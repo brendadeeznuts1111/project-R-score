@@ -17,6 +17,15 @@
   # Reuse fresh registry data; allow a short stale window while refreshing it
   Cache-Control: public, max-age=60, stale-while-revalidate=30
 
+/feeds/v1/*.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=60, must-revalidate
+
+/feeds/v1/projects/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=60, must-revalidate
+
 /registry/bake-manifest.json
   Content-Type: application/json; charset=utf-8
   Cache-Control: public, max-age=30, must-revalidate

@@ -42,6 +42,7 @@ tmp/
 .tmp/
 *.temp
 *.cache
+*.backup
 
 # Export files (temporary data exports)
 *-export.json

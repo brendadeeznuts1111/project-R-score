@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/project/benchmarking#cpu-profiling — --cpu-prof
 // @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
 // @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof
-// @see https://bun.com/docs/project/benchmarking#markdown-output-1 — --heap-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-md
 // @see https://bun.com/blog/bun-v1.3.2#cpu-profiling-with-cpu-prof — shipped Bun 1.3.2
 // @see https://bun.com/blog/bun-v1.4#cpu-prof-md — shipped Bun 1.4.0 Observability
 // @see https://bun.com/blog/bun-v1.4#heap-prof-md — shipped Bun 1.4.0 Observability
@@ -77,7 +77,7 @@ export const CLI_DOCUMENTATION_URLS = {
     HEAP_PROF: `/docs/${BENCHMARKING_PROFILE_DOCS_PATHS.heapProf}`,
     /**
      * How-to · ship https://bun.com/blog/bun-v1.4#heap-prof-md
-     * Mintlify collision `#markdown-output-1` — see benchmarking-profile-loci.ts
+     * The duplicate child heading has no distinct fragment; use its heap parent.
      */
     HEAP_PROF_MD: `/docs/${BENCHMARKING_PROFILE_DOCS_PATHS.heapProfMd}`,
     TRACE: '/docs/cli/trace',

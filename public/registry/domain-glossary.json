@@ -132,6 +132,11 @@
       "sections": []
     },
     {
+      "path": "/portal/bun-1.4/",
+      "concept": "page.bunRelease",
+      "sections": []
+    },
+    {
       "path": "/portal/catalog/",
       "concept": "page.catalog",
       "sections": []
@@ -446,13 +451,13 @@
     }
   ],
   "summary": {
-    "concepts": 481,
-    "active": 471,
+    "concepts": 482,
+    "active": 472,
     "deprecated": 10,
     "draft": 0,
     "mapped": 19,
     "registryColumns": 31,
-    "portalSemantics": 344,
+    "portalSemantics": 345,
     "categories": {
       "market": 33,
       "model": 18,
@@ -461,7 +466,7 @@
       "registry": 1,
       "tournament": 99,
       "trading": 59,
-      "ui": 190,
+      "ui": 191,
       "warehouse": 27
     },
     "kinds": {
@@ -485,13 +490,13 @@
       "registry": 39,
       "sport": 11,
       "tournament": 6,
-      "ui": 264
+      "ui": 265
     },
     "semanticTypes": {
       "classification": 169,
       "location": 4,
       "presentation": 14,
-      "resource": 119,
+      "resource": 120,
       "state": 37,
       "version": 1
     },
@@ -499,7 +504,7 @@
       "badge": 66,
       "chip": 130,
       "code": 37,
-      "heading": 83,
+      "heading": 84,
       "link": 24,
       "token": 4
     }
@@ -4089,6 +4094,40 @@
       "synonyms": [
         "Bun config",
         "installation policy"
+      ],
+      "values": null,
+      "valueLabels": null,
+      "seeAlso": [
+        "ui.semantic.surface",
+        "ui.semantic.resources",
+        "ui.semantic.artifact"
+      ],
+      "status": "active",
+      "deprecatedBy": null,
+      "unit": null,
+      "format": null,
+      "registryColumn": null,
+      "source": "lib/portal/semantic-vocabulary.ts",
+      "featurePurpose": "Cross-portal semantic field contract.",
+      "semanticType": "resource",
+      "uiRole": "heading",
+      "correlationId": "legacy",
+      "addedAt": "2026-01-01",
+      "domain": "portal",
+      "namespace": "page",
+      "color": "#58a6ff"
+    },
+    {
+      "id": "page.bunRelease",
+      "label": "Bun 1.4 release gallery",
+      "description": "Versioned portal page for Bun 1.4 release capabilities, official media, attribution, and asset validation evidence.",
+      "category": "ui",
+      "kind": "ui",
+      "mapsTo": null,
+      "synonyms": [
+        "Bun 1.4",
+        "release gallery",
+        "Bun release assets"
       ],
       "values": null,
       "valueLabels": null,

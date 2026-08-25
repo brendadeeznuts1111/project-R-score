@@ -111,7 +111,7 @@ lines.push('| Action | Command |');
 lines.push('|--------|---------|');
 lines.push('| Quick status | `git status --short` |');
 lines.push('| Check changes | `git diff --stat` |');
-lines.push('| Stage all | `git add -A` |');
+lines.push('| Stage claimed paths | `git add -- <owned-paths...>` |');
 lines.push('| Commit | `git commit -m "type: message"` |');
 lines.push('');
 lines.push('---', '');

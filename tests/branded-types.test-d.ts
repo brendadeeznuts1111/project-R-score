@@ -56,6 +56,8 @@ import type {
   PortalTenantId,
   ProjectId,
   RequestId,
+  ReleaseAssetId,
+  ReleaseCapabilityId,
   ReleaseKnowledgeExampleId,
   ResourceId,
   SessionId,
@@ -132,6 +134,8 @@ import {
   asPortalTenantId,
   asProjectId,
   asRequestId,
+  asReleaseAssetId,
+  asReleaseCapabilityId,
   asReleaseKnowledgeExampleId,
   asResourceId,
   asRunId,
@@ -172,6 +176,8 @@ const forecastIssueId: LimitForecastIssueId = asLimitForecastIssueId('forecast-1
 const sportsbookId: SportsbookId = asSportsbookId('draftkings');
 const requestId: RequestId = asRequestId('req-1');
 const documentId: DocumentId = asDocumentId('doc-1');
+const releaseAssetId: ReleaseAssetId = asReleaseAssetId('bun-1.4-og-image');
+const releaseCapabilityId: ReleaseCapabilityId = asReleaseCapabilityId('bun-xml-native');
 const portalTenantId: PortalTenantId = asPortalTenantId('factory');
 const portalAccountId: PortalAccountId = asPortalAccountId('account-1');
 const partnerProfileKey: PartnerProfileKey = asPartnerProfileKey('profile-1');
@@ -253,6 +259,12 @@ const crossAsToken: TokenId = sessionId;
 
 // @ts-expect-error — DocumentId is not a FeedId
 const crossAsFeed: FeedId = documentId;
+
+// @ts-expect-error — a release asset is not a release capability
+const crossReleaseAssetAsCapability: ReleaseCapabilityId = releaseAssetId;
+
+// @ts-expect-error — a release capability is not a release asset
+const crossReleaseCapabilityAsAsset: ReleaseAssetId = releaseCapabilityId;
 
 // @ts-expect-error — PortalTenantId is not a PortalAccountId
 const crossPortalTenantAsAccount: PortalAccountId = portalTenantId;
@@ -350,7 +362,7 @@ if (isBrandedValue('SessionId', guardInput)) {
   void guardedSession;
 }
 
-// ─── 6. Aggregate unions cover the complete 92-value catalog ─────────────────
+// ─── 6. Aggregate unions cover the complete catalog ──────────────────────────
 
 const everyId: readonly AnyId[] = [
   asSessionId('s'),
@@ -384,6 +396,8 @@ const everyId: readonly AnyId[] = [
   asStepId('st'),
   asWebhookId('wh'),
   asFeedId('f'),
+  asReleaseAssetId('bun-1.4-og-image'),
+  asReleaseCapabilityId('bun-xml-native'),
   asRunId('run'),
   asDecisionId('dec'),
   asLoopId('loop'),

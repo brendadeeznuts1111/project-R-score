@@ -117,7 +117,7 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 | [`time.ts`](./time.ts)                                     | `Bun.nanoseconds` · `sleep`/`sleepSync` · `randomUUIDv7`                                                      |
 | [`escape-html.ts`](./escape-html.ts)                       | `Bun.escapeHTML` wrapper                                                                                      |
 | [`bytes-base64.ts`](./bytes-base64.ts)                     | `Uint8Array` base64 / base64url / hex (no `btoa`/`atob`)                                                      |
-| [`toml-stringify.ts`](./toml-stringify.ts)                 | TOML write via Bun when available; 1.3.14-safe fallback                                                       |
+| [`toml-stringify.ts`](./toml-stringify.ts)                 | Stable Bun 1.4 native TOML serialization boundary                                                            |
 | [`image-metadata.ts`](./image-metadata.ts)                 | `Bun.Image.metadata` evidence helpers                                                                         |
 | [`screenshot-remediation.ts`](./screenshot-remediation.ts) | TEST-003 screenshot metadata remediation                                                                      |
 

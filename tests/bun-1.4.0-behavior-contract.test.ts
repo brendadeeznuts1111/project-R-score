@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.4#other-behavior-changes — Bun 1.4.0 Other behavior changes
+// @see https://github.com/oven-sh/bun/issues/28792 — reconciled Bun 1.4 breaking changes
 /**
  * Executable proofs for Bun 1.4.0 Other behavior changes (safe / in-process tier).
  * Inventory: packages/bun-release-contracts/contracts/bun-v1.4.0.json
@@ -68,6 +68,12 @@ describe('Bun 1.4.0 Other behavior — serve / cookie / color', () => {
     expect(() =>
       Bun.serve({
         port: -1,
+        fetch: () => new Response('x'),
+      })
+    ).toThrow(RangeError);
+    expect(() =>
+      Bun.serve({
+        port: 1.5,
         fetch: () => new Response('x'),
       })
     ).toThrow(RangeError);
@@ -167,6 +173,7 @@ describe('Bun 1.4.0 Other behavior — router / equals / fetch shapes', () => {
     );
     // Relative URL is written as-is (not run through absolute URL serialization).
     expect(Response.redirect('/relative/path').headers.get('Location')).toBe('/relative/path');
+    expect(() => Response.redirect('/relative/\u{10000}')).toThrow(TypeError);
   });
 
   releaseTest('structuredClone rejects non-object transfer entries (#32809)', () => {

@@ -1,0 +1,14 @@
+id: no-ambiguous-exit-code-assertion
+snapshots:
+  expect([0, 1]).toContain(proc.exitCode):
+    labels:
+    - source: expect([0, 1]).toContain(proc.exitCode)
+      style: primary
+      start: 0
+      end: 39
+  expect([1, 0]).toContain(result.exitCode):
+    labels:
+    - source: expect([1, 0]).toContain(result.exitCode)
+      style: primary
+      start: 0
+      end: 41

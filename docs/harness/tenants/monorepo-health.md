@@ -1,14 +1,12 @@
 # Tenant: monorepo-health
 
-**Tenant** `monorepo-health`  
-**Runs** `bun run monorepo:health` · `bun run check:monorepo-health` ·
-`bun tools/monorepo-health.ts`
-**Proof** claim `monorepo-health-score` · `reports/monorepo-health-latest.json`
-· formula unit tests
-**Gates** pre-commit `--tests-only` when health sources staged · **ci:core**
-full ratchet · import-graph shares `scanSourceImports`
-**Catalog** Bun-native Glob · build metafile · optional Archive · SQLite trend  
-**Workspace graph / catalog policy** sibling
+**Tenant** `monorepo-health` **Runs** `bun run monorepo:health` ·
+`bun run check:monorepo-health` · `bun tools/monorepo-health.ts` **Proof** claim
+`monorepo-health-score` · `reports/monorepo-health-latest.json` · formula unit
+tests **Gates** pre-commit `--tests-only` when health sources staged ·
+**ci:core** full ratchet · import-graph shares `scanSourceImports` **Catalog**
+Bun-native Glob · build metafile · optional Archive · SQLite trend **Workspace
+graph / catalog policy** sibling
 [monorepo-workspaces.md](./monorepo-workspaces.md) ·
 `bun run validate:workspaces`
 
@@ -40,7 +38,7 @@ scores comparable. `null` means not measured; zero means measured and zero.
 | duplicateDepCount        | workspace + root `package.json` dependency version sets                                                                                                                                                                                                        |
 | deadCodePercent / cycles | **`Bun.Transpiler.scanImports`** (prefers over `scan` — captures `require()` on Bun 1.4) · ESM + dynamic `import()` · type-only ignored · relative edges for orphans; cycles use the same classifier and `lib/` + `scripts/` perimeter as `check:import-graph` |
 | largeFilePercent         | `Bun.Glob` + line count (&gt; 200 default); informs the score                                                                                                                                                                                                  |
-| largeFileCount           | Absolute oversized-file ratchet; deleting source cannot regress it by shrinking the denominator                                                                                                                                                              |
+| largeFileCount           | Absolute oversized-file ratchet; deleting source cannot regress it by shrinking the denominator                                                                                                                                                                |
 | testFailureRate          | optional, nullable evidence from `--with-tests` / `--with-coverage`; not scored                                                                                                                                                                                |
 | testCoveragePercent      | optional, nullable `--with-coverage` evidence from Bun's `All files` **line %**; not scored                                                                                                                                                                    |
 
@@ -73,6 +71,11 @@ ignored). They own different decisions:
   (owners, after intentional restructuring) never re-pins the score baseline,
   and vice versa.
 
+Large-file count is only a pressure signal. Use
+[`file-removal-grading.md`](./file-removal-grading.md) to distinguish source
+that should be split from exact duplicates, generated artifacts, addressability
+gaps, and files protected by active feed or portal contracts.
+
 ## CLI
 
 ```bash
@@ -81,6 +84,7 @@ bun run check:monorepo-health                    # unit tests + collect + schema
 bun scripts/check-monorepo-health.ts --tests-only  # pre-commit when health files staged
 bun scripts/check-monorepo-health.ts --write-baseline  # owners: re-pin floors after intentional change
 bun run check:import-graph                       # cycle/deep-relative (shares scanSourceImports)
+bun run files:rate-removal                       # SHA-256 + references; advisory, never deletes
 
 # Operator CLI (not a commit gate by itself)
 bun run monorepo:health              # human table + latest JSON + SQLite trend

@@ -314,7 +314,7 @@ systems **CODEOWNERS:** @fire22/telegram-team @fire22/communication-team
 | Package           | Location                              | Purpose                            | CODEOWNERS                                          |
 | ----------------- | ------------------------------------- | ---------------------------------- | --------------------------------------------------- |
 | `content/`        | `enterprise/packages/content/`        | Content management system          | @fire22/content-team @fire22/marketing-team         |
-| `communications/` | `enterprise/packages/communications/` | Communication & messaging          | @fire22/communication-team @fire22/users-team       |
+| `communications/` | `enterprise/packages/communications/` | Ownership pointer; canonical records in `communications/` | @fire22/communication-team @fire22/users-team       |
 | `telegram/`       | `enterprise/packages/telegram/`       | Telegram bot & integration         | @fire22/communication-team @fire22/integration-team |
 | `feeds/`          | `enterprise/packages/feeds/`          | Data feed processing & management  | @fire22/content-team @fire22/analytics-team         |
 | `docs/`           | `enterprise/packages/docs/`           | Documentation generation & hosting | @fire22/content-team @fire22/technical-writing-team |

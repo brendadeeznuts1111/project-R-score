@@ -1,13 +1,14 @@
 /**
  * Portal skill detail — server-rendered `/portal/skills/<name>` page.
  * Body markdown renders through Bun.markdown.html with the shared
- * PORTAL_MARKDOWN_PARSER feature set; all dynamic text is HTML-escaped.
+ * the secure Bun.markdown wrapper; raw HTML and unsafe URL schemes are disabled.
  * @see https://bun.com/docs/runtime/markdown#bun-markdown-html
  * @see https://bun.com/docs/runtime/markdown#options
  * @see ../markdown/options.ts — MARKDOWN_PRESET_PORTAL
  */
 
-import { MARKDOWN_PRESET_PORTAL, markdownHtml } from '../markdown/options.ts';
+import { MARKDOWN_PRESET_PORTAL } from '../markdown/options.ts';
+import { markdownSafeHtml } from '../markdown/safe-html.ts';
 import type { SkillDetail } from './skills-catalog.ts';
 
 /** @deprecated Prefer MARKDOWN_PRESET_PORTAL — alias kept for existing imports. */
@@ -15,13 +16,9 @@ export const PORTAL_MARKDOWN_PARSER = MARKDOWN_PRESET_PORTAL;
 
 function mdToHtml(md: string): string {
   try {
-    return markdownHtml(md, PORTAL_MARKDOWN_PARSER);
+    return markdownSafeHtml(md, PORTAL_MARKDOWN_PARSER);
   } catch {
-    try {
-      return markdownHtml(md, {});
-    } catch {
-      return `<pre>${escapeHtml(md)}</pre>`;
-    }
+    return `<pre>${escapeHtml(md)}</pre>`;
   }
 }
 

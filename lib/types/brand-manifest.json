@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-17T17:07:27.977Z",
+  "generatedAt": "2026-08-25T05:11:24.179Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 94,
+  "brandCount": 96,
   "domainCount": 10,
   "domains": [
     "audit",
@@ -17,7 +17,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 72,
+    "id": 74,
     "key": 3,
     "code": 19
   },
@@ -50,7 +50,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 39
+      "brandCount": 41
     },
     {
       "name": "portal",
@@ -1402,6 +1402,62 @@
       "guard": "BRAND_GUARDS.isFeedId",
       "shortName": "feedId",
       "envName": "FEED_ID"
+    },
+    {
+      "name": "ReleaseAssetId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Version-scoped release media asset identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asReleaseAssetId",
+        "try": "tryReleaseAssetId",
+        "parse": "parseReleaseAssetId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseAssetId",
+      "shortName": "releaseAssetId",
+      "envName": "RELEASE_ASSET_ID"
+    },
+    {
+      "name": "ReleaseCapabilityId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Version-scoped release capability identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asReleaseCapabilityId",
+        "try": "tryReleaseCapabilityId",
+        "parse": "parseReleaseCapabilityId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseCapabilityId",
+      "shortName": "releaseCapabilityId",
+      "envName": "RELEASE_CAPABILITY_ID"
     },
     {
       "name": "RunId",

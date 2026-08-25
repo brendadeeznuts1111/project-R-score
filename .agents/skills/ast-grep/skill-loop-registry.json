@@ -99,7 +99,8 @@
         },
         "precommit": {
           "enabled": true,
-          "script": "precommit"
+          "script": "precommit",
+          "note": "includes the fail-closed Bun 1.4 migration audit"
         }
       }
     },

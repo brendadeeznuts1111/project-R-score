@@ -1,5 +1,6 @@
 // @see https://bun.com/docs/runtime/http/routing#file-responses-vs-static-responses
-// Promotion observation captured on 1.4.0-canary.1 revision 3f93daaf0.
+// Initial promotion observation was captured on 1.4.0-canary.1 revision 3f93daaf0;
+// this suite now runs against the stable 1.4.0 pin.
 import { expect, test } from 'bun:test';
 
 const TARGET_VERSION = '1.4.0';

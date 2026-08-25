@@ -53,26 +53,37 @@ function releaseFetch(
 }
 
 const RSS_FIXTURE = `<?xml version="1.0"?>
-<rss><channel>
+<rss version="2.0"><channel>
+  <title>Bun releases</title>
+  <link>https://bun.com/blog</link>
+  <description>Official Bun release posts</description>
   <item>
     <title>Bun 1.4</title>
     <link>https://bun.com/blog/bun-v1.4</link>
+    <guid>https://bun.com/blog/bun-v1.4</guid>
     <pubDate>Thu, 20 Aug 2026 00:53:44 GMT</pubDate>
+    <description>Bun 1.4 release</description>
   </item>
   <item>
     <title>Rewriting Bun in Rust</title>
     <link>https://bun.com/blog/bun-in-rust</link>
+    <guid>https://bun.com/blog/bun-in-rust</guid>
     <pubDate>Wed, 08 Jul 2026 16:00:00 GMT</pubDate>
+    <description>Engineering post</description>
   </item>
   <item>
     <title>Bun v1.3.14</title>
     <link>https://bun.com/blog/bun-v1.3.14</link>
+    <guid>https://bun.com/blog/bun-v1.3.14</guid>
     <pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate>
+    <description>Bun 1.3.14 release</description>
   </item>
   <item>
     <title>Bun v1.3.13</title>
     <link>https://bun.com/blog/bun-v1.3.13</link>
+    <guid>https://bun.com/blog/bun-v1.3.13</guid>
     <pubDate>Mon, 20 Apr 2026 07:33:26 GMT</pubDate>
+    <description>Bun 1.3.13 release</description>
   </item>
 </channel></rss>`;
 

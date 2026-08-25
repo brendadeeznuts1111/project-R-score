@@ -108,6 +108,7 @@ reports/junit.xml
 reports/*.json
 *.heapsnapshot
 Heap-*
+my-wager-v3/omega-dashboard-report.*
 
 # Generated test/benchmark artifacts
 test-*.txt
@@ -170,6 +171,7 @@ openclaw/
 .factory-wager/vault-metadata.json
 .factory-wager/config.vault*.yaml
 .factory-wager/config.original.yaml
+.factory-wager/registry-cookies.jar
 
 # FactoryWager reports and analysis (keep structure, exclude content)
 .factory-wager/reports/*.json

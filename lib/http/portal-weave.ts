@@ -145,6 +145,14 @@ export const PORTAL_WEAVE_SURFACES: PortalWeaveLink[] = [
     relatedArtifactIds: ['ssot-flow-soft', 'pm-proof'],
   },
   {
+    id: 'bun-1-4-gallery',
+    label: 'Bun 1.4 gallery',
+    href: '/portal/bun-1.4/',
+    note: 'release features · external-source media gallery · rights-pending asset mode',
+    group: 'registry',
+    relatedArtifactIds: ['bun-1-4-assets', 'bun-1-4-capabilities', 'bun-1-4-channel-release'],
+  },
+  {
     id: 'skills',
     label: 'Skills',
     href: '/portal/skills/',
@@ -706,6 +714,30 @@ export const PORTAL_WEAVE_ARTIFACTS: PortalWeaveArtifact[] = [
     group: 'registry',
     cli: 'bun run workspace-taxonomy:bake',
     purpose: 'shared',
+  },
+  {
+    id: 'bun-1-4-assets',
+    label: 'bun-1.4-assets',
+    href: '/registry/bun-1.4-assets.json',
+    note: 'Bun 1.4 release media manifest · external source URLs until republishing rights are approved',
+    group: 'registry',
+    purpose: 'ui',
+  },
+  {
+    id: 'bun-1-4-capabilities',
+    label: 'bun-1.4-capabilities',
+    href: '/registry/bun-1.4-capabilities.json',
+    note: 'Official-source capability graph · asset relations · adoption and contract evidence',
+    group: 'registry',
+    purpose: 'ui',
+  },
+  {
+    id: 'bun-1-4-channel-release',
+    label: 'bun-1.4-channel-release',
+    href: '/registry/bun-1.4-channel-release.json',
+    note: 'Owner · active channel membership · SHA-256 release snapshot',
+    group: 'registry',
+    purpose: 'ui',
   },
 ];
 

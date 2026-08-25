@@ -61,6 +61,7 @@ benchmark-*.json
 benchmark-*.md
 benchmark-*.html
 benchmark-*.csv
+dependency-report-*.json.formatted
 
 # Bun
 bun.lockb

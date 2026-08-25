@@ -706,6 +706,22 @@ export const CANONICAL_IMAGE_REFS = {
     'https://github.com/oven-sh/bun/commit/7be1d459f28566735bd602ce009e24cba0548e1e',
 } as const satisfies Record<string, string>;
 
+/** Bun 1.4 native XML parser, serializer, and documented result shapes. */
+export const CANONICAL_XML_REFS = {
+  'Bun.XML': bunDocs('runtime/xml'),
+  'Bun.XML.parse': bunReference('bun/XML/parse'),
+  'Bun.XML.stringify': bunReference('bun/XML/stringify'),
+  'Bun.XML.Comment': bunReference('bun/XML/Comment'),
+  'Bun.XML.Document': bunReference('bun/XML/Document'),
+  'Bun.XML.Element': bunReference('bun/XML/Element'),
+  'Bun.XML.Node': bunReference('bun/XML/Node'),
+  'Bun.XML.NodeInput': bunReference('bun/XML/NodeInput'),
+  'Bun.XML.ParseOptions': bunReference('bun/XML/ParseOptions'),
+  'Bun.XML.ProcessingInstruction': bunReference('bun/XML/ProcessingInstruction'),
+  'Bun.XML.Scalar': bunReference('bun/XML/Scalar'),
+  'Bun.XML.Value': bunReference('bun/XML/Value'),
+} as const satisfies Record<string, string>;
+
 export const CANONICAL_REFS: Record<string, string> = {
   // ── Terminal width & ANSI (replaces string-width / strip-ansi / wrap-ansi /
   //    slice-ansi) ────────────────────────────────────────────────────────
@@ -961,6 +977,7 @@ export const CANONICAL_REFS: Record<string, string> = {
   'Bun.JSON5': 'https://bun.com/reference/bun/JSON5',
   'Bun.JSONC': 'https://bun.com/reference/bun/JSONC',
   'Bun.JSONL': 'https://bun.com/reference/bun/JSONL',
+  ...CANONICAL_XML_REFS,
   // Markdown page (html + ansi + render + react)
   'Bun.markdown': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',
   'Bun.markdown.html': 'https://bun.com/docs/runtime/markdown#bun-markdown-html',

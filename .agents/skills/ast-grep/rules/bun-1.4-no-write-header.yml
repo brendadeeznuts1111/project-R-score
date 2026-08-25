@@ -1,0 +1,6 @@
+id: bun-1.4-no-write-header
+language: TypeScript
+severity: warning
+message: Bun 1.4 follows Node.js 26 and removes response.writeHeader(); use writeHead()
+rule:
+  pattern: $RESPONSE.writeHeader($$$ARGS)

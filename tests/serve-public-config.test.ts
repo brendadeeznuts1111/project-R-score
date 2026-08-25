@@ -3,11 +3,16 @@
 import { describe, expect, test } from 'bun:test';
 import {
   isBunEnvPortChainActive,
+  loadServePublicToml,
   resolveServePublicBindPrefs,
   type ServePublicToml,
 } from '../lib/http/serve-public-config.ts';
 
 describe('lib/http/serve-public-config', () => {
+  test('an absent optional TOML file is an empty overlay', async () => {
+    expect(await loadServePublicToml('/definitely/missing/serve-public.toml')).toEqual({});
+  });
+
   test('env/CLI port chain beats TOML port', () => {
     const toml: ServePublicToml = { server: { port: 4000, host: '127.0.0.1' } };
     const prefs = resolveServePublicBindPrefs(toml, { BUN_PORT: '3099' }, [

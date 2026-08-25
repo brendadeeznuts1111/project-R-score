@@ -15,6 +15,8 @@
  *   file-static  — disk / respondAuto (portal HTML, large JSON)
  */
 
+import { ROOT_BUN_14_CHANNELS } from '../rss/project-channel-registry.ts';
+
 export type PublicRouteKind = 'simd-route' | 'fetch-handler' | 'hot-static' | 'file-static';
 
 export type PublicRouteCategory =
@@ -30,6 +32,8 @@ export type PublicRouteDef = {
   method?: 'GET' | 'HEAD';
   /** HTTP statuses that count as reachable for this route. */
   okStatuses?: number[];
+  /** Canonical route when this entry is a transport alias. */
+  aliasOf?: string;
   note?: string;
 };
 
@@ -636,6 +640,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
     note: 'page.packages · packages/workspaces docs index',
   },
+  {
+    path: '/portal/bun-1.4/',
+    name: 'Bun 1.4 release gallery',
+    category: 'portal',
+    kind: 'file-static',
+    okStatuses: [200],
+    note: 'page.bunRelease · /registry/bun-1.4-assets.json · official source attribution',
+  },
 ];
 
 /** Env status API (fetch-handler in serve-public). */
@@ -674,6 +686,29 @@ export const FETCH_HANDLER_ROUTES: PublicRouteDef[] = [
     okStatuses: [200],
     note: 'shared header mark · public with read auth enabled',
   },
+  ...['all', 'images', 'videos', 'embeds'].map(
+    channel =>
+      ({
+        path: `/feeds/v1/${channel}.xml`,
+        name: `Bun 1.4 ${channel} RSS`,
+        category: 'registry',
+        kind: 'file-static',
+        okStatuses: [200],
+        note: 'RSS 2.0 + Media RSS · feed schema v1 · manifest-derived',
+      }) satisfies PublicRouteDef
+  ),
+  ...ROOT_BUN_14_CHANNELS.map(
+    channel =>
+      ({
+        path: channel.projectEndpoint,
+        name: `Project RSS alias · ${channel.id}`,
+        category: 'registry',
+        kind: 'simd-route',
+        okStatuses: [200, 301],
+        aliasOf: channel.canonicalEndpoint,
+        note: `Permanent alias to ${channel.canonicalEndpoint}; no duplicate XML bytes`,
+      }) satisfies PublicRouteDef
+  ),
 ];
 
 /**

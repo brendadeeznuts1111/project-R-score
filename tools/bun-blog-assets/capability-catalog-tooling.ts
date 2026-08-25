@@ -1,0 +1,157 @@
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#cpu-prof-md
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-md
+// @released --heap-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof-md
+// @see https://bun.com/docs/bundler/index#metafile — --metafile-md
+// @released --metafile-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#metafile-md
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @released --parallel · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @updated --parallel · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// Official Bun 1.4 facts only. Performance entries remain explicitly upstream-only claims.
+import type { Bun14Capability } from './types.ts';
+import { asReleaseCapabilityId } from '../../lib/types/branded.ts';
+
+const BLOG = 'https://bun.com/blog/bun-v1.4';
+
+export const BUN_14_TOOLING_CAPABILITIES: Bun14Capability[] = [
+  {
+    id: asReleaseCapabilityId('bun-audit-fix'),
+    domain: 'package-manager',
+    symbol: 'bun audit fix',
+    changeKind: 'new',
+    adoption: 'candidate',
+    summary: 'Applies compatible dependency upgrades for reported vulnerabilities.',
+    boundary: 'Review lockfile diffs; never run as an implicit gallery-side mutation.',
+    releaseUrl: `${BLOG}#bun-audit-fix`,
+    docsUrl: 'https://bun.com/docs/pm/cli/audit',
+    assetIds: ['bun-1.4-bun-audit-fix-poster', 'bun-1.4-bun-audit-fix'],
+    contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('bun-dedupe'),
+    domain: 'package-manager',
+    symbol: 'bun dedupe',
+    changeKind: 'new',
+    adoption: 'candidate',
+    summary: 'Rewrites the dependency graph to reduce duplicate package versions.',
+    boundary: 'Explicit maintenance command with lockfile review, not an install side effect.',
+    releaseUrl: `${BLOG}#bun-dedupe`,
+    docsUrl: 'https://bun.com/docs/pm/cli/dedupe',
+    assetIds: ['bun-1.4-bun-dedupe-poster', 'bun-1.4-bun-dedupe'],
+    contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('bun-prune'),
+    domain: 'package-manager',
+    symbol: 'bun prune',
+    changeKind: 'new',
+    adoption: 'candidate',
+    summary: 'Removes packages no longer reachable from the current dependency graph.',
+    boundary: 'Explicit maintenance command; generated media and registries are outside its scope.',
+    releaseUrl: `${BLOG}#bun-prune`,
+    docsUrl: 'https://bun.com/docs/pm/cli/prune',
+    assetIds: ['bun-1.4-bun-prune-poster', 'bun-1.4-bun-prune'],
+    contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('bun-test-parallel'),
+    domain: 'test-runner',
+    symbol: 'bun test --parallel',
+    changeKind: 'release-window',
+    adoption: 'integrated',
+    summary: 'Distributes test files across workers and implies isolation by default.',
+    boundary: 'Repository test lanes bound worker counts where shared resources require it.',
+    releaseUrl: `${BLOG}#bun-test-parallel`,
+    docsUrl: 'https://bun.com/docs/test',
+    assetIds: [],
+    contractFiles: ['tests/bun-test-changed.test.ts', 'tests/bun-test-changed-staged.test.ts'],
+  },
+  {
+    id: asReleaseCapabilityId('bun-test-timings'),
+    domain: 'test-runner',
+    symbol: 'bun test --timings',
+    changeKind: 'new',
+    adoption: 'candidate',
+    summary: 'Uses recorded file durations to balance parallel workers and CI shards.',
+    boundary: 'Timing files are scheduling evidence, not correctness baselines.',
+    releaseUrl: `${BLOG}#bun-test-timings`,
+    docsUrl: 'https://bun.com/docs/test',
+    assetIds: ['bun-1.4-test-timings'],
+    contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('cpu-profile-markdown'),
+    domain: 'observability',
+    symbol: '--cpu-prof-md',
+    changeKind: 'release-window',
+    adoption: 'contract',
+    summary: 'Writes hot functions and call trees as terminal-readable Markdown.',
+    boundary: 'Generated profiling evidence stays local and is not served by the gallery.',
+    releaseUrl: `${BLOG}#cpu-prof-md`,
+    assetIds: ['bun-1.4-cpu-prof-devtools'],
+    contractFiles: ['tests/bun-1.4.0-observability-contract.test.ts'],
+  },
+  {
+    id: asReleaseCapabilityId('heap-profile-markdown'),
+    domain: 'observability',
+    symbol: '--heap-prof-md',
+    changeKind: 'release-window',
+    adoption: 'contract',
+    summary: 'Writes retained types, objects and retaining chains as Markdown.',
+    boundary: 'Profiles can contain sensitive runtime data and remain local artifacts.',
+    releaseUrl: `${BLOG}#heap-prof-md`,
+    assetIds: [],
+    contractFiles: ['tests/bun-1.4.0-observability-contract.test.ts'],
+  },
+  {
+    id: asReleaseCapabilityId('bundle-metafile-markdown'),
+    domain: 'bundler',
+    symbol: 'bun build --metafile-md',
+    changeKind: 'release-window',
+    adoption: 'integrated',
+    summary: 'Writes bundle size, entry-point and import-chain analysis as Markdown.',
+    boundary: 'Build evidence only; the JSON asset manifest remains the media source of truth.',
+    releaseUrl: `${BLOG}#bun-build-metafile-md`,
+    docsUrl: 'https://bun.com/docs/bundler',
+    assetIds: [],
+    contractFiles: ['tests/bun-1.4-cli-example.test.ts'],
+  },
+  {
+    id: asReleaseCapabilityId('node-sqlite-compatibility'),
+    domain: 'runtime',
+    symbol: 'node:sqlite',
+    changeKind: 'compatibility',
+    adoption: 'contract',
+    summary: 'Bun reports full coverage of the referenced Node sqlite test module in 1.4.',
+    boundary: 'Compatibility claim is upstream; project behavior is separately contract-tested.',
+    releaseUrl: `${BLOG}#node-sqlite`,
+    assetIds: ['bun-1.4-node-sqlite'],
+    contractFiles: ['tests/bun-1.4.0-bugfix-contract.test.ts'],
+  },
+  {
+    id: asReleaseCapabilityId('node-test-compatibility'),
+    domain: 'runtime',
+    symbol: 'Node.js compatibility',
+    changeKind: 'compatibility',
+    adoption: 'upstream-claim',
+    summary: 'Bun reports 1,517 additional passing Node.js tests in the 1.4 release.',
+    boundary: 'Upstream suite counts are displayed as claims and are not re-benchmarked here.',
+    releaseUrl: `${BLOG}#node-js-compatibility`,
+    assetIds: ['bun-1.4-node-test-suite-progress'],
+    contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('react-compiler-built-in'),
+    domain: 'bundler',
+    symbol: 'React Compiler',
+    changeKind: 'new',
+    adoption: 'candidate',
+    summary: 'Enables the React Compiler in Bun build flows without a separate Babel setup.',
+    boundary: 'Candidate for React build surfaces; not required by this static portal.',
+    releaseUrl: `${BLOG}#built-in-react-compiler`,
+    assetIds: ['bun-1.4-react-compiler'],
+    contractFiles: [],
+  },
+];

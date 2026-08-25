@@ -800,10 +800,11 @@ describe('factory-library template contract', () => {
       expect(stdout).toContain(
         'Scaffold materialization: requirements, files, and manifest passed'
       );
-      // Active Bun 1.3.14 suppresses preinstall when --no-install is present,
-      // while preserving the postinstall next-step message.
+      // Bun 1.4.0 suppresses both local template hooks when --no-install is present
+      // and retains its native scaffold-completion message.
       expect(stdout).not.toContain('Installing library dependencies');
-      expect(stdout).toContain('Library scaffolded successfully');
+      expect(stdout).not.toContain('Library scaffolded successfully');
+      expect(stdout).toContain('Created factory-library project successfully');
       expect(await Bun.file(`${destination}/stale.txt`).exists()).toBe(false);
       expect(await Bun.file(`${destination}/node_modules`).exists()).toBe(false);
       expect(await Bun.file(`${destination}/.git`).exists()).toBe(false);

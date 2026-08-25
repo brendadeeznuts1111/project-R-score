@@ -8,6 +8,9 @@
   },
   "include": [
     "src/**/*",
+    "../../lib/docs/benchmarking-profile-loci.ts",
+    "../../lib/docs/bun-blog-url.ts",
+    "../../lib/docs/bun-site-url.ts",
     "../../lib/docs/constants/**/*"
   ],
   "exclude": ["node_modules", "dist", "build"]

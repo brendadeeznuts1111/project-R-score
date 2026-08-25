@@ -14,6 +14,7 @@ export const PORTAL_BOARD_SLUGS = [
   'catalog',
   'skills',
   'brands',
+  'bun-1.4',
   'bookmakers',
   'bunfig',
   'compliance',

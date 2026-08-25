@@ -26,6 +26,7 @@ hyperbun-core
 .shell-temp/
 temp-*.js
 test-results.*
+*.bak
 
 # Logs
 *.log

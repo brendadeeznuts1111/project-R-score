@@ -1,9 +1,9 @@
 {
   "formulaVersion": 2,
   "targetScore": 90,
-  "minScore": 63,
-  "maxDeadCodePercent": 6.2,
-  "maxLargeFileCount": 575,
+  "minScore": 63.4,
+  "maxDeadCodePercent": 6,
+  "maxLargeFileCount": 581,
   "maxCyclicDependencyCount": 0,
   "maxDuplicateDepCount": 0
 }

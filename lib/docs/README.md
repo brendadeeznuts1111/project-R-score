@@ -40,7 +40,7 @@ runtime helpers, not general docs API.
 | [`repo-docs.ts`](./repo-docs.ts)                                 | `CANONICAL_REPO_DOCS` · `CANONICAL_REMOTES`                                                                                         |
 | [`bun-site-url.ts`](./bun-site-url.ts)                           | URLPatternInit parts · `CANONICAL_SOURCES` (`blog` ≠ `rss`) · `bunDocs` / `bunBlog` · release blog patterns                         |
 | [`bun-blog-url.ts`](./bun-blog-url.ts)                           | Release version via URLPattern `groups.version` · canonicalize marketing vs release-notes · pubDate ISO · Bun.XML list/text helpers |
-| [`benchmarking-profile-loci.ts`](./benchmarking-profile-loci.ts) | Observability profile docs how-to (Mintlify `#markdown-output-1`) ↔ ship blog anchors · CANONICAL_REFS / CLI announcement SSOT      |
+| [`benchmarking-profile-loci.ts`](./benchmarking-profile-loci.ts) | Addressable Observability docs loci (heap Markdown uses `#heap-profiling`) ↔ versioned ship anchors · CANONICAL_REFS / CLI SSOT     |
 | [`bun-rss.ts`](./bun-rss.ts)                                     | Shared RSS 2.0 `<item>` parse (`parseRssChannelItems`) for release-index · contracts feed · MCP — RSS plane only                    |
 | [`fetch-page.ts`](./fetch-page.ts)                               | Shared page fetch SSOT (`fetchPage`)                                                                                                |
 | [`extract-metadata.ts`](./extract-metadata.ts)                   | Social metadata via HTMLRewriter                                                                                                    |

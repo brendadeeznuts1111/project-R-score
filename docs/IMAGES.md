@@ -11,7 +11,7 @@ Zero-npm image decode, transform, and encode using
 | Upstream Markdown source | [`docs/runtime/image.mdx`](https://raw.githubusercontent.com/oven-sh/bun/main/docs/runtime/image.mdx)     |
 | Initial release          | [Bun 1.3.14 · 2026-05-13](https://bun.com/blog/bun-v1.3.14#bun-image-built-in-image-processing)           |
 | Last source audit        | [2026-07-07 · `7be1d459`](https://github.com/oven-sh/bun/commit/7be1d459f28566735bd602ce009e24cba0548e1e) |
-| Project verification     | Pinned Bun 1.3.14 + current `bun-types` tip, rechecked 2026-08-14                                         |
+| Project verification     | Stable Bun 1.4.0 + reviewed vendored `bun-types` tip, rechecked 2026-08-23                                |
 
 Pipelines are lazy. Chain transformations, choose an output format, and await
 exactly one terminal operation (`bytes`, `buffer`/`toBuffer`, `blob`,
@@ -35,6 +35,29 @@ typed-array input while a terminal is pending.
 | Clipboard   | macOS/Windows only; Linux returns `null`                                                                        | [Clipboard](https://bun.com/docs/runtime/image#clipboard)                                                                                |
 | Backend     | System geometry on macOS/Windows; set `Bun.Image.backend = "bun"` for portable golden tests                     | [Platform backends](https://bun.com/docs/runtime/image#platform-backends)                                                                |
 | Errors      | Branch on stable `Bun.Image.ErrorCode` values rather than parsing messages                                      | [`ErrorCode`](https://bun.com/reference/bun/Image/ErrorCode) · [Platform backends](https://bun.com/docs/runtime/image#platform-backends) |
+
+`metadata()` has exactly three documented result fields: `width`, `height`, and
+`format`. Evidence fields such as byte size and SHA-256 are computed from the
+input bytes by project helpers. Dominant color, palette, alpha, and color space
+are not documented `Bun.Image.Metadata` fields and must remain explicitly
+application-derived. The API is an instance pipeline (`new Bun.Image(input)` or
+`blob.image()`), not a static `Image.metadata()` / `Image.resize()` surface.
+
+For remote feed media, fetch and bound the response first, then pass fixed bytes
+to `Bun.Image`. A constructor string is a filesystem path, so passing an
+untrusted enclosure URL or source-provided path string would create an arbitrary
+local-file-read boundary. Bun sniffs image format from bytes and deliberately
+ignores filename extensions and HTTP `Content-Type`; record both the declared
+MIME type and the sniffed format when auditing disagreement. Set `maxPixels`
+before any terminal to reject decompression bombs after header inspection and
+before pixel allocation. Do not mutate a borrowed typed-array buffer while a
+terminal is pending.
+
+`placeholder()` is the native LQIP primitive: it returns a ThumbHash-rendered,
+at-most-32px blur as a data URL. It is suitable as presentation metadata, but it
+is not a dominant-color or palette API. For cross-platform deterministic image
+goldens, use the portable `Bun.Image.backend = 'bun'`; system-backed formats and
+geometry otherwise vary by operating system and installed codecs.
 
 ## Project type contract
 

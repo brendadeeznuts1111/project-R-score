@@ -23,9 +23,10 @@
  * `Response(BunFile)` retain Bun's native file metadata and Range behavior.
  * `Response(Uint8Array|ArrayBuffer|Buffer)` is buffered and does not retain
  * file Range/Last-Modified semantics. `Response(file.stream())` is for
- * transformations; it likewise needs explicit metadata/cache headers and does
- * not inherit file Range/conditional handling. Convert raw `number[]` to a
- * `Uint8Array` (binary) or serialize it as JSON before constructing a Response.
+ * transformations and still needs explicit metadata/cache headers. Bun 1.4
+ * applies Range to a BunFile stream response, but application transforms can
+ * change byte offsets, so transformed streams must own their own range policy.
+ * Convert raw `number[]` to a `Uint8Array` (binary) or serialize it as JSON.
  *
  * Bun 1.3.14 and the observed 1.4.0 canary return 206 for a stale `If-Range`
  * date. Do not promise RFC If-Range validation until the explicit TODO contract

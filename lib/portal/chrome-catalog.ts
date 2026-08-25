@@ -597,6 +597,11 @@ export const PORTAL_OVERFLOW_NAV: PortalChromeNavItem[] = [
  */
 export const PORTAL_CHROME_UNLISTED: PortalChromeUnlistedSurface[] = [
   {
+    id: 'bun-1.4',
+    href: '/portal/bun-1.4/',
+    reason: 'Bun 1.4 release gallery · direct release/evidence route · media rights pending',
+  },
+  {
     id: 'agent-odds',
     href: '/portal/agent-odds/',
     reason: 'specialized agent odds workspace · direct product route',
@@ -926,7 +931,7 @@ export function assertPortalChromeBoardCoverage(portalDir: string): PortalChrome
   const missingOnDisk: string[] = [];
 
   for (const entry of coverage) {
-    const m = entry.href.match(/^\/portal\/([a-z0-9-]+)\/?$/i);
+    const m = entry.href.match(/^\/portal\/([a-z0-9.-]+)\/?$/i);
     if (!m) continue; // home, monitoring, external, nested graph
     const slug = m[1]!;
     coveredSlugs.add(slug);

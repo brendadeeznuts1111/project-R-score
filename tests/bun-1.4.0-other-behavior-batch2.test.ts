@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.4#other-behavior-changes
+// @see https://github.com/oven-sh/bun/issues/28792 — reconciled Bun 1.4 breaking changes
 /**
  * Bun 1.4.0 Other behavior — bundler / runtime / Node API contracts (batch 2).
  */
@@ -72,7 +72,7 @@ describe('Bun 1.4.0 Other — bundler shapes', () => {
     }
   });
 
-  rt('browser target honors browser field remap for Node builtin (#35447)', async () => {
+  rt('browser target honors browser field remap for Node builtin (#36597)', async () => {
     const dir = temp('bun-1.4-br-');
     try {
       mkdirSync(join(dir, 'node_modules', 'cryptopkg'), { recursive: true });
@@ -94,8 +94,10 @@ describe('Bun 1.4.0 Other — bundler shapes', () => {
         target: 'browser',
         bundling: true,
       } as Bun.BuildConfig);
-      // Should succeed without bundling a full crypto polyfill path as before.
-      expect(build.success || build.logs.length >= 0).toBe(true);
+      expect(build.success).toBe(true);
+      expect(build.logs).toHaveLength(0);
+      const output = await build.outputs[0]!.text();
+      expect(output).not.toContain('node:crypto');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

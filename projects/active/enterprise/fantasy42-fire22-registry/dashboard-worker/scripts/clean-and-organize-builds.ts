@@ -508,7 +508,7 @@ export default config;
     // Clean node_modules and reinstall
     const nodeModulesPath = join(process.cwd(), 'node_modules');
     try {
-      await fs.rmdir(nodeModulesPath, { recursive: true });
+      await fs.rm(nodeModulesPath, { recursive: true, force: true });
       console.info('     🗑️  Removed node_modules directory');
     } catch (error) {
       // Directory might not exist

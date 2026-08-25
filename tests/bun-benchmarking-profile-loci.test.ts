@@ -1,11 +1,11 @@
 // @see https://bun.com/docs/project/benchmarking#cpu-profiling
 // @see https://bun.com/docs/project/benchmarking#markdown-output
 // @see https://bun.com/docs/project/benchmarking#heap-profiling
-// @see https://bun.com/docs/project/benchmarking#markdown-output-1
+// @see https://bun.com/docs/project/benchmarking#heap-profiling
 // @see https://bun.com/blog/bun-v1.4#cpu-prof-md
 // @see https://bun.com/blog/bun-v1.4#heap-prof-md
 /**
- * Ratchet Mintlify collision for heap `--heap-prof-md` how-to locus and
+ * Ratchet the addressable heap `--heap-prof-md` parent locus and
  * docs↔ship plane pairing for Observability profile flags.
  */
 import { describe, expect, test } from 'bun:test';
@@ -19,6 +19,7 @@ import {
   BENCHMARKING_PROFILE_PLANE_PAIRS,
   BENCHMARKING_PROFILE_SHIP,
   extractHtmlIds,
+  htmlSectionAfterId,
   htmlSnippetAfterId,
 } from '../lib/docs/benchmarking-profile-loci.ts';
 import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_PROFILE_ANNOUNCEMENT_URLS } from '../lib/docs/constants/cli.ts';
@@ -32,7 +33,7 @@ const FIXTURE = `
   <h3 id="markdown-output">Markdown output</h3>
   <p>Use <code>--cpu-prof-md</code> for LLM-friendly CPU profiles.</p>
   <h2 id="heap-profiling">Heap profiling</h2>
-  <h3 id="markdown-output-1">Markdown output</h3>
+  <h3 id="markdown-output">Markdown output</h3>
   <p>Use <code>--heap-prof-md</code> for CLI heap analysis.</p>
 </section>
 `;
@@ -51,8 +52,8 @@ async function benchmarkingReachable(): Promise<boolean> {
 const online = await benchmarkingReachable();
 
 describe('benchmarking profile loci SSOT', () => {
-  test('CANONICAL_REFS and CLI paths share the Mintlify heap-md collision slug', () => {
-    expect(BENCHMARKING_PROFILE_ANCHORS.heapProfMd).toBe('markdown-output-1');
+  test('CANONICAL_REFS and CLI paths use the addressable heap parent', () => {
+    expect(BENCHMARKING_PROFILE_ANCHORS.heapProfMd).toBe('heap-profiling');
     expect(BENCHMARKING_PROFILE_ANCHORS.cpuProfMd).toBe('markdown-output');
 
     expect(CANONICAL_REFS['--heap-prof-md']).toBe(BENCHMARKING_PROFILE_DOCS_URLS.heapProfMd);
@@ -93,22 +94,22 @@ describe('benchmarking profile loci SSOT', () => {
     }
   });
 
-  test('fixture HTML keeps cpu markdown before heap markdown-output-1', () => {
+  test('fixture HTML keeps CPU markdown before the addressable heap parent', () => {
     expect(extractHtmlIds(FIXTURE)).toEqual([
       'cpu-profiling',
       'markdown-output',
       'heap-profiling',
-      'markdown-output-1',
     ]);
     expect(() => assertBenchmarkingProfileLocusOrder(FIXTURE)).not.toThrow();
     expect(() => assertBenchmarkingProfileLocusSemantics(FIXTURE)).not.toThrow();
     expect(htmlSnippetAfterId(FIXTURE, 'markdown-output')).toContain('--cpu-prof-md');
-    expect(htmlSnippetAfterId(FIXTURE, 'markdown-output-1')).toContain('--heap-prof-md');
+    expect(htmlSnippetAfterId(FIXTURE, 'heap-profiling')).toContain('--heap-prof-md');
+    expect(htmlSectionAfterId(FIXTURE, 'markdown-output')).not.toContain('--heap-prof-md');
   });
 
-  test('fixture fails closed when Mintlify drops the -1 collision', () => {
-    const broken = FIXTURE.replace('id="markdown-output-1"', 'id="markdown-heap"');
-    expect(() => assertBenchmarkingProfileLocusOrder(broken)).toThrow(/markdown-output-1/);
+  test('fixture fails closed when the addressable heap parent disappears', () => {
+    const broken = FIXTURE.replace('id="heap-profiling"', 'id="heap-profile"');
+    expect(() => assertBenchmarkingProfileLocusOrder(broken)).toThrow(/heap-profiling/);
   });
 
   test('fixture fails closed when section bodies swap flag names', () => {
@@ -116,7 +117,7 @@ describe('benchmarking profile loci SSOT', () => {
       .replace('--heap-prof-md', '--cpu-prof-md')
       .replace('--HEAP_TMP', '--heap-prof-md');
     expect(() => assertBenchmarkingProfileLocusSemantics(swapped)).toThrow(
-      /missing --heap-prof-md|mentions --cpu-prof-md first|mentions --heap-prof-md first/
+      /missing --cpu-prof-md|missing --heap-prof-md|mentions --cpu-prof-md first|mentions --heap-prof-md first/
     );
   });
 

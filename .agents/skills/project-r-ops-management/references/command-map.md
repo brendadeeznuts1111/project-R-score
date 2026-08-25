@@ -67,6 +67,24 @@ completeness ratchet. Persisted feed, overlay, scrape-state, and catalog inputs
 fail closed; recover incomplete scrape state with
 `bun tools/bun-docs-releases.ts scrape --force` after reviewing the artifact.
 
+## Bun 1.4 release-graph proof
+
+```bash
+bun run docs:blog-assets:check
+bun run channels:bun-1.4:check
+bun test tests/bun-1.4-capabilities.test.ts tests/bun-1.4-feeds.test.ts tests/bun-1.4-channel-release.test.ts
+(
+  cd .agents/skills/ast-grep
+  bun run bun:1.4:migration:check
+)
+```
+
+The source manifest owns assets and rights state; the capability registry owns
+release fact ↔ adoption ↔ contract relations; the channel-release registry owns
+active item membership and archive addressing; the ast-grep audit owns
+syntax-shaped migration findings and its reviewed negative-contract expectation.
+Do not use one as proof for a different layer.
+
 ## Test and snapshot proof
 
 | Intent                   | Command                                                  | Contract                                                                     |

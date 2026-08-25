@@ -1,3 +1,14 @@
+// @see https://bun.com/docs/runtime/utils#bun-deepequals — Bun.deepEquals
+// @updated Bun.deepEquals · changed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.deepEquals · fixed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
+// @updated Bun.deepEquals · fixed v1.1.13 · 2024-06-05 · https://bun.com/blog/bun-v1.1.13
+// @updated Bun.deepEquals · changed v1.1.27 · 2024-09-07 · https://bun.com/blog/bun-v1.1.27
+// @updated Bun.deepEquals · fixed v1.1.27 · 2024-09-07 · https://bun.com/blog/bun-v1.1.27
+// @updated Bun.deepEquals · changed v1.1.35 · 2024-11-19 · https://bun.com/blog/bun-v1.1.35
+// @updated Bun.deepEquals · changed v1.2.2 · 2025-02-01 · https://bun.com/blog/bun-v1.2.2
+// @updated Bun.deepEquals · fixed v1.2.2 · 2025-02-01 · https://bun.com/blog/bun-v1.2.2
+// @updated Bun.deepEquals · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.deepEquals · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/utils#bun-deepequals
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
 // @see https://bun.com/docs/runtime/color#flexible-input
@@ -57,15 +68,23 @@ export type ColorKernelEvidence = {
   telegram: { aliases: string[]; colorKeys: string[]; topicRoles: number };
 };
 
-function asHex(input: string, label: string): string {
-  const hex = Bun.color(input, 'HEX');
-  if (typeof hex !== 'string' || !hex) {
+type ConcreteRgba = { r: number; g: number; b: number; a: number };
+
+export function normalizeColorForComparison(input: string, label = 'color'): ConcreteRgba {
+  const rgba = Bun.color(input, '{rgba}');
+  if (
+    !rgba ||
+    typeof rgba !== 'object' ||
+    !['r', 'g', 'b', 'a'].every(channel =>
+      Number.isFinite((rgba as Record<string, unknown>)[channel])
+    )
+  ) {
     throw new Error(`Bun.color failed for ${label}: ${input}`);
   }
-  return hex;
+  return rgba as ConcreteRgba;
 }
 
-/** Intentional theme-dark aliases (case-normalized via Bun.color HEX). */
+/** Intentional theme-dark aliases (alpha-preserving via Bun.color {rgba}). */
 export const THEME_DARK_ALIAS_CHECKS: readonly {
   themeKey: AlignColorKey;
   consumer: ColorKernelConsumer;
@@ -160,15 +179,18 @@ export function assessColorKernelAlign(): ColorKernelAlignResult {
   const mismatches: ColorKernelMismatch[] = [];
 
   for (const row of THEME_DARK_ALIAS_CHECKS) {
-    const expected = asHex(portalTheme.dark[row.themeKey], `theme.dark.${row.themeKey}`);
-    const actual = asHex(row.value, `${row.consumer}.${row.key}`);
-    if (expected !== actual) {
+    const expectedRgba = normalizeColorForComparison(
+      portalTheme.dark[row.themeKey],
+      `theme.dark.${row.themeKey}`
+    );
+    const actualRgba = normalizeColorForComparison(row.value, `${row.consumer}.${row.key}`);
+    if (!Bun.deepEquals(expectedRgba, actualRgba)) {
       mismatches.push({
         consumer: row.consumer,
         key: row.key,
         themeKey: row.themeKey,
-        expected,
-        actual,
+        expected: JSON.stringify(expectedRgba),
+        actual: JSON.stringify(actualRgba),
       });
     }
   }

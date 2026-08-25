@@ -76,7 +76,6 @@ export interface DocumentationURLConfig {
   STACK_OVERFLOW?: string;
   REDDIT?: string;
   SECURITY_BLOG?: string;
-  SECURITY_RSS?: string;
   VULNERABILITIES?: string;
 }
 
@@ -238,7 +237,6 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     BASE: 'https://bun.com',
     SECURITY: 'https://bun.com/security',
     SECURITY_BLOG: 'https://bun.com/security/blog',
-    SECURITY_RSS: 'https://bun.com/security/rss.xml',
     VULNERABILITIES: 'https://bun.com/security/vulnerabilities',
   },
 
@@ -366,10 +364,10 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
   [DocumentationProvider.BUN_RSS]: {
     BASE: 'https://bun.com',
     MAIN_RSS: 'https://bun.com/rss.xml',
+    /** Bun publishes blog and release posts through the one official feed. */
     BLOG_RSS: 'https://bun.com/rss.xml',
     RELEASES_RSS: 'https://bun.com/rss.xml',
-    SECURITY_RSS: 'https://bun.com/security/rss.xml',
-    COMMUNITY_RSS: 'https://bun.com/community/rss.xml',
+    /** Guides do not have a distinct official feed; this is the site-wide feed. */
     GUIDES_RSS: 'https://bun.com/rss.xml',
   },
 
@@ -379,8 +377,6 @@ export const ENTERPRISE_DOCUMENTATION_BASE_URLS = {
     TECHNICAL_FEED: 'https://bun.com/rss.xml',
     BLOG_FEED: 'https://bun.com/rss.xml',
     RELEASES_FEED: 'https://bun.com/rss.xml',
-    SECURITY_FEED: 'https://bun.com/security/rss.xml',
-    COMMUNITY_FEED: 'https://bun.com/community/rss.xml',
   },
 } as const;
 
@@ -420,14 +416,6 @@ export const DOCUMENTATION_URL_MAPPINGS = {
     type: 'cli_reference',
     audience: 'developers',
     format: 'technical_reference',
-    domain: DocumentationDomain.BUN_SH,
-  },
-
-  'bun.com/rss.xml': {
-    provider: DocumentationProvider.BUN_RSS,
-    type: 'technical_rss',
-    audience: 'developers',
-    format: 'xml',
     domain: DocumentationDomain.BUN_SH,
   },
 
@@ -508,8 +496,6 @@ export const QUICK_REFERENCE_URLS = {
     TECHNICAL: 'https://bun.com/rss.xml', // Technical release RSS (bun.com)
     BLOG: 'https://bun.com/rss.xml', // Blog RSS
     RELEASES: 'https://bun.com/rss.xml', // Release announcements
-    SECURITY: 'https://bun.com/security/rss.xml', // Security updates
-    COMMUNITY: 'https://bun.com/community/rss.xml', // Community updates
   },
 
   // Getting started across domains

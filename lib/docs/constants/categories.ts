@@ -266,10 +266,10 @@ export const ENTERPRISE_DOCUMENTATION_PATHS = {
         MAIN_RSS: '/rss.xml',
         /** No separate Bun blog feed — same as MAIN_RSS (`/rss.xml`). */
         BLOG_RSS: '/rss.xml',
-        RELEASES_RSS: '/releases/rss.xml',
-        SECURITY_RSS: '/security/rss.xml',
-        COMMUNITY_RSS: '/community/rss.xml',
-        GUIDES_RSS: '/guides/rss.xml',
+        /** No separate release feed — release posts are in MAIN_RSS. */
+        RELEASES_RSS: '/rss.xml',
+        /** No separate guides feed — guides are not represented as a channel. */
+        GUIDES_RSS: '/rss.xml',
         TECHNICAL_RSS: '/rss.xml', // bun.com/rss.xml
       },
 
@@ -505,7 +505,7 @@ export const INTELLIGENT_ROUTING_RULES = {
         fallback: {
           provider: DocumentationProvider.BUN_RSS,
           category: DocumentationCategory.RSS_FEEDS,
-          path: 'SECURITY_RSS',
+          path: 'MAIN_RSS',
         },
       },
     },

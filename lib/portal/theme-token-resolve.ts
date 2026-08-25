@@ -1,3 +1,9 @@
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @released Bun.color · released v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.color · changed v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.color · fixed v1.1.31 · 2024-10-18 · https://bun.com/blog/bun-v1.1.31
+// @updated Bun.color · fixed v1.1.32 · 2024-10-21 · https://bun.com/blog/bun-v1.1.32
+// @updated Bun.color · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
 /**
  * Read-only theme token path resolver over portalTheme (theme.jsonc).
  * Resolves dotted paths + CSS var() aliases to a concrete color string,
@@ -120,6 +126,31 @@ export function cssVarNameToThemePath(
 
   const tier = /^tier-(retail|vip|sharp)$/.exec(name);
   if (tier) return `semantic.tier.${tier[1]}`;
+
+  const bun14NamespacePrefix = 'fw-bun-14-color-';
+  if (name.startsWith(bun14NamespacePrefix)) {
+    const suffix = name.slice(bun14NamespacePrefix.length);
+    const namespaceKeys: Record<string, string> = {
+      canvas: 'canvas',
+      surface: 'surface',
+      'surface-hover': 'surfaceHover',
+      'surface-active': 'surfaceActive',
+      border: 'border',
+      text: 'text',
+      'text-muted': 'textMuted',
+      'text-on-strong': 'textOnStrong',
+      accent: 'accent',
+      'accent-hover': 'accentHover',
+      'accent-soft': 'accentSoft',
+      success: 'success',
+      warning: 'warning',
+      danger: 'danger',
+      info: 'info',
+      'focus-ring': 'focusRing',
+    };
+    const key = namespaceKeys[suffix];
+    if (key) return `namespaces.bun14.${key}`;
+  }
 
   if (name === 'brand-accent') return 'brand.accent';
   if (name === 'brand-wordmark') return 'brand.wordmark';

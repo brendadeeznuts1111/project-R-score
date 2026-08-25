@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.4#other-behavior-changes
+// @see https://github.com/oven-sh/bun/issues/28792 — reconciled Bun 1.4 breaking changes
 /**
  * Bun 1.4.0 Other behavior — Bun.serve / fetch / lazy bun exports.
  */

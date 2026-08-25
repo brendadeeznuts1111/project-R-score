@@ -12,8 +12,9 @@
  * to an off-kernel Tailwind palette before this gate existed).
  *
  * Comparison is grounded in the Bun-native color API: both sides normalize
- * through Bun.color HEX, so `#fff` ≡ `#ffffff` and rgba alpha is compared
- * exactly (e.g. accent-glow 0.12 ≠ 0.15).
+ * through Bun.color {rgba}, so `#fff` ≡ `#ffffff` while rgba alpha is compared
+ * exactly (e.g. accent-glow 0.12 ≠ 0.15). HEX is intentionally not used for
+ * equality because Bun drops alpha in that output format.
  *
  * Does not rewrite files. Component vars without a mapped token are reported
  * as `unmapped` warnings — triage them into COMPONENT_VAR_TOKEN_MAP or leave

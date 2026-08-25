@@ -1,0 +1,32 @@
+id: bun-1.4-no-recursive-rmdir
+snapshots:
+  'fs.rmdir(path, { recursive: true }, callback)':
+    labels:
+    - source: 'fs.rmdir(path, { recursive: true }, callback)'
+      style: primary
+      start: 0
+      end: 45
+    - source: 'recursive: true'
+      style: secondary
+      start: 17
+      end: 32
+  'fs.rmdirSync(path, { recursive: true, force: true })':
+    labels:
+    - source: 'fs.rmdirSync(path, { recursive: true, force: true })'
+      style: primary
+      start: 0
+      end: 52
+    - source: 'recursive: true'
+      style: secondary
+      start: 21
+      end: 36
+  'nodeFs.rmdir(path, { force: true, recursive: true }, callback)':
+    labels:
+    - source: 'nodeFs.rmdir(path, { force: true, recursive: true }, callback)'
+      style: primary
+      start: 0
+      end: 62
+    - source: 'recursive: true'
+      style: secondary
+      start: 34
+      end: 49

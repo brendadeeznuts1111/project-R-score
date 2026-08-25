@@ -1,0 +1,14 @@
+id: bun-1.4-no-recursive-rmdir
+language: TypeScript
+severity: warning
+message: Bun 1.4 follows Node.js 26 and removes recursive rmdir(); use fs.rm() or Bun.remove()
+rule:
+  all:
+    - any:
+        - pattern: $FS.rmdir($$$ARGS)
+        - pattern: $FS.rmdirSync($$$ARGS)
+    - has:
+        pattern:
+          context: "({ recursive: true })"
+          selector: pair
+        stopBy: end

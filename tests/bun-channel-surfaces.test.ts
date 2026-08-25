@@ -1,6 +1,13 @@
 // @see https://github.com/oven-sh/setup-bun#using-version-file
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
 import { describe, expect, test } from 'bun:test';
+import { ENTERPRISE_DOCUMENTATION_PATHS } from '../lib/docs/constants/categories.ts';
+import {
+  DocumentationCategory,
+  DocumentationProvider,
+  ENTERPRISE_DOCUMENTATION_BASE_URLS,
+  QUICK_REFERENCE_URLS,
+} from '../lib/docs/constants/domains.ts';
 import { joinPath } from '../lib/path-bun.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
@@ -19,6 +26,27 @@ async function githubYamlFiles(): Promise<string[]> {
 }
 
 describe('Bun channel surfaces', () => {
+  test('canonical RSS catalogs expose only Bun’s one verified official feed', () => {
+    const officialFeed = 'https://bun.com/rss.xml';
+    const absoluteCatalogs = [
+      ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_RSS],
+      ENTERPRISE_DOCUMENTATION_BASE_URLS[DocumentationProvider.BUN_FEEDS],
+      QUICK_REFERENCE_URLS.RSS_FEEDS,
+    ];
+
+    for (const catalog of absoluteCatalogs) {
+      const feedUrls = Object.values(catalog).filter(value => value.endsWith('.xml'));
+      expect(feedUrls.length).toBeGreaterThan(0);
+      expect(new Set(feedUrls)).toEqual(new Set([officialFeed]));
+    }
+
+    const feedPaths =
+      ENTERPRISE_DOCUMENTATION_PATHS.BUN_CORE[DocumentationProvider.BUN_RSS][
+        DocumentationCategory.RSS_FEEDS
+      ];
+    expect(new Set(Object.values(feedPaths))).toEqual(new Set(['/rss.xml']));
+  });
+
   test('network-free runtime check reports the exact executing revision', async () => {
     const resolvedBun = resolveVerificationBunBinary();
     expect(resolvedBun.matchesRuntime).toBe(true);
@@ -81,6 +109,16 @@ describe('Bun channel surfaces', () => {
       };
       expect(Bun.semver.satisfies(selected, manifest.engines?.bun ?? '')).toBe(true);
     }
+  });
+
+  test('root type selectors use the stable 1.4 wrapper and reviewed vendored declarations', async () => {
+    const manifest = (await Bun.file(joinPath(ROOT, 'package.json')).json()) as {
+      catalog?: { '@types/bun'?: string; 'bun-types'?: string };
+    };
+    expect(manifest.catalog?.['@types/bun']).toBe('1.4.0');
+    expect(manifest.catalog?.['bun-types']).toBe(
+      'file:tools/vendor/bun-types/bun-types-1.4.0-tip.23d233b2.tgz'
+    );
   });
 
   test('partner composition references Bun governance without copying runtime versions', async () => {

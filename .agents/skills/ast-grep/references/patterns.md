@@ -129,6 +129,55 @@ The low-level CLI does not combine machine-readable JSON preview with mutation
 reliably. The helper performs separate preview and apply passes; prefer it over
 hand-written `sg run --update-all` scripts.
 
+## Bun 1.4 migration and contract proof
+
+Keep discovery aligned to what each tool can prove:
+
+- Use the bundled AST rules for removed call shapes such as
+  `response.writeHeader()` and recursive `fs.rmdir()`, and for test assertions
+  that cannot fail.
+- Use `rg` for source headings, prose, comments, URL fragments, and
+  error-message text. In particular, the Bun 1.4 breaking-change tracker's
+  **Under consideration** section is not shipped behavior.
+- Use the TypeScript compiler or a focused runtime contract when the finding
+  depends on a resolved type. CString values returned by Bun FFI are the key
+  example: a property access on an arbitrary variable is too broad for a safe
+  AST rule.
+
+The recursive-rmdir audit intentionally also reports a call inside
+`tests/bun-1.4.0-breaking-changes-contract.test.ts`. That contract invokes the
+removed shape to prove it throws. Keep that reviewed finding; a syntax rule
+cannot safely infer expected-failure intent from arbitrary callback structure.
+
+Inspect the catalog from the repository root, then run the fail-closed audit
+from the owning package:
+
+```bash
+python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py bun patterns --bundle bun-1.4-migration
+cd .agents/skills/ast-grep
+bun run bun:1.4:migration:check
+```
+
+Use `bun run bun:1.4:migration:check -- --json` for machine-readable evidence.
+The expected-finding contract lives beside the scanner in
+`scripts/bun-1.4-migration-audit.ts`; changing it requires review and its unit
+test. Never promote a newly discovered violation into that list merely to make
+the gate pass.
+
+Then inspect FFI-bearing files and prove the expected string shape with the
+focused Bun release-contract tests:
+
+```bash
+rg -n 'bun:ffi|CString|FFIType\.cstring' lib tools tests
+bun test tests/bun-1.4.0-breaking-changes-contract.test.ts
+```
+
+The canonical evidence boundary is
+[`BUN_1_4_MIGRATION.md`](../../../../docs/BUN_1_4_MIGRATION.md): the release
+blog owns announced release facts, the merged tracker owns reconciled breaking
+behavior, and repository tests own local executable claims. A clean syntax scan
+does not substitute for any of those layers.
+
 ## Diagnose a miss
 
 1. Confirm the language and path.

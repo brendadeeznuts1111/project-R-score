@@ -4,10 +4,14 @@
 
 ### **📦 Packages Documentation**
 
-- `docs/packages/` - All package-specific documentation
+- `docs/packages/` - Package navigation and shared documentation
   - **Operation Surgical Precision** - Main platform engine docs
   - **Surgical Precision MCP** - Model Context Protocol integration docs
   - **Poly Kalshi Arb** - Arbitrage trading operations docs
+
+Package-owned guides remain beside their implementation. The
+[`docs/packages/README.md`](./packages/README.md) index links to those canonical
+files instead of copying them.
 
 ### **🔧 Workers Documentation**
 

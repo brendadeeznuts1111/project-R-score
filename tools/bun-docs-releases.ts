@@ -100,26 +100,28 @@ export function parseReleaseIndexFile(value: unknown, source = 'release index'):
     const entry = parseReleaseRecord(raw);
     const label = `${source}: entries[${index}]`;
     if (!entry) throw new Error(`${label} must be an object`);
-    if (!isReleaseSemver(entry.version)) throw new Error(`${label}.version is not X.Y.Z`);
-    if (typeof entry.title !== 'string' || !entry.title) throw new Error(`${label}.title is empty`);
-    if (typeof entry.url !== 'string' || !entry.url) {
+    const { version, title, url, guid, pubDate } = entry;
+    if (!isReleaseSemver(version)) throw new Error(`${label}.version is not X.Y.Z`);
+    if (typeof title !== 'string' || !title) throw new Error(`${label}.title is empty`);
+    if (typeof url !== 'string' || !url) {
       throw new Error(`${label}.url is not an official Bun release post`);
     }
+    let canonicalUrl: string;
     try {
-      entry.url = requireCanonicalBunBlogUrl(entry.url, entry.version);
+      canonicalUrl = requireCanonicalBunBlogUrl(url, version);
     } catch {
       throw new Error(`${label}.url is not an official Bun release post`);
     }
-    if (typeof entry.guid !== 'string' || !entry.guid) throw new Error(`${label}.guid is empty`);
-    if (!isIsoTimestamp(entry.pubDate)) throw new Error(`${label}.pubDate is not ISO-8601`);
-    if (normalizeReleaseVersion(entry.title, entry.url) !== entry.version) {
-      throw new Error(`${label}: title/url version does not match ${entry.version}`);
+    entry.url = canonicalUrl;
+    if (typeof guid !== 'string' || !guid) throw new Error(`${label}.guid is empty`);
+    if (!isIsoTimestamp(pubDate)) throw new Error(`${label}.pubDate is not ISO-8601`);
+    if (normalizeReleaseVersion(title, canonicalUrl) !== version) {
+      throw new Error(`${label}: title/url version does not match ${version}`);
     }
-    if (versions.has(entry.version))
-      throw new Error(`${source}: duplicate version ${entry.version}`);
-    if (guids.has(entry.guid)) throw new Error(`${source}: duplicate guid ${entry.guid}`);
-    versions.add(entry.version);
-    guids.add(entry.guid);
+    if (versions.has(version)) throw new Error(`${source}: duplicate version ${version}`);
+    if (guids.has(guid)) throw new Error(`${source}: duplicate guid ${guid}`);
+    versions.add(version);
+    guids.add(guid);
   }
   return file as ReleaseIndexFile;
 }
@@ -185,7 +187,7 @@ function releaseEntryFromFields(fields: {
   };
 }
 
-/** Prefer Bun.XML (RSS 2.0 object shape); regex fallback for odd fixtures. */
+/** Parse the strict Bun.XML RSS 2.0 object shape. */
 export function parseReleaseEntries(xml: string): ReleaseEntry[] {
   const out: ReleaseEntry[] = [];
   const seen = new Set<string>();

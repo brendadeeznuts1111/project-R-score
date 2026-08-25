@@ -183,12 +183,7 @@ function findDocUrl(api: string): string | null {
 
 const KNOWN_BUN_TYPES_GAPS: Readonly<Record<string, { version: string; reason: string }>> = {};
 
-const KNOWN_RUNTIME_GAPS: Readonly<Record<string, { minimum: string; reason: string }>> = {
-  'Bun.TOML.stringify': {
-    minimum: '1.4.0',
-    reason: 'Pages-safe Bun 1.3.14 uses the governed lib/toml-stringify fallback',
-  },
-};
+const KNOWN_RUNTIME_GAPS: Readonly<Record<string, { minimum: string; reason: string }>> = {};
 
 type RunnableDemo = {
   id: string; // brand-ok — demo oneliner id

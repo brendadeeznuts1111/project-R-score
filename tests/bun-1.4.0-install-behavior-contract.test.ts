@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.4#other-behavior-changes — Bun 1.4.0 install / init / update
+// @see https://github.com/oven-sh/bun/issues/28792 — reconciled Bun 1.4 install / CLI changes
 /**
  * Tempdir-only package-manager contracts for Bun 1.4.0 Other behavior changes.
  * Never runs against the monorepo root (frozenLockfile / bun.lock stay untouched).

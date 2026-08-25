@@ -54,7 +54,9 @@ function fixtureFetch(overrides: Record<string, Response> = {}): typeof fetch {
     'https://fixture.test/blog': new Response(
       '<html><body><a href="/blog">Bun blog</a></body></html>'
     ),
-    'https://fixture.test/rss': new Response('<rss><title>Bun v1.3.14</title></rss>'),
+    'https://fixture.test/rss': new Response(
+      '<rss version="2.0"><channel><title>Bun</title><link>https://bun.com</link><description>Releases</description><item><title>Bun v1.3.14</title><link>https://bun.com/blog/bun-v1.3.14</link><guid>https://bun.com/blog/bun-v1.3.14</guid><pubDate>Wed, 13 May 2026 03:19:35 GMT</pubDate><description>Bun v1.3.14</description></item></channel></rss>'
+    ),
     'https://fixture.test/atom': new Response('<feed><title>Bun v1.3.14</title></feed>'),
     'https://fixture.test/npm/%40types%2Fbun': Response.json({
       'dist-tags': { latest: '1.3.14' },
@@ -295,6 +297,28 @@ describe('Bun channel doctor', () => {
     expect(report.drift.map(item => item.code)).toContain('bun-version-file-stale');
     expect(report.drift.map(item => item.code)).toContain('installed-runtime-stale');
     expect(await Bun.file(join(root, '.bun-version')).text()).toBe(before);
+  });
+
+  test('normalizes Bun minor launch posts as patch-zero stable corroboration', async () => {
+    const report = await runBunChannelDoctor({
+      root,
+      config,
+      fetchImpl: fixtureFetch({
+        'https://fixture.test/stable': Response.json({
+          tag_name: 'bun-v1.4.0',
+          published_at: '2026-08-20T00:53:44Z',
+        }),
+        'https://fixture.test/rss': new Response(
+          '<rss version="2.0"><channel><title>bun.com</title><link>https://bun.com</link><description>Bun posts</description><item><title>Bun 1.4</title><link>https://bun.com/blog/bun-v1.4</link><guid>https://bun.com/blog/bun-v1.4</guid><pubDate>Thu, 20 Aug 2026 00:53:44 GMT</pubDate><description>Bun 1.4</description></item></channel></rss>'
+        ),
+      }),
+      runtime: { version: '1.4.0', revision: '34cbb9a40' },
+    });
+
+    expect(report.observations.find(row => row.source === 'bun-rss')?.versions).toContain(
+      '1.4.0'
+    );
+    expect(report.drift.some(row => row.code === 'stable-missing-from:bun-rss')).toBe(false);
   });
 
   test('uses exit code 2 when an official source is unavailable', async () => {

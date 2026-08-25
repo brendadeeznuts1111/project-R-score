@@ -3,7 +3,8 @@ name: ast-grep
 description: >
   Map, search, lint, and rewrite code by syntax with ast-grep 0.44+. Use for
   symbol outlines, import/export structure, call/class/JSX patterns, YAML rule
-  scans, or codemods when text search is too noisy.
+  scans, versioned Bun migration audits, or codemods when text search is too
+  noisy.
 ---
 
 # ast-grep
@@ -87,7 +88,25 @@ python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py jump --name resolveBi
 # Bun-aware outline extractors
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py outline scripts/rate-removal-candidates.ts --bun-rules --view digest
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py bun patterns
+
+# Bun 1.4 migration inventory
+python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py bun patterns --bundle bun-1.4-migration
 ```
+
+Run the fail-closed audit from its owning package:
+
+```bash
+cd .agents/skills/ast-grep
+bun run bun:1.4:migration:check
+bun run bun:1.4:migration:check -- --json
+```
+
+The audit fails for a new finding and when its one reviewed negative-contract
+finding disappears. It never updates the expectation automatically. Read
+[`BUN_1_4_MIGRATION.md`](../../../docs/BUN_1_4_MIGRATION.md) before interpreting
+results, and use the type-aware review recipe in
+[`patterns.md`](references/patterns.md#bun-14-migration-and-contract-proof) for
+FFI/CString behavior that a syntax matcher cannot resolve safely.
 
 The cross-target symbol index is a disposable navigation cache. Refresh it only
 for `index`, `jump`, `anchors`, `exports`, or collision work:
@@ -135,6 +154,7 @@ For rules, helper code, package scripts, or MCP changes:
 cd .agents/skills/ast-grep
 bun run doctor
 bun run test
+bun run bun:1.4:migration:check
 bun run precommit
 ```
 

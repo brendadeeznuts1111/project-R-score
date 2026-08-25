@@ -1,0 +1,8 @@
+id: no-ambiguous-exit-code-assertion
+valid:
+  - "expect(proc.exitCode).toBe(0)"
+  - "expect(proc.exitCode).toBe(1)"
+  - "expect([0, 2]).toContain(proc.exitCode)"
+invalid:
+  - "expect([0, 1]).toContain(proc.exitCode)"
+  - "expect([1, 0]).toContain(result.exitCode)"

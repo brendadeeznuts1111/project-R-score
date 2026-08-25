@@ -359,7 +359,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'cloudflare-pages-env-ssot',
     claim:
-      'Cloudflare Pages project-r-score identity + build pins (BUN_VERSION 1.3.14, SKIP_DEPENDENCY_INSTALL, destination public) stay documented in config/r2-env and .env.example',
+      'Cloudflare Pages project-r-score identity + production/preview build pins (BUN_VERSION 1.4.0, SKIP_DEPENDENCY_INSTALL, destination tmp/pages-optimized) stay documented in config/r2-env and .env.example',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',

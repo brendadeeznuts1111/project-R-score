@@ -1,0 +1,10 @@
+id: no-tautological-collection-assertion
+language: TypeScript
+severity: warning
+message: This collection-size assertion is always true and cannot prove behavior
+rule:
+  any:
+    - pattern: expect($VALUE.length >= 0).toBe(true)
+    - pattern: expect($VALUE.length).toBeGreaterThanOrEqual(0)
+    - pattern: expect($VALUE.size >= 0).toBe(true)
+    - pattern: expect($VALUE.size).toBeGreaterThanOrEqual(0)

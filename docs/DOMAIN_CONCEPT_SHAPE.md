@@ -6,12 +6,12 @@ wire payload, registry artifact, or board.
 
 ## The four layers
 
-| Layer | Question | Authority | Proof |
-| --- | --- | --- | --- |
-| **Domain** | Which business lane owns the meaning? | [`lib/portal/concept-domains.ts`](../lib/portal/concept-domains.ts) | `bun test tests/concept-domains.test.ts` |
-| **Concept** | What stable semantic idea is being named? | [`lib/portal/semantic-vocabulary.ts`](../lib/portal/semantic-vocabulary.ts) · page identities in [`lib/portal/page-concepts.ts`](../lib/portal/page-concepts.ts) | `bun run concept:audit -- --strict` |
-| **Shape** | What parsed representation is trusted after the boundary? | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md) · owning parser/schema · branded values in [`lib/types/branded/`](../lib/types/branded/) | boundary tests · `bun run check:brands` |
-| **Surface** | Where is the meaning consumed or operated? | board/API/artifact catalogs · surface maps beside the vocabulary | `bun run validate:surface-coverage` · `bun run public:audit:verify` |
+| Layer       | Question                                                  | Authority                                                                                                                                                        | Proof                                                               |
+| ----------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| **Domain**  | Which business lane owns the meaning?                     | [`lib/portal/concept-domains.ts`](../lib/portal/concept-domains.ts)                                                                                              | `bun test tests/concept-domains.test.ts`                            |
+| **Concept** | What stable semantic idea is being named?                 | [`lib/portal/semantic-vocabulary.ts`](../lib/portal/semantic-vocabulary.ts) · page identities in [`lib/portal/page-concepts.ts`](../lib/portal/page-concepts.ts) | `bun run concept:audit -- --strict`                                 |
+| **Shape**   | What parsed representation is trusted after the boundary? | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md) · owning parser/schema · branded values in [`lib/types/branded/`](../lib/types/branded/)                             | boundary tests · `bun run check:brands`                             |
+| **Surface** | Where is the meaning consumed or operated?                | board/API/artifact catalogs · surface maps beside the vocabulary                                                                                                 | `bun run validate:surface-coverage` · `bun run public:audit:verify` |
 
 The direction is intentional:
 
@@ -46,6 +46,28 @@ domain, and a concept identifier does not by itself prove a valid runtime shape.
 - **Commit scope** in `type(scope):` is an open git-history hint — not a frozen
   child of session lane or ConceptDomain.
 
+## Project, repository, and channel cross-map
+
+RSS registration crosses the four layers without collapsing their identities:
+
+```text
+project ownership
+  → channel meaning
+  → validated registration and normalized item shapes
+  → canonical RSS endpoint and declared aliases
+```
+
+`ProjectId` identifies the product or workspace, `GitHubRepositoryRef`
+identifies source-control authority, and `FeedId` identifies the channel. The
+source manifest owns active membership; endpoints and aliases are surfaces and
+cannot create ownership or identity.
+
+A repository may contain several projects, and a project may have an independent
+remote. Neither relation creates a channel automatically. If no explicit,
+provenance-bearing registration exists, the project remains valid but has no RSS
+surface. Consumers expose `unregistered` or not found; they do not invent a
+route, publish an empty authoritative feed, or reuse another project's channel.
+
 ## Agent workflow
 
 1. **Discover ownership.** Check `CONCEPT_DOMAINS`, `DOMAIN_METADATA`, and the
@@ -66,18 +88,19 @@ domain, and a concept identifier does not by itself prove a valid runtime shape.
 
 ## Change matrix
 
-| Change | Minimum focused commands |
-| --- | --- |
-| Domain mapping | `bun test tests/concept-domains.test.ts` · `bun run concept:domain:stats` |
-| Vocabulary or lifecycle | `bun run concept:audit -- --strict` · `bun run validate:concept-metadata` |
-| Wire/parser shape | owning boundary tests · `bun run check:brands` · `bun run type-check:ci` |
-| Board/surface binding | `bun run validate:surface-coverage` · `bun run verify:portal:static` |
-| Concept/glossary bake | `bun run concepts:bake:check` · `bun run glossary:portal:check` |
-| Publish | `bun run cloudflare:preflight` · `bun run cloudflare:deploy:verify` · `bun run verify:pages-edge` |
+| Change                  | Minimum focused commands                                                                          |
+| ----------------------- | ------------------------------------------------------------------------------------------------- |
+| Domain mapping          | `bun test tests/concept-domains.test.ts` · `bun run concept:domain:stats`                         |
+| Vocabulary or lifecycle | `bun run concept:audit -- --strict` · `bun run validate:concept-metadata`                         |
+| Wire/parser shape       | owning boundary tests · `bun run check:brands` · `bun run type-check:ci`                          |
+| Board/surface binding   | `bun run validate:surface-coverage` · `bun run verify:portal:static`                              |
+| Concept/glossary bake   | `bun run concepts:bake:check` · `bun run glossary:portal:check`                                   |
+| Publish                 | `bun run cloudflare:preflight` · `bun run cloudflare:deploy:verify` · `bun run verify:pages-edge` |
 
 Full lifecycle details: [`docs/CONCEPT_LIFECYCLE.md`](CONCEPT_LIFECYCLE.md).
-Live operator view: [`/portal/concepts/`](https://score.factory-wager.com/portal/concepts/)
-and the [concept graph](https://score.factory-wager.com/portal/concepts/graph/).
+Live operator view:
+[`/portal/concepts/`](https://score.factory-wager.com/portal/concepts/) and the
+[concept graph](https://score.factory-wager.com/portal/concepts/graph/).
 
 ## Delivery boundary
 
@@ -88,7 +111,8 @@ and the [concept graph](https://score.factory-wager.com/portal/concepts/graph/).
 - `tennis.factory-wager.com` is a separate Worker Market Desk plane — not Pages.
   Portal evidence lives at `/portal/tennis/` only. See
   [`docs/design/portal-design-agent.md`](design/portal-design-agent.md) (Portal
-  Design agent) and [`tennis-hq-registry.md`](harness/tenants/tennis-hq-registry.md).
+  Design agent) and
+  [`tennis-hq-registry.md`](harness/tenants/tennis-hq-registry.md).
 - Merge authority is local `bun run bun:ci`; hosted checks do not replace it.
 - Deploy only a merged `main` revision, using the Proton-backed Pages workflow.
 

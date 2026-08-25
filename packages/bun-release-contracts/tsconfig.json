@@ -8,6 +8,9 @@
   },
   "include": [
     "src/**/*",
+    "../../lib/docs/bun-blog-url.ts",
+    "../../lib/docs/bun-rss.ts",
+    "../../lib/docs/bun-site-url.ts",
     "../../lib/console/**/*",
     "../../lib/docs/ref-id-tool-flags.ts",
     "../../lib/docs/ref-id.ts",

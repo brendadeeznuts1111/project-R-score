@@ -25,6 +25,10 @@ description: >
 6. Register a new skill in `.agents/skills/ast-grep/skill-loop-registry.json`
    with enabled `doctor` and `rate` phases. Add `precommit` only when the skill
    owns that command.
+7. Replace repeated multi-command audit recipes with one owner command when the
+   repository already has the machinery. A versioned audit must fail for new
+   findings and stale expected findings; keep every expected finding explicit,
+   reviewed, and tested. Never add an automatic allowlist-update mode.
 
 ## Thread-portfolio boundary
 
@@ -48,9 +52,24 @@ clarity but must not be added to that catalog.
   canonical publication timestamp, and URL for every recorded event. Never use a
   nearby minor release, the active runtime, `verifiedOn`, or `lastUpdated` as an
   introduction date; retain `release-unknown` when official evidence is absent.
+- When a skill mentions Bun 1.4, link to
+  [`BUN_1_4_MIGRATION.md`](../../../docs/BUN_1_4_MIGRATION.md),
+  [`BUN_1_4_CHANNEL_LIFECYCLE.md`](../../../docs/BUN_1_4_CHANNEL_LIFECYCLE.md),
+  and the
+  [versioned capability registry](../../../public/registry/bun-1.4-capabilities.json)
+  instead of copying capability lists. The release blog owns announced facts;
+  the breaking-change tracker's merged section owns reconciled behavior; its
+  **Under consideration** section did not ship; the capability registry owns
+  local adoption state; executable contracts own proof. Preserve the registry's
+  adoption semantics: release coverage is not local use,
+  `candidate`/`upstream-claim` carry no contracts, and `integrated`/`contract`
+  require executable evidence.
 - Preserve fail-closed validation for committed feeds, catalogs, overlays, and
   scrape state. Recovery is an explicit artifact repair or documented forced
   rebuild, not a silent default or synthesized metadata.
+- Route Bun 1.4 syntax migration checks through the ast-grep package's
+  `bun:1.4:migration:check` command. Do not copy its rule list or expected
+  finding into another skill.
 - Repository scripts and the owning command map outrank copied command snippets.
 - Keep shell examples executable. `bun run <name>` must resolve in the package
   selected by the example's explicit `cd`; cross-skill paths must start at

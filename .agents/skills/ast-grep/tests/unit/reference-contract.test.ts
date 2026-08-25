@@ -48,7 +48,7 @@ describe('ast-grep skill reference contract', () => {
 
     for (const filePath of await markdownFiles()) {
       const markdown = await Bun.file(filePath).text();
-      for (const match of markdown.matchAll(/\bbun run ([a-zA-Z0-9:_-]+)/g)) {
+      for (const match of markdown.matchAll(/\bbun run ([a-zA-Z0-9:._-]+)/g)) {
         const script = match[1];
         if (script && !scripts.has(script)) missing.add(script);
       }
@@ -80,5 +80,39 @@ describe('ast-grep skill reference contract', () => {
     expect(contract).not.toContain('--global-fix');
     expect(contract).not.toContain('https://bun.sh');
     expect(contents['scripts/install.sh']).toContain('--no-save');
+  });
+
+  test('Bun 1.4 migration bundle resolves versioned, unique patterns', async () => {
+    const catalog = (await Bun.file(resolve(SKILL_ROOT, 'bun-patterns.json')).json()) as {
+      version: number;
+      bundles: Record<string, { patterns?: string[] }>;
+      patterns: Array<{
+        id: string;
+        since?: string;
+        source_url?: string;
+        tier?: string;
+      }>;
+    };
+    const ids = catalog.bundles['bun-1.4-migration']?.patterns ?? [];
+    const expectedIds = [
+      'node-response-write-header',
+      'node-fs-rmdir-recursive',
+      'test-tautological-collection-assertion',
+      'test-ambiguous-exit-code-assertion',
+    ];
+    const byId = new Map(catalog.patterns.map(pattern => [pattern.id, pattern]));
+
+    expect(catalog.version).toBeGreaterThanOrEqual(8);
+    expect(ids).toEqual(expectedIds);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) {
+      expect(byId.get(id)).toMatchObject({ id, since: '1.4.0', tier: 'migrate' });
+    }
+    expect(byId.get('node-response-write-header')?.source_url).toBe(
+      'https://github.com/oven-sh/bun/issues/28792'
+    );
+    expect(byId.get('node-fs-rmdir-recursive')?.source_url).toBe(
+      'https://github.com/oven-sh/bun/issues/28792'
+    );
   });
 });

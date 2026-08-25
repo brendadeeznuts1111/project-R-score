@@ -102,6 +102,33 @@ export type PortalThemeLayers = {
   border: string;
 };
 
+/**
+ * Collision-resistant role aliases for the Bun 1.4 release surface.
+ * These are projections of the shared kernel, never an independent palette.
+ */
+export type PortalThemeBun14Namespace = {
+  canvas: string;
+  surface: string;
+  surfaceHover: string;
+  surfaceActive: string;
+  border: string;
+  text: string;
+  textMuted: string;
+  textOnStrong: string;
+  accent: string;
+  accentHover: string;
+  accentSoft: string;
+  success: string;
+  warning: string;
+  danger: string;
+  info: string;
+  focusRing: string;
+};
+
+export type PortalThemeNamespaces = {
+  bun14: PortalThemeBun14Namespace;
+};
+
 export type PortalThemeTypography = {
   fontSizes: {
     xs: string;
@@ -212,6 +239,7 @@ export type PortalTheme = {
   tones: PortalThemeTones;
   semantic: PortalThemeSemantic;
   layers: PortalThemeLayers;
+  namespaces: PortalThemeNamespaces;
   typography: PortalThemeTypography;
   layout: PortalThemeLayout;
   breakpoints: PortalThemeBreakpoints;
@@ -259,6 +287,25 @@ const CARD_TO_CSS: Record<keyof PortalCardPalette, string> = {
   errorBg: '--portal-error-bg',
   errorBorder: '--portal-error-border',
 };
+
+export const BUN14_NAMESPACE_TO_CSS: Record<keyof PortalThemeBun14Namespace, string> = {
+  canvas: '--fw-bun-14-color-canvas',
+  surface: '--fw-bun-14-color-surface',
+  surfaceHover: '--fw-bun-14-color-surface-hover',
+  surfaceActive: '--fw-bun-14-color-surface-active',
+  border: '--fw-bun-14-color-border',
+  text: '--fw-bun-14-color-text',
+  textMuted: '--fw-bun-14-color-text-muted',
+  textOnStrong: '--fw-bun-14-color-text-on-strong',
+  accent: '--fw-bun-14-color-accent',
+  accentHover: '--fw-bun-14-color-accent-hover',
+  accentSoft: '--fw-bun-14-color-accent-soft',
+  success: '--fw-bun-14-color-success',
+  warning: '--fw-bun-14-color-warning',
+  danger: '--fw-bun-14-color-danger',
+  info: '--fw-bun-14-color-info',
+  focusRing: '--fw-bun-14-color-focus-ring',
+};
 function paletteBlock(palette: PortalThemePalette, indent = '  '): string {
   const flat = (Object.keys(FLAT_PALETTE_TO_CSS) as Array<keyof typeof FLAT_PALETTE_TO_CSS>)
     .map(k => indentLine(indent, `${FLAT_PALETTE_TO_CSS[k]}: ${palette[k]};`))
@@ -283,6 +330,12 @@ function mapEntries(
 function cardBlock(card: PortalCardPalette, indent = '  '): string {
   return (Object.keys(CARD_TO_CSS) as Array<keyof PortalCardPalette>)
     .map(k => `${indent}${CARD_TO_CSS[k]}: ${card[k]};`)
+    .join('\n');
+}
+
+function bun14NamespaceBlock(namespace: PortalThemeBun14Namespace, indent = '  '): string {
+  return (Object.keys(BUN14_NAMESPACE_TO_CSS) as Array<keyof PortalThemeBun14Namespace>)
+    .map(k => `${indent}${BUN14_NAMESPACE_TO_CSS[k]}: ${namespace[k]};`)
     .join('\n');
 }
 
@@ -409,6 +462,20 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     "html[data-theme='light'] {",
     '  color-scheme: light;',
     paletteBlock(light),
+    '}',
+    '',
+  ].join('\n');
+}
+
+/** Emit the Bun 1.4 namespace separately so shared chrome does not duplicate it per route. */
+export function renderBun14NamespaceCss(theme: PortalTheme = portalTheme): string {
+  return [
+    '/* GENERATED — do not edit. Source: public/portal/theme.jsonc#namespaces.bun14 */',
+    '/* bun run portal:theme:sync */',
+    '/* Route-scoped projection of the shared FactoryWager color kernel. */',
+    '',
+    '.bun-board {',
+    bun14NamespaceBlock(theme.namespaces.bun14),
     '}',
     '',
   ].join('\n');

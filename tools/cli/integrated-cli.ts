@@ -9,7 +9,7 @@
 // @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
 // @verified Bun.env · Bun v1.3.14 · 2026-08-18 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/reference/bun/argv — Bun.argv
-import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { applyUnknownLongOptionGuardFor } from '../../lib/docs/ref-id-tool-flags.ts';
 
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -27,7 +27,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 import { requireR2Config, tryR2Config } from '../../config/r2-env.ts';
 import { PackageManager, type PackageInfo } from '../../lib/package/package-manager.ts';
 import { R2Storage, type R2StorageConfig } from '../../lib/r2/r2-storage-enhanced.ts';
-import { RSSManager, type RSSFeed } from '../../lib/rss/rss-manager.ts';
+import { generateRSS, RSSManager } from '../../lib/rss/rss-manager.ts';
 
 class IntegratedCLI {
   private packageManager: PackageManager;
@@ -344,6 +344,8 @@ class IntegratedCLI {
     const port = parseInt(portArg?.split('=')[1] || '3000', 10);
 
     console.info(`🌐 Starting documentation server on http://localhost:${port}`);
+    const rssManager = this.rssManager;
+    const upstreamFeedUrl = Bun.env.RSS_FEED_URL || 'https://bun.com/rss.xml';
 
     const server = Bun.serve({
       port,
@@ -360,11 +362,27 @@ class IntegratedCLI {
         // Serve RSS feed
         if (url.pathname === '/feed.rss') {
           const packageInfo = await new PackageManager().analyzePackage();
-          const rssManager = new RSSManager();
           const feed = await rssManager.generatePackageFeed(packageInfo.name, packageInfo);
           return new Response(generateRSS(feed), {
             headers: { 'Content-Type': 'application/rss+xml' },
           });
+        }
+
+        if (url.pathname === '/api/feed') {
+          try {
+            const feed = await rssManager.fetchFeed(upstreamFeedUrl);
+            return Response.json(feed, {
+              headers: { 'Cache-Control': 'private, max-age=60' },
+            });
+          } catch (error) {
+            return Response.json(
+              {
+                error: 'Unable to load the configured RSS feed',
+                detail: error instanceof Error ? error.message : String(error),
+              },
+              { status: 502, headers: { 'Cache-Control': 'no-store' } }
+            );
+          }
         }
 
         // API endpoints
@@ -490,7 +508,14 @@ async function generatePackagePage(packageInfo: PackageInfo): Promise<string> {
         header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 2rem; border-radius: 12px; }
         .api-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; margin: 2rem 0; }
         .api-card { border: 1px solid #e0e0e0; padding: 1rem; border-radius: 8px; }
-        .feed-item { border-left: 3px solid var(--primary); padding-left: 1rem; margin: 1rem 0; }
+        .feed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .feed-item { border: 1px solid #e0e0e0; border-top: 4px solid var(--feed-accent, var(--primary)); border-radius: 10px; overflow: hidden; background: white; }
+        .feed-image { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: #f4f4f5; }
+        .feed-content { padding: 1rem; }
+        .feed-content h3 { margin: 0 0 .5rem; }
+        .feed-description { color: #52525b; line-height: 1.45; }
+        .feed-meta { color: #71717a; font-size: .85rem; margin: .75rem 0; }
+        .feed-status { color: #71717a; }
     </style>
 </head>
 <body>
@@ -522,7 +547,8 @@ async function generatePackagePage(packageInfo: PackageInfo): Promise<string> {
 
         <section id="rss">
             <h2>Latest Updates</h2>
-            <div id="rss-feed"></div>
+            <p id="rss-status" class="feed-status">Loading the configured feed…</p>
+            <div id="rss-feed" class="feed-grid" aria-live="polite"></div>
         </section>
 
         <section id="dependencies">
@@ -532,60 +558,86 @@ async function generatePackagePage(packageInfo: PackageInfo): Promise<string> {
     </main>
 
     <script>
-        // Load RSS feed
-        fetch('/feed.rss')
-            .then(r => r.text())
-            .then(xml => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(xml, 'text/xml');
-                const items = doc.querySelectorAll('item');
+        const feedContainer = document.getElementById('rss-feed');
+        const feedStatus = document.getElementById('rss-status');
 
-                const feedContainer = document.getElementById('rss-feed');
-                items.forEach(item => {
-                    const title = item.querySelector('title')?.textContent || '';
-                    const link = item.querySelector('link')?.textContent || '';
-                    feedContainer.innerHTML += \`
-                        <div class="feed-item">
-                            <h3>\${title}</h3>
-                            <a href="\${link}">Read more →</a>
-                        </div>
-                    \`;
+        function appendText(parent, tag, text, className) {
+            const element = document.createElement(tag);
+            if (className) element.className = className;
+            element.textContent = text;
+            parent.appendChild(element);
+            return element;
+        }
+
+        fetch('/api/feed')
+            .then(response => {
+                if (!response.ok) throw new Error('Feed request failed');
+                return response.json();
+            })
+            .then(feed => {
+                feedStatus.textContent = feed.items.length
+                    ? \`\${feed.items.length} updates from \${feed.title}\`
+                    : 'No updates are currently available.';
+                feed.items.forEach(item => {
+                    const card = document.createElement('article');
+                    card.className = 'feed-item';
+                    const color = item.image?.dominantColor;
+                    if (/^#[0-9a-f]{6}$/i.test(color || '')) {
+                        card.style.setProperty('--feed-accent', color);
+                    }
+
+                    if (item.image?.thumbnail?.dataUrl) {
+                        const image = document.createElement('img');
+                        image.className = 'feed-image';
+                        image.src = item.image.thumbnail.dataUrl;
+                        image.alt = '';
+                        image.loading = 'lazy';
+                        image.decoding = 'async';
+                        image.width = item.image.thumbnail.width;
+                        image.height = item.image.thumbnail.height;
+                        card.appendChild(image);
+                    }
+
+                    const content = document.createElement('div');
+                    content.className = 'feed-content';
+                    appendText(content, 'h3', item.title || 'Untitled update');
+                    if (item.description) {
+                        appendText(content, 'p', item.description, 'feed-description');
+                    }
+                    const metadata = [];
+                    const published = item.pubDate ? new Date(item.pubDate) : null;
+                    if (published && !Number.isNaN(published.valueOf())) {
+                        metadata.push(published.toLocaleDateString());
+                    }
+                    if (item.image) {
+                        const kilobytes = Math.max(1, Math.round(item.image.byteSize / 1024));
+                        metadata.push(\`\${item.image.width}×\${item.image.height} \${item.image.format} · \${kilobytes} KB\`);
+                    }
+                    if (metadata.length) appendText(content, 'p', metadata.join(' · '), 'feed-meta');
+
+                    const link = appendText(content, 'a', 'Read more →');
+                    link.href = item.link;
+                    link.target = '_blank';
+                    link.rel = 'noopener noreferrer';
+                    if (item.imageUrl) {
+                        content.appendChild(document.createTextNode(' · '));
+                        const imageLink = appendText(content, 'a', 'Source image');
+                        imageLink.href = item.imageUrl;
+                        imageLink.target = '_blank';
+                        imageLink.rel = 'noopener noreferrer';
+                    }
+                    card.appendChild(content);
+                    feedContainer.appendChild(card);
                 });
             })
-            .catch(() => {});
+            .catch(() => {
+                feedStatus.textContent = 'The feed is temporarily unavailable.';
+            });
     </script>
 </body>
 </html>`;
 }
 
-// Helper function to generate RSS
-function generateRSS(feed: RSSFeed): string {
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <title>${feed.title}</title>
-    <link>${feed.link}</link>
-    <description>${feed.description}</description>
-    <lastBuildDate>${feed.lastBuildDate}</lastBuildDate>
-    <ttl>${feed.ttl}</ttl>
-    ${feed.items
-      .map(
-        item => `
-    <item>
-      <title><![CDATA[${item.title}]]></title>
-      <link>${item.link}</link>
-      <description><![CDATA[${item.description}]]></description>
-      <pubDate>${item.pubDate}</pubDate>
-      <guid>${item.guid}</guid>
-    </item>
-    `
-      )
-      .join('')}
-  </channel>
-</rss>`;
-}
-
 // Run CLI
 const cli = new IntegratedCLI();
 await cli.run();
-process.exit(0);

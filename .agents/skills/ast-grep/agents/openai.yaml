@@ -1,4 +1,4 @@
 interface:
   display_name: "ast-grep"
-  short_description: "Syntax-aware code outline, search, scan, and rewrite"
-  default_prompt: "Outline unfamiliar code, validate the syntax pattern, narrow with files/search, preview rewrites, and prove changes with the owning project tests."
+  short_description: "Syntax-aware search, migration audits, and rewrites"
+  default_prompt: "Outline unfamiliar code, validate the syntax pattern, use versioned fail-closed audits when available, preview rewrites, and prove changes with the owning project tests."

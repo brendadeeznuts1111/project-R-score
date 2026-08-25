@@ -210,10 +210,21 @@ export {
 export { R2Storage, type R2StorageConfig } from './r2/r2-storage-enhanced';
 export {
   RSSManager,
+  parseRSSFeed,
   type RSSFeed,
   type RSSFeedItem,
   type FeedSubscription,
+  type RSSManagerOptions,
 } from './rss/rss-manager';
+export {
+  FEED_IMAGE_SOURCES,
+  FeedImageEnricher,
+  type FeedImageCandidate,
+  type FeedImageEnricherOptions,
+  type FeedImageMetadata,
+  type FeedImageSource,
+  type FeedImageThumbnail,
+} from './rss/feed-image';
 
 /**
  * FactoryWager Library Info — paths are repo-relative (see CANONICAL_REPO_DOCS).

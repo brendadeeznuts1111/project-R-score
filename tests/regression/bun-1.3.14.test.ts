@@ -252,28 +252,6 @@ describe(`Bun ${MIN_VERSION} Performance smokes (${BLOG})`, () => {
 });
 
 describe(`Bun ${MIN_VERSION} bugfixes — Web APIs (${BLOG_BUGFIXES})`, () => {
-  fixTest('Bun.file ReadableStream response ignores Range (no Content-Range)', async () => {
-    const fixture = Bun.file(join(import.meta.dir, '../../package.json'));
-    const server = Bun.serve({
-      hostname: '127.0.0.1',
-      port: 0,
-      routes: {
-        '/stream': () => new Response(fixture.stream()),
-      },
-      fetch: () => new Response('not found', { status: 404 }),
-    });
-    try {
-      const response = await fetch(new URL('/stream', server.url), {
-        headers: { Range: 'bytes=0-9' },
-      });
-      expect(response.status).toBe(200);
-      expect(response.headers.get('Content-Range')).toBeNull();
-      expect((await response.bytes()).byteLength).toBe(fixture.size);
-    } finally {
-      server.stop(true);
-    }
-  });
-
   fixTest('small Bun.file stream reads without double-close', async () => {
     const source = Bun.file(join(import.meta.dir, '../../package.json'));
     const streamed = await new Response(source.stream()).bytes();

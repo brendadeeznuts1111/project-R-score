@@ -23,6 +23,10 @@ export type JobId = BrandedString<'JobId'>;
 export type StepId = BrandedString<'StepId'>;
 export type WebhookId = BrandedString<'WebhookId'>;
 export type FeedId = BrandedString<'FeedId'>;
+/** Stable identity for a versioned release asset. */
+export type ReleaseAssetId = BrandedString<'ReleaseAssetId'>;
+/** Stable identity for a versioned release capability. */
+export type ReleaseCapabilityId = BrandedString<'ReleaseCapabilityId'>;
 export type RunId = BrandedString<'RunId'>;
 export type DecisionId = BrandedString<'DecisionId'>;
 export type LoopId = BrandedString<'LoopId'>;
@@ -128,6 +132,8 @@ const job = defineBrandConstructors('JobId');
 const step = defineBrandConstructors('StepId');
 const webhook = defineBrandConstructors('WebhookId');
 const feed = defineBrandConstructors('FeedId');
+const releaseAsset = defineBrandConstructors('ReleaseAssetId');
+const releaseCapability = defineBrandConstructors('ReleaseCapabilityId');
 const run = defineBrandConstructors('RunId');
 const decision = defineBrandConstructors('DecisionId');
 const loop = defineBrandConstructors('LoopId');
@@ -194,6 +200,14 @@ export const parseWebhookId = webhook.parse;
 export const asFeedId = feed.as;
 export const tryFeedId = feed.try;
 export const parseFeedId = feed.parse;
+
+export const asReleaseAssetId = releaseAsset.as;
+export const tryReleaseAssetId = releaseAsset.try;
+export const parseReleaseAssetId = releaseAsset.parse;
+
+export const asReleaseCapabilityId = releaseCapability.as;
+export const tryReleaseCapabilityId = releaseCapability.try;
+export const parseReleaseCapabilityId = releaseCapability.parse;
 
 export const asRunId = run.as;
 export const tryRunId = run.try;
@@ -459,6 +473,20 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'RSS / event feed identity',
+  },
+  {
+    name: 'ReleaseAssetId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Version-scoped release media asset identity',
+  },
+  {
+    name: 'ReleaseCapabilityId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Version-scoped release capability identity',
   },
   {
     name: 'RunId',
