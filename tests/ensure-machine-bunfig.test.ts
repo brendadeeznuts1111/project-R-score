@@ -197,6 +197,26 @@ describe('ensure-machine-bunfig', () => {
     await Bun.$`rm -rf ${home}`.quiet();
   });
 
+  test('--overwrite-link does not replace a regular file', async () => {
+    const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-regular-home');
+    await Bun.$`rm -rf ${home}`.quiet();
+    await Bun.$`mkdir -p ${home}`.quiet();
+    const live = joinPath(home, '.bunfig.toml');
+    const original = '[install]\nlinker = "hoisted"\n';
+    await Bun.write(live, original);
+
+    const linkOnly = await ensureMachineBunfig({ cwd: ROOT, home, overwriteLink: true });
+    expect(linkOnly.ok).toBe(true);
+    expect(linkOnly.action).toBe('exists');
+    expect(await Bun.file(live).text()).toBe(original);
+
+    const overwrite = await ensureMachineBunfig({ cwd: ROOT, home, overwrite: true });
+    expect(overwrite.ok).toBe(true);
+    expect(overwrite.action).toBe('wrote');
+    expect(await Bun.file(live).text()).toContain('linker = "isolated"');
+    await Bun.$`rm -rf ${home}`.quiet();
+  });
+
   test('directory at ~/.bunfig.toml is not a regular file', async () => {
     const home = joinPath(ROOT, 'tmp/ensure-machine-bunfig-dir-home');
     await Bun.$`rm -rf ${home}`.quiet();

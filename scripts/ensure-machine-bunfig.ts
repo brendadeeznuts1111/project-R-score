@@ -221,7 +221,7 @@ export async function ensureMachineBunfig(
     };
   }
 
-  if (readable && !linked && !opts.overwrite && !opts.overwriteLink) {
+  if (readable && !linked && !opts.overwrite) {
     return { ok: true, action: 'exists', path, cacheDir };
   }
 

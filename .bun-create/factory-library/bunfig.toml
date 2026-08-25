@@ -4,7 +4,10 @@
 # @see https://bun.com/docs/pm/global-store — isolated global virtual store
 
 [install]
-# linker, globalStore, cache.dir, age — inherit from ~/.bunfig.toml
+# The standalone template keeps portable linker/store defaults; the monorepo
+# root inherits its machine-owned install policy from ~/.bunfig.toml.
+linker = "isolated"
+globalStore = true
 # A new scaffold has no lockfile yet. Allow the first install and intentional
 # dependency updates. Release and publish gates always override this with a
 # frozen, script-free dry run after a reviewed bun.lock is committed.
