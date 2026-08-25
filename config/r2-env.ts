@@ -34,8 +34,8 @@ export const CLOUDFLARE_DEFAULTS = {
     destinationDir: 'tmp/pages-optimized',
     buildCommand: 'bun tools/optimize-portal-assets.ts --no-report',
     rootDir: '',
-    /** GitHub-releasable Bun for Pages asdf — not local canary packageManager. */
-    bunVersion: '1.3.14',
+    /** Stable Bun release installed by the Pages build image through BUN_VERSION. */
+    bunVersion: '1.4.0',
     skipDependencyInstall: true,
   },
   zones: {
@@ -266,14 +266,13 @@ export function cloudflarePagesDesiredBuild() {
 }
 
 /**
- * Fail if local env overlays would recreate the Pages Bun 404
- * (canary packageManager pin leaking into dashboard-shaped values).
+ * Fail if local env overlays drift from the reviewed stable Pages runtime.
  */
 export function assertCloudflarePagesPins(): void {
   const { bunVersion, destinationDir, buildCommand, skipDependencyInstall } = CLOUDFLARE_PAGES;
-  if (bunVersion === '1.4.0' || bunVersion.includes('canary')) {
+  if (bunVersion !== CLOUDFLARE_DEFAULTS.pages.bunVersion) {
     throw new Error(
-      `BUN_VERSION=${bunVersion} is not Pages-safe (GitHub release 404). Use ${CLOUDFLARE_DEFAULTS.pages.bunVersion}.`
+      `BUN_VERSION=${bunVersion} drifts from the reviewed stable Pages pin ${CLOUDFLARE_DEFAULTS.pages.bunVersion}.`
     );
   }
   if (destinationDir !== CLOUDFLARE_DEFAULTS.pages.destinationDir) {
@@ -416,6 +415,8 @@ export async function assertLiveCloudflarePages(): Promise<{
   build_config: Record<string, string | null | undefined>;
   bunVersion: string | undefined;
   skipDependencyInstall: string | undefined;
+  previewBunVersion: string | undefined;
+  previewSkipDependencyInstall: string | undefined;
 }> {
   assertCloudflarePagesPins();
   const token = await resolveCloudflareApiToken();
@@ -439,6 +440,9 @@ export async function assertLiveCloudflarePages(): Promise<{
         root_dir?: string | null;
       };
       deployment_configs?: {
+        preview?: {
+          env_vars?: Record<string, { value?: string } | undefined>;
+        };
         production?: {
           env_vars?: Record<string, { value?: string } | undefined>;
         };
@@ -451,9 +455,12 @@ export async function assertLiveCloudflarePages(): Promise<{
   }
   const desired = cloudflarePagesDesiredBuild();
   const build = result.build_config || {};
-  const env = result.deployment_configs?.production?.env_vars || {};
-  const bunVersion = env.BUN_VERSION?.value;
-  const skip = env.SKIP_DEPENDENCY_INSTALL?.value;
+  const productionEnv = result.deployment_configs?.production?.env_vars || {};
+  const previewEnv = result.deployment_configs?.preview?.env_vars || {};
+  const bunVersion = productionEnv.BUN_VERSION?.value;
+  const skip = productionEnv.SKIP_DEPENDENCY_INSTALL?.value;
+  const previewBunVersion = previewEnv.BUN_VERSION?.value;
+  const previewSkip = previewEnv.SKIP_DEPENDENCY_INSTALL?.value;
   const mismatches: string[] = [];
   if (build.build_command !== desired.build_command) {
     mismatches.push(`build_command=${JSON.stringify(build.build_command)}`);
@@ -465,10 +472,16 @@ export async function assertLiveCloudflarePages(): Promise<{
     mismatches.push(`production_branch=${JSON.stringify(result.production_branch)}`);
   }
   if (bunVersion !== CLOUDFLARE_PAGES.bunVersion) {
-    mismatches.push(`BUN_VERSION=${JSON.stringify(bunVersion)}`);
+    mismatches.push(`production.BUN_VERSION=${JSON.stringify(bunVersion)}`);
   }
   if (skip !== 'true' && skip !== '1') {
-    mismatches.push(`SKIP_DEPENDENCY_INSTALL=${JSON.stringify(skip)}`);
+    mismatches.push(`production.SKIP_DEPENDENCY_INSTALL=${JSON.stringify(skip)}`);
+  }
+  if (previewBunVersion !== CLOUDFLARE_PAGES.bunVersion) {
+    mismatches.push(`preview.BUN_VERSION=${JSON.stringify(previewBunVersion)}`);
+  }
+  if (previewSkip !== 'true' && previewSkip !== '1') {
+    mismatches.push(`preview.SKIP_DEPENDENCY_INSTALL=${JSON.stringify(previewSkip)}`);
   }
   if (mismatches.length > 0) {
     throw new Error(
@@ -488,6 +501,8 @@ export async function assertLiveCloudflarePages(): Promise<{
     },
     bunVersion,
     skipDependencyInstall: skip,
+    previewBunVersion,
+    previewSkipDependencyInstall: previewSkip,
   };
 }
 

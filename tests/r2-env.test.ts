@@ -32,7 +32,7 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(p.destinationDir).toBe('tmp/pages-optimized');
     expect(p.buildCommand).toBe('bun tools/optimize-portal-assets.ts --no-report');
     expect(p.productionBranch).toBe('main');
-    expect(p.bunVersion).toBe('1.3.14');
+    expect(p.bunVersion).toBe('1.4.0');
     expect(p.skipDependencyInstall).toBe(true);
 
     expect(CLOUDFLARE_PAGES.url).toBe(`https://${p.subdomain}`);
@@ -100,7 +100,7 @@ describe('config/r2-env Cloudflare SSOT', () => {
 
   test('.env.example + public/index.html are the Pages source surface', async () => {
     const text = await Bun.file('.env.example').text();
-    expect(text).toContain('BUN_VERSION=1.3.14');
+    expect(text).toContain('BUN_VERSION=1.4.0');
     expect(text).toContain('SKIP_DEPENDENCY_INSTALL=true');
     expect(text).toContain('REGISTRY_URL=https://registry.factory-wager.com');
     // Channel/outbox plane bucket (doctor fallback remains CLOUDFLARE_DEFAULTS.registryDoctorBucket)

@@ -129,6 +129,7 @@ describe('verifyBunApis (offline)', () => {
     expect(manifest.summary.referenceModulePrefixMatches).toBeGreaterThan(0);
     expect(manifest.summary.unavailableAnchors).toBeGreaterThanOrEqual(0);
     expect(manifest.summary.knownTypeGaps).toBe(0);
+    expect(manifest.summary.knownRuntimeGaps).toBe(0);
     expect(manifest.demoApis['Bun.TOML.stringify']).toMatchObject({
       scope: 'curated-runnable-demo',
       declaration: { matched: true, knownGap: false },

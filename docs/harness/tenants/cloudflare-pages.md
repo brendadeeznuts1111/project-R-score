@@ -12,7 +12,7 @@ GitHub check **Cloudflare Pages** fails, or `bun test tests/r2-env.test.ts` / `b
 
 Common root causes:
 
-1. Pages tried to install `bun@1.4.0` from root `packageManager` (canary) → GitHub release **404**
+1. Pages `BUN_VERSION` drifted from stable `1.4.0`, or an unreleased canary leaked into the build environment
 2. `destination_dir` was `/` (monorepo symlinks) → asset validation failed
 3. Dashboard env lost `BUN_VERSION` / `SKIP_DEPENDENCY_INSTALL`
 
@@ -20,10 +20,10 @@ Common root causes:
 
 1. Confirm SSOT: `bun run cloudflare:env` and `bun test tests/r2-env.test.ts`
 2. Pages → Settings → Environment variables (prod + preview):
-   - `BUN_VERSION=1.3.14`
+   - `BUN_VERSION=1.4.0`
    - `SKIP_DEPENDENCY_INSTALL=true`
 3. Build settings: command `bun tools/optimize-portal-assets.ts --no-report`, output directory `tmp/pages-optimized`, production branch `main`
-4. Retry the failed deployment (dashboard or API). Do **not** pin local `packageManager` to 1.3.14 to “fix” Pages.
+4. Retry the failed deployment (dashboard or API). Keep the local and Pages stable channels aligned at `1.4.0`; do not use a canary as a production repair.
 5. Local pin check (no API): `bun run cloudflare:env:assert`
 6. Apex HTTP check (no API token): `bun run cloudflare:env:assert-apex`
 7. Live dashboard drift + apex (API token or wrangler OAuth): `bun run cloudflare:env:assert-live`

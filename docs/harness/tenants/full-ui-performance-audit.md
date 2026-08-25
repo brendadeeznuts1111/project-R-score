@@ -94,8 +94,9 @@ PAGES_VERIFY_BASE=http://127.0.0.1:6111 bun run verify:pages-edge
 bun run verify:weave -- --summary
 ```
 
-Cloudflare uses `BUN_VERSION=1.3.14`; that pinned runtime produces 3,716,496 B,
-a 42.07% reduction.
+The previous Pages runtime baseline produced 3,716,496 B, a 42.07% reduction.
+Re-record this measurement from the first successful 1.4.0 preview before
+treating it as current production evidence.
 
 ## Production proof
 
