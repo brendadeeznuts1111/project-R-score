@@ -52,11 +52,23 @@ type BuildOpts = {
   minify: boolean;
 };
 
+type MetafilePaths = {
+  json: string;
+  markdown: string;
+};
+
+function metafilePaths(opts: BuildOpts): MetafilePaths {
+  return opts.minify
+    ? { json: 'meta.min.json', markdown: 'meta.min.md' }
+    : { json: 'meta.json', markdown: 'meta.md' };
+}
+
 async function buildCss(opts: BuildOpts) {
+  const metafile = metafilePaths(opts);
   // Explicit css loader — default for .css, documented for Asset Processing clarity.
   // @see https://bun.com/docs/bundler/loaders#css
   // @see https://bun.com/docs/bundler#content-types
-  return Bun.build({
+  const config = {
     entrypoints: [SOURCE],
     outdir: OUTDIR,
     naming: opts.naming,
@@ -65,7 +77,29 @@ async function buildCss(opts: BuildOpts) {
     loader: {
       '.css': 'css',
     },
-  });
+    // Bun 1.4: emit both esbuild-compatible JSON and LLM-readable Markdown.
+    // Local bundled declarations still expose the pre-1.4 Boolean-only shape.
+    // @see https://bun.com/docs/bundler#metafile
+    metafile,
+  };
+  return Bun.build(config as Parameters<typeof Bun.build>[0]);
+}
+
+async function assertMetafile(paths: MetafilePaths): Promise<void> {
+  const jsonPath = joinPath(OUTDIR, paths.json);
+  const markdownPath = joinPath(OUTDIR, paths.markdown);
+  const jsonFile = Bun.file(jsonPath);
+  const markdownFile = Bun.file(markdownPath);
+  if (!(await jsonFile.exists()) || !(await markdownFile.exists())) {
+    throw new Error(`Bun.build did not emit metafiles: ${jsonPath}, ${markdownPath}`);
+  }
+  const metafile = (await jsonFile.json()) as { inputs?: unknown; outputs?: unknown };
+  if (!metafile.inputs || !metafile.outputs) {
+    throw new Error(`invalid Bun metafile: ${jsonPath}`);
+  }
+  if (!(await markdownFile.text()).includes('Quick Summary')) {
+    throw new Error(`invalid Bun Markdown metafile: ${markdownPath}`);
+  }
 }
 
 async function main(): Promise<void> {
@@ -90,6 +124,8 @@ async function main(): Promise<void> {
   const outPath = lowered.outputs[0]?.path ?? joinPath(OUTDIR, 'style.css');
   const size = Bun.file(outPath).size;
   const kind = lowered.outputs[0]?.kind ?? 'asset';
+  const loweredMetafile = metafilePaths({ naming: 'style.css', minify: false });
+  await assertMetafile(loweredMetafile);
 
   let minPath: string | undefined;
   let minSize: number | undefined;
@@ -102,6 +138,7 @@ async function main(): Promise<void> {
     }
     minPath = minified.outputs[0]?.path ?? joinPath(OUTDIR, 'style.min.css');
     minSize = Bun.file(minPath).size;
+    await assertMetafile(metafilePaths({ naming: 'style.min.css', minify: true }));
   }
 
   const readme = [
@@ -118,6 +155,9 @@ async function main(): Promise<void> {
     '|------|------|',
     '| `style.css` | Lowered / vendor-prefixed (Bun default browser targets) |',
     '| `style.min.css` | Same + minify (`--minify`) |',
+    '| `meta.json` | esbuild-compatible input/output graph for CI and tooling |',
+    '| `meta.md` | Bun 1.4 Markdown build graph for human and agent review |',
+    '| `meta.min.{json,md}` | Matching analysis for the optional minified build |',
     '',
     `\`publicPath\`: \`${PUBLIC_PATH}\` (prefixes rewritten asset URLs).`,
     '',
@@ -132,6 +172,9 @@ async function main(): Promise<void> {
   console.log(`  loader: css (Asset Processing) · kind=${kind}`);
   console.log(`  publicPath: ${PUBLIC_PATH}`);
   console.log(`  size:   ${size} bytes (lowered)`);
+  console.log(
+    `  meta:   ${joinPath(OUTDIR, loweredMetafile.json)} · ${joinPath(OUTDIR, loweredMetafile.markdown)}`
+  );
   if (minPath) console.log(`  minify: ${minPath} (${minSize} bytes)`);
   console.log(`  docs:   bundler#content-types · bundler/loaders#css · bundler/css`);
   console.log('');
