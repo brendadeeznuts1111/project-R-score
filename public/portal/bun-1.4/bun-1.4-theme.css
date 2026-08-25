@@ -1,0 +1,22 @@
+/* GENERATED — do not edit. Source: public/portal/theme.jsonc#namespaces.bun14 */
+/* bun run portal:theme:sync */
+/* Route-scoped projection of the shared FactoryWager color kernel. */
+
+.bun-board {
+  --fw-bun-14-color-canvas: var(--bg-canvas);
+  --fw-bun-14-color-surface: var(--bg-card);
+  --fw-bun-14-color-surface-hover: var(--bg-elevated);
+  --fw-bun-14-color-surface-active: var(--badge-active);
+  --fw-bun-14-color-border: var(--layer-border);
+  --fw-bun-14-color-text: var(--text);
+  --fw-bun-14-color-text-muted: var(--text-dim);
+  --fw-bun-14-color-text-on-strong: var(--tone-on-strong);
+  --fw-bun-14-color-accent: var(--tone-info);
+  --fw-bun-14-color-accent-hover: var(--link-hover);
+  --fw-bun-14-color-accent-soft: var(--accent-glow);
+  --fw-bun-14-color-success: var(--tone-ok);
+  --fw-bun-14-color-warning: var(--tone-warn);
+  --fw-bun-14-color-danger: var(--tone-bad);
+  --fw-bun-14-color-info: var(--tone-info);
+  --fw-bun-14-color-focus-ring: var(--accent);
+}

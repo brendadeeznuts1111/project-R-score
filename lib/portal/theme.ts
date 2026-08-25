@@ -347,7 +347,6 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     tones,
     semantic,
     layers,
-    namespaces,
     typography,
     breakpoints,
     animation,
@@ -388,8 +387,6 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     `  --bg-elevated: ${layers.elevated};`,
     `  --bg-inverse: ${layers.inverse};`,
     `  --layer-border: ${layers.border};`,
-    // Product namespace — role aliases into this shared kernel, not a palette.
-    bun14NamespaceBlock(namespaces.bun14),
     // Semantic status (bake age · pills · freshness)
     `  --status-fresh: ${semantic.status.fresh};`,
     `  --status-stale: ${semantic.status.stale};`,
@@ -465,6 +462,20 @@ export function renderThemeTokensCss(theme: PortalTheme = portalTheme): string {
     "html[data-theme='light'] {",
     '  color-scheme: light;',
     paletteBlock(light),
+    '}',
+    '',
+  ].join('\n');
+}
+
+/** Emit the Bun 1.4 namespace separately so shared chrome does not duplicate it per route. */
+export function renderBun14NamespaceCss(theme: PortalTheme = portalTheme): string {
+  return [
+    '/* GENERATED — do not edit. Source: public/portal/theme.jsonc#namespaces.bun14 */',
+    '/* bun run portal:theme:sync */',
+    '/* Route-scoped projection of the shared FactoryWager color kernel. */',
+    '',
+    '.bun-board {',
+    bun14NamespaceBlock(theme.namespaces.bun14),
     '}',
     '',
   ].join('\n');

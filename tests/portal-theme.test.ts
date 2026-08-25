@@ -1,7 +1,11 @@
 // @see https://bun.com/docs/test/index#run-tests
 // @see https://bun.com/docs/bundler/loaders#jsonc
 import { describe, expect, test } from 'bun:test';
-import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
+import {
+  portalTheme,
+  renderBun14NamespaceCss,
+  renderThemeTokensCss,
+} from '../lib/portal/theme.ts';
 
 describe('portal theme (jsonc loader)', () => {
   test('theme.jsonc loads design-system v1.4', () => {
@@ -72,10 +76,7 @@ describe('portal theme (jsonc loader)', () => {
     expect(css).toContain('--tier-vip: var(--yellow)');
     expect(css).toContain('--tier-sharp: var(--red)');
     expect(css).toContain('--bg-card: var(--surface)');
-    expect(css).toContain('--fw-bun-14-color-canvas: var(--bg-canvas)');
-    expect(css).toContain('--fw-bun-14-color-surface-hover: var(--bg-elevated)');
-    expect(css).toContain('--fw-bun-14-color-accent: var(--tone-info)');
-    expect(css).toContain('--fw-bun-14-color-focus-ring: var(--accent)');
+    expect(css).not.toContain('--fw-bun-14-color-');
     expect(css).toContain('--text-sm: 0.75rem');
     expect(css).toContain('--font-weight-semibold: 600');
     expect(css).toContain('--leading-normal: 1.45');
@@ -86,6 +87,15 @@ describe('portal theme (jsonc loader)', () => {
     expect(css).toContain('--duration-fast: 150ms');
     expect(css).toContain('--ease-out: cubic-bezier');
     expect(css).toContain('--layout-sidebar: 15rem');
+  });
+
+  test('Bun 1.4 namespace renders once in its route-scoped stylesheet', () => {
+    const css = renderBun14NamespaceCss();
+    expect(css).toContain('.bun-board {');
+    expect(css).toContain('--fw-bun-14-color-canvas: var(--bg-canvas)');
+    expect(css).toContain('--fw-bun-14-color-surface-hover: var(--bg-elevated)');
+    expect(css).toContain('--fw-bun-14-color-accent: var(--tone-info)');
+    expect(css).toContain('--fw-bun-14-color-focus-ring: var(--accent)');
   });
 
   test('flat palette keys remain string (color-kernel safe)', () => {

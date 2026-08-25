@@ -127,6 +127,7 @@ describe('Bun 1.4 asset gallery', () => {
     );
     expect(html).toContain('/portal/data.js');
     expect(html).toContain('/portal/topbar.js');
+    expect(html).toContain('/portal/bun-1.4/bun-1.4-theme.css');
     expect(html).toContain('/registry/bun-1.4-assets.json');
     expect(html).toContain('/registry/bun-1.4-capabilities.json');
     expect(html).toContain('/registry/bun-1.4-channel-release.json');
