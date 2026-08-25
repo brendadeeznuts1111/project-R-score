@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-25T08:07:00.595Z",
+  "generatedAt": "2026-08-25T13:33:22.063Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -6769,7 +6769,7 @@
     },
     {
       "project": "projects/active/enterprise/fantasy42-fire22-registry",
-      "sourceFiles": 1119,
+      "sourceFiles": 1118,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
