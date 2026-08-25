@@ -36,7 +36,7 @@
       }
     ]
   },
-  "snapshotDigest": "1a0ecf77b476832d9fcd3e120d99919c132292e1a57011ba9146286b040143da",
+  "snapshotDigest": "9252a4ec4f38e3bc0f91788b9f7073b7bdaa29de4daffcb9d6183aa81e32cc2e",
   "files": [
     {
       "path": "feeds/v1/all.xml",
@@ -60,8 +60,8 @@
     },
     {
       "path": "registry/bun-1.4-assets.json",
-      "bytes": 22152,
-      "sha256": "cb2033de080a553441b0f44718ae000cf6f6ca2d46a8119981e0921f60ed32d4"
+      "bytes": 22905,
+      "sha256": "25a0c09bce2b7b1904fb7623099bfa61d2bda7d32be9b7c8ef6bff0d13677a5d"
     },
     {
       "path": "registry/bun-1.4-capabilities.json",
