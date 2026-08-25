@@ -1,12 +1,12 @@
 {
-  "generated": "2026-08-18T04:14:59.273Z",
+  "generated": "2026-08-25T09:07:07.263Z",
   "source": "https://bun.com/docs/llms.txt",
-  "bunVersion": "1.3.14",
-  "upstreamBunVersion": "1.4.0",
+  "bunVersion": "1.4.0",
+  "upstreamBunVersion": "1.4.1",
   "taxonomy": "tools/bun-docs-taxonomy.json",
   "taxonomyTagged": 74,
   "pages": 321,
-  "anchors": 2202,
+  "anchors": 2206,
   "entries": [
     {
       "section": "Docs",
@@ -258,6 +258,7 @@
         "install-savetextlockfile",
         "install-auto",
         "install-prefer",
+        "install-offline",
         "install-frozenlockfile",
         "install-dryrun",
         "install-globaldir",
@@ -1912,6 +1913,7 @@
         "overrides-and-resolutions",
         "global-packages",
         "production-mode",
+        "offline-installs",
         "omitting-dependencies",
         "dry-run",
         "non-npm-dependencies",
@@ -2172,6 +2174,7 @@
       "desc": "Develop complex monorepos with multiple independent packages",
       "domain": "pm/workspaces",
       "anchors": [
+        "self-contained-workspaces",
         "share-versions-with-catalogs"
       ]
     },
@@ -2728,6 +2731,7 @@
         "serving-static-assets-in-an-http-server",
         "embedding-templates",
         "embedding-binary-files",
+        "embed-text-as-a-string",
         "embed-sqlite-databases",
         "embed-n-api-addons",
         "embed-directories",
