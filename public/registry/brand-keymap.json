@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-18T00:27:54.621Z",
+  "generatedAt": "2026-08-25T05:37:24.044Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,14 +12,14 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 94,
+    "brands": 96,
     "domains": 10,
-    "ids": 72,
+    "ids": 74,
     "keys": 3,
     "codes": 19,
-    "covered": 72,
+    "covered": 75,
     "referencedUnconstructed": 7,
-    "unused": 15,
+    "unused": 14,
     "cataloguedProjects": 35,
     "trackedProjects": 31,
     "adoptedProjects": 2,
@@ -95,7 +95,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 39,
+      "brandCount": 41,
       "colorKey": "accent",
       "color": "#58a6ff",
       "tone": "info"
@@ -2887,26 +2887,38 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 4,
+        "references": 12,
         "constructors": {
-          "as": 7,
+          "as": 13,
           "try": 0,
-          "parse": 0
+          "parse": 2
         },
         "guards": 0,
         "files": [
           "lib/gate-map.ts",
-          "lib/http/host-planes.ts"
+          "lib/http/host-planes.ts",
+          "lib/rss/project-channel-registry-build.ts",
+          "lib/rss/project-channel-registry-collections.ts",
+          "lib/rss/project-channel-registry-contract.ts",
+          "lib/rss/project-channel-registry-entries.ts",
+          "lib/rss/project-channel-registry-types.ts",
+          "tools/bun-blog-assets/release-snapshot-contract.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 4,
-            "constructionCalls": 7,
+            "references": 12,
+            "constructionCalls": 15,
             "guardCalls": 0,
             "files": [
               "lib/gate-map.ts",
-              "lib/http/host-planes.ts"
+              "lib/http/host-planes.ts",
+              "lib/rss/project-channel-registry-build.ts",
+              "lib/rss/project-channel-registry-collections.ts",
+              "lib/rss/project-channel-registry-contract.ts",
+              "lib/rss/project-channel-registry-entries.ts",
+              "lib/rss/project-channel-registry-types.ts",
+              "tools/bun-blog-assets/release-snapshot-contract.ts"
             ]
           },
           "projects": {
@@ -3187,22 +3199,182 @@
       "tone": "info",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "unused",
-        "references": 0,
+        "status": "covered",
+        "references": 19,
         "constructors": {
-          "as": 0,
+          "as": 12,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
-        "files": [],
+        "files": [
+          "lib/rss/project-channel-registry-contract.ts",
+          "lib/rss/project-channel-registry-entries.ts",
+          "lib/rss/project-channel-registry-types.ts",
+          "lib/rss/rss-fanout.ts",
+          "tools/bun-blog-assets/feed-build.ts",
+          "tools/bun-blog-assets/release-snapshot-contract.ts",
+          "tools/bun-blog-assets/release-snapshot-feeds.ts"
+        ],
         "scopes": {
           "spine": {
+            "status": "covered",
+            "references": 19,
+            "constructionCalls": 13,
+            "guardCalls": 0,
+            "files": [
+              "lib/rss/project-channel-registry-contract.ts",
+              "lib/rss/project-channel-registry-entries.ts",
+              "lib/rss/project-channel-registry-types.ts",
+              "lib/rss/rss-fanout.ts",
+              "tools/bun-blog-assets/feed-build.ts",
+              "tools/bun-blog-assets/release-snapshot-contract.ts",
+              "tools/bun-blog-assets/release-snapshot-feeds.ts"
+            ]
+          },
+          "projects": {
             "status": "unused",
             "references": 0,
             "constructionCalls": 0,
             "guardCalls": 0,
             "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ReleaseAssetId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Version-scoped release media asset identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asReleaseAssetId",
+        "try": "tryReleaseAssetId",
+        "parse": "parseReleaseAssetId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseAssetId",
+      "shortName": "releaseAssetId",
+      "envName": "RELEASE_ASSET_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 7,
+        "constructors": {
+          "as": 3,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "tools/bun-blog-assets/html.ts",
+          "tools/bun-blog-assets/release-snapshot-contract.ts",
+          "tools/bun-blog-assets/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 7,
+            "constructionCalls": 3,
+            "guardCalls": 0,
+            "files": [
+              "tools/bun-blog-assets/html.ts",
+              "tools/bun-blog-assets/release-snapshot-contract.ts",
+              "tools/bun-blog-assets/types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ReleaseCapabilityId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Version-scoped release capability identity",
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asReleaseCapabilityId",
+        "try": "tryReleaseCapabilityId",
+        "parse": "parseReleaseCapabilityId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseCapabilityId",
+      "shortName": "releaseCapabilityId",
+      "envName": "RELEASE_CAPABILITY_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 2,
+        "constructors": {
+          "as": 60,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "tools/bun-blog-assets/capability-catalog-builtins-web.ts",
+          "tools/bun-blog-assets/capability-catalog-builtins.ts",
+          "tools/bun-blog-assets/capability-catalog-claims.ts",
+          "tools/bun-blog-assets/capability-catalog-dev-network.ts",
+          "tools/bun-blog-assets/capability-catalog-network.ts",
+          "tools/bun-blog-assets/capability-catalog-runtime.ts",
+          "tools/bun-blog-assets/capability-catalog-tooling.ts",
+          "tools/bun-blog-assets/types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 2,
+            "constructionCalls": 60,
+            "guardCalls": 0,
+            "files": [
+              "tools/bun-blog-assets/capability-catalog-builtins-web.ts",
+              "tools/bun-blog-assets/capability-catalog-builtins.ts",
+              "tools/bun-blog-assets/capability-catalog-claims.ts",
+              "tools/bun-blog-assets/capability-catalog-dev-network.ts",
+              "tools/bun-blog-assets/capability-catalog-network.ts",
+              "tools/bun-blog-assets/capability-catalog-runtime.ts",
+              "tools/bun-blog-assets/capability-catalog-tooling.ts",
+              "tools/bun-blog-assets/types.ts"
+            ]
           },
           "projects": {
             "status": "unused",
@@ -6593,7 +6765,7 @@
     },
     {
       "project": "projects/active/enterprise/fantasy42-fire22-registry",
-      "sourceFiles": 1118,
+      "sourceFiles": 1119,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -6713,7 +6885,7 @@
     },
     {
       "project": "projects/active/development/kal-poly-bot",
-      "sourceFiles": 269,
+      "sourceFiles": 266,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -6723,7 +6895,7 @@
     },
     {
       "project": "projects/active/analysis/matrix-analysis",
-      "sourceFiles": 683,
+      "sourceFiles": 682,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -6753,7 +6925,7 @@
     },
     {
       "project": "projects/active/enterprise/foxy-proxy",
-      "sourceFiles": 86,
+      "sourceFiles": 87,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
