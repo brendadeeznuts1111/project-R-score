@@ -1567,7 +1567,7 @@ export const OPS_SEED_ALL_ALLOWED_LONG = ['force'] as const;
 export const POLICY_AUDIT_ALLOWED_LONG = ['json'] as const;
 
 /** § — portal:css:build (`tools/build-portal-css.ts`) — auto team plan */
-export const PORTAL_CSS_BUILD_ALLOWED_LONG = ['check', 'minify'] as const;
+export const PORTAL_CSS_BUILD_ALLOWED_LONG = ['analyze', 'check', 'minify'] as const;
 
 /** § — ops:anchor:scan (`tools/ops-anchor-scan.ts`) — auto team plan */
 export const OPS_ANCHOR_SCAN_ALLOWED_LONG = ['json'] as const;

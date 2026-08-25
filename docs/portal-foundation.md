@@ -395,6 +395,7 @@ bun run validate:colors:strict     # fail-closed + --ci env tag
 bun run test:colors                # unit + validate:colors smoke
 bun run portal:css:build           # sync theme + lower CSS → dist/style.css
 bun run portal:css:build:minify    # → also dist/style.min.css
+bun run portal:css:analyze         # → ignored dist/meta.json + Bun 1.4 dist/meta.md
 bun run portal:css:check
 bun run portal:css:score:power     # 5-pillar Power UI matrix
 bun run docs:portal                # ANSI preview this file (bun ./docs/portal-foundation.md)

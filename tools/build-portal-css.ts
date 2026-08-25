@@ -21,6 +21,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * Usage:
  *   bun tools/build-portal-css.ts
  *   bun tools/build-portal-css.ts --minify
+ *   bun tools/build-portal-css.ts --analyze
  *   bun tools/build-portal-css.ts --check
  *
  * @see https://bun.com/docs/bundler#content-types — Asset Processing / Content types
@@ -45,11 +46,13 @@ const OUTDIR = joinPath(ROOT, 'public/portal/dist');
 const PUBLIC_PATH = '/portal/dist/';
 
 const minify = argv.includes('--minify');
+const analyze = argv.includes('--analyze');
 const check = argv.includes('--check');
 
 type BuildOpts = {
   naming: string;
   minify: boolean;
+  analyze: boolean;
 };
 
 type MetafilePaths = {
@@ -64,7 +67,7 @@ function metafilePaths(opts: BuildOpts): MetafilePaths {
 }
 
 async function buildCss(opts: BuildOpts) {
-  const metafile = metafilePaths(opts);
+  const metafile = opts.analyze ? { metafile: metafilePaths(opts) } : {};
   // Explicit css loader — default for .css, documented for Asset Processing clarity.
   // @see https://bun.com/docs/bundler/loaders#css
   // @see https://bun.com/docs/bundler#content-types
@@ -77,10 +80,11 @@ async function buildCss(opts: BuildOpts) {
     loader: {
       '.css': 'css',
     },
-    // Bun 1.4: emit both esbuild-compatible JSON and LLM-readable Markdown.
-    // Local bundled declarations still expose the pre-1.4 Boolean-only shape.
+    // Bun 1.4: emit both esbuild-compatible JSON and LLM-readable Markdown
+    // only in explicit analysis mode. Local bundled declarations still expose
+    // the pre-1.4 Boolean-only shape.
     // @see https://bun.com/docs/bundler#metafile
-    metafile,
+    ...metafile,
   };
   return Bun.build(config as Parameters<typeof Bun.build>[0]);
 }
@@ -113,7 +117,7 @@ async function main(): Promise<void> {
   }
 
   // Always emit readable lowered CSS; optionally also emit minified.
-  const lowered = await buildCss({ naming: 'style.css', minify: false });
+  const lowered = await buildCss({ naming: 'style.css', minify: false, analyze });
 
   if (!lowered.success) {
     console.error('portal CSS build failed:');
@@ -124,13 +128,13 @@ async function main(): Promise<void> {
   const outPath = lowered.outputs[0]?.path ?? joinPath(OUTDIR, 'style.css');
   const size = Bun.file(outPath).size;
   const kind = lowered.outputs[0]?.kind ?? 'asset';
-  const loweredMetafile = metafilePaths({ naming: 'style.css', minify: false });
-  await assertMetafile(loweredMetafile);
+  const loweredMetafile = metafilePaths({ naming: 'style.css', minify: false, analyze });
+  if (analyze) await assertMetafile(loweredMetafile);
 
   let minPath: string | undefined;
   let minSize: number | undefined;
   if (minify) {
-    const minified = await buildCss({ naming: 'style.min.css', minify: true });
+    const minified = await buildCss({ naming: 'style.min.css', minify: true, analyze });
     if (!minified.success) {
       console.error('portal CSS minify failed:');
       for (const log of minified.logs) console.error(log);
@@ -138,7 +142,9 @@ async function main(): Promise<void> {
     }
     minPath = minified.outputs[0]?.path ?? joinPath(OUTDIR, 'style.min.css');
     minSize = Bun.file(minPath).size;
-    await assertMetafile(metafilePaths({ naming: 'style.min.css', minify: true }));
+    if (analyze) {
+      await assertMetafile(metafilePaths({ naming: 'style.min.css', minify: true, analyze }));
+    }
   }
 
   const readme = [
@@ -155,9 +161,9 @@ async function main(): Promise<void> {
     '|------|------|',
     '| `style.css` | Lowered / vendor-prefixed (Bun default browser targets) |',
     '| `style.min.css` | Same + minify (`--minify`) |',
-    '| `meta.json` | esbuild-compatible input/output graph for CI and tooling |',
-    '| `meta.md` | Bun 1.4 Markdown build graph for human and agent review |',
-    '| `meta.min.{json,md}` | Matching analysis for the optional minified build |',
+    '| `meta.json` | `--analyze`: esbuild-compatible input/output graph for CI and tooling |',
+    '| `meta.md` | `--analyze`: Bun 1.4 Markdown graph for human and agent review |',
+    '| `meta.min.{json,md}` | `--analyze --minify`: matching minified-build analysis |',
     '',
     `\`publicPath\`: \`${PUBLIC_PATH}\` (prefixes rewritten asset URLs).`,
     '',
@@ -172,9 +178,11 @@ async function main(): Promise<void> {
   console.log(`  loader: css (Asset Processing) · kind=${kind}`);
   console.log(`  publicPath: ${PUBLIC_PATH}`);
   console.log(`  size:   ${size} bytes (lowered)`);
-  console.log(
-    `  meta:   ${joinPath(OUTDIR, loweredMetafile.json)} · ${joinPath(OUTDIR, loweredMetafile.markdown)}`
-  );
+  if (analyze) {
+    console.log(
+      `  meta:   ${joinPath(OUTDIR, loweredMetafile.json)} · ${joinPath(OUTDIR, loweredMetafile.markdown)}`
+    );
+  }
   if (minPath) console.log(`  minify: ${minPath} (${minSize} bytes)`);
   console.log(`  docs:   bundler#content-types · bundler/loaders#css · bundler/css`);
   console.log('');

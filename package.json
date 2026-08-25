@@ -2314,6 +2314,7 @@
     "portal:theme:check": "bun tools/sync-portal-theme.ts --check && bun run portal:colors:check",
     "portal:css:build": "bun tools/build-portal-css.ts",
     "portal:css:build:minify": "bun tools/build-portal-css.ts --minify",
+    "portal:css:analyze": "bun tools/build-portal-css.ts --analyze",
     "portal:css:check": "bun tools/build-portal-css.ts --check",
     "portal:optimize": "bun tools/optimize-portal-assets.ts",
     "portal:css:score": "bun tools/portal-css-score.ts",
