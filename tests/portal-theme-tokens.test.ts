@@ -71,4 +71,13 @@ describe('portal theme token resolve', () => {
       '#1a7f37'
     );
   });
+
+  test('Bun 1.4 namespace resolves through shared dark and light kernels', () => {
+    expect(resolveThemeTokenColor('namespaces.bun14.accent')).toBe('#58a6ff');
+    expect(resolveThemeTokenColor('namespaces.bun14.accent', { scheme: 'light' })).toBe(
+      '#0969da'
+    );
+    expect(resolveThemeTokenColor('namespaces.bun14.surfaceHover')).toBe('#1c2333');
+    expect(resolveThemeTokenColor('namespaces.bun14.danger')).toBe('#f85149');
+  });
 });

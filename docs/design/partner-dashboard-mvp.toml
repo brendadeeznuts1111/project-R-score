@@ -760,7 +760,7 @@ relation = "communication-topic"
 
 [theme]
 source = "public/portal/theme.jsonc"
-version = "1.3.0"
+version = "1.4.0"
 resolver = "lib/portal/theme.ts"
 generated_css = "public/portal/theme-tokens.css"
 default_scheme = "dark"

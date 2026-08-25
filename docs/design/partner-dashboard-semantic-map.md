@@ -63,7 +63,7 @@ replaces `PartnerCode`.
 ## State axes and theme roles
 
 All rows require a visible text label. Theme references resolve through portal
-theme v1.3.0; the artifact stores none of the resolved colors.
+theme v1.4.0; the artifact stores none of the resolved colors.
 
 The TOML also binds page, panel, elevated-panel, and filter-chip recipes to the
 theme's layout, spacing, radius, shadow, typography, badge, and motion tokens.

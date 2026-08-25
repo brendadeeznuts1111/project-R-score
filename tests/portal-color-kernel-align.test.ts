@@ -10,6 +10,7 @@ import {
   colorKernelClaimReport,
   formatColorKernelClaimReport,
   GLOSSARY_EXTENDED_KEYS,
+  normalizeColorForComparison,
   THEME_DARK_ALIAS_CHECKS,
   type ColorKernelCheckId,
 } from '../lib/portal/color-kernel-align.ts';
@@ -23,6 +24,13 @@ describe('portal color-kernel align', () => {
     expect(result.ok, Bun.inspect(result.mismatches)).toBe(true);
     expect(result.themeVersion).toBe(portalTheme.version);
     expect(THEME_DARK_ALIAS_CHECKS.length).toBeGreaterThanOrEqual(20);
+  });
+
+  test('alignment normalization preserves alpha', () => {
+    const opaque = normalizeColorForComparison('rgba(88 166 255 / 1)');
+    const translucent = normalizeColorForComparison('rgba(88 166 255 / 0.15)');
+    expect(Bun.deepEquals(opaque, translucent)).toBe(false);
+    expect(translucent.a).toBeLessThan(1);
   });
 
   test('glossary extended keys are outside the theme-alias check table', () => {

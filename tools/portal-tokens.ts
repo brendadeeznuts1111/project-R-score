@@ -9,6 +9,7 @@
  *   bun run tokens --token semantic.tier.sharp --format hsl
  *   bun run tokens --token semantic.pattern.bettor.sharp --format hex
  *   bun run tokens --token dark.green --format '[rgba]'
+ *   bun run tokens --token namespaces.bun14.accent --all-formats
  *   bun run tokens --token semantic.tiers.sharp --format hex   # alias → tier
  *
  * @see https://bun.com/docs/runtime/color
@@ -17,20 +18,25 @@
 import {
   ThemeTokenResolveError,
   formatThemeToken,
+  normalizeThemeTokenPath,
+  resolveThemeTokenColor,
   type ThemeColorScheme,
 } from '../lib/portal/theme-token-resolve.ts';
+import { diagnoseColor } from '../lib/factory/color-diagnostics.ts';
 
 const HELP = `Read-only portal theme token printer (theme.jsonc via portalTheme).
 
 Usage:
-  bun run tokens --token <dotted.path> [--format <fmt>] [--scheme dark|light]
+  bun run tokens --token <dotted.path> [--format <fmt> | --all-formats] [--scheme dark|light]
 
 Options:
   --token <path>     Required. Dotted path into theme.jsonc
                      (e.g. semantic.vertical.sportsbook, semantic.pattern.bettor.sharp,
                      dark.green)
   --format <fmt>     Bun.color format (default: hex). Examples:
-                     hex, HEX, hsl, number, [rgba], {rgba}, [rgb], css, ansi
+                     ansi, ansi-16, ansi-256, ansi-16m, css, rgb, rgba,
+                     hsl, lab, hex, HEX, {rgb}, {rgba}, [rgb], [rgba], number
+  --all-formats      Emit a JSON report for all 16 Bun 1.4 color formats
   --scheme dark|light  Palette scheme for CSS var resolution (default: dark)
   --help             Show this help
 
@@ -46,12 +52,20 @@ Notes:
 type Parsed = {
   token?: string;
   format: string;
+  formatExplicit: boolean;
+  allFormats: boolean;
   scheme: ThemeColorScheme;
   help: boolean;
 };
 
 function parseArgv(argv: string[]): Parsed {
-  const out: Parsed = { format: 'hex', scheme: 'dark', help: false };
+  const out: Parsed = {
+    format: 'hex',
+    formatExplicit: false,
+    allFormats: false,
+    scheme: 'dark',
+    help: false,
+  };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]!;
     if (arg === '--help' || arg === '-h') {
@@ -76,10 +90,16 @@ function parseArgv(argv: string[]): Parsed {
         throw new Error('--format requires a format argument');
       }
       out.format = v;
+      out.formatExplicit = true;
       continue;
     }
     if (arg.startsWith('--format=')) {
       out.format = arg.slice('--format='.length);
+      out.formatExplicit = true;
+      continue;
+    }
+    if (arg === '--all-formats') {
+      out.allFormats = true;
       continue;
     }
     if (arg === '--scheme') {
@@ -99,6 +119,9 @@ function parseArgv(argv: string[]): Parsed {
       continue;
     }
     throw new Error(`Unknown flag: ${arg}\n\n${HELP}`);
+  }
+  if (out.allFormats && out.formatExplicit) {
+    throw new Error('--format and --all-formats are mutually exclusive');
   }
   return out;
 }
@@ -123,6 +146,25 @@ function main(): void {
   }
 
   try {
+    if (parsed.allFormats) {
+      const color = resolveThemeTokenColor(parsed.token, { scheme: parsed.scheme });
+      const report = diagnoseColor(color);
+      // console-ok — CLI stdout is the JSON product.
+      console.log(
+        JSON.stringify(
+          {
+            token: normalizeThemeTokenPath(parsed.token),
+            scheme: parsed.scheme,
+            sourceColor: color,
+            formatCount: report.formats.length,
+            formats: report.formats,
+          },
+          null,
+          2
+        )
+      );
+      return;
+    }
     const value = formatThemeToken(parsed.token, parsed.format, {
       scheme: parsed.scheme,
     });

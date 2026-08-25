@@ -162,6 +162,11 @@ describe('Bun 1.4 asset gallery', () => {
     expect(mediaScript).toContain('asset.raw?.watchUrl || asset.raw?.sourcePage || asset.sourceUrl');
     expect(mediaScript).not.toContain('innerHTML');
     expect(styles).toContain('prefers-reduced-motion');
+    expect(styles).toContain('var(--fw-bun-14-color-accent)');
+    expect(styles).toContain('var(--fw-bun-14-color-focus-ring)');
+    expect(styles).not.toMatch(
+      /var\(--(?:bg|surface|border|text|text-dim|accent)\)/
+    );
   });
 
   test('browser consumer rejects stale aliases and inconsistent rights before rendering', async () => {

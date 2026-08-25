@@ -4,8 +4,8 @@ import { describe, expect, test } from 'bun:test';
 import { portalTheme, renderThemeTokensCss } from '../lib/portal/theme.ts';
 
 describe('portal theme (jsonc loader)', () => {
-  test('theme.jsonc loads design-system v1.3', () => {
-    expect(portalTheme.version).toBe('1.3.0');
+  test('theme.jsonc loads design-system v1.4', () => {
+    expect(portalTheme.version).toBe('1.4.0');
     expect(portalTheme.colorSchemeDefault).toBe('dark');
     expect(portalTheme.dark.bg).toBe('#0d1117');
     expect(portalTheme.dark.orange).toBe('#db6d28');
@@ -29,6 +29,14 @@ describe('portal theme (jsonc loader)', () => {
     expect(portalTheme.semantic.tier.vip).toBe('var(--yellow)');
     expect(portalTheme.semantic.tier.sharp).toBe('var(--red)');
     expect(portalTheme.layers.card).toBe('var(--surface)');
+    expect(Object.keys(portalTheme.namespaces.bun14)).toHaveLength(16);
+    expect(portalTheme.namespaces.bun14.canvas).toBe('var(--bg-canvas)');
+    expect(portalTheme.namespaces.bun14.surfaceHover).toBe('var(--bg-elevated)');
+    expect(portalTheme.namespaces.bun14.accent).toBe('var(--tone-info)');
+    expect(portalTheme.namespaces.bun14.focusRing).toBe('var(--accent)');
+    for (const value of Object.values(portalTheme.namespaces.bun14)) {
+      expect(value).toMatch(/^var\(--[a-z0-9-]+\)$/);
+    }
     expect(portalTheme.typography.fontSizes.sm).toBe('0.75rem');
     expect(portalTheme.typography.fontWeights.semibold).toBe(600);
     expect(portalTheme.layout.spacing['4']).toBe('1rem');
@@ -64,6 +72,10 @@ describe('portal theme (jsonc loader)', () => {
     expect(css).toContain('--tier-vip: var(--yellow)');
     expect(css).toContain('--tier-sharp: var(--red)');
     expect(css).toContain('--bg-card: var(--surface)');
+    expect(css).toContain('--fw-bun-14-color-canvas: var(--bg-canvas)');
+    expect(css).toContain('--fw-bun-14-color-surface-hover: var(--bg-elevated)');
+    expect(css).toContain('--fw-bun-14-color-accent: var(--tone-info)');
+    expect(css).toContain('--fw-bun-14-color-focus-ring: var(--accent)');
     expect(css).toContain('--text-sm: 0.75rem');
     expect(css).toContain('--font-weight-semibold: 600');
     expect(css).toContain('--leading-normal: 1.45');

@@ -8,7 +8,7 @@
   // and existing boards. Nested scales (neutral, semantic, typography, …)
   // are additive design-system layers.
 
-  "version": "1.3.0",
+  "version": "1.4.0",
   "colorSchemeDefault": "dark",
 
   "dark": {
@@ -81,7 +81,7 @@
     // Kernel-grounded: values alias the light-scheme tokens (accent, green,
     // yellow, red, text, textDim, border). accentHover is the Primer-derived
     // emphasis step of light.accent. Enforced by portal:colors:check
-    // (component plane, Bun.color HEX).
+    // (component plane, alpha-preserving Bun.color {rgba}).
     "bg": "#ffffff",
     "border": "#d0d7de",
     "textMain": "#1f2328",
@@ -163,6 +163,30 @@
     "elevated": "var(--surface-hover)",
     "inverse": "var(--text)",
     "border": "var(--border)",
+  },
+
+  // Product/release surfaces receive namespaced role aliases only. Values must
+  // resolve through the shared FactoryWager palette and semantic kernel; never
+  // place a second palette or product-owned hex values in this section.
+  "namespaces": {
+    "bun14": {
+      "canvas": "var(--bg-canvas)",
+      "surface": "var(--bg-card)",
+      "surfaceHover": "var(--bg-elevated)",
+      "surfaceActive": "var(--badge-active)",
+      "border": "var(--layer-border)",
+      "text": "var(--text)",
+      "textMuted": "var(--text-dim)",
+      "textOnStrong": "var(--tone-on-strong)",
+      "accent": "var(--tone-info)",
+      "accentHover": "var(--link-hover)",
+      "accentSoft": "var(--accent-glow)",
+      "success": "var(--tone-ok)",
+      "warning": "var(--tone-warn)",
+      "danger": "var(--tone-bad)",
+      "info": "var(--tone-info)",
+      "focusRing": "var(--accent)",
+    },
   },
 
   "typography": {
