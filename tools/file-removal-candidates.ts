@@ -117,6 +117,7 @@ function humanReport(report: FileRemovalReport, options: CliOptions): void {
   console.info(
     `file-removal · ${s.filesScanned} files · ${s.candidates} candidates · ` +
       `${s.duplicateGroups} duplicate groups · ${s.exactDuplicateBytes} theoretical bytes · ` +
+      `${s.ownershipScopedDuplicateBytes} owner-scoped bytes · ` +
       `${s.safeReviewDuplicateBytes} safe-review bytes`
   );
   console.info('advisoryOnly=true · autoDeleteAllowed=false');
@@ -134,6 +135,7 @@ function humanReport(report: FileRemovalReport, options: CliOptions): void {
       bytes: row.bytes,
       lines: row.lines ?? '—',
       refs: row.inboundReferences.length + row.importedBy.length,
+      owner: row.ownership.boundary,
       path: row.path,
     }));
   logTable(rows);

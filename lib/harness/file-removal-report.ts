@@ -20,17 +20,41 @@ export function buildDuplicateGroups(
     const memberRows = members
       .map(member => rowByPath.get(member.path))
       .filter((row): row is FileInventoryRow => row !== undefined);
-    const canonicalPath = chooseCanonicalDuplicate(memberRows);
-    for (const row of memberRows) row.canonicalDuplicate = canonicalPath;
+    const byOwnership = new Map<string, FileInventoryRow[]>();
+    for (const row of memberRows) {
+      const boundary = row.ownership.boundary;
+      byOwnership.set(boundary, [...(byOwnership.get(boundary) ?? []), row]);
+    }
+    const canonicalPaths: string[] = [];
+    let reclaimableBytes = 0;
+    for (const boundaryRows of byOwnership.values()) {
+      if (boundaryRows.length < 2) continue;
+      const canonicalPath = chooseCanonicalDuplicate(boundaryRows);
+      canonicalPaths.push(canonicalPath);
+      reclaimableBytes += members[0]!.bytes * (boundaryRows.length - 1);
+      for (const row of boundaryRows) {
+        row.canonicalDuplicate = canonicalPath;
+        row.duplicatePaths = boundaryRows
+          .map(member => member.path)
+          .filter(path => path !== row.path)
+          .sort();
+      }
+    }
     groups.push({
       sha256: hash,
       bytesEach: members[0]!.bytes,
-      canonicalPath,
+      canonicalPaths: canonicalPaths.sort(),
+      ownershipBoundaries: [...byOwnership.keys()].sort(),
       paths: members.map(member => member.path).sort(),
-      reclaimableBytes: members[0]!.bytes * (members.length - 1),
+      theoreticalReclaimableBytes: members[0]!.bytes * (members.length - 1),
+      reclaimableBytes,
     });
   }
-  return groups.sort((a, b) => b.reclaimableBytes - a.reclaimableBytes);
+  return groups.sort(
+    (a, b) =>
+      b.theoreticalReclaimableBytes - a.theoreticalReclaimableBytes ||
+      a.sha256.localeCompare(b.sha256)
+  );
 }
 
 function emptyCounts<T extends string>(values: readonly T[]): Record<T, number> {
@@ -68,7 +92,18 @@ export function buildFileRemovalSummary(
     largeByLines: candidates.filter(row => row.largeByLines).length,
     largeByBytes: candidates.filter(row => row.largeByBytes).length,
     duplicateGroups: duplicateGroups.length,
-    exactDuplicateBytes: duplicateGroups.reduce((sum, group) => sum + group.reclaimableBytes, 0),
+    exactDuplicateBytes: duplicateGroups.reduce(
+      (sum, group) => sum + group.theoreticalReclaimableBytes,
+      0
+    ),
+    ownershipScopedDuplicateBytes: duplicateGroups.reduce(
+      (sum, group) => sum + group.reclaimableBytes,
+      0
+    ),
+    crossOwnershipDuplicateBytes: duplicateGroups.reduce(
+      (sum, group) => sum + group.theoreticalReclaimableBytes - group.reclaimableBytes,
+      0
+    ),
     safeReviewDuplicateBytes: candidates
       .filter(row => row.verdict === 'safe-review' || row.verdict === 'very-safe-review')
       .reduce((sum, row) => sum + row.reclaimableBytes, 0),

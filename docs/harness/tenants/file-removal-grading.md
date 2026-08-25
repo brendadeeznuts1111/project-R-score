@@ -9,6 +9,8 @@ The report combines:
 - SHA-256 exact-content groups;
 - Bun-native import scanning;
 - path, registry, feed, portal, and nested app-local `public/` references;
+- project/repository/feed ownership from `project-rss-channels.json`;
+- the nearest package boundary for every candidate;
 - generated-artifact markers;
 - Git tracking and dirty-state protection.
 
@@ -18,6 +20,14 @@ source files are split candidates, not removal candidates. Public files without
 visible references are reviewed for route wiring before removal. Root-relative
 browser URLs and sibling manifest assets resolve inside the nearest nested app,
 so identical assets owned by separate app roots are not treated as disposable.
+
+Exact content identity is global evidence, but deduplication is scoped to one
+owner. A candidate can reach `safe-review` only when another byte-identical copy
+exists inside the same project and nearest `package.json` boundary. Matches in
+another project or package remain visible as cross-ownership content matches,
+carry zero reclaimable bytes, and are retained for an owner handoff. An
+`unregistered` RSS state proves only that the project does not inherit the root
+Bun 1.4 feeds; it is not deletion authority.
 
 ## Safety grades
 
@@ -45,8 +55,9 @@ bun run files:rate-removal -- --json > reports/file-removal-candidates.stdout.js
 
 `--write` saves `reports/file-removal-candidates.json`, which is ignored by Git.
 The report declares `advisoryOnly: true` and `autoDeleteAllowed: false`. It
-reports theoretical exact-duplicate bytes separately from bytes represented by
-`safe-review` rows; neither number authorizes deletion.
+reports global theoretical exact-duplicate bytes, owner-scoped duplicate bytes,
+cross-ownership content bytes, and bytes represented by `safe-review` rows. None
+of those numbers authorizes deletion.
 
 The saved policy also carries the required post-cleanup checks for the Bun 1.4
 asset manifest, RSS channels, portal contracts, public discovery, and monorepo
