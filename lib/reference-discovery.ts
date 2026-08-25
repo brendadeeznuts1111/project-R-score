@@ -69,15 +69,18 @@ export type ReferenceDiscoveryOptions = {
 export const NAMING_CLUSTERS = [
   {
     id: 'registry-plane',
-    canonical: 'factoryWagerRegistryUrlFromEnv() · REGISTRY_URL · registry.factory-wager.com',
+    canonical:
+      'factoryWagerNpmRegistryUrlFromEnv() · factoryWagerRegistryUrlFromEnv() · registry.factory-wager.com',
     tokens: [
       'REGISTRY_URL',
+      'REGISTRY_PUBLIC_URL',
       'FACTORY_REGISTRY_URL',
+      'factoryWagerNpmRegistryUrlFromEnv',
       'factoryWagerRegistryUrlFromEnv',
       'registry.factory-wager.com',
       'registryHost',
     ],
-    repair: 'npm registry plane only — see docs/registry-client.md',
+    repair: 'npm read base and artifact origin are separate — see docs/registry-client.md',
   },
   {
     id: 'pages-plane',
@@ -219,7 +222,8 @@ async function scanLegacyDomains(files: string[]): Promise<ReferenceFinding[]> {
         title: 'Legacy registry host uses .co TLD (typo)',
         detail: 'Prefer registry.factory-wager.com (npm plane SSOT)',
         samples: [{ file: rel, line: lineNumber(text, m.index!), excerpt: m[0] }],
-        repair: 'Replace .co with .com or use factoryWagerRegistryUrlFromEnv()',
+        repair:
+          'Replace .co with .com and use the npm-base or artifact-origin helper for the intended plane',
       });
     }
   }

@@ -3,7 +3,11 @@
 // @see https://bun.com/docs/runtime/environment-variables#manually-specifying-env-files — --env-file
 // @see https://bun.com/docs/runtime/file-io — Bun.file, Bun.write
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
-import { CLOUDFLARE_DEFAULTS, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
+import {
+  CLOUDFLARE_DEFAULTS,
+  FACTORY_WAGER_NPM_REGISTRY_URL,
+  FACTORY_WAGER_REGISTRY_ORIGIN,
+} from '../config/r2-env.ts';
 import { jsonOut } from '../lib/console-depth.ts';
 import { fileExistsSync, joinPath, readText, resolvePath, writeText } from './lib/fs-bun';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
@@ -22,7 +26,8 @@ type Check = {
   detail: string;
 };
 
-const CANONICAL_REGISTRY_URL = factoryWagerRegistryUrlFromEnv();
+const CANONICAL_REGISTRY_URL = FACTORY_WAGER_REGISTRY_ORIGIN;
+const CANONICAL_NPM_REGISTRY_URL = FACTORY_WAGER_NPM_REGISTRY_URL;
 const CDN_REGISTRY_URL = CANONICAL_REGISTRY_URL;
 const DEFAULT_R2_BUCKET = CLOUDFLARE_DEFAULTS.registryDoctorBucket;
 
@@ -104,11 +109,7 @@ function canonicalRegistryConfigText(): string {
 }
 
 function canonicalNpmrcBlock(): string {
-  return `@factory-wager:registry=${CANONICAL_REGISTRY_URL}/
-@factorywager:registry=${CANONICAL_REGISTRY_URL}/
-//registry.factory-wager.com/:_authToken=\${FACTORY_WAGER_TOKEN}
-//registry.factory-wager.com/:always-auth=true
-`;
+  return `@factorywager:registry=${CANONICAL_NPM_REGISTRY_URL}\n`;
 }
 
 async function ensureRegistryConfig(path: string, fix: boolean): Promise<Check> {
@@ -163,10 +164,9 @@ async function ensureNpmrc(path: string, fix: boolean): Promise<Check> {
   const abs = resolvePath(path);
   const block = canonicalNpmrcBlock();
   const raw = fileExistsSync(abs) ? await readText(abs) : '';
-  const hasScopeA = raw.includes(`@factory-wager:registry=${CANONICAL_REGISTRY_URL}/`);
-  const hasScopeB = raw.includes(`@factorywager:registry=${CANONICAL_REGISTRY_URL}/`);
-  const hasAuth = raw.includes(`//registry.factory-wager.com/:_authToken=\${FACTORY_WAGER_TOKEN}`);
-  if (hasScopeA && hasScopeB && hasAuth) {
+  const hasScope = raw.includes(`@factorywager:registry=${CANONICAL_NPM_REGISTRY_URL}`);
+  const leaksPublicToken = /registry\.factory-wager\.com.*_authToken/.test(raw);
+  if (hasScope && !leaksPublicToken) {
     return { id: 'npmrc_canonical', ok: true, detail: abs };
   }
   if (!fix) {
@@ -185,7 +185,8 @@ async function checkPackagePublishConfig(): Promise<Check> {
   const pkgPath = resolvePath('package.json');
   const pkg = JSON.parse(await readText(pkgPath)) as any;
   const registry = String(pkg?.publishConfig?.registry || '');
-  const ok = registry === `${CANONICAL_REGISTRY_URL}/` || registry === CANONICAL_REGISTRY_URL;
+  const ok =
+    registry === `${CANONICAL_NPM_REGISTRY_URL}/` || registry === CANONICAL_NPM_REGISTRY_URL;
   return {
     id: 'package_publish_registry',
     ok,
@@ -205,6 +206,7 @@ async function runDoctor(options: Options) {
     fixApplied: options.fix,
     canonical: {
       registryUrl: CANONICAL_REGISTRY_URL,
+      npmRegistryUrl: CANONICAL_NPM_REGISTRY_URL,
       cdnUrl: CDN_REGISTRY_URL,
       r2Bucket: DEFAULT_R2_BUCKET,
     },

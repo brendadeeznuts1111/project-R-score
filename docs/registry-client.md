@@ -97,11 +97,12 @@ exists (served from the R2-backed index).
 Three planes share "registry" vocabulary — do not cross them. Canonical names
 (scanner: `naming-cluster` findings in `bun tools/reference-discovery.ts`):
 
-| Plane        | Canonical                                                                             | Scope                                                          |
-| ------------ | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com`    | artifact resolve/publish (this doc)                            |
-| Pages public | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com` | Pages portal + routing probes — never `bun publish --registry` |
-| R2 bucket    | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry`    | object store bucket — see `config/r2-env.ts`                   |
+| Plane               | Canonical                                                                                 | Scope                                                          |
+| ------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| npm read registry   | `factoryWagerNpmRegistryUrlFromEnv()` · `REGISTRY_URL` · `/api/npm`                       | `bun info` and scoped installs; GET/HEAD only                  |
+| artifact API origin | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_PUBLIC_URL` · `registry.factory-wager.com` | artifact resolve/download; production writes go direct to R2   |
+| Pages public        | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com`     | Pages portal + routing probes — never `bun publish --registry` |
+| R2 bucket           | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry`        | object store bucket — see `config/r2-env.ts`                   |
 
 ### Proxy transport
 

@@ -32,7 +32,9 @@ bun run reference:discover:check
      `similar-env`
    - `info` · `naming-cluster` — consolidate docs; not blocking
 3. **Apply SSOT** (registry / Pages split)
-   - npm plane → `factoryWagerRegistryUrlFromEnv()` · `docs/registry-client.md`
+   - npm read plane → `factoryWagerNpmRegistryUrlFromEnv()` · `REGISTRY_URL`
+   - artifact API origin → `factoryWagerRegistryUrlFromEnv()` ·
+     `REGISTRY_PUBLIC_URL`
    - Pages plane → `resolveRoutingProbeBaseUrl()` · `config/r2-env.ts`
 4. **Re-run related gates**
    - `bun tools/doc-map-check.ts`

@@ -2,9 +2,9 @@ import type { VaultMapFile } from '../security/vault-map.ts';
 
 export const TENNIS_AGENT_AUTH_KIND = 'tennis-hq-agent-auth' as const;
 export const TENNIS_AGENT_AUTH_PATH = '/registry/tennis/agent-auth.json' as const;
-export const TENNIS_AGENT_AUTH_SCHEMA_VERSION = 3 as const;
+export const TENNIS_AGENT_AUTH_SCHEMA_VERSION = 4 as const;
 export const TENNIS_AGENT_AUTH_ENV_KEY = 'FACTORY_WAGER_TOKEN' as const;
-export const TENNIS_AGENT_AUTH_REGISTRY_URL = 'https://registry.factory-wager.com/' as const;
+export const TENNIS_AGENT_AUTH_REGISTRY_URL = 'https://registry.factory-wager.com/api/npm' as const;
 export const TENNIS_HQ_RUNTIME_URL = 'https://tennis.factory-wager.com' as const;
 
 export type TennisAgentAuthArtifact = {
@@ -30,7 +30,7 @@ export type TennisAgentAuthArtifact = {
     operatorEnvFile: string;
     inject: string;
     npmrcLine: string;
-    bunfigScopes: readonly ['@factorywager', '@factory-wager', '@factory'];
+    bunfigScopes: readonly ['@factorywager'];
   };
   planes: {
     read: string;
@@ -95,8 +95,8 @@ export function buildTennisAgentAuthArtifact(
     handoff: {
       operatorEnvFile: '~/.reasonix/tennis-hq-registry-token.env',
       inject: `export ${TENNIS_AGENT_AUTH_ENV_KEY} from vault or operator handoff; never commit`,
-      npmrcLine: '//registry.factory-wager.com/:_authToken=${FACTORY_WAGER_TOKEN}',
-      bunfigScopes: ['@factorywager', '@factory-wager', '@factory'],
+      npmrcLine: '@factorywager:registry=https://registry.factory-wager.com/api/npm',
+      bunfigScopes: ['@factorywager'],
     },
     planes: {
       read: 'Public Pages/R2 mirror — GET/HEAD without token',

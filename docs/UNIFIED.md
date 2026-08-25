@@ -184,11 +184,12 @@ before promotion. Pages `BUN_VERSION` is a separate deploy pin.
 - **Scope→registry mapping: bunfig `[install.scopes]` owns it for Bun** (Bun
   itself recommends migrating `.npmrc` → bunfig —
   [pm/npmrc](https://bun.com/docs/pm/npmrc)). `.npmrc` registry/auth lines
-  remain only for non-Bun tooling (vite/npm clients). Both scope spellings exist
-  (`@factorywager` and `@factory-wager`); bunfig maps both. **Registry URL
-  variants:** root `bunfig.toml` scopes use `http://localhost:3000/` for local
-  `serve-public`; production/apex is `https://registry.factory-wager.com/` — do
-  not assume one URL in docs or scripts without naming which lane.
+  remain only for non-Bun tooling (vite/npm clients). The supported package
+  scope is `@factorywager`. Production metadata and installs use the public,
+  read-only npm base `https://registry.factory-wager.com/api/npm`; the artifact
+  API origin is `https://registry.factory-wager.com`. Production writes use
+  `factory publish` directly to R2, not `bun publish`. Local registry testing is
+  an explicit override via `--config ./bunfig.local-registry.toml`.
 - **`bunfig.toml` does not inherit upward.** A nested workspace root (e.g.
   `projects/active/factorywager/registry/`) reads only its own `./bunfig.toml` +
   `~/.bunfig.toml` — it needs its own `frozenLockfile = false` dev override.
@@ -310,8 +311,9 @@ absolute machine `cache.dir`; never set cache env in IDE; never
 exact = true
 frozenLockfile = true
 # linker / globalStore / cache.dir / minimumReleaseAge(+Excludes): machine ~/.bunfig.toml only
-# Scope mapping SSOT here [install.scopes] — local dev: http://localhost:3000/
-# Production apex: https://registry.factory-wager.com/ · token "$FACTORY_WAGER_TOKEN"
+# Scope mapping SSOT here [install.scopes]:
+# "@factorywager" = { url = "https://registry.factory-wager.com/api/npm" }
+# Local opt-in: --config ./bunfig.local-registry.toml
 # Nested workspace roots may set frozenLockfile = false — bunfig does not inherit upward.
 # Intentional root dep edit: temporarily false → bun add/update → restore true.
 ```
@@ -383,12 +385,13 @@ pins. Always inspect `bun why` before `remove:safe`.
 **CI runners:** `setup-factory-bun` writes a regular `~/.bunfig.toml` via
 `machine:bunfig:ensure --overwrite` so doctor/fingerprint gates are portable.
 `--overwrite` refuses a symlink (dotfiles SSOT); `--overwrite-link` is the
-explicit flatten. Default ensure restores `~/dotfiles/bun/bunfig.toml` when
-that target exists and `~/.bunfig.toml` is missing. Template is the CI/bootstrap
-seed; `--check` reads through the link and fails if `$XDG_CONFIG_HOME/.bunfig.toml`
-exists (Bun prefers it). Dangling `~/.bunfig.toml` is not reported as missing.
-Effective install merge, policy labels, and `bunfig:bake` use that XDG file when present, otherwise `~/.bunfig.toml`.
-`~/.bun/install/global/bunfig.toml` is not a Bun config path.
+explicit flatten. Default ensure restores `~/dotfiles/bun/bunfig.toml` when that
+target exists and `~/.bunfig.toml` is missing. Template is the CI/bootstrap
+seed; `--check` reads through the link and fails if
+`$XDG_CONFIG_HOME/.bunfig.toml` exists (Bun prefers it). Dangling
+`~/.bunfig.toml` is not reported as missing. Effective install merge, policy
+labels, and `bunfig:bake` use that XDG file when present, otherwise
+`~/.bunfig.toml`. `~/.bun/install/global/bunfig.toml` is not a Bun config path.
 
 ```bash
 # Project-scoped install verification (11 aspects — toolchain + config + platform + linker)
@@ -496,14 +499,14 @@ SSOT: `tools/bun-install-env.ts` · runtime proof: `tools/verify-install-env.ts`
 · **8 probe rows** in `public/registry/install-env-proof.json` (6 env vars +
 `install.scopes` npm plane + `registry-read-plane` SDK plane).
 
-| Probe                      | Legitimate use                                                                                             |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `BUN_CONFIG_REGISTRY`      | CI override or ephemeral local registry in tools                                                           |
-| `BUN_CONFIG_TOKEN`         | CI secrets for private registry only                                                                       |
-| `BUN_CONFIG_YARN_LOCKFILE` | migration / dual-lockfile experiments                                                                      |
-| `BUN_CONFIG_SKIP_*`        | isolated probes in verification scripts only                                                               |
-| `install.scopes`           | `@factorywager` → `http://localhost:3000/` (dev) or `https://registry.factory-wager.com/` (apex) in bunfig |
-| `registry-read-plane`      | `RegistryClient.health()` / `fetchIndex()` against `/api/registry/*` (R2-backed read plane)                |
+| Probe                      | Legitimate use                                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `BUN_CONFIG_REGISTRY`      | CI override or ephemeral local registry in tools                                                     |
+| `BUN_CONFIG_TOKEN`         | CI secrets for private registry only                                                                 |
+| `BUN_CONFIG_YARN_LOCKFILE` | migration / dual-lockfile experiments                                                                |
+| `BUN_CONFIG_SKIP_*`        | isolated probes in verification scripts only                                                         |
+| `install.scopes`           | `@factorywager` → `https://registry.factory-wager.com/api/npm` in bunfig; local override is explicit |
+| `registry-read-plane`      | `RegistryClient.health()` / `fetchIndex()` against `/api/registry/*` (R2-backed read plane)          |
 
 **Registry client SDK** — canonical:
 [`docs/registry-client.md`](registry-client.md). SSOT:

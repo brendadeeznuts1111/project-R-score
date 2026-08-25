@@ -1,0 +1,4 @@
+# Explicit local npm-registry override. Use only while `bun run serve:public` is running.
+# Example: bun --config ./bunfig.local-registry.toml info @factorywager/registry-client
+[install.scopes]
+"@factorywager" = { url = "http://localhost:3000/" }

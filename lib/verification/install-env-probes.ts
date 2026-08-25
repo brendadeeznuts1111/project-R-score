@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+// @updated --dry-run · fixed v1.3.4 · 2025-12-06 · https://bun.com/blog/bun-v1.3.4
+// @updated --dry-run · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @verified --dry-run · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/pm/cli/install#dry-run
 // @see https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/registry-client/README.md — RegistryClient
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
@@ -12,7 +16,10 @@
  */
 import { joinPath } from '../path-bun.ts';
 import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
-import { factoryWagerRegistryUrlFromEnv } from '../../config/r2-env.ts';
+import {
+  factoryWagerNpmRegistryUrlFromEnv,
+  factoryWagerRegistryUrlFromEnv,
+} from '../../config/r2-env.ts';
 import { RegistryClient } from '@factorywager/registry-client';
 import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { resolveVerificationBunBinary } from './resolve-bun-binary.ts';
@@ -29,18 +36,22 @@ export const SCOPED_REGISTRY_PROBE_VERSION = '1.0.0';
 export const SCOPED_REGISTRY_LANES = [
   {
     id: 'env-registry-url',
-    label: 'REGISTRY_URL / FACTORY_REGISTRY_URL',
-    resolveUrl: () => Bun.env.REGISTRY_URL || Bun.env.FACTORY_REGISTRY_URL || '',
+    label: 'REGISTRY_URL',
+    resolveUrl: () => Bun.env.REGISTRY_URL || '',
+    resolveArtifactOrigin: () =>
+      (Bun.env.REGISTRY_PUBLIC_URL || Bun.env.REGISTRY_URL || '').replace(/\/api\/npm\/?$/i, ''),
   },
   {
     id: 'local-serve-public',
     label: 'serve-public (local R2-backed)',
     resolveUrl: () => 'http://localhost:3000/',
+    resolveArtifactOrigin: () => 'http://localhost:3000/',
   },
   {
     id: 'production-apex',
-    label: 'registry.factory-wager.com (R2 CDN)',
-    resolveUrl: () => factoryWagerRegistryUrlFromEnv(),
+    label: 'registry.factory-wager.com npm gateway',
+    resolveUrl: () => factoryWagerNpmRegistryUrlFromEnv(),
+    resolveArtifactOrigin: () => factoryWagerRegistryUrlFromEnv(),
   },
 ] as const;
 

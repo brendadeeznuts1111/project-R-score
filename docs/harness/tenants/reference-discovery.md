@@ -16,8 +16,9 @@ domain, or warn-tier drift in harness perimeter.
 3. Fix **warnings** (`legacy-domain`, `skill-broken-link`, `unused-canonical`,
    high-similarity env pairs)
 4. Consolidate naming on SSOT:
-   - npm → `factoryWagerRegistryUrlFromEnv()` ·
-     [`docs/registry-client.md`](../../registry-client.md)
+   - npm read base → `factoryWagerNpmRegistryUrlFromEnv()`
+   - artifact API origin → `factoryWagerRegistryUrlFromEnv()`
+   - registry contract → [`docs/registry-client.md`](../../registry-client.md)
    - Pages → `resolveRoutingProbeBaseUrl()` ·
      [`config/r2-env.ts`](../../../config/r2-env.ts)
    - R2 bucket alias → `resolveR2BucketName()` in

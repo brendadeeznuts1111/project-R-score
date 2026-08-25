@@ -1,12 +1,16 @@
 # FactoryWager Brand & Infrastructure Alignment
 
 **Role** Domain map · email · naming · vaults (human SSOT for brand plane).
-**Tunnels / machine cloudflared** → [`docs/harness/tenants/tunnel-inventory.md`](harness/tenants/tunnel-inventory.md) (not duplicated here).
-**Routing (local vs Pages)** → [`docs/platform-routing.md`](platform-routing.md).
+**Tunnels / machine cloudflared** →
+[`docs/harness/tenants/tunnel-inventory.md`](harness/tenants/tunnel-inventory.md)
+(not duplicated here). **Routing (local vs Pages)** →
+[`docs/platform-routing.md`](platform-routing.md).
 
 ## Domain Structure
 
-Verified live (dig + curl 2026-08-04 — status in parentheses; `terminal` CNAME removal re-checked 2026-07-29):
+Verified live (dig + curl 2026-08-04 — status in parentheses; `terminal` CNAME
+removal re-checked 2026-07-29):
+
 ```
 factory-wager.com          → Pages (project-r-score, apex)
   www.factory-wager.com    → Pages (same as apex)
@@ -18,12 +22,14 @@ factory-wager.com          → Pages (project-r-score, apex)
 ```
 
 Resolves but misleading (do not treat as functional endpoints):
+
 ```
   health.factory-wager.com   → Pages vanity CNAME — serves app landing, NOT the health endpoint (real: score.factory-wager.com/health)
   telegram.factory-wager.com → Pages vanity CNAME — serves app landing, NOT the webhook (real: score…/api/telegram/webhook/{tenant})
 ```
 
 Not resolving (no DNS records):
+
 ```
 reasonix.factory-wager.com, api, mail, news, backup, status,
 terminal.factory-wager.com (CNAME deleted 2026-07-28 — was dangling tunnel),
@@ -31,6 +37,7 @@ support.factory-wager.com (CNAME deleted 2026-07-28 — was broken HelpScout)
 ```
 
 ## Email
+
 ```
 admin@factory-wager.com    → Proton Mail (org admin)
 dev@factory-wager.com      → Proton Mail (developer)
@@ -39,6 +46,7 @@ team@factory-wager.com     → Group (admin+dev+bot)
 ```
 
 ## Naming
+
 ```
 Org: APEX-BIOLABS
 Email: apexbiolabsdirect@proton.me
@@ -47,24 +55,30 @@ GitHub: brendadeeznuts1111
 ```
 
 ## Registry
+
 ```
-Production: https://registry.factory-wager.com/
-Local dev:  http://localhost:3000/
-Scope: @factorywager, @factory-wager, @factory
+Artifact origin: https://registry.factory-wager.com/
+npm read base:   https://registry.factory-wager.com/api/npm
+Local dev:       http://localhost:3000/
+Scope:           @factorywager
+Production write: factory publish → R2 (no bun publish endpoint)
 ```
 
 ## Proton Pass Vaults
-| Vault | Purpose | Agent |
-|-------|---------|-------|
-| factorywager | Monorepo + Telegram secrets | factorywager-agent |
-| cloudflare | DNS/R2/Pages keys | cloudflare-agent |
-| bet-ticker | Poller/token secrets | bet-ticker-agent |
-| cascade-mover | Sports intelligence | cascade-agent |
-| Personal | Personal SSH key | — |
 
-> Telegram secrets live in the `factorywager` vault — the retired `tenants` vault is not accessible to the `factorywager-bot` PAT.
+| Vault         | Purpose                     | Agent              |
+| ------------- | --------------------------- | ------------------ |
+| factorywager  | Monorepo + Telegram secrets | factorywager-agent |
+| cloudflare    | DNS/R2/Pages keys           | cloudflare-agent   |
+| bet-ticker    | Poller/token secrets        | bet-ticker-agent   |
+| cascade-mover | Sports intelligence         | cascade-agent      |
+| Personal      | Personal SSH key            | —                  |
+
+> Telegram secrets live in the `factorywager` vault — the retired `tenants`
+> vault is not accessible to the `factorywager-bot` PAT.
 
 ## Agent Access
+
 ```bash
 source scripts/agent-env.sh <vault-name>
 ```

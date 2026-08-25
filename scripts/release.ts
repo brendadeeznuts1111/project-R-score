@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
+// @verified Bun.$ · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/shell
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -157,10 +159,9 @@ async function main(): Promise<void> {
   console.info(`   4. Tag once: git tag -a ${tag} -m "FactoryWager ${tag}"`);
   console.info(`   5. Push the commit: git push origin main`);
   console.info(`   6. Push only this tag: git push origin refs/tags/${tag}`);
-  console.info(
-    `   7. Publish: bun run pack:all && bun publish dist/packs/*.tgz --registry=${REGISTRY_URL}`
-  );
-  console.info(`   8. Upload to R2: bun run r2:sync`);
+  console.info(`   7. Pack: bun run pack:all`);
+  console.info(`   8. Publish one reviewed archive: bun run factory:publish -- <archive>`);
+  console.info(`   9. Refresh the read snapshot after the R2 write`);
 }
 
 if (import.meta.main) {

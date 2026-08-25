@@ -49,6 +49,8 @@ export const CLOUDFLARE_DEFAULTS = {
   wikiHost: 'wiki.factory-wager.com',
   /** HTTPS package registry (npm / CDN front). */
   registryHost: 'registry.factory-wager.com',
+  /** Read-only npm packument prefix on the registry host. */
+  registryNpmPath: '/api/npm',
   /** Default registry object store path (pack/release/changelog scripts). */
   registryBucket: 'factory-wager-registry',
   /** Doctor / deploy fallback when no R2_* bucket env is set. */
@@ -91,6 +93,11 @@ function parseTruthy(raw: string, defaultValue: boolean): boolean {
 }
 
 const PLACEHOLDER_RE = /^(your_|replace_me|changeme|xxx|TODO|place.?holder)/i;
+
+export const FACTORY_WAGER_REGISTRY_ORIGIN =
+  `https://${CLOUDFLARE_DEFAULTS.registryHost}` as const;
+export const FACTORY_WAGER_NPM_REGISTRY_URL =
+  `${FACTORY_WAGER_REGISTRY_ORIGIN}${CLOUDFLARE_DEFAULTS.registryNpmPath}` as const;
 
 function isUsableSecret(value: string): boolean {
   return Boolean(value) && !PLACEHOLDER_RE.test(value);
@@ -157,10 +164,18 @@ export function searchBenchR2PublicBaseFromEnv(): string {
   return envString('SEARCH_BENCH_R2_PUBLIC_BASE');
 }
 
-/** FactoryWager npm registry URL (`REGISTRY_URL` overlay; `bun publish --registry`). */
-// @see https://bun.com/docs/pm/cli/publish#registry-configuration
+/** FactoryWager artifact registry origin (`REGISTRY_PUBLIC_URL` overlay). */
 export function factoryWagerRegistryUrlFromEnv(): string {
-  return envString('REGISTRY_URL', `https://${CLOUDFLARE_DEFAULTS.registryHost}`);
+  return envString('REGISTRY_PUBLIC_URL', FACTORY_WAGER_REGISTRY_ORIGIN);
+}
+
+/** Public, read-only npm registry base used by `bun info` and scoped installs. */
+// @see https://bun.com/docs/pm/cli/info
+export function factoryWagerNpmRegistryUrlFromEnv(): string {
+  return envString(
+    'REGISTRY_URL',
+    FACTORY_WAGER_NPM_REGISTRY_URL
+  );
 }
 
 export function factoryWagerWikiUrl(): string {
@@ -315,7 +330,8 @@ export function describeCloudflareEnv() {
     zone: CLOUDFLARE_ZONE,
     desiredBuild: cloudflarePagesDesiredBuild(),
     wikiUrl: factoryWagerWikiUrl(),
-    registryUrl: factoryWagerRegistryUrlFromEnv(),
+    registryOrigin: factoryWagerRegistryUrlFromEnv(),
+    npmRegistryUrl: factoryWagerNpmRegistryUrlFromEnv(),
     r2BucketUrl: r2BucketUrlFromEnv(),
     secrets,
     identity: CLOUDFLARE_ENV_KEYS.identity.map(presence),
@@ -572,6 +588,7 @@ async function runCloudflareEnvCli(): Promise<void> {
     }
     console.log(`  wiki          ${factoryWagerWikiUrl()}`);
     console.log(`  registry      ${factoryWagerRegistryUrlFromEnv()}`);
+    console.log(`  npmRegistry   ${factoryWagerNpmRegistryUrlFromEnv()}`);
     console.log(`  r2BucketUrl   ${r2BucketUrlFromEnv()}`);
   }
 }

@@ -12,7 +12,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun tools/bun-utils-registry-proof.ts
  *   bun tools/bun-utils-registry-proof.ts --write
  *   bun tools/bun-utils-registry-proof.ts --write --json
- *   REGISTRY_URL=… API_KEY=… bun tools/bun-utils-registry-proof.ts --publish
+ *   REGISTRY_PUBLIC_URL=… API_KEY=… bun tools/bun-utils-registry-proof.ts --publish
  *
  * Writes under public/registry/@factorywager/bun-utils-test/ (Pages static +
  * allowlisted for /api/registry/@factorywager/* when mirrored to R2).

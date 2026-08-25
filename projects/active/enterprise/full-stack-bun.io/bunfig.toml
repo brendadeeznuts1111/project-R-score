@@ -8,7 +8,6 @@ sourcemap = "external"
 
 [install]
 exact = true
-registry = "https://registry.factory-wager.com"
 # minimumReleaseAge inherited from machine ~/.bunfig.toml (3-day gate)
 linkWorkspacePackages = false
 globalBinDir = "./my-portal/packages/templates/bun-transformer/dist"
@@ -34,8 +33,7 @@ hoistPattern = [
 ]
 
 [install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
+"@factorywager" = { url = "https://registry.factory-wager.com/api/npm" }
 # Scope-specific configurations
 "@types" = { "hoist" = true }
 "eslint" = { "hoist" = true }
@@ -50,6 +48,3 @@ axios = "^0.20.0"  # Only exclude vulnerable versions
 
 [install.security]
 scanner = "@socketsecurity/bun-security-scanner"
-
-[publish]
-registry = "https://registry.factory-wager.com"

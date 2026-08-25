@@ -12,7 +12,8 @@ default_prompt: |
      - skip unused-canonical unless user asked
      - info · naming-cluster — document only
   3. Repair against config/r2-env.ts and docs/registry-client.md SSOT
-     - npm plane → factoryWagerRegistryUrlFromEnv()
+     - npm read plane → factoryWagerNpmRegistryUrlFromEnv()
+     - artifact origin → factoryWagerRegistryUrlFromEnv()
      - Pages plane → resolveRoutingProbeBaseUrl()
   4. Hand off to Audit Gap Close agent — bun run audit:verify · tenant gap map
      For public/portal/registry gaps → Public Discovery · bun run public:discover:check

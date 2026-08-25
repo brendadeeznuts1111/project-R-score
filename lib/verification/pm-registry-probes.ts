@@ -1,3 +1,12 @@
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @updated Bun.fileURLToPath · changed v1.0.30 · 2024-03-04 · https://bun.com/blog/bun-v1.0.30
+// @verified Bun.fileURLToPath · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/api/spawn — Bun.spawnSync
@@ -22,6 +31,7 @@ import {
   publishPlaneModeConceptId,
   type PublishPlaneColorBlock,
 } from './publish-plane-color.ts';
+import { factoryWagerNpmRegistryUrlFromEnv } from '../../config/r2-env.ts';
 
 export const PM_PACKAGE_NAME = '@factorywager/registry-client';
 export const PM_PACKAGE_DIR = 'packages/registry-client';
@@ -41,7 +51,7 @@ export const PM_PROOF_BOARD_PATH = '/portal/packages/' as const;
 export const PM_PROOF_WEAVE_PATH = '/registry/portal-weave.json' as const;
 
 const REPO_ROOT = Bun.fileURLToPath(new URL('../../', import.meta.url));
-const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/api/npm';
+const DEFAULT_REGISTRY = factoryWagerNpmRegistryUrlFromEnv();
 
 export interface PmSpawnResult {
   exitCode: number;

@@ -12,6 +12,7 @@ import {
   cloudflarePagesDesiredBuild,
   cloudflareDashboardUrlFromEnv,
   factoryWagerRegistryUrlFromEnv,
+  factoryWagerNpmRegistryUrlFromEnv,
   factoryWagerWikiUrl,
   r2BenchPrefixFromEnv,
   r2BucketFromEnv,
@@ -66,6 +67,10 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(bucketUrl.startsWith('https://')).toBe(true);
     expect(bucketUrl).toContain('.r2.cloudflarestorage.com');
     expect(factoryWagerRegistryUrlFromEnv()).toContain(CLOUDFLARE_DEFAULTS.registryHost);
+    expect(factoryWagerRegistryUrlFromEnv()).toBe('https://registry.factory-wager.com');
+    expect(factoryWagerNpmRegistryUrlFromEnv()).toBe(
+      'https://registry.factory-wager.com/api/npm'
+    );
     expect(factoryWagerWikiUrl()).toBe(`https://${CLOUDFLARE_DEFAULTS.wikiHost}`);
     expect(CLOUDFLARE_DEFAULTS.registryDoctorBucket).toBe('npm-registry');
     expect(factoryRegistryBucketFromEnv().length).toBeGreaterThan(0);
@@ -102,7 +107,8 @@ describe('config/r2-env Cloudflare SSOT', () => {
     const text = await Bun.file('.env.example').text();
     expect(text).toContain('BUN_VERSION=1.4.0');
     expect(text).toContain('SKIP_DEPENDENCY_INSTALL=true');
-    expect(text).toContain('REGISTRY_URL=https://registry.factory-wager.com');
+    expect(text).toContain('REGISTRY_URL=https://registry.factory-wager.com/api/npm');
+    expect(text).toContain('REGISTRY_PUBLIC_URL=https://registry.factory-wager.com');
     // Channel/outbox plane bucket (doctor fallback remains CLOUDFLARE_DEFAULTS.registryDoctorBucket)
     expect(text).toContain('R2_REGISTRY_BUCKET=factory-wager-registry');
     expect(text).not.toContain('CLOUDFLARE_PAGES_PROJECT=');

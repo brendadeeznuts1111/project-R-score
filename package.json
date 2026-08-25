@@ -1734,6 +1734,7 @@
     "dev:portal": "SERVE_PUBLIC_DEV=1 bun run serve:public:hot",
     "audit:bunfig": "bash scripts/audit-bunfig.sh",
     "audit:bunfig:strict": "bash scripts/audit-bunfig.sh --strict",
+    "registry:config:check": "bun scripts/check-registry-config.ts",
     "build:affected": "bun scripts/affected-workspaces.ts build",
     "test:affected": "bun scripts/affected-workspaces.ts test",
     "test": "NODE_ENV=test bun test --parallel --timeout=30000 --pass-with-no-tests tests",

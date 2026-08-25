@@ -150,9 +150,9 @@ export const ENV_CHECK_SPECS: Spec[] = [
     key: 'REGISTRY_URL',
     group: 'registry',
     severity: 'recommended',
-    anyOf: ['REGISTRY_URL', 'FACTORY_REGISTRY_URL'],
+    anyOf: ['REGISTRY_URL'],
     hasCodeDefault: true,
-    note: `npm publish/install plane (default https://${CLOUDFLARE_DEFAULTS.registryHost}); see bun publish --registry`,
+    note: `npm read/install plane (default https://${CLOUDFLARE_DEFAULTS.registryHost}${CLOUDFLARE_DEFAULTS.registryNpmPath}); production writes use factory publish → R2`,
   },
   {
     key: 'ROUTING_PROBE_BASE_URL',
@@ -166,6 +166,8 @@ export const ENV_CHECK_SPECS: Spec[] = [
     key: 'REGISTRY_PUBLIC_URL',
     group: 'registry',
     severity: 'optional',
+    hasCodeDefault: true,
+    note: `artifact API origin (default https://${CLOUDFLARE_DEFAULTS.registryHost}); distinct from REGISTRY_URL`,
   },
   {
     key: 'REGISTRY_SECRET',

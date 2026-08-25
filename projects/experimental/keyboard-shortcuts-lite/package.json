@@ -42,7 +42,7 @@
   },
   "publishConfig": {
     "access": "public",
-    "registry": "https://registry.factory-wager.com"
+    "registry": "https://registry.factory-wager.com/api/npm"
   },
   "peerDependencies": {
     "typescript": "5.9.3"

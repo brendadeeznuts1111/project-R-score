@@ -7,6 +7,7 @@ export const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'scripts/verify-install-cache.ts', '--strict', '--quiet', '--skip-cache-size'],
   },
   { name: 'cache-lifecycle', cmd: ['bun', 'run', 'install:cache:lifecycle'] },
+  { name: 'registry-config', cmd: ['bun', 'run', 'registry:config:check'] },
   { name: 'hygiene', cmd: ['bun', 'run', 'hygiene'] },
   { name: 'agent-skills', cmd: ['bun', 'run', 'skills:validate'] },
   { name: 'native-docs', cmd: ['bun', 'run', 'docs:native:check'] },

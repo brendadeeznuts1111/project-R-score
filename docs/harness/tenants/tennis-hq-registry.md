@@ -55,45 +55,45 @@ it is not delegated to an external Git integration. Cloudflare owns DNS and TLS
 for the Worker Custom Domain, while this repository owns its inventory and
 consumer evidence.
 
-| Proof            | Value                                                                                                |
-| ---------------- | ---------------------------------------------------------------------------------------------------- |
-| Runtime          | `https://tennis.factory-wager.com`                                                                   |
-| Worker           | `tennis-hq`                                                                                          |
+| Proof            | Value                                                                                                                                                                                                                                    |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Runtime          | `https://tennis.factory-wager.com`                                                                                                                                                                                                       |
+| Worker           | `tennis-hq`                                                                                                                                                                                                                              |
 | Production tip   | [`8f21bf2`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/commit/8f21bf25ce47f11828a388a5e77650152104a2be) · `tennis-hq@1.4.0` · `/api/version` · `feat(edge): R2-only partner ledger/executions snapshots (no D1) (#13)` |
-| Deployment id    | `a930f52c-4160-4240-af1c-56e4444a9727` (from `/api/version` · `deploymentId`)                         |
-| Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod`)          |
-| Verified         | 2026-08-06 · tip `8f21bf2` · ledger+executions **R2 cache** (`meta.cache=url`) · favicon.ico **200** · unauth all five v1 **401** · desk serverFn **200** with `x-tsr-serverFn: true` |
-| Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                  |
-| Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections |
+| Deployment id    | `a930f52c-4160-4240-af1c-56e4444a9727` (from `/api/version` · `deploymentId`)                                                                                                                                                            |
+| Git tip (`main`) | Matches production tip after Wrangler redeploy (`cloudflare:deploy` + `deploy:verify:prod`)                                                                                                                                              |
+| Verified         | 2026-08-06 · tip `8f21bf2` · ledger+executions **R2 cache** (`meta.cache=url`) · favicon.ico **200** · unauth all five v1 **401** · desk serverFn **200** with `x-tsr-serverFn: true`                                                    |
+| Inventory        | `config/surfaces.toml` → `/registry/surfaces-state.json` (re-bake after tip change)                                                                                                                                                      |
+| Cross-host probe | `bun run verify:weave -- --subdomains` → version, glossary, all five configured v1 bearer rejections                                                                                                                                     |
 
 Producer service auth is a distinct boundary from FactoryWager registry auth.
 `FACTORY_WAGER_TOKEN` is not sent to Tennis HQ. The producer accepts its own
 `PARTNER_API_TOKEN` (Proton Pass + Worker secret). Unauthenticated v1 reads
 return HTTP **401** `unauthorized` when the secret is configured, or **503**
-`contract_auth_unconfigured` only when the secret is missing from the Worker;
-an unconfigured HTTP 503 is not release-ready.
+`contract_auth_unconfigured` only when the secret is missing from the Worker; an
+unconfigured HTTP 503 is not release-ready.
 
 ## Registry agent auth status: configured
 
-| Check            | Value                                                                       |
-| ---------------- | --------------------------------------------------------------------------- |
-| Vault item       | `factorywager` / **FactoryWager Registry Token**                            |
-| Monorepo inject  | `env.template` → `FACTORY_WAGER_TOKEN={{ pass://… }}`                       |
-| Vault map note   | `config/vault-map.toml` `[env.FACTORY_WAGER_TOKEN].note`                    |
-| Portal mark      | `bun run tennis:agent-auth:bake` → `public/registry/tennis/agent-auth.json` |
-| Operator handoff | `~/.reasonix/tennis-hq-registry-token.env` (mode 600, not committed)        |
+| Check            | Value                                                                                                                                                                                                                              |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vault item       | `factorywager` / **FactoryWager Registry Token**                                                                                                                                                                                   |
+| Monorepo inject  | `env.template` → `FACTORY_WAGER_TOKEN={{ pass://… }}`                                                                                                                                                                              |
+| Vault map note   | `config/vault-map.toml` `[env.FACTORY_WAGER_TOKEN].note`                                                                                                                                                                           |
+| Portal mark      | `bun run tennis:agent-auth:bake` → `public/registry/tennis/agent-auth.json`                                                                                                                                                        |
+| Operator handoff | `~/.reasonix/tennis-hq-registry-token.env` (mode 600, not committed)                                                                                                                                                               |
 | Tennis HQ app    | [`plum-spruce-dawn-dune1`](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1) (canonical) · Worker `tennis-hq` · [CONTRIBUTING](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) |
 
 ### Producer service auth (`PARTNER_API_TOKEN`) — configured 2026-08-05
 
-| Check | Value |
-| ----- | ----- |
-| Vault item | `factorywager` / **Tennis HQ Partner API Token** |
-| Vault map | `config/vault-map.toml` `[env.PARTNER_API_TOKEN]` |
-| Worker secret | `wrangler secret put PARTNER_API_TOKEN --name tennis-hq` |
-| Handoff | `~/.reasonix/tennis-hq-partner-api-token.env` (mode 600) |
-| Smoke | `curl -H "Authorization: Bearer $PARTNER_API_TOKEN" https://tennis.factory-wager.com/api/v1/research/status` → 200 |
-| Unauth smoke | no bearer → **401** `unauthorized` (not 503) |
+| Check         | Value                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Vault item    | `factorywager` / **Tennis HQ Partner API Token**                                                                   |
+| Vault map     | `config/vault-map.toml` `[env.PARTNER_API_TOKEN]`                                                                  |
+| Worker secret | `wrangler secret put PARTNER_API_TOKEN --name tennis-hq`                                                           |
+| Handoff       | `~/.reasonix/tennis-hq-partner-api-token.env` (mode 600)                                                           |
+| Smoke         | `curl -H "Authorization: Bearer $PARTNER_API_TOKEN" https://tennis.factory-wager.com/api/v1/research/status` → 200 |
+| Unauth smoke  | no bearer → **401** `unauthorized` (not 503)                                                                       |
 
 ```bash
 # Load partner service token (never print)
@@ -111,21 +111,19 @@ committed.
 
 ```bash
 # 1) Inject token (from operator / vault / CI secret) — never hardcode in repo
-export FACTORY_WAGER_TOKEN='…'   # same value as vault "FactoryWager Registry Token"
-export REGISTRY_URL='https://registry.factory-wager.com/'
+export FACTORY_WAGER_TOKEN='…'   # write lane only; same value as vault item
+export REGISTRY_URL='https://registry.factory-wager.com/api/npm'
+export REGISTRY_PUBLIC_URL='https://registry.factory-wager.com'
 
 # 2) bunfig.toml (project or sandbox)
 # [install.scopes]
-# "@factorywager" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
-# "@factory-wager" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
-# "@factory" = { url = "https://registry.factory-wager.com/", token = "$FACTORY_WAGER_TOKEN" }
+# "@factorywager" = { url = "https://registry.factory-wager.com/api/npm" }
 
 # 3) Optional .npmrc
-# //registry.factory-wager.com/:_authToken=${FACTORY_WAGER_TOKEN}
-# registry=https://registry.factory-wager.com/
+# @factorywager:registry=https://registry.factory-wager.com/api/npm
 
 # 4) Smoke read plane (no token required)
-curl -fsS "$REGISTRY_URL/api/registry/health"
+curl -fsS "$REGISTRY_PUBLIC_URL/api/registry/health"
 ```
 
 SDK write path (when publish origin is reachable):
@@ -170,10 +168,10 @@ set -a && source ~/.reasonix/tennis-hq-registry-token.env && set +a
 Offline only: Tennis HQ `ssot:build` → `ssot:check` → `ssot:pack` (no
 `bun publish`). Resolves the gitignored checkout via `TENNIS_HQ_ROOT` or
 `king-zippy-umbra-acre` next to the monorepo (worktrees use the git common-dir
-sibling). Production bake still fails closed when no checkout is present (`Set
-TENNIS_HQ_ROOT`). Unit tests use synthetic checkouts under `.tmp/`; the staged
-`test:changed` scratch runner symlinks `king-zippy-umbra-acre` when that tree
-exists on the operator machine (skip if absent — no dangling link). Version
+sibling). Production bake still fails closed when no checkout is present
+(`Set TENNIS_HQ_ROOT`). Unit tests use synthetic checkouts under `.tmp/`; the
+staged `test:changed` scratch runner symlinks `king-zippy-umbra-acre` when that
+tree exists on the operator machine (skip if absent — no dangling link). Version
 bumps stay operator-controlled (`bun pm version` inside Tennis HQ, not root
 `factorywager-enterprise`).
 
@@ -195,8 +193,8 @@ not import files from the sibling Tennis HQ source tree. The soft-pass extracts
 `package/registry/contracts/v1/manifest.json` from the tarball and requires
 package-version parity plus exactly these five authenticated read domains:
 
-| Domain     | Runtime path                     | Contract package export               | Live tip `8f21bf2` |
-| ---------- | -------------------------------- | ------------------------------------- | ------------------ |
+| Domain     | Runtime path                     | Contract package export               | Live tip `8f21bf2`         |
+| ---------- | -------------------------------- | ------------------------------------- | -------------------------- |
 | research   | `GET /api/v1/research/status`    | `contracts/v1/research.schema.json`   | **wired** (unauth **401**) |
 | marketdata | `GET /api/v1/marketdata/desk`    | `contracts/v1/marketdata.schema.json` | **wired** (unauth **401**) |
 | trading    | `GET /api/v1/trading/executions` | `contracts/v1/trading.schema.json`    | **wired** (unauth **401**) |
@@ -208,10 +206,10 @@ probes return JSON **401** (not SPA HTML). Runtime reads require
 `PARTNER_API_TOKEN` (provider-side `OPERATOR_API_TOKEN` alias) and fail closed
 when it is absent (`401` unauthorized when set; `503`
 `contract_auth_unconfigured` only when missing). Payload quality (empty desk
-rows, warehouse payloads) is separate from route wiring. Executions+ledger **GETs**
-are R2-first published caches on edge (`meta.cache=url` when SQLite is
-unavailable); live ledger **writes** still **503** on edge (no D1). Unauth
-write POSTs without bearer return **401** when the secret is set.
+rows, warehouse payloads) is separate from route wiring. Executions+ledger
+**GETs** are R2-first published caches on edge (`meta.cache=url` when SQLite is
+unavailable); live ledger **writes** still **503** on edge (no D1). Unauth write
+POSTs without bearer return **401** when the secret is set.
 `FACTORY_WAGER_TOKEN` remains registry/package authentication and is not a
 runtime API credential.
 
@@ -257,21 +255,21 @@ full hard parity when `publishPlane` is on the edge; soft-skip while Pages lags
 Use these when changing the Market Desk, v1 contracts, or day-loop gates — not
 the Pages evidence board.
 
-| Concern | Producer path (GitHub) |
-| ------- | ---------------------- |
-| Contribute / PR checklist / release gate | [CONTRIBUTING.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md) |
-| Docs hub | [docs/README.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/README.md) |
-| Factory registry token for cloud agents | [docs/REGISTRY.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/REGISTRY.md) |
-| Partners / ledger / seat capital | [docs/PARTNERS.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/PARTNERS.md) |
-| Tip · tags · Worker vs Pages | [docs/RELEASE.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/RELEASE.md) · [CLOUDFLARE-DELIVERY.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/CLOUDFLARE-DELIVERY.md) |
-| Product / agent entry | [AGENTS.project.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/AGENTS.project.md) |
-| Gate failures | [docs/RELEASE-GATE-FAILURES.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/RELEASE-GATE-FAILURES.md) |
+| Concern                                  | Producer path (GitHub)                                                                                                                                                                                                                   |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Contribute / PR checklist / release gate | [CONTRIBUTING.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/CONTRIBUTING.md)                                                                                                                                |
+| Docs hub                                 | [docs/README.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/README.md)                                                                                                                                  |
+| Factory registry token for cloud agents  | [docs/REGISTRY.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/REGISTRY.md)                                                                                                                              |
+| Partners / ledger / seat capital         | [docs/PARTNERS.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/PARTNERS.md)                                                                                                                              |
+| Tip · tags · Worker vs Pages             | [docs/RELEASE.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/RELEASE.md) · [CLOUDFLARE-DELIVERY.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/CLOUDFLARE-DELIVERY.md) |
+| Product / agent entry                    | [AGENTS.project.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/AGENTS.project.md)                                                                                                                            |
+| Gate failures                            | [docs/RELEASE-GATE-FAILURES.md](https://github.com/brendadeeznuts1111/plum-spruce-dawn-dune1/blob/main/docs/RELEASE-GATE-FAILURES.md)                                                                                                    |
 
 **Plane split (do not collapse):**
 
-| Plane | Host | Refresh |
-| ----- | ---- | ------- |
-| Market Desk | `tennis.factory-wager.com` | Producer deploy / Wrangler |
+| Plane           | Host                               | Refresh                                                                           |
+| --------------- | ---------------------------------- | --------------------------------------------------------------------------------- |
+| Market Desk     | `tennis.factory-wager.com`         | Producer deploy / Wrangler                                                        |
 | Portal evidence | `factory-wager.com/portal/tennis/` | Factory bake (`tennis:board:bake` · `bake-registry-manifest` · partner-contracts) |
 
 Inventory age + **Bun runtime provenance** for bakes:
@@ -286,4 +284,5 @@ Inventory age + **Bun runtime provenance** for bakes:
 - [`docs/harness/tenants/proton-integration.md`](proton-integration.md) — vault
   inject
 - [`tennis-hq-ui-audit.md`](tennis-hq-ui-audit.md) — dual-surface UI inventory
-- [`public/portal/tennis.md`](../../../public/portal/tennis.md) — portal consumer map
+- [`public/portal/tennis.md`](../../../public/portal/tennis.md) — portal
+  consumer map
