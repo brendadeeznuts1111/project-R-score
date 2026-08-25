@@ -59,70 +59,13 @@ import { BUN_14_CLAIM_CAPABILITIES } from './capability-catalog-claims.ts';
 import { BUN_14_BUILTIN_CAPABILITIES } from './capability-catalog-builtins.ts';
 import { BUN_14_BUILTIN_WEB_CAPABILITIES } from './capability-catalog-builtins-web.ts';
 import { BUN_14_DEV_NETWORK_CAPABILITIES } from './capability-catalog-dev-network.ts';
-import { validateCapability } from './capability-validation.ts';
-import {
-  attachReleaseChapters,
-  BUN_14_RELEASE_CHAPTERS,
-  parseReleaseChapters,
-} from './release-chapters.ts';
-import { fail, parseRecord } from './errors.ts';
+import { parseCapabilityRegistry } from './capability-registry-validation.ts';
+import { attachReleaseChapters, BUN_14_RELEASE_CHAPTERS } from './release-chapters.ts';
+import { fail } from './errors.ts';
 import { atomicWriteJson } from './storage.ts';
 import type { AssetManifest, Bun14Capability, Bun14CapabilityRegistry } from './types.ts';
 
-export function parseCapabilityRegistry(
-  value: unknown,
-  manifest: AssetManifest,
-  label: string
-): Bun14CapabilityRegistry {
-  const record = parseRecord(value);
-  if (!record) fail(`${label}: expected a JSON object`);
-  if (record.schemaVersion !== CAPABILITY_SCHEMA_VERSION) {
-    fail(`${label}: schemaVersion must be ${CAPABILITY_SCHEMA_VERSION}`);
-  }
-  if (
-    record.release !== 'Bun 1.4' ||
-    record.version !== '1.4.0' ||
-    record.sourcePage !== BUN_14_SOURCE_URL ||
-    record.publishedAt !== BUN_14_PUBLISHED_AT ||
-    record.relationModel !== 'capability-references-assets'
-  ) {
-    fail(`${label}: release identity or relation model is invalid`);
-  }
-  const migration = parseRecord(record.migration);
-  if (
-    !migration ||
-    migration.breakingChangesUrl !== BUN_14_BREAKING_CHANGES_URL ||
-    migration.upgradeGuideUrl !== BUN_14_UPGRADE_GUIDE_URL ||
-    migration.reconciledTag !== 'bun-v1.4.0' ||
-    migration.underConsiderationShipped !== false
-  ) {
-    fail(`${label}: Bun 1.4 migration sources or shipped-state boundary is invalid`);
-  }
-  if (record.generatedAt !== manifest.generatedAt) {
-    fail(`${label}: generatedAt must match the asset manifest`);
-  }
-  if (!Array.isArray(record.capabilities) || !record.capabilities.length) {
-    fail(`${label}: capabilities must be a non-empty array`);
-  }
-  const chapters = parseReleaseChapters(record.chapters, label);
-  const chapterIds = new Set(chapters.map(chapter => chapter.id));
-  const assetIds = new Set(manifest.assets.map(asset => asset.id));
-  const seenIds = new Set<string>();
-  const linkedAssets = new Set<string>();
-  for (const item of record.capabilities as Bun14Capability[]) {
-    validateCapability(item, assetIds, seenIds, chapterIds);
-    item.assetIds.forEach(id => linkedAssets.add(id));
-  }
-  for (const chapterId of chapterIds) {
-    if (!(record.capabilities as Bun14Capability[]).some(item => item.chapterId === chapterId)) {
-      fail(`${label}: chapter ${chapterId} has no capability relations`);
-    }
-  }
-  for (const assetId of assetIds) {
-    if (!linkedAssets.has(assetId)) fail(`${label}: asset ${assetId} has no capability relation`);
-  }
-  return value as Bun14CapabilityRegistry;
-}
+export { parseCapabilityRegistry } from './capability-registry-validation.ts';
 
 export function buildBun14CapabilityRegistry(manifest: AssetManifest): Bun14CapabilityRegistry {
   const registry: Bun14CapabilityRegistry = {
