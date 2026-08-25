@@ -54,7 +54,11 @@ export type ReferenceEvidence = {
 };
 
 const PATH_TOKEN =
-  /(?:\.\.?\/|\/)?(?:[A-Za-z0-9_@.-]+\/)+[A-Za-z0-9_@.-]+\/?|[A-Za-z0-9_@.-]+\.[A-Za-z0-9]{1,12}/g;
+  /(?:\.\.?\/|\/)(?:[A-Za-z0-9_@.-]+\/)*[A-Za-z0-9_@.-]+(?:\.[A-Za-z0-9]{1,12})?\/?|(?:[A-Za-z0-9_@.-]+\/)+[A-Za-z0-9_@.-]+\/?|[A-Za-z0-9_@.-]+\.[A-Za-z0-9]{1,12}/g;
+
+export function extractReferenceTokens(text: string): string[] {
+  return text.match(PATH_TOKEN) ?? [];
+}
 
 function addReference(map: Map<string, Set<string>>, target: string, from: string): void {
   if (target === from) return;
@@ -63,7 +67,7 @@ function addReference(map: Map<string, Set<string>>, target: string, from: strin
   map.set(target, refs);
 }
 
-function tokenTargets(
+export function resolveReferenceTargets(
   token: string,
   from: string,
   candidates: ReadonlySet<string>,
@@ -80,10 +84,26 @@ function tokenTargets(
     }
   };
 
-  if (clean.startsWith('/')) add(`public${clean}`);
-  else if (clean.startsWith('./') || clean.startsWith('../'))
+  if (clean.startsWith('/')) {
+    add(`public${clean}`);
+
+    // A root-relative browser URL belongs to the nearest app-local public/
+    // directory, not necessarily the repository's top-level public/. Check
+    // every ancestor so separately addressed nested apps retain their assets.
+    let ancestor = dirnamePath(from);
+    while (ancestor !== '.' && ancestor !== '/') {
+      add(joinPath(ancestor, 'public', clean.slice(1)));
+      ancestor = dirnamePath(ancestor);
+    }
+  } else if (clean.startsWith('./') || clean.startsWith('../'))
     add(joinPath(dirnamePath(from), clean));
-  else add(clean);
+  else {
+    add(clean);
+    // Browser manifests, HTML, CSS, and Markdown commonly address a sibling
+    // asset by basename. Preserve that local ownership even when another app
+    // contains a byte-identical file with the same basename.
+    add(joinPath(dirnamePath(from), clean));
+  }
 
   const byBase = uniqueBasenames.get(basenamePath(clean));
   if (byBase) add(byBase);
@@ -105,8 +125,8 @@ async function scanOneFile(
     return;
   }
 
-  for (const token of text.match(PATH_TOKEN) ?? []) {
-    for (const target of tokenTargets(token, path, candidates, uniqueBasenames)) {
+  for (const token of extractReferenceTokens(text)) {
+    for (const target of resolveReferenceTargets(token, path, candidates, uniqueBasenames)) {
       addReference(evidence.inboundReferences, target, path);
     }
   }

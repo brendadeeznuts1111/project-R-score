@@ -53,8 +53,12 @@ export function isTextPath(path: string): boolean {
 }
 
 export function publicUrlFor(path: string): string | null {
-  if (!path.startsWith('public/')) return null;
-  const rel = path.slice('public/'.length);
+  const nestedMarker = '/public/';
+  const nestedPublic = path.lastIndexOf(nestedMarker);
+  if (!path.startsWith('public/') && nestedPublic < 0) return null;
+  const rel = path.startsWith('public/')
+    ? path.slice('public/'.length)
+    : path.slice(nestedPublic + nestedMarker.length);
   return rel.endsWith('/index.html') ? `/${rel.slice(0, -'index.html'.length)}` : `/${rel}`;
 }
 

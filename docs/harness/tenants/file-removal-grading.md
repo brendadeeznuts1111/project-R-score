@@ -8,14 +8,16 @@ The report combines:
 - line and byte thresholds;
 - SHA-256 exact-content groups;
 - Bun-native import scanning;
-- path, registry, feed, and portal references;
+- path, registry, feed, portal, and nested app-local `public/` references;
 - generated-artifact markers;
 - Git tracking and dirty-state protection.
 
 Every candidate has a content address, evidence, blockers, and one action:
 `retain`, `split`, `deduplicate`, `wire-or-remove`, or `verify-generator`. Large
 source files are split candidates, not removal candidates. Public files without
-visible references are reviewed for route wiring before removal.
+visible references are reviewed for route wiring before removal. Root-relative
+browser URLs and sibling manifest assets resolve inside the nearest nested app,
+so identical assets owned by separate app roots are not treated as disposable.
 
 ## Safety grades
 

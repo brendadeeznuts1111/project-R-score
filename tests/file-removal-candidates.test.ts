@@ -1,6 +1,17 @@
 import { describe, expect, test } from 'bun:test';
+import { mkdir, mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { chooseCanonicalDuplicate, gradeFileRemoval } from '../lib/harness/file-removal-grade.ts';
-import { isMonorepoHealthSourcePath } from '../lib/harness/file-removal-policy.ts';
+import {
+  isMonorepoHealthSourcePath,
+  publicUrlFor,
+} from '../lib/harness/file-removal-policy.ts';
+import {
+  collectReferenceEvidence,
+  extractReferenceTokens,
+  resolveReferenceTargets,
+} from '../lib/harness/file-removal-references.ts';
+import { joinPath } from '../lib/path-bun.ts';
 import {
   FILE_REMOVAL_VERIFICATION_COMMANDS,
   type FileInventoryRow,
@@ -47,6 +58,83 @@ describe('file removal grading safety', () => {
     expect(isMonorepoHealthSourcePath('packages/core/src/large.tsx')).toBe(true);
     expect(isMonorepoHealthSourcePath('docs/large.md')).toBe(false);
     expect(isMonorepoHealthSourcePath('tests/large.test.ts')).toBe(false);
+  });
+
+  test('root-relative static URLs retain the matching nested app asset', () => {
+    const take1 = 'apps/take-one/public/brand.png';
+    const take2 = 'apps/take-two/public/brand.png';
+    const take3 = 'apps/take-three/public/brand.png';
+    const candidates = new Set([take1, take2, take3]);
+
+    expect(extractReferenceTokens('src="/brand.png" icon="./favicon.ico"')).toEqual([
+      '/brand.png',
+      './favicon.ico',
+    ]);
+    expect(
+      resolveReferenceTargets(
+        '/brand.png',
+        'apps/take-two/src/routes/index.tsx',
+        candidates,
+        new Map()
+      )
+    ).toEqual([take2]);
+    expect(
+      resolveReferenceTargets(
+        '/brand.png',
+        'apps/take-three/src/routes/index.tsx',
+        candidates,
+        new Map()
+      )
+    ).toEqual([take3]);
+
+    expect(
+      resolveReferenceTargets('brand.png', 'apps/take-two/public/manifest.json', candidates, new Map())
+    ).toEqual([take2]);
+    expect(publicUrlFor(take2)).toBe('/brand.png');
+  });
+
+  test('reference evidence joins browser paths, sibling assets, and source imports', async () => {
+    const root = await mkdtemp(joinPath(tmpdir(), 'file-removal-refs-'));
+    const source = 'apps/take-two/src/routes/index.ts';
+    const manifest = 'apps/take-two/public/manifest.json';
+    const brand = 'apps/take-two/public/brand.png';
+    const data = 'apps/take-two/src/data.json';
+    const guide = 'public/guide/index.html';
+    const unique = 'docs/unique.md';
+    const missing = 'docs/missing.md';
+
+    try {
+      await Promise.all([
+        mkdir(joinPath(root, 'apps/take-two/src/routes'), { recursive: true }),
+        mkdir(joinPath(root, 'apps/take-two/public'), { recursive: true }),
+        mkdir(joinPath(root, 'public/guide'), { recursive: true }),
+        mkdir(joinPath(root, 'docs'), { recursive: true }),
+      ]);
+      await Promise.all([
+        Bun.write(
+          joinPath(root, source),
+          `import data from '../data.json';\nimport 'package-name';\nexport const assets = ['/brand.png', '/guide/', 'unique.md', data];\n`
+        ),
+        Bun.write(joinPath(root, manifest), '{"src":"brand.png"}\n'),
+        Bun.write(joinPath(root, brand), new Uint8Array([1, 2, 3])),
+        Bun.write(joinPath(root, data), '{}\n'),
+        Bun.write(joinPath(root, guide), '<h1>Guide</h1>\n'),
+        Bun.write(joinPath(root, unique), '# Unique\n'),
+      ]);
+
+      const evidence = await collectReferenceEvidence(
+        root,
+        [source, manifest, brand, data, guide, unique, missing],
+        new Set([brand, data, guide, unique])
+      );
+
+      expect([...evidence.inboundReferences.get(brand)!].sort()).toEqual([manifest, source]);
+      expect(evidence.inboundReferences.get(guide)).toEqual(new Set([source]));
+      expect(evidence.inboundReferences.get(unique)).toEqual(new Set([source]));
+      expect(evidence.importedBy.get(data)).toEqual(new Set([source]));
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
 
   test('only an unreferenced archived exact duplicate reaches very-safe-review', () => {
