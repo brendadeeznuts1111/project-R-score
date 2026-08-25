@@ -54,6 +54,16 @@ export type EdgeProofTaxonomySlice = {
   source: 'ops-summary' | 'audit-json' | null;
 };
 
+/** Compact, Pages-safe view of the generated portal theme proof. */
+export type EdgePortalThemeSlice = {
+  available: boolean;
+  path: '/registry/portal-theme.json';
+  version: string | null;
+  sourceSha256: string | null;
+  generatedFiles: number | null;
+  rawLiteralMaximum: number | null;
+};
+
 export type EdgeHealthBody = {
   status: 'ok' | 'degraded';
   schemaVersion: 1;
@@ -67,6 +77,7 @@ export type EdgeHealthBody = {
   bunApiProof: Record<string, unknown>;
   defaults: EdgeDefaultsSlice;
   proofTaxonomy: EdgeProofTaxonomySlice;
+  portalTheme: EdgePortalThemeSlice;
   env: Record<string, unknown>;
   routeStats: Record<string, unknown>;
   toc?: Record<string, unknown> | null;
@@ -75,6 +86,30 @@ export type EdgeHealthBody = {
   monorepoHealth?: Record<string, unknown> | null;
   serve: Record<string, unknown>;
 };
+
+export function slicePortalTheme(raw: Record<string, unknown> | null): EdgePortalThemeSlice {
+  const empty: EdgePortalThemeSlice = {
+    available: false,
+    path: '/registry/portal-theme.json',
+    version: null,
+    sourceSha256: null,
+    generatedFiles: null,
+    rawLiteralMaximum: null,
+  };
+  if (!raw) return empty;
+  const theme = raw.theme as Record<string, unknown> | undefined;
+  const source = raw.source as Record<string, unknown> | undefined;
+  const policy = raw.colorPolicy as Record<string, unknown> | undefined;
+  return {
+    available: true,
+    path: '/registry/portal-theme.json',
+    version: typeof theme?.version === 'string' ? theme.version : null,
+    sourceSha256: typeof source?.resolvedSha256 === 'string' ? source.resolvedSha256 : null,
+    generatedFiles: Array.isArray(raw.generated) ? raw.generated.length : null,
+    rawLiteralMaximum:
+      typeof policy?.rawLiteralMaximum === 'number' ? policy.rawLiteralMaximum : null,
+  };
+}
 
 /** @internal exported for unit tests */
 export function sliceDefaults(raw: Record<string, unknown> | null): EdgeDefaultsSlice {
@@ -247,6 +282,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     complianceBoard,
     limitRaisesBoard,
     monorepoHealthBoard,
+    portalThemeManifest,
   ] = await Promise.all([
     assetJson(env, origin, '/registry/ops-summary.json'),
     assetJson(env, origin, '/registry/monitoring.json'),
@@ -258,6 +294,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     assetJson(env, origin, '/registry/compliance-board.json'),
     assetJson(env, origin, '/registry/limit-raises.json'),
     assetJson(env, origin, '/registry/monorepo-health.json'),
+    assetJson(env, origin, '/registry/portal-theme.json'),
   ]);
 
   const defaults = sliceDefaults(defaultsRaw);
@@ -265,6 +302,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     ops?.proofTaxonomy as Record<string, unknown> | undefined,
     taxonomyAudit
   );
+  const portalTheme = slicePortalTheme(portalThemeManifest);
 
   let bunApiProof: Record<string, unknown> = { available: false };
   if (proof) {
@@ -366,6 +404,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
       tocOps: { exists: Boolean(ops?.toc) },
       defaultsProof: { exists: Boolean(defaultsRaw) },
       proofTaxonomyAudit: { exists: Boolean(taxonomyAudit) },
+      portalTheme: { exists: portalTheme.available, version: portalTheme.version },
       complianceBoard: complianceArtifact,
       limitRaises: limitRaisesArtifact,
       monorepoHealth: monorepoArtifact,
@@ -384,6 +423,7 @@ export async function collectEdgeHealth(env: HealthEnv, origin: string): Promise
     bunApiProof,
     defaults,
     proofTaxonomy,
+    portalTheme,
     toc: (ops?.toc as Record<string, unknown> | undefined) ?? null,
     channels: (ops?.channels as Record<string, unknown> | undefined) ?? null,
     loop: (ops?.loop as Record<string, unknown> | undefined) ?? null,
@@ -540,6 +580,18 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
     lines.push('  Missing — bun run verify:proof-taxonomy:save');
   }
 
+  const theme = data.portalTheme;
+  lines.push('', '── Portal theme proof ────────────────────');
+  if (theme?.available) {
+    lines.push(`  Version:     ${theme.version ?? '—'}`);
+    lines.push(`  Outputs:     ${theme.generatedFiles ?? '—'}`);
+    lines.push(`  Raw colors:  ${theme.rawLiteralMaximum ?? '—'} maximum`);
+    if (theme.sourceSha256) lines.push(`  Source hash: ${theme.sourceSha256.slice(0, 16)}…`);
+    lines.push(`  Artifact:    ${theme.path}`);
+  } else {
+    lines.push('  Missing — bun run portal:theme:sync');
+  }
+
   lines.push(
     '',
     '── Environment ───────────────────────────',
@@ -552,6 +604,7 @@ export function renderEdgeHealthPlain(data: EdgeHealthBody): string {
     '  Plain:    GET /health/pre',
     '  Defaults: GET /api/defaults  ·  /registry/defaults-proof.json',
     '  Audit:    GET /registry/proof-taxonomy-audit.json',
+    '  Theme:    GET /registry/portal-theme.json',
     '  UI:       GET /portal/health/',
     '  OPTIONS:  Allow GET, HEAD, OPTIONS (If-None-Match, Accept, Content-Type)',
     ''

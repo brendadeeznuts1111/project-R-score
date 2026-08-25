@@ -1426,6 +1426,29 @@ async function collectHealthData(): Promise<{
       docRefs = { available: true, malformed: true };
     }
   }
+
+  const portalThemeFile = Bun.file('public/registry/portal-theme.json');
+  let portalTheme: Record<string, unknown> = { available: false };
+  if (await portalThemeFile.exists()) {
+    try {
+      const parsed = (await portalThemeFile.json()) as {
+        theme?: { version?: string };
+        source?: { resolvedSha256?: string };
+        generated?: unknown[];
+        colorPolicy?: { rawLiteralMaximum?: number };
+      };
+      portalTheme = {
+        available: true,
+        path: '/registry/portal-theme.json',
+        version: parsed.theme?.version ?? null,
+        sourceSha256: parsed.source?.resolvedSha256 ?? null,
+        generatedFiles: Array.isArray(parsed.generated) ? parsed.generated.length : null,
+        rawLiteralMaximum: parsed.colorPolicy?.rawLiteralMaximum ?? null,
+      };
+    } catch {
+      portalTheme = { available: true, malformed: true, path: '/registry/portal-theme.json' };
+    }
+  }
   const networkingDegraded =
     networking.available === true &&
     typeof networking.degraded === 'boolean' &&
@@ -1472,6 +1495,7 @@ async function collectHealthData(): Promise<{
       opsSummary: { exists, generated, ageSeconds },
       complianceBoard,
       limitRaises,
+      portalTheme,
     },
     registry: { packages: pkgCount, versions: versionCount },
     bunApiProof: proofStatus,
@@ -1543,6 +1567,19 @@ function renderHealthPlain(data: Record<string, unknown>): string {
     lines.push(`  Demo APIs:   ${proof.demoApisVerified}/${proof.demoApisTotal} verified`);
   } else {
     lines.push('  Not generated — run bun run docs:api-verify --write');
+  }
+  const theme =
+    ((data.artifacts as Record<string, unknown>)?.portalTheme as Record<string, unknown>) || {};
+  lines.push('', '── Portal theme proof ────────────────────');
+  if (theme.available) {
+    lines.push(`  Version:     ${theme.version ?? '—'}`);
+    lines.push(`  Outputs:     ${theme.generatedFiles ?? '—'}`);
+    lines.push(`  Raw colors:  ${theme.rawLiteralMaximum ?? '—'} maximum`);
+    if (theme.sourceSha256)
+      lines.push(`  Source hash: ${String(theme.sourceSha256).slice(0, 16)}…`);
+    lines.push(`  Artifact:    ${theme.path ?? '—'}`);
+  } else {
+    lines.push('  Missing — bun run portal:theme:sync');
   }
   const net = (data.networking as Record<string, unknown>) || {};
   lines.push('', '── Networking Proof ───────────────────────');

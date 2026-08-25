@@ -8,12 +8,12 @@ import {
 import { portalTheme } from '../lib/portal/theme.ts';
 
 describe('component color-kernel alignment', () => {
-  test('real components align with theme.jsonc (no drift, no unmapped)', async () => {
+  test('real components consume theme variables without fallback literals', async () => {
     const result = await assessComponentColorAlign();
     expect(result.ok).toBe(true);
     expect(result.mismatches).toEqual([]);
     expect(result.unmapped).toEqual([]);
-    expect(result.checked).toBeGreaterThan(20);
+    expect(result.checked).toBe(0);
   });
 
   test('every mapped token path resolves to a theme value', () => {

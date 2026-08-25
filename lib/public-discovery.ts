@@ -232,6 +232,8 @@ export const DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS = new Set([
   /** Redacted partner_ledger feed for partners-dashboard bake (no portal board). */
   'partner-ledger.json',
   'stale-anchors.json',
+  /** Consumed by edge + local health; no standalone portal board. */
+  'portal-theme.json',
 ]);
 
 async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFinding[]> {

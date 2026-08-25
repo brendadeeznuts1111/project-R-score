@@ -8,6 +8,7 @@ import {
   venueBrand,
   venueCssVars,
 } from '../lib/venues/venue-brand.ts';
+import { portalTheme } from '../lib/portal/theme.ts';
 
 describe('venue-brand identity palette', () => {
   test('four market venues + unknown', () => {
@@ -30,6 +31,18 @@ describe('venue-brand identity palette', () => {
     expect(poly.text.toLowerCase()).toBe('#58a6ff');
     expect(poly.border.toLowerCase()).toBe('#2e5cff');
     expect(poly.short).toBe('PM');
+  });
+
+  test('portal identity tokens preserve the CLI venue palette', () => {
+    for (const venue of [...MARKET_VENUES, 'unknown'] as const) {
+      expect(portalTheme.identity.venue[venue].border.toLowerCase()).toBe(
+        VENUE_BRAND[venue].border.toLowerCase()
+      );
+      expect(portalTheme.identity.venue[venue].text.toLowerCase()).toBe(
+        VENUE_BRAND[venue].text.toLowerCase()
+      );
+      expect(portalTheme.identity.venue[venue].bg).toBe(VENUE_BRAND[venue].bg);
+    }
   });
 
   test('fmtVenueBadge short and long include labels', () => {

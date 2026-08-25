@@ -165,6 +165,15 @@ Content-Type matrix rows for env page CT section.
 
 ## Typography & UX polish
 
+### Color ownership
+
+`public/portal/theme.jsonc` is the sole handwritten portal palette. Board and
+component CSS consumes semantic custom properties; it must not introduce hex,
+`rgb()`/`rgba()`, or `hsl()`/`hsla()` literals. Generated token files are output
+only. `bun run validate:colors` fails closed for reusable components and the
+Bun 1.4 board. `public/portal/style.css` follows the same zero-literal policy;
+it is not precedent for new code.
+
 Agent rule: [`.cursor/rules/portal-frontend.mdc`](../.cursor/rules/portal-frontend.mdc) (supersedes generic “avoid Inter” for this surface).
 
 Agent rule (ship): [`.cursor/rules/portal-ship.mdc`](../.cursor/rules/portal-ship.mdc) (Prettier on touched `lib/**/*.ts` before commit; PR bodies follow [`.github/pull_request_template.md`](../.github/pull_request_template.md), not HEREDOC stubs).

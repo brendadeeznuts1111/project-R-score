@@ -9,6 +9,7 @@ import {
   edgeTaxonomyDegradesHealth,
   renderEdgeHealthPlain,
   sliceDefaults,
+  slicePortalTheme,
   sliceProofTaxonomy,
   type EdgeHealthBody,
   type HealthEnv,
@@ -74,6 +75,14 @@ function sample(): EdgeHealthBody {
       consistencyTotal: 20,
       source: 'ops-summary',
     },
+    portalTheme: {
+      available: true,
+      path: '/registry/portal-theme.json',
+      version: '1.4.0',
+      sourceSha256: 'abcdef0123456789abcdef0123456789',
+      generatedFiles: 2,
+      rawLiteralMaximum: 0,
+    },
     env: {
       summary: {
         total: 3,
@@ -127,6 +136,9 @@ describe('portal-health-edge', () => {
     expect(text).toContain('── Proof taxonomy audit');
     expect(text).toContain('Contracts:   13/13');
     expect(text).toContain('GET /api/defaults');
+    expect(text).toContain('── Portal theme proof');
+    expect(text).toContain('Raw colors:  0 maximum');
+    expect(text).toContain('GET /registry/portal-theme.json');
     expect(text).toContain('OPTIONS:');
   });
 
@@ -169,6 +181,24 @@ describe('portal-health-edge', () => {
     expect(slice.contracts).toBe(2);
     expect(slice.contractsOk).toBe(2);
     expect(edgeTaxonomyDegradesHealth(slice)).toBe(false);
+  });
+
+  test('slicePortalTheme exposes only compact, public proof metadata', () => {
+    expect(
+      slicePortalTheme({
+        theme: { version: '1.4.0' },
+        source: { resolvedSha256: 'abc' },
+        generated: [{ path: '/portal/theme-tokens.css' }, { path: '/portal/bun-1.4/bun-1.4-theme.css' }],
+        colorPolicy: { rawLiteralMaximum: 0 },
+      })
+    ).toEqual({
+      available: true,
+      path: '/registry/portal-theme.json',
+      version: '1.4.0',
+      sourceSha256: 'abc',
+      generatedFiles: 2,
+      rawLiteralMaximum: 0,
+    });
   });
 
   test('stale ops-summary ok:false does not degrade health', () => {

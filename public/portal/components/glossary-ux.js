@@ -73,7 +73,7 @@ function ensureStyles() {
     }
     .glossary-crumbs li:not(:last-child)::after {
       content: "/";
-      color: var(--border, #30363d);
+      color: var(--border);
       font-weight: 400;
     }
     .glossary-crumbs a {
@@ -86,7 +86,7 @@ function ensureStyles() {
       outline: none;
     }
     .glossary-crumbs [aria-current="page"] {
-      color: var(--text, #e6edf3);
+      color: var(--text);
       font-weight: 600;
     }
     .glossary-suggest-wrap {
@@ -104,10 +104,10 @@ function ensureStyles() {
       list-style: none;
       max-height: 320px;
       overflow: auto;
-      border: 1px solid var(--border, #30363d);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      background: var(--surface, #161b22);
-      box-shadow: 0 16px 40px rgb(0 0 0 / 35%);
+      background: var(--surface);
+      box-shadow: 0 16px 40px color-mix(in srgb, black 35%, transparent);
     }
     .glossary-suggest[hidden] { display: none; }
     .glossary-suggest__item {
@@ -126,12 +126,12 @@ function ensureStyles() {
     .glossary-suggest__item[aria-selected="true"],
     .glossary-suggest__item:hover,
     .glossary-suggest__item:focus-visible {
-      background: var(--accent-glow, rgba(88, 166, 255, 0.15));
+      background: var(--accent-glow);
       outline: none;
     }
     .glossary-suggest__label {
       font-weight: 600;
-      color: var(--text, #e6edf3);
+      color: var(--text);
     }
     .glossary-suggest__id {
       font: 500 11px/1.3 var(--font-mono, ui-monospace, monospace);
@@ -150,11 +150,11 @@ function ensureStyles() {
       z-index: 60;
       max-width: min(360px, calc(100vw - 24px));
       padding: 10px 12px;
-      border: 1px solid var(--border, #30363d);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      background: var(--surface, #161b22);
-      color: var(--text, #e6edf3);
-      box-shadow: 0 12px 32px rgb(0 0 0 / 40%);
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 12px 32px color-mix(in srgb, black 40%, transparent);
       font: 500 12px/1.45 var(--font-sans, Inter, system-ui, sans-serif);
       pointer-events: none;
     }

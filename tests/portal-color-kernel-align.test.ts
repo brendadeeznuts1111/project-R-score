@@ -15,10 +15,23 @@ import {
   type ColorKernelCheckId,
 } from '../lib/portal/color-kernel-align.ts';
 import { PORTAL_KERNEL_PALETTE } from '../lib/portal/portal-kernel-palette.ts';
+import {
+  countPortalStyleRawColors,
+  findPortalConsumerRawColors,
+  PORTAL_STYLE_RAW_COLOR_MAX,
+} from '../lib/portal/raw-color-policy.ts';
 import { portalTheme } from '../lib/portal/theme.ts';
 import { PARTNER_OPS_COLORS } from '../lib/telegram/partner-ops-color-kernel.ts';
 
 describe('portal color-kernel align', () => {
+  test('reusable components and Bun 1.4 board contain no raw color literals', async () => {
+    expect(await findPortalConsumerRawColors()).toEqual([]);
+  });
+
+  test('shared stylesheet raw-color debt only decreases', async () => {
+    expect(await countPortalStyleRawColors()).toBeLessThanOrEqual(PORTAL_STYLE_RAW_COLOR_MAX);
+  });
+
   test('theme-dark aliases match across glossary / partner-ops / telegram', () => {
     const result = assessColorKernelAlign();
     expect(result.ok, Bun.inspect(result.mismatches)).toBe(true);

@@ -28,20 +28,20 @@ const STYLE = `
   <style>
     :host {
       display: block;
-      --card-bg: var(--portal-card-bg, #ffffff);
-      --card-border: var(--portal-card-border, #d0d7de);
+      --card-bg: var(--portal-card-bg);
+      --card-border: var(--portal-card-border);
       --card-radius: var(--portal-card-radius, 8px);
-      --text-main: var(--portal-text-main, #1f2328);
-      --text-dim: var(--portal-text-dim, #656d76);
-      --text-inv: var(--portal-text-inv, #fff);
-      --health-ok: var(--portal-health-ok, #1a7f37);
-      --health-warn: var(--portal-health-warn, #9a6700);
-      --health-bad: var(--portal-health-bad, #cf222e);
-      --accent: var(--portal-accent, #0969da);
-      --accent-hover: var(--portal-accent-hover, #0550ae);
-      --skeleton-bg: var(--portal-skeleton-bg, #d0d7de);
-      --error-bg: var(--portal-error-bg, #fef2f2);
-      --error-border: var(--portal-error-border, #fecaca);
+      --text-main: var(--portal-text-main);
+      --text-dim: var(--portal-text-dim);
+      --text-inv: var(--portal-text-inv);
+      --health-ok: var(--portal-health-ok);
+      --health-warn: var(--portal-health-warn);
+      --health-bad: var(--portal-health-bad);
+      --accent: var(--portal-accent);
+      --accent-hover: var(--portal-accent-hover);
+      --skeleton-bg: var(--portal-skeleton-bg);
+      --error-bg: var(--portal-error-bg);
+      --error-border: var(--portal-error-border);
     }
 
     .card {
