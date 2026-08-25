@@ -4,26 +4,26 @@ How day-loop testing, pre-commit, and quality gates work in this monorepo —
 aligned with Bun’s runner (`--changed`, `--watch`, `pathIgnorePatterns`) while
 keeping the FactoryWager **husky** harness (not a second hooks stack).
 
-| Related                       | Path                                                        |
-| ----------------------------- | ----------------------------------------------------------- |
-| Coding standards              | [`.custom-instructions.md`](../.custom-instructions.md)     |
-| Portal foundation / semantics | [`docs/portal-foundation.md`](portal-foundation.md)         |
-| Wire boundary                 | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md)                 |
-| Bunfig / install              | [`docs/UNIFIED.md`](UNIFIED.md)                             |
-| Agent entry                   | [`AGENTS.md`](../AGENTS.md)                                 |
+| Related                       | Path                                                    |
+| ----------------------------- | ------------------------------------------------------- |
+| Coding standards              | [`.custom-instructions.md`](../.custom-instructions.md) |
+| Portal foundation / semantics | [`docs/portal-foundation.md`](portal-foundation.md)     |
+| Wire boundary                 | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md)             |
+| Bunfig / install              | [`docs/UNIFIED.md`](UNIFIED.md)                         |
+| Agent entry                   | [`AGENTS.md`](../AGENTS.md)                             |
 
 ---
 
 ## Day-loop commands
 
-| Command                | What it does                                                         |
-| ---------------------- | -------------------------------------------------------------------- |
-| `bun run test:dev`     | `bun test --watch` on `tests/` (file watchers + re-run)              |
-| `bun run test:watch`   | `bun test --changed --watch` — only tests affected by the dirty tree |
-| `bun run test:changed` | Wrapper → **`bun test --changed`** (+ parallel by default)           |
-| `bun run test`         | Full monorepo suite under `tests/` (`NODE_ENV=test`)                 |
-| `bun run test:ci`      | Same tree + JUnit report                                             |
-| `bun run test:concept` | Concept-lane subset (graph, audit, boards, limit-row wire)           |
+| Command                | What it does                                               |
+| ---------------------- | ---------------------------------------------------------- |
+| `bun run test:dev`     | `bun test --watch` on `tests/` (file watchers + re-run)    |
+| `bun run test:watch`   | Owned changed-test wrapper in watch mode                   |
+| `bun run test:changed` | `--changed` + adaptive `--timings` + parallel files        |
+| `bun run test`         | Full monorepo suite under `tests/` (`NODE_ENV=test`)       |
+| `bun run test:ci`      | Same tree + JUnit report                                   |
+| `bun run test:concept` | Concept-lane subset (graph, audit, boards, limit-row wire) |
 
 ### Why not bare `bun test` at repo root?
 

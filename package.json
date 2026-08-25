@@ -1750,7 +1750,7 @@
     "test:changed:watch": "bun scripts/bun-test-changed.ts --watch",
     "test:changed:serial": "bun scripts/bun-test-changed.ts --serial",
     "test:concept": "NODE_ENV=test bun test tests/concept-graph.test.ts tests/concept-audit.test.ts tests/concept-domains.test.ts tests/partner-history-portal.test.ts tests/portal-board-routes.test.ts tests/limit-row-wire.test.ts",
-    "test:watch": "NODE_ENV=test bun test --changed --watch --parallel --pass-with-no-tests",
+    "test:watch": "NODE_ENV=test bun run test:changed:watch",
     "test:watch:full": "NODE_ENV=test bun test --watch --parallel --timeout=30000 --pass-with-no-tests tests",
     "format:staged": "bun x prettier --check",
     "test:watch:shard1": "bun test --watch --parallel --timeout=30000 --pass-with-no-tests tests --shard=1/3",

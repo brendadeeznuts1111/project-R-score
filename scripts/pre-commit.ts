@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#cpu-prof-md
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @updated Bun.spawn · changed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
 // @updated Bun.spawn · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
@@ -458,11 +460,20 @@ if (import.meta.main) {
   // Opt-in Bun 1.4 CPU profile for slow-hook diagnosis (reports/ already gitignored).
   // @see https://bun.com/docs/project/benchmarking#cpu-profiling
   if (Bun.env.PRECOMMIT_PROFILE === '1' && Bun.env.PRECOMMIT_PROFILE_CHILD !== '1') {
-    const profilePath = resolvePath(REPO_ROOT, 'reports/precommit-cpu.md');
-    await Bun.$`mkdir -p ${resolvePath(REPO_ROOT, 'reports')}`.nothrow();
+    const profileDir = resolvePath(REPO_ROOT, 'reports');
+    const profileName = 'precommit-cpu.md';
+    const profilePath = resolvePath(profileDir, profileName);
+    await Bun.$`mkdir -p ${profileDir}`.nothrow();
     const bunBin = resolveVerificationBunBinary().path;
     const child = Bun.spawn(
-      [bunBin, `--cpu-prof-md=${profilePath}`, import.meta.path, ...Bun.argv.slice(2)],
+      [
+        bunBin,
+        '--cpu-prof-md',
+        `--cpu-prof-dir=${profileDir}`,
+        `--cpu-prof-name=${profileName}`,
+        import.meta.path,
+        ...Bun.argv.slice(2),
+      ],
       {
         cwd: REPO_ROOT,
         env: { ...Bun.env, PRECOMMIT_PROFILE_CHILD: '1' },

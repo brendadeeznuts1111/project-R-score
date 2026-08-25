@@ -42,6 +42,19 @@ an explicit generation command, never a CI side effect.
 end-to-end orchestration check, run `bun run ci:core -- --fast`; unknown options
 fail before any gate starts.
 
+The install precheck validates policy and layout without traversing the complete
+global cache. After it passes, the remaining read-only checks run concurrently:
+`install:cache:lifecycle` owns the single cache-size traversal and shares that
+snapshot with package-manager health. This matters on long-lived machines where
+the global store can be several gigabytes. `reports/ci-core-timing.json` records
+both `wallMs` and the diagnostic per-gate `totalMs` step sum; do not compare the
+step sum to wall time after fan-out.
+
+The harness merge lane combines Bun 1.4 adaptive timing data with a bounded
+`--parallel=4` main-head run. Tests must own unique scratch paths and remove
+only their own fixtures; `bun run test:changed:serial` is a race diagnostic, not
+the merge default.
+
 ## Retirement
 
 Remove when a single required GHA job owns the full envelope without a cataloged

@@ -7,30 +7,24 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * One local/CI envelope after `bun ci`: install proof + hygiene + ci:harness.
  * Avoids a second GHA job that re-installs for hygiene alone.
  *
- *   bun run ci:core
- *   bun run ci:core -- --fast
- *   bun run ci:core -- --full-lint --verbose
- *
  * Extra args after `--` forward to ci:harness.
  */
-import { ensureDir, writeJson } from './lib/fs-bun';
+import {
+  runCoreStep,
+  writeCoreTimingReport,
+  type CoreStep,
+  type CoreStepResult,
+  type GateTiming,
+} from './lib/ci-core-runner';
 
 const repoRoot = `${import.meta.dir}/..`;
 const TIMING_PATH = `${repoRoot}/reports/ci-core-timing.json`;
 
-type GateTiming = { name: string; ms: number; ok: boolean };
-
-type CoreStep = {
-  name: string;
-  cmd: string[];
-  /** Write captured stdout to this repo-relative artifact on success. */
-  writeOut?: string;
-};
-
 const CORE_STEPS: CoreStep[] = [
   {
     name: 'install-verify',
-    cmd: ['bun', 'scripts/verify-install-cache.ts', '--strict', '--quiet'],
+    // cache-lifecycle owns the one expensive global-cache size traversal below.
+    cmd: ['bun', 'scripts/verify-install-cache.ts', '--strict', '--quiet', '--skip-cache-size'],
   },
   {
     name: 'cache-lifecycle',
@@ -115,54 +109,70 @@ const CORE_STEPS: CoreStep[] = [
   },
 ];
 
-async function run(
-  cmd: string[],
-  inherit: boolean
-): Promise<{ code: number; ms: number; out: string }> {
-  const t0 = performance.now();
-  const proc = Bun.spawn(cmd, {
-    cwd: repoRoot,
-    stdout: inherit ? 'inherit' : 'pipe',
-    stderr: inherit ? 'inherit' : 'pipe',
-    stdin: 'ignore',
-  });
-  let out = '';
-  if (!inherit) {
-    const [stdout, stderr] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
-    ]);
-    out = `${stdout}${stderr}`;
-  }
-  const code = (await proc.exited) ?? 1;
-  return { code, ms: Math.round(performance.now() - t0), out };
-}
-
 const harnessArgs = import.meta.main
   ? applyUnknownLongOptionGuardFor('ci:core', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const verbose = harnessArgs.includes('--verbose');
 const timings: GateTiming[] = [];
+const coreStartedAt = performance.now();
 
-for (const step of CORE_STEPS) {
-  // writeOut steps always capture stdout (needed for the artifact), even in verbose mode.
-  const { code, ms, out } = await run(step.cmd, verbose && !step.writeOut);
+async function writeTimingReport(): Promise<void> {
+  await writeCoreTimingReport({ path: TIMING_PATH, startedAt: coreStartedAt, timings });
+}
+
+async function acceptResult(step: CoreStep, result: CoreStepResult): Promise<void> {
+  const { code, ms, out } = result;
   timings.push({ name: step.name, ms, ok: code === 0 });
-  if (!verbose) console.info(`${code === 0 ? '✓' : '✗'} ${step.name} (${ms}ms)`);
-  if (code !== 0) {
-    if (!verbose && out.trim()) console.error(out.trimEnd());
-    console.error(`❌ ${step.name} failed`);
-    await ensureDir(`${repoRoot}/reports`);
-    await writeJson(TIMING_PATH, {
-      generatedAt: new Date().toISOString(),
-      totalMs: timings.reduce((s, t) => s + t.ms, 0),
-      gates: timings,
-    });
-    process.exit(code);
-  }
-  if (step.writeOut) {
+  if (step.writeOut && code === 0) {
     await Bun.write(`${repoRoot}/${step.writeOut}`, out);
   }
+}
+
+const [installPrecheck, ...parallelCoreSteps] = CORE_STEPS;
+if (!installPrecheck) throw new Error('ci:core requires an install precheck');
+
+// Validate machine/project install policy before fan-out. The remaining gates
+// are read-only or write only their declared ignored report, so Bun can overlap
+// their repository scans with the single global-cache traversal.
+const installResult = await runCoreStep(installPrecheck.cmd, {
+  cwd: repoRoot,
+  inherit: verbose && !installPrecheck.writeOut,
+});
+await acceptResult(installPrecheck, installResult);
+if (installResult.code !== 0) {
+  if (!verbose && installResult.out.trim()) console.error(installResult.out.trimEnd());
+  console.error(`❌ ${installPrecheck.name} failed`);
+  await writeTimingReport();
+  process.exit(installResult.code);
+}
+
+const parallelStartedAt = performance.now();
+const parallelResults = await Promise.all(
+  parallelCoreSteps.map(async step => ({
+    step,
+    result: await runCoreStep(step.cmd, {
+      cwd: repoRoot,
+      inherit: verbose && !step.writeOut,
+    }),
+  }))
+);
+
+for (const { step, result } of parallelResults) {
+  await acceptResult(step, result);
+}
+if (!verbose) {
+  console.info(
+    `∥ core×${parallelCoreSteps.length} (${Math.round(performance.now() - parallelStartedAt)}ms wall)`
+  );
+}
+
+const failed = parallelResults.find(({ result }) => result.code !== 0);
+if (failed) {
+  const { step, result } = failed;
+  if (!verbose && result.out.trim()) console.error(result.out.trimEnd());
+  console.error(`❌ ${step.name} failed`);
+  await writeTimingReport();
+  process.exit(result.code);
 }
 
 const harnessCmd = ['bun', 'scripts/ci-harness.ts', ...harnessArgs];
@@ -180,13 +190,10 @@ timings.push({
   ok: harnessCode === 0,
 });
 
-await ensureDir(`${repoRoot}/reports`);
 const totalMs = timings.reduce((s, t) => s + t.ms, 0);
-await writeJson(TIMING_PATH, {
-  generatedAt: new Date().toISOString(),
-  totalMs,
-  gates: timings,
-});
+await writeTimingReport();
 
 if (harnessCode !== 0) process.exit(harnessCode);
-console.info(`✅ ci:core ${totalMs}ms step-sum`);
+console.info(
+  `✅ ci:core ${Math.round(performance.now() - coreStartedAt)}ms wall · ${totalMs}ms step-sum`
+);

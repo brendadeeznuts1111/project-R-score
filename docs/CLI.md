@@ -169,7 +169,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:tenant-heal` | E2E heal: break → signal → intervene → recover (sandboxed fixture) |
 | `bun run test:tenant-runbooks` | Ratchet: TenantRunbook + heal + code-quality + CI/deploy runbooks |
 | `bun run test:toc-ops` | test tests/toc-ops/ |
-| `bun run test:watch` | NODE_ENV=test bun test --changed --watch --parallel --pass-with-no-tests |
+| `bun run test:watch` | NODE_ENV=test bun run test:changed:watch |
 | `bun run test:watch:full` | NODE_ENV=test bun test --watch --parallel --timeout=30000 --pass-with-no-tests tests |
 | `bun run test:watch:shard1` | test --watch --parallel --timeout=30000 --pass-with-no-tests tests --shard=1/3 |
 | `bun run test:watch:shard2` | test --watch --parallel --timeout=30000 --pass-with-no-tests tests --shard=2/3 |

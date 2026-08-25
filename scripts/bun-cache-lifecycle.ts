@@ -11,7 +11,11 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * @see docs/UNIFIED.md
  */
 import { jsonOut } from '../lib/console-depth.ts';
-import { runBunCacheLifecycle, type BunCacheLifecyclePlan } from './lib/bun-cache-metrics.ts';
+import {
+  collectBunCacheMetrics,
+  runBunCacheLifecycle,
+  type BunCacheLifecyclePlan,
+} from './lib/bun-cache-metrics.ts';
 import { collectBunPmHealth, type BunPmHealthReport } from './lib/bun-pm-health.ts';
 
 function parseArgs(argv: string[]): {
@@ -50,9 +54,12 @@ async function main(): Promise<void> {
     applyUnknownLongOptionGuardFor('install:cache:lifecycle', Bun.argv.slice(2))
   );
   const dryRun = args.dryRun || !args.prune;
+  // The global cache can be many gigabytes. Collect it once, then share the
+  // immutable snapshot across lifecycle and package-manager health evaluation.
+  const cache = await collectBunCacheMetrics();
   const [plan, health] = await Promise.all([
-    runBunCacheLifecycle({ dryRun, prune: args.prune }),
-    collectBunPmHealth(),
+    runBunCacheLifecycle({ dryRun, prune: args.prune }, cache),
+    collectBunPmHealth(undefined, cache),
   ]);
 
   const payload = { lifecycle: plan, pmHealth: health };

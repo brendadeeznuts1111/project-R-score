@@ -6,12 +6,13 @@ const precommitSource = await Bun.file(
 ).text();
 
 describe('ci-harness changed-test scheduling', () => {
-  test('serializes the main-head lane without slowing the dirty-tree lane', () => {
+  test('bounds main-head parallelism without slowing the dirty-tree lane', () => {
     expect(source).toContain(
-      "? ['bun', 'run', 'test:changed', '--', '--main-head', '--serial']"
+      "? ['bun', 'run', 'test:changed', '--', '--main-head', '--parallel=4']"
     );
     expect(source).toContain(": ['bun', 'run', 'test:changed']");
-    expect(source).toContain('shared repository files');
+    expect(source).toContain("Bun 1.4's timing cache");
+    expect(source).toContain('test:changed:serial to diagnose races');
   });
 });
 

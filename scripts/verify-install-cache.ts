@@ -55,6 +55,7 @@ const strict = argv.includes('--strict');
 const quiet = argv.includes('--quiet');
 const dryRun = argv.includes('--dry-run');
 const json = argv.includes('--json');
+const skipCacheSize = argv.includes('--skip-cache-size');
 
 /** Human label for the forbidden install-env pair (SSOT order). */
 const FORBIDDEN_INSTALL_ENV_LABEL = FORBIDDEN_INSTALL_ENV_VARS.join(' / ');
@@ -172,7 +173,7 @@ function checkShellInstallEnv(
   };
 }
 
-function checkCacheDir(): Check {
+function checkCacheDir(includeSize = true): Check {
   const cacheDir = resolveBunInstallCacheDir(applyBunInstallEnv());
   if (!cacheDir) {
     return {
@@ -189,6 +190,13 @@ function checkCacheDir(): Check {
       ok: !strict,
       label: 'cache dir',
       detail: `missing (run bun run install:all): ${cacheDir}`,
+    };
+  }
+  if (!includeSize) {
+    return {
+      ok: true,
+      label: 'cache dir',
+      detail: `${cacheDir} (size delegated to install:cache:lifecycle)`,
     };
   }
   const size = Bun.spawnSync(['du', '-sh', cacheDir], { stdout: 'pipe' });
@@ -334,7 +342,7 @@ async function main() {
     await checkBunfig(),
     checkEnvDefaults(),
     checkShellInstallEnv(),
-    checkCacheDir(),
+    checkCacheDir(!skipCacheSize),
     checkGlobalStore(),
     checkTildeDrift(),
     await checkTrustedDependencies(),

@@ -11,22 +11,27 @@ install-scoped environment configuration owned by the Factory Bun setup action.
 
 ## Local day loop
 
-| Command                                    | Purpose                                                              |
-| ------------------------------------------ | -------------------------------------------------------------------- |
-| `bun run test:changed`                     | Select tests from the current import graph and run files in parallel |
-| `bun run test:changed:watch`               | Re-query git and rerun affected tests                                |
-| `bun run test:watch`                       | Native changed/watch/parallel loop                                   |
-| `bun run test:changed:serial`              | Diagnose a worker-only failure without parallelism                   |
-| `bun run test`                             | Full serial `tests/` suite                                           |
-| `bun run test:parallel`                    | Full suite with isolated workers and a 30-second file timeout        |
-| `bun run test:ci`                          | Full serial suite with JUnit output                                  |
-| `SHARD=2/4 bun run test:ci:shard`          | One serial CI shard                                                  |
-| `SHARD=2/4 bun run test:ci:shard:parallel` | One shard with four workers after its files are isolation-clean      |
-| `bun run test:inventory`                   | Produce current suite and timing evidence                            |
+| Command                                     | Purpose                                                         |
+| ------------------------------------------- | --------------------------------------------------------------- |
+| `bun run test:changed`                      | Import-graph selection, adaptive timings, and parallel files    |
+| `bun run test:changed:watch`                | Re-query git and run slow-known affected files first            |
+| `bun run test:watch`                        | Alias of the owned changed/watch wrapper                        |
+| `bun run test:changed:serial`               | Diagnose a worker-only failure without parallelism              |
+| `bun run test:changed:main -- --parallel=4` | Bounded merge-base proof used by the CI harness                 |
+| `bun run test`                              | Full parallel `tests/` suite                                    |
+| `bun run test:parallel`                     | Full suite with isolated workers and a 30-second file timeout   |
+| `bun run test:ci`                           | Full serial suite with JUnit output                             |
+| `SHARD=2/4 bun run test:ci:shard`           | One serial CI shard                                             |
+| `SHARD=2/4 bun run test:ci:shard:parallel`  | One shard with four workers after its files are isolation-clean |
+| `bun run test:inventory`                    | Produce current suite and timing evidence                       |
 
 The changed-test wrapper is
 [`scripts/bun-test-changed.ts`](../scripts/bun-test-changed.ts). It exits
-cleanly without starting Bun when the change set contains no code-like files.
+cleanly without starting Bun when the change set contains no code-like files. On
+each finite run it passes Bun 1.4's `--timings` and `--update-timings`, using
+the gitignored `.cache/bun-test-timings.json`. Bun starts known-slow files
+first; later runs learn from the files actually selected. Use `--no-timings`
+only to diagnose timing-cache behavior, not as a routine speed switch.
 
 ## State isolation is the first speed feature
 
@@ -53,6 +58,11 @@ artifacts behind is a failing test design.
 
 Serial execution is not an isolation mechanism. It can temporarily help diagnose
 an order-dependent failure, but the fix is to remove shared writable state.
+
+The merge harness therefore runs the larger main-head selection with four
+workers. This cap measured about 9 seconds for 208 files versus 28 seconds
+serially on the Bun 1.4 migration lane. Keep the serial wrapper as a diagnostic;
+do not restore serial merge proof to conceal repository-wide fixture cleanup.
 
 ## CI lanes
 
@@ -89,11 +99,14 @@ test configuration.
 --isolate        give each test file a fresh global object
 --shard=M/N      select one deterministic subset for a CI runner
 --changed[=REF]  select tests that transitively import changed files
+--timings=PATH   read per-file durations and schedule slow files first
+--update-timings merge measured durations into the timing file
 --bail=1         stop after the first failure
 --reporter=junit --reporter-outfile=path
 ```
 
 Pin for the reviewed upstream behavior:
+[Bun 1.4 test timings](https://bun.com/blog/bun-v1.4#bun-test-timings),
 [Bun test tree](https://github.com/oven-sh/bun/tree/b5036bc6a11be1389b5cb50549c407f956df76d3/test)
 and
 [Bun test README](https://github.com/oven-sh/bun/blob/b5036bc6a11be1389b5cb50549c407f956df76d3/test/README.md).

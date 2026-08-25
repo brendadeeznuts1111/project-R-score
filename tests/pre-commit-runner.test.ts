@@ -157,6 +157,16 @@ describe('pre-commit environment', () => {
   });
 });
 
+describe('pre-commit Bun 1.4 profiler contract', () => {
+  it('uses the boolean markdown flag plus separate output directory and name', async () => {
+    const source = await Bun.file(new URL('../scripts/pre-commit.ts', import.meta.url)).text();
+    expect(source).toContain("'--cpu-prof-md'");
+    expect(source).toContain('`--cpu-prof-dir=${profileDir}`');
+    expect(source).toContain('`--cpu-prof-name=${profileName}`');
+    expect(source).not.toContain('`--cpu-prof-md=${profilePath}`');
+  });
+});
+
 describe('pre-commit Bun stable pin', () => {
   it('accepts the exact reviewed stable runtime', async () => {
     const pin = await checkBunPin(REVIEWED_BUN_VERSION);

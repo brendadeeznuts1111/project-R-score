@@ -55,7 +55,7 @@ exit 1
 
 describe('portal-secret autofill --json (stubbed pass-cli)', () => {
   test('report is value-free; empty + unsanitizable + reserved land in missing', async () => {
-    const shimDir = `${import.meta.dir}/../.tmp/pass-shim-${process.pid}-${Date.now()}`;
+    const shimDir = `${Bun.env.TMPDIR ?? '/tmp'}/fw-pass-shim-${Bun.randomUUIDv7()}`;
     const shimPath = `${shimDir}/pass-cli`;
     try {
       await Bun.write(shimPath, PASS_CLI_SHIM);
@@ -86,7 +86,7 @@ describe('portal-secret autofill --json (stubbed pass-cli)', () => {
       expect(report.parallel).toBe(true);
       expect(typeof report.durationMs).toBe('number');
     } finally {
-      await Bun.$`rm -rf ${`${import.meta.dir}/../.tmp`}`.quiet();
+      await Bun.$`rm -rf ${shimDir}`.quiet();
     }
   });
 });

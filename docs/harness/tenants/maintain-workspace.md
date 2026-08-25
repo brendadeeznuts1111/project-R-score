@@ -219,12 +219,17 @@ Hard pre-commit fails print a shared markdown shape (**gate · why · fix**) via
 `lib/harness/gate-fail.ts` (`Bun.markdown.ansi` + `statusLine`). Re-run the
 `fix` command from that block.
 
-Slow hook diagnosis (Bun 1.4 CPU profile → `reports/precommit-cpu.md`, gitignored):
+Slow hook diagnosis (Bun 1.4 CPU profile → `reports/precommit-cpu.md`,
+gitignored):
 
 ```bash
 bun run precommit:profile
 # or: PRECOMMIT_PROFILE=1 bun run precommit
 ```
+
+`--cpu-prof-md` is a boolean runtime flag. Output routing uses separate
+`--cpu-prof-dir=reports` and `--cpu-prof-name=precommit-cpu.md` arguments; do
+not use the invalid `--cpu-prof-md=<path>` shape.
 
 Packages graph MD audit (existing `--md` path, not a second bundler):
 

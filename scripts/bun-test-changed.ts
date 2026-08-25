@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/test/parallel#one-timings-file-per-shard — --shard
+// @released --shard · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --shard · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -6,6 +9,7 @@
 // @see https://bun.com/blog/bun-v1.3.13#bun-test-changed — --changed / --changed=REF / --watch
 // @see https://bun.com/docs/test/parallel#isolate — --isolate
 // @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @see https://bun.com/blog/bun-v1.4#bun-test-timings — --timings / --update-timings
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
@@ -20,6 +24,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun run test:changed -- --serial     # opt out of --parallel
  *   bun run test:changed -- --isolate    # fresh global per file, no worker pool
  *   bun run test:changed -- --shard=1/4  # shard the changed test set
+ *   bun run test:changed -- --no-timings # disable the adaptive local timing cache
  *   bun run test:changed -- --dry-run    # preview selection without running tests
  *   BUN_TEST_SERIAL=1 bun run test:changed
  *
@@ -28,6 +33,9 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { bunSpawnArgs } from '../lib/bun-executable.ts';
 import { hasCodeLikeChange, listChangedFiles, resolveMainHead } from './lib/git-changed';
+import { ensureDir } from './lib/fs-bun';
+
+export const DEFAULT_TEST_TIMINGS_PATH = '.cache/bun-test-timings.json';
 
 export type TestChangedShard = {
   index: number;
@@ -41,6 +49,7 @@ export type TestChangedArgs = {
   dryRun: boolean;
   serial: boolean;
   isolate: boolean;
+  timings: boolean;
   mainHead: boolean;
   shard: TestChangedShard | undefined;
   /** Remaining flags to forward to `bun test` (e.g. --bail=1). */
@@ -88,8 +97,11 @@ export function parseTestChangedArgs(
   const wantSerial =
     argv.includes('--serial') || env.BUN_TEST_SERIAL === '1' || env.BUN_TEST_SERIAL === 'true';
   const wantIsolate = argv.includes('--isolate');
+  const wantTimings = !argv.includes('--no-timings');
   const dryRun = argv.includes('--dry-run');
-  const stripped = argv.filter(a => a !== '--main-head' && a !== '--serial' && a !== '--dry-run');
+  const stripped = argv.filter(
+    a => a !== '--main-head' && a !== '--serial' && a !== '--dry-run' && a !== '--no-timings'
+  );
 
   // Parse --shard=M/N and remove from forwarded flags so we can validate it.
   let shard: TestChangedShard | undefined;
@@ -112,6 +124,7 @@ export function parseTestChangedArgs(
     dryRun,
     serial: wantSerial,
     isolate: wantIsolate,
+    timings: wantTimings,
     shard,
     mainHead: wantMainHead,
     flags,
@@ -126,6 +139,15 @@ export function buildBunTestCommand(
 ): string[] {
   const bunArgs = ['test', '--pass-with-no-tests'];
   bunArgs.push(resolvedRef ? `--changed=${resolvedRef}` : '--changed');
+
+  const hasTimings = args.flags.some(flag => flag === '--timings' || flag.startsWith('--timings='));
+  const updatesTimings = args.flags.includes('--update-timings');
+  if (args.timings && !hasTimings) {
+    bunArgs.push(`--timings=${DEFAULT_TEST_TIMINGS_PATH}`);
+  }
+  if (args.timings && !args.watch && !updatesTimings) {
+    bunArgs.push('--update-timings');
+  }
 
   // Parallel implies --isolate (fresh global per file). Opt out with --serial or --isolate.
   const hasParallel = args.flags.some(f => f === '--parallel' || f.startsWith('--parallel='));
@@ -210,6 +232,10 @@ export async function runTestChanged(
       console.info(`✓ test:changed — skip (${why}${ref ? `; since ${ref}` : ''})`);
       return 0;
     }
+  }
+
+  if (args.timings) {
+    await ensureDir(`${import.meta.dir}/../.cache`);
   }
 
   const proc = Bun.spawn(bunSpawnArgs(bunArgs), {
