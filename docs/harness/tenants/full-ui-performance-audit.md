@@ -78,8 +78,10 @@ offline snapshot path retains it. The three candidate sweeps completed in
 - `portal:optimize` now copies the complete `public/` tree, including hidden
   discovery files, then minifies portal JavaScript, CSS, and runnable inline
   blocks without mutating readable source artifacts.
-- The optimizer enforces the 35% target and the 35-page inventory during every
-  Pages build. Cloudflare's desired output changes from `public` to
+- The optimizer reads its minimum reduction policy from the versioned performance
+  baseline, derives the byte target from that policy and the baseline bytes, and
+  verifies that the copied output preserves the dynamically discovered page
+  inventory. Cloudflare's desired output changes from `public` to
   `tmp/pages-optimized`.
 - The portal logo CSS URL is relative so both source serving and CSS compilation
   resolve it correctly.

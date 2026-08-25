@@ -41,7 +41,7 @@ type PortalBundleReport = {
   baselineBytes: number;
   sourceBytes: number;
   optimizedBytes: number;
-  targetReductionPct: 35;
+  targetReductionPct: number;
   reductionPct: number;
   targetBytes: number;
   pass: boolean;
@@ -55,7 +55,12 @@ type PortalPerformanceBaseline = {
   revision: string;
   pageCount: number;
   baselineBytes: number;
+  minimumReductionPct: number;
 };
+
+function isReductionPercentage(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value > 0 && value < 100;
+}
 
 function flagValue(name: string): string | undefined {
   const prefix = `--${name}=`;
@@ -328,7 +333,13 @@ export async function optimizePortalAssets(
   const outdir = options.outdir ?? DEFAULT_OUTDIR;
   const baselinePath = options.baselinePath ?? DEFAULT_BASELINE;
   const baseline = (await Bun.file(baselinePath).json()) as PortalPerformanceBaseline;
-  if (baseline.schemaVersion !== 1 || baseline.metric !== 'aggregate-initial-js-css-by-route') {
+  if (
+    baseline.schemaVersion !== 1 ||
+    baseline.metric !== 'aggregate-initial-js-css-by-route' ||
+    !Number.isSafeInteger(baseline.baselineBytes) ||
+    baseline.baselineBytes <= 0 ||
+    !isReductionPercentage(baseline.minimumReductionPct)
+  ) {
     throw new Error(`Unsupported portal performance baseline: ${baselinePath}`);
   }
   await copyPublicTree(outdir);
@@ -345,7 +356,7 @@ export async function optimizePortalAssets(
   }
   const sourceBytes = source.reduce((total, row) => total + row.totalBytes, 0);
   const optimizedBytes = optimized.reduce((total, row) => total + row.totalBytes, 0);
-  const { baselineBytes } = baseline;
+  const { baselineBytes, minimumReductionPct } = baseline;
   const reductionPct = Number(
     (((baselineBytes - optimizedBytes) / baselineBytes) * 100).toFixed(2)
   );
@@ -357,10 +368,10 @@ export async function optimizePortalAssets(
     baselineBytes,
     sourceBytes,
     optimizedBytes,
-    targetReductionPct: 35,
+    targetReductionPct: minimumReductionPct,
     reductionPct,
-    targetBytes: Math.floor(baselineBytes * 0.65),
-    pass: reductionPct >= 35,
+    targetBytes: Math.floor(baselineBytes * (1 - minimumReductionPct / 100)),
+    pass: reductionPct >= minimumReductionPct,
     source,
     optimized,
   };
