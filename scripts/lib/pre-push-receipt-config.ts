@@ -44,29 +44,21 @@
 // @updated Bun.file · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/file-io
-// @see https://bun.com/docs/runtime/glob#quickstart — Bun.Glob
-// @updated Bun.Glob · fixed v1.0.27 · 2024-02-17 · https://bun.com/blog/bun-v1.0.27
-// @updated Bun.Glob · fixed v1.0.28 · 2024-02-19 · https://bun.com/blog/bun-v1.0.28
-// @updated Bun.Glob · fixed v1.0.29 · 2024-02-23 · https://bun.com/blog/bun-v1.0.29
-// @updated Bun.Glob · fixed v1.0.30 · 2024-03-04 · https://bun.com/blog/bun-v1.0.30
-// @updated Bun.Glob · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
-// @updated Bun.Glob · changed v1.2.3 · 2025-02-22 · https://bun.com/blog/bun-v1.2.3
-// @updated Bun.Glob · fixed v1.2.3 · 2025-02-22 · https://bun.com/blog/bun-v1.2.3
-// @updated Bun.Glob · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
-// @updated Bun.Glob · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
-// @updated Bun.Glob · changed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
-// @updated Bun.Glob · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
-// @verified Bun.Glob · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/glob#quickstart
-import { scanTestConsoleSource, type TestConsoleCall } from './console-test-ratchet-core.ts';
-export * from './console-test-ratchet-core.ts';
+import { sha256 } from './pre-push-receipt-contract.ts';
 
-export async function scanTestConsole(root: string): Promise<TestConsoleCall[]> {
-  const calls: TestConsoleCall[] = [];
-  for (const suffix of ['test.ts', 'spec.ts']) {
-    const glob = new Bun.Glob(`tests/**/*.${suffix}`);
-    for await (const file of glob.scan({ cwd: root })) {
-      calls.push(...scanTestConsoleSource(file, await Bun.file(`${root}/${file}`).text()));
-    }
-  }
-  return calls;
+const CONFIG_PATHS = [
+  'package.json',
+  'bunfig.toml',
+  'scripts/ci-harness.ts',
+  'scripts/bun-test-changed.ts',
+  'scripts/bun-test-changed-staged.ts',
+  'lib/harness/ci-test-groups.ts',
+] as const;
+
+/** Hash every file that defines the proof receipt's validity boundary. */
+export async function receiptGateConfigHash(root: string): Promise<string> {
+  const text = await Promise.all(
+    CONFIG_PATHS.map(async path => `${path}\n${await Bun.file(`${root}/${path}`).text()}`)
+  );
+  return sha256(text.join('\n---\n'));
 }

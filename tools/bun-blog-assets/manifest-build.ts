@@ -14,10 +14,10 @@ import type {
   AssetRecord,
   Attribution,
   CliOptions,
-  FetchedAsset,
   RightsApprovalEvidence,
   SourceDocuments,
 } from './types.ts';
+import type { FetchedAsset } from './inspection-types.ts';
 
 function localUrlFor(asset: AssetDraft, mode: CliOptions['mode']): string | null {
   if (mode !== 'vendor' || asset.kind === 'embed') return null;

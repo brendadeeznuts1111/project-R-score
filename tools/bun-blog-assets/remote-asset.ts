@@ -4,7 +4,8 @@ import {
   validateRemoteHttpsUrl,
 } from '../../lib/rss/remote-fetch.ts';
 import { fail } from './errors.ts';
-import type { AssetDraft, RangeProbe } from './types.ts';
+import type { AssetDraft } from './types.ts';
+import type { RangeProbe } from './inspection-types.ts';
 
 const ALLOWED_ORIGINS = new Set(['https://bun.com']);
 const RANGE_REQUEST = 'bytes=0-0' as const;

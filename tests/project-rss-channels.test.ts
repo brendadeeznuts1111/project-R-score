@@ -121,9 +121,9 @@ describe('project RSS channel registry', () => {
     expect(packageJson.scripts['channels:bun-1.4:check']).toContain(
       'bun run channels:projects:types'
     );
-    const ciCore = await Bun.file('scripts/ci-core.ts').text();
-    expect(ciCore).toContain("cmd: ['bun', 'run', 'docs:blog-assets:check']");
-    expect(ciCore).toContain("cmd: ['bun', 'run', 'channels:bun-1.4:check']");
+    const ciCoreSteps = await Bun.file('scripts/lib/ci-core-steps.ts').text();
+    expect(ciCoreSteps).toContain("cmd: ['bun', 'run', 'docs:blog-assets:check']");
+    expect(ciCoreSteps).toContain("cmd: ['bun', 'run', 'channels:bun-1.4:check']");
     const scheduledDrift = await Bun.file('.github/workflows/bun-1.4-release-drift.yml').text();
     expect(scheduledDrift).toContain('cron: "20 6 * * *"');
     expect(scheduledDrift).toContain('bun run docs:blog-assets:check');

@@ -69,13 +69,14 @@ describe('repository governance', () => {
     const ciCoreRunner = await Bun.file(
       `${import.meta.dir}/../scripts/lib/ci-core-runner.ts`
     ).text();
-    expect(ciCore).toContain("'--skip-cache-size'");
+    const ciCoreSteps = await Bun.file(`${import.meta.dir}/../scripts/lib/ci-core-steps.ts`).text();
+    expect(ciCoreSteps).toContain("'--skip-cache-size'");
     expect(ciCore).toContain('parallelCoreSteps.map');
     expect(ciCoreRunner).toContain('wallMs:');
-    expect(ciCore).toContain("name: 'bun-release-contracts'");
-    expect(ciCore).toContain("['bun', 'run', 'bun:release-contracts:check']");
-    expect(ciCore.indexOf("name: 'bun-release-contracts'")).toBeLessThan(
-      ciCore.indexOf("name: 'bun-release-knowledge'")
+    expect(ciCoreSteps).toContain("name: 'bun-release-contracts'");
+    expect(ciCoreSteps).toContain("['bun', 'run', 'bun:release-contracts:check']");
+    expect(ciCoreSteps.indexOf("name: 'bun-release-contracts'")).toBeLessThan(
+      ciCoreSteps.indexOf("name: 'bun-release-knowledge'")
     );
     expect(packageJson.scripts['test:partner-cli:snapshots']).toBe(
       'bun test tests/partner-cli-snapshots.test.ts'

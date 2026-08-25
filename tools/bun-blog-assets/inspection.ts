@@ -9,7 +9,8 @@ import {
   validateMp4Container,
 } from './media-validation.ts';
 import { fetchRemoteAssetBytes } from './remote-asset.ts';
-import type { AssetDraft, AssetRecord, CliOptions, FetchedAsset } from './types.ts';
+import type { AssetDraft, AssetRecord, CliOptions } from './types.ts';
+import type { FetchedAsset } from './inspection-types.ts';
 
 function expectedMimeType(asset: AssetDraft): string | null {
   if (asset.kind === 'embed') return null;

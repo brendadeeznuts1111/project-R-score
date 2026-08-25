@@ -111,81 +111,27 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /** Local, clean-tree receipt for the fast pre-push proof. */
 import { ensureDir, writeJson } from './lib/fs-bun.ts';
-import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
+import {
+  hasContentPush,
+  receiptMatches,
+  type PrePushReceipt,
+} from './lib/pre-push-receipt-contract.ts';
+import { receiptGateConfigHash } from './lib/pre-push-receipt-config.ts';
+import { runPrePushReceiptProfile } from './lib/pre-push-receipt-profile.ts';
 
 const ROOT = `${import.meta.dir}/..`;
 const RECEIPT_DIR = `${ROOT}/.cache/ci-receipts`;
-const CONFIG_PATHS = [
-  'package.json',
-  'bunfig.toml',
-  'scripts/ci-harness.ts',
-  'scripts/bun-test-changed.ts',
-  'scripts/bun-test-changed-staged.ts',
-  'lib/harness/ci-test-groups.ts',
-] as const;
 
-export type PrePushReceipt = {
-  schemaVersion: 1;
-  tree: string;
-  bunVersion: string;
-  bunRevision: string;
-  gateConfigHash: string;
-  status: 'passed';
-  finishedAt: string;
-};
-
-export type PrePushProfileKind = 'cpu' | 'heap';
-
-export function resolvePrePushProfile(
-  kind: string | undefined,
-  tree: string
-): {
-  flag: '--cpu-prof-md' | '--heap-prof-md';
-  name: string;
-} {
-  const normalized: PrePushProfileKind = kind === 'heap' ? 'heap' : 'cpu';
-  return {
-    flag: normalized === 'heap' ? '--heap-prof-md' : '--cpu-prof-md',
-    name: `prepush-${normalized}-${tree.slice(0, 8)}.md`,
-  };
-}
+export {
+  receiptMatches,
+  resolvePrePushProfile,
+  sha256,
+  type PrePushReceipt,
+} from './lib/pre-push-receipt-contract.ts';
 
 function git(args: string[]): { code: number; out: string } {
   const result = Bun.spawnSync(['git', ...args], { cwd: ROOT, stdout: 'pipe', stderr: 'pipe' });
   return { code: result.exitCode ?? 1, out: result.stdout.toString().trim() };
-}
-
-export function sha256(value: string): string {
-  return new Bun.CryptoHasher('sha256').update(value).digest('hex');
-}
-
-export function receiptMatches(
-  receipt: PrePushReceipt | undefined,
-  expected: Omit<PrePushReceipt, 'status' | 'finishedAt'>
-): boolean {
-  return Boolean(
-    receipt &&
-    receipt.schemaVersion === 1 &&
-    receipt.status === 'passed' &&
-    receipt.tree === expected.tree &&
-    receipt.bunVersion === expected.bunVersion &&
-    receipt.bunRevision === expected.bunRevision &&
-    receipt.gateConfigHash === expected.gateConfigHash
-  );
-}
-
-async function configHash(): Promise<string> {
-  const text = await Promise.all(
-    CONFIG_PATHS.map(async path => `${path}\n${await Bun.file(`${ROOT}/${path}`).text()}`)
-  );
-  return sha256(text.join('\n---\n'));
-}
-
-function hasContentPush(lines: string): boolean {
-  return lines.split('\n').some(line => {
-    const [, localSha] = line.trim().split(/\s+/);
-    return Boolean(localSha && localSha !== '0000000000000000000000000000000000000000');
-  });
 }
 
 async function main(): Promise<number> {
@@ -204,7 +150,7 @@ async function main(): Promise<number> {
     tree: tree.out,
     bunVersion: Bun.version,
     bunRevision: Bun.revision,
-    gateConfigHash: await configHash(),
+    gateConfigHash: await receiptGateConfigHash(ROOT),
   };
   const receiptPath = `${RECEIPT_DIR}/${expected.tree}.json`;
   let receipt: PrePushReceipt | undefined;
@@ -235,33 +181,11 @@ async function main(): Promise<number> {
 }
 
 if (import.meta.main) {
-  // Opt-in Bun 1.4 Markdown CPU/heap profile for slow-push diagnosis.
-  if (Bun.env.PREPUSH_PROFILE === '1' && Bun.env.PREPUSH_PROFILE_CHILD !== '1') {
-    const profileDir = `${ROOT}/reports`;
-    const tree = git(['rev-parse', 'HEAD^{tree}']);
-    if (tree.code !== 0) process.exit(tree.code);
-    const profile = resolvePrePushProfile(Bun.env.PREPUSH_PROFILE_KIND, tree.out);
-    await ensureDir(profileDir);
-    const child = Bun.spawn(
-      [
-        resolveVerificationBunBinary().path,
-        profile.flag,
-        `--cpu-prof-dir=${profileDir}`,
-        `--cpu-prof-name=${profile.name}`,
-        import.meta.path,
-        ...Bun.argv.slice(2),
-      ],
-      {
-        cwd: ROOT,
-        env: { ...Bun.env, PREPUSH_PROFILE_CHILD: '1' },
-        stdin: 'inherit',
-        stdout: 'inherit',
-        stderr: 'inherit',
-      }
-    );
-    const code = (await child.exited) ?? 1;
-    if (code === 0) console.info(`⏱  ${profile.flag} → ${profileDir}/${profile.name}`);
-    process.exit(code);
-  }
-  process.exit(await main());
+  const profiled = await runPrePushReceiptProfile({
+    root: ROOT,
+    entrypoint: import.meta.path,
+    args: Bun.argv.slice(2),
+    git,
+  });
+  process.exit(profiled ?? (await main()));
 }

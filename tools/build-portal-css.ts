@@ -33,6 +33,13 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  */
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import {
+  assertMetafile,
+  checkBuildLogs,
+  cssOutputPath,
+  metafilePaths,
+  type BuildOpts,
+} from './lib/portal-css-build-results.ts';
 import { syncPortalTheme } from './sync-portal-theme.ts';
 
 const argv = import.meta.main
@@ -48,23 +55,6 @@ const PUBLIC_PATH = '/portal/dist/';
 const minify = argv.includes('--minify');
 const analyze = argv.includes('--analyze');
 const check = argv.includes('--check');
-
-type BuildOpts = {
-  naming: string;
-  minify: boolean;
-  analyze: boolean;
-};
-
-type MetafilePaths = {
-  json: string;
-  markdown: string;
-};
-
-function metafilePaths(opts: BuildOpts): MetafilePaths {
-  return opts.minify
-    ? { json: 'meta.min.json', markdown: 'meta.min.md' }
-    : { json: 'meta.json', markdown: 'meta.md' };
-}
 
 async function buildCss(opts: BuildOpts) {
   const metafile = opts.analyze ? { metafile: metafilePaths(opts) } : {};
@@ -89,61 +79,6 @@ async function buildCss(opts: BuildOpts) {
   return Bun.build(config as Parameters<typeof Bun.build>[0]);
 }
 
-async function assertMetafile(paths: MetafilePaths): Promise<void> {
-  const jsonPath = joinPath(OUTDIR, paths.json);
-  const markdownPath = joinPath(OUTDIR, paths.markdown);
-  const jsonFile = Bun.file(jsonPath);
-  const markdownFile = Bun.file(markdownPath);
-  if (!(await jsonFile.exists()) || !(await markdownFile.exists())) {
-    throw new Error(`Bun.build did not emit metafiles: ${jsonPath}, ${markdownPath}`);
-  }
-  const metafile = (await jsonFile.json()) as { inputs?: unknown; outputs?: unknown };
-  if (!metafile.inputs || !metafile.outputs) {
-    throw new Error(`invalid Bun metafile: ${jsonPath}`);
-  }
-  if (!(await markdownFile.text()).includes('Quick Summary')) {
-    throw new Error(`invalid Bun Markdown metafile: ${markdownPath}`);
-  }
-}
-
-function cssOutputPath(result: Awaited<ReturnType<typeof Bun.build>>, opts: BuildOpts): string {
-  const expected = joinPath(OUTDIR, opts.naming);
-  const output = result.outputs.find(item => item.path === expected);
-  if (!output) {
-    throw new Error(`Bun.build did not emit CSS output: ${expected}`);
-  }
-  return output.path;
-}
-
-type BuildLog = {
-  level?: unknown;
-  message?: unknown;
-};
-
-type BuildLogAtLevel = {
-  level: 'error' | 'warning';
-  message: string;
-};
-
-function buildLogAtLevel(log: unknown, level: 'error' | 'warning'): log is BuildLogAtLevel {
-  if (!log || typeof log !== 'object') return false;
-  const candidate = log as BuildLog;
-  return candidate.level === level && typeof candidate.message === 'string';
-}
-
-function checkBuildLogs(label: string, logs: readonly unknown[]): void {
-  const errors = logs.filter(log => buildLogAtLevel(log, 'error'));
-  if (errors.length > 0) {
-    throw new Error(
-      `${label} reported Bun.build error(s): ${errors.map(log => log.message).join('; ')}`
-    );
-  }
-  const warnings = logs.filter(log => buildLogAtLevel(log, 'warning'));
-  if (warnings.length === 0) return;
-  console.warn(`${label} completed with ${warnings.length} Bun.build warning(s):`);
-  for (const warning of warnings) console.warn(warning.message);
-}
-
 async function main(): Promise<void> {
   // Keep theme-tokens.css in sync (jsonc loader) before css loader bundles @import.
   await syncPortalTheme();
@@ -164,11 +99,11 @@ async function main(): Promise<void> {
   }
   checkBuildLogs('portal CSS build', lowered.logs);
 
-  const outPath = cssOutputPath(lowered, { naming: 'style.css', minify: false, analyze });
+  const outPath = cssOutputPath(OUTDIR, lowered, { naming: 'style.css', minify: false, analyze });
   const size = Bun.file(outPath).size;
   const kind = lowered.outputs.find(item => item.path === outPath)?.kind ?? 'asset';
   const loweredMetafile = metafilePaths({ naming: 'style.css', minify: false, analyze });
-  if (analyze) await assertMetafile(loweredMetafile);
+  if (analyze) await assertMetafile(OUTDIR, loweredMetafile);
 
   let minPath: string | undefined;
   let minSize: number | undefined;
@@ -180,10 +115,13 @@ async function main(): Promise<void> {
       process.exit(1);
     }
     checkBuildLogs('portal CSS minify build', minified.logs);
-    minPath = cssOutputPath(minified, { naming: 'style.min.css', minify: true, analyze });
+    minPath = cssOutputPath(OUTDIR, minified, { naming: 'style.min.css', minify: true, analyze });
     minSize = Bun.file(minPath).size;
     if (analyze) {
-      await assertMetafile(metafilePaths({ naming: 'style.min.css', minify: true, analyze }));
+      await assertMetafile(
+        OUTDIR,
+        metafilePaths({ naming: 'style.min.css', minify: true, analyze })
+      );
     }
   }
 

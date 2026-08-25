@@ -9,7 +9,8 @@ import { fail } from './errors.ts';
 import { sha256 } from './inspection.ts';
 import { parseManifestShape } from './manifest-validation.ts';
 import { assertVendorSafeAsset } from './media-validation.ts';
-import type { AssetManifest, FetchedAsset } from './types.ts';
+import type { AssetManifest } from './types.ts';
+import type { FetchedAsset } from './inspection-types.ts';
 
 export async function readManifest(path: string): Promise<AssetManifest> {
   try {
