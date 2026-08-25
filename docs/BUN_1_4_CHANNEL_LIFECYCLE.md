@@ -3,6 +3,11 @@
 The Bun 1.4 asset manifest is the source contract. The capability registry,
 portal, and four Bun.XML RSS feeds are derived projections.
 
+This is a versioned release projection, not a general RSS ingestion service or
+an odds/channel runtime. It does not imply a SQLite feed registry, polling,
+proxying, replay endpoints, MP4 transcoding, WebSocket delivery, or enabled
+HTTP/3. Add any such system as its own owned design and runtime contract.
+
 Breaking-behavior and upgrade evidence is owned by
 [`BUN_1_4_MIGRATION.md`](./BUN_1_4_MIGRATION.md). The registry stores those
 sources once under `migration`; release-note anchors remain capability-local.

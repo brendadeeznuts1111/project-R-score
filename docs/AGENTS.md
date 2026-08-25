@@ -15,10 +15,11 @@ grounded API matrix. Load only the matching route and its owner.
   [`DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md)
 - Bun APIs: [`BUN_NATIVE_CAPABILITIES.md`](BUN_NATIVE_CAPABILITIES.md) ·
   [`BUN_DOCS_OPERATE.md`](BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
-- Bun 1.4 release graph: [`BUN_1_4_MIGRATION.md`](BUN_1_4_MIGRATION.md) ·
-  [`BUN_1_4_CHANNEL_LIFECYCLE.md`](BUN_1_4_CHANNEL_LIFECYCLE.md) ·
-  `public/registry/bun-1.4-*.json` · `bun run docs:blog-assets:check` ·
-  `bun run channels:bun-1.4:check`
+- Bun 1.4 release facts: [`BUN_1_4_MIGRATION.md`](BUN_1_4_MIGRATION.md)
+  (what shipped) · [`BUN_1_4_CHANNEL_LIFECYCLE.md`](BUN_1_4_CHANNEL_LIFECYCLE.md)
+  (channels, ownership, removal) · [`BUN_1_4_MEDIA_RIGHTS.md`](BUN_1_4_MEDIA_RIGHTS.md)
+  (external versus vendored delivery) · `public/registry/bun-1.4-*.json` ·
+  `bun run docs:blog-assets:check` · `bun run channels:bun-1.4:check`
 - Native fetch protocols: `lib/docs/fetch-protocol-docs.ts` ·
   `bun test tests/bun-release-tracker.test.ts`
 - Console output: `lib/console/` · `lib/bun-runtime.md` ·

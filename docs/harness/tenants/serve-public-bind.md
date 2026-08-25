@@ -117,6 +117,12 @@ Optional operator defaults may live in `config/serve-public.toml`. The Bun
 server entrypoint checks for the file and parses it with `Bun.TOML.parse`; an
 absent file is an empty overlay and must not prevent startup.
 
+This is a **repository-local application file**, not `bunfig.toml`.
+Its `[server]` table is owned by `serve-public-config.ts`; it must not be
+presented as Bun's `[serve]` configuration section or as a generic Bun server
+schema. The actual Bun configuration remains root `bunfig.toml` and its
+documented `[serve]` settings.
+
 ```toml
 [server]
 port = 3000
