@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/project/benchmarking#heap-profiling — --heap-prof-md
+// @released --heap-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#heap-prof-md
 // @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
 // @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#cpu-prof-md
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -132,6 +134,22 @@ export type PrePushReceipt = {
   finishedAt: string;
 };
 
+export type PrePushProfileKind = 'cpu' | 'heap';
+
+export function resolvePrePushProfile(
+  kind: string | undefined,
+  tree: string
+): {
+  flag: '--cpu-prof-md' | '--heap-prof-md';
+  name: string;
+} {
+  const normalized: PrePushProfileKind = kind === 'heap' ? 'heap' : 'cpu';
+  return {
+    flag: normalized === 'heap' ? '--heap-prof-md' : '--cpu-prof-md',
+    name: `prepush-${normalized}-${tree.slice(0, 8)}.md`,
+  };
+}
+
 function git(args: string[]): { code: number; out: string } {
   const result = Bun.spawnSync(['git', ...args], { cwd: ROOT, stdout: 'pipe', stderr: 'pipe' });
   return { code: result.exitCode ?? 1, out: result.stdout.toString().trim() };
@@ -217,17 +235,19 @@ async function main(): Promise<number> {
 }
 
 if (import.meta.main) {
-  // Opt-in Bun 1.4 Markdown CPU profile for a slow pre-push diagnosis.
+  // Opt-in Bun 1.4 Markdown CPU/heap profile for slow-push diagnosis.
   if (Bun.env.PREPUSH_PROFILE === '1' && Bun.env.PREPUSH_PROFILE_CHILD !== '1') {
     const profileDir = `${ROOT}/reports`;
-    const profileName = 'prepush-cpu.md';
+    const tree = git(['rev-parse', 'HEAD^{tree}']);
+    if (tree.code !== 0) process.exit(tree.code);
+    const profile = resolvePrePushProfile(Bun.env.PREPUSH_PROFILE_KIND, tree.out);
     await ensureDir(profileDir);
     const child = Bun.spawn(
       [
         resolveVerificationBunBinary().path,
-        '--cpu-prof-md',
+        profile.flag,
         `--cpu-prof-dir=${profileDir}`,
-        `--cpu-prof-name=${profileName}`,
+        `--cpu-prof-name=${profile.name}`,
         import.meta.path,
         ...Bun.argv.slice(2),
       ],
@@ -240,7 +260,7 @@ if (import.meta.main) {
       }
     );
     const code = (await child.exited) ?? 1;
-    if (code === 0) console.info(`⏱  CPU profile → ${profileDir}/${profileName}`);
+    if (code === 0) console.info(`⏱  ${profile.flag} → ${profileDir}/${profile.name}`);
     process.exit(code);
   }
   process.exit(await main());

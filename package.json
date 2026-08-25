@@ -1570,6 +1570,7 @@
     "precommit": "bun scripts/pre-commit.ts",
     "precommit:profile": "PRECOMMIT_PROFILE=1 bun scripts/pre-commit.ts",
     "prepush:profile": "PREPUSH_PROFILE=1 bun scripts/pre-push-receipt.ts",
+    "prepush:profile:heap": "PREPUSH_PROFILE=1 PREPUSH_PROFILE_KIND=heap bun scripts/pre-push-receipt.ts",
     "precommit:ast-grep": "bun scripts/pre-commit-ast-grep.ts --full",
     "lint:money-sql:staged": "bun scripts/lint-money-sql.ts --staged",
     "partner:money:migrate": "bun scripts/migrate-money-to-integers.ts",

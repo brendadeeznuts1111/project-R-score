@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'bun:test';
-import { receiptMatches, sha256, type PrePushReceipt } from '../scripts/pre-push-receipt.ts';
+import {
+  receiptMatches,
+  resolvePrePushProfile,
+  sha256,
+  type PrePushReceipt,
+} from '../scripts/pre-push-receipt.ts';
 
 const receipt: PrePushReceipt = {
   schemaVersion: 1,
@@ -28,5 +33,16 @@ describe('pre-push receipts', () => {
     expect(receiptMatches({ ...receipt, bunRevision: 'other' }, expected)).toBe(false);
     expect(receiptMatches({ ...receipt, gateConfigHash: 'other' }, expected)).toBe(false);
     expect(receiptMatches({ ...receipt, status: 'passed', tree: 'other' }, expected)).toBe(false);
+  });
+
+  test('profiles are commit-addressable and opt into heap only explicitly', () => {
+    expect(resolvePrePushProfile(undefined, '1234567890')).toEqual({
+      flag: '--cpu-prof-md',
+      name: 'prepush-cpu-12345678.md',
+    });
+    expect(resolvePrePushProfile('heap', 'abcdefghij')).toEqual({
+      flag: '--heap-prof-md',
+      name: 'prepush-heap-abcdefgh.md',
+    });
   });
 });
