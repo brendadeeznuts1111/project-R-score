@@ -73,6 +73,14 @@ describe('lib/http/public-routes', () => {
     }
   });
 
+  test('registry catalog models serve-public and Pages gateway status shapes', () => {
+    const routes = new Map(publicRouteCatalog().map(route => [route.path, route]));
+    for (const path of ['/api/registry', '/api/registry/static', '/api/registry/search']) {
+      expect(routes.get(path)?.okStatuses).toEqual([200, 400]);
+      expect(routes.get(path)?.note).toContain('Pages R2 gateway');
+    }
+  });
+
   test('mergeHotFromHealth adds unseen hot paths', () => {
     const base = publicRouteCatalog();
     const merged = mergeHotFromHealth(base, {
