@@ -1615,6 +1615,7 @@
     "files:rate-removal": "bun tools/file-removal-candidates.ts",
     "channels:bun-1.4:check": "bun tools/bun-1.4-channel-release.ts --check && bun run channels:projects:types",
     "channels:bun-1.4:refresh": "bun tools/bun-blog-assets.ts",
+    "channels:bun-1.4:refresh:plan": "bun tools/bun-blog-assets.ts --plan",
     "channels:bun-1.4:rebuild": "bun tools/bun-1.4-channel-release.ts",
     "channels:bun-1.4:watch": "bun --watch --no-clear-screen tools/bun-1.4-channel-watch.ts",
     "channels:projects": "bun tools/project-rss-channels.ts",

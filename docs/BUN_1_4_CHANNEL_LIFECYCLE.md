@@ -109,6 +109,7 @@ exactly one declared kind channel; feed filenames remain plural (`images.xml`,
 
 ```bash
 bun run channels:bun-1.4:refresh
+bun run channels:bun-1.4:refresh:plan
 bun run channels:bun-1.4:check
 bun run channels:bun-1.4:rebuild
 bun run channels:bun-1.4:watch
@@ -121,6 +122,11 @@ manifest and all derived capability, feed, video-share-page, and channel-release
 outputs. It remains external-only while rights are pending; it cannot vendor
 media without the separate explicit approval command. Review and commit its
 diff—an upstream hash or inventory change is never silently deployed.
+
+`refresh:plan` performs the same bounded source fetch and inspection but makes
+no writes. It reports added, removed, and changed stable asset IDs plus
+manifest-level metadata drift; use it before `refresh` when reviewing an
+upstream change.
 
 `rebuild` derives capability and RSS outputs from the committed manifest, then
 writes a gzip-compressed tar archive and `latest.json` under

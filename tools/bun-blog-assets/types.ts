@@ -189,6 +189,7 @@ export type RangeProbe = {
 
 export type CliOptions = {
   check: boolean;
+  plan?: boolean;
   vendor: boolean;
   confirmRights: boolean;
   mode: 'external' | 'vendor';

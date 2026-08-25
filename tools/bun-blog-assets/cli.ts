@@ -15,6 +15,7 @@ export function parseCliOptions(): CliOptions {
     args: Bun.argv.slice(2),
     options: {
       check: { type: 'boolean' },
+      plan: { type: 'boolean' },
       vendor: { type: 'boolean' },
       'confirm-rights': { type: 'boolean' },
       mode: { type: 'string' },
@@ -35,6 +36,7 @@ export function parseCliOptions(): CliOptions {
 Modes:
   (default)                         Fetch and write external-only manifest
   --check                           Fetch and validate committed manifest; no writes
+  --plan                            Fetch and show proposed manifest drift; no writes
   --vendor --confirm-rights --rights-evidence PATH
                                     Stage media only with scoped approval evidence
 
@@ -54,7 +56,9 @@ Options:
   const mode = values.mode ?? (vendor ? 'vendor' : 'external');
   if (mode !== 'external' && mode !== 'vendor') fail(`--mode must be external or vendor`);
   if (vendor !== (mode === 'vendor')) fail(`--vendor and --mode=vendor must agree`);
+  if (values.check && values.plan) fail('--check cannot be combined with --plan');
   if (values.check && vendor) fail('--check cannot be combined with --vendor');
+  if (values.plan && vendor) fail('--plan cannot be combined with --vendor');
   if (values['confirm-rights'] && !vendor) fail('--confirm-rights requires --vendor');
   if (values['rights-evidence'] && !vendor) fail('--rights-evidence requires --vendor');
   if (vendor && typeof values['rights-evidence'] !== 'string') {
@@ -66,6 +70,7 @@ Options:
   }
   return {
     check: values.check === true,
+    plan: values.plan === true,
     vendor,
     confirmRights: values['confirm-rights'] === true,
     mode,

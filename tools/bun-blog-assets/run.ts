@@ -60,6 +60,7 @@ import { inspectAllAssets } from './inspection.ts';
 import { buildManifest } from './manifest-build.ts';
 import { compareManifestToInspection, parseManifestShape } from './manifest-validation.ts';
 import { readRightsApprovalEvidence } from './rights.ts';
+import { buildRefreshPlan, formatRefreshPlan } from './refresh-plan.ts';
 import { loadSourceDocuments } from './sources.ts';
 import { atomicWriteJson, readManifest, stageVendorAssets } from './storage.ts';
 import type { AssetManifest, CliOptions } from './types.ts';
@@ -88,6 +89,12 @@ export async function run(options: CliOptions): Promise<AssetManifest> {
     ),
     'generated manifest'
   );
+
+  if (options.plan) {
+    const existing = await readManifest(options.manifestPath);
+    console.log(formatRefreshPlan(buildRefreshPlan(existing, manifest)));
+    return manifest;
+  }
 
   if (options.check) {
     const existing = await readManifest(options.manifestPath);
