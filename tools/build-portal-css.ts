@@ -106,6 +106,21 @@ async function assertMetafile(paths: MetafilePaths): Promise<void> {
   }
 }
 
+function cssOutputPath(result: Awaited<ReturnType<typeof Bun.build>>, opts: BuildOpts): string {
+  const expected = joinPath(OUTDIR, opts.naming);
+  const output = result.outputs.find(item => item.path === expected);
+  if (!output) {
+    throw new Error(`Bun.build did not emit CSS output: ${expected}`);
+  }
+  return output.path;
+}
+
+function printBuildWarnings(label: string, logs: readonly unknown[]): void {
+  if (logs.length === 0) return;
+  console.warn(`${label} completed with ${logs.length} Bun.build warning(s):`);
+  for (const log of logs) console.warn(log);
+}
+
 async function main(): Promise<void> {
   // Keep theme-tokens.css in sync (jsonc loader) before css loader bundles @import.
   await syncPortalTheme();
@@ -124,10 +139,11 @@ async function main(): Promise<void> {
     for (const log of lowered.logs) console.error(log);
     process.exit(1);
   }
+  printBuildWarnings('portal CSS build', lowered.logs);
 
-  const outPath = lowered.outputs[0]?.path ?? joinPath(OUTDIR, 'style.css');
+  const outPath = cssOutputPath(lowered, { naming: 'style.css', minify: false, analyze });
   const size = Bun.file(outPath).size;
-  const kind = lowered.outputs[0]?.kind ?? 'asset';
+  const kind = lowered.outputs.find(item => item.path === outPath)?.kind ?? 'asset';
   const loweredMetafile = metafilePaths({ naming: 'style.css', minify: false, analyze });
   if (analyze) await assertMetafile(loweredMetafile);
 
@@ -140,7 +156,8 @@ async function main(): Promise<void> {
       for (const log of minified.logs) console.error(log);
       process.exit(1);
     }
-    minPath = minified.outputs[0]?.path ?? joinPath(OUTDIR, 'style.min.css');
+    printBuildWarnings('portal CSS minify build', minified.logs);
+    minPath = cssOutputPath(minified, { naming: 'style.min.css', minify: true, analyze });
     minSize = Bun.file(minPath).size;
     if (analyze) {
       await assertMetafile(metafilePaths({ naming: 'style.min.css', minify: true, analyze }));
