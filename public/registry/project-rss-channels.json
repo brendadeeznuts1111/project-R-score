@@ -1,0 +1,320 @@
+{
+  "schemaVersion": 1,
+  "feedSchemaVersion": 1,
+  "scope": "root-and-active-projects",
+  "origin": "https://score.factory-wager.com",
+  "inventorySource": "tools/projects-root-check.ts",
+  "defaultPolicy": "unregistered-no-fallback",
+  "repositories": [
+    {
+      "repository": {
+        "remote": "origin",
+        "host": "github.com",
+        "owner": "brendadeeznuts1111",
+        "name": "project-R-score",
+        "ownerName": "brendadeeznuts1111/project-R-score",
+        "url": "https://github.com/brendadeeznuts1111/project-R-score"
+      },
+      "authority": "feed-host",
+      "projectIds": [
+        "project-r-score",
+        "bun-file-analyzer",
+        "bun-toml-secrets-editor",
+        "enterprise-dashboard",
+        "factorywager",
+        "fantasy42-fire22-registry",
+        "foxy-proxy",
+        "full-stack-bun.io",
+        "geelark",
+        "grok-security",
+        "kal-poly-bot",
+        "matrix-analysis",
+        "native-addon-tool",
+        "playwriter-skill",
+        "proton-pass",
+        "quantum-terminal-dashboard",
+        "scanner",
+        "secrets-dashboard",
+        "shortcut-registry",
+        "sports-terminal-os",
+        "toml-cli"
+      ],
+      "channelIds": [
+        "bun-1.4:all",
+        "bun-1.4:image",
+        "bun-1.4:video",
+        "bun-1.4:embed"
+      ]
+    },
+    {
+      "repository": {
+        "remote": "cascade",
+        "host": "github.com",
+        "owner": "brendadeeznuts1111",
+        "name": "cascade-mover-v3",
+        "ownerName": "brendadeeznuts1111/cascade-mover-v3",
+        "url": "https://github.com/brendadeeznuts1111/cascade-mover-v3"
+      },
+      "authority": "independent-no-feed",
+      "projectIds": [
+        "cascade-mover-v3"
+      ],
+      "channelIds": []
+    }
+  ],
+  "pendingIndependentProjects": [
+    {
+      "projectId": "kimiremote",
+      "repository": null,
+      "feedStatus": "unregistered",
+      "reason": "canonical-repository-unresolved"
+    },
+    {
+      "projectId": "f402-openapi",
+      "repository": null,
+      "feedStatus": "unregistered",
+      "reason": "canonical-repository-unresolved"
+    },
+    {
+      "projectId": "bet-ticker-worker-v1.1",
+      "repository": null,
+      "feedStatus": "unregistered",
+      "reason": "canonical-repository-unresolved"
+    }
+  ],
+  "projects": [
+    {
+      "projectId": "project-r-score",
+      "path": ".",
+      "repositoryRelation": "root",
+      "repositoryRemote": "origin",
+      "feedStatus": "registered",
+      "channels": [
+        {
+          "id": "bun-1.4:all",
+          "canonicalEndpoint": "/feeds/v1/all.xml",
+          "projectEndpoint": "/feeds/v1/projects/project-r-score/bun-1.4/all.xml",
+          "publisher": {
+            "name": "Bun",
+            "url": "https://bun.com/"
+          },
+          "sourceManifest": "/registry/bun-1.4-assets.json",
+          "archivePolicy": "content-addressed-snapshot"
+        },
+        {
+          "id": "bun-1.4:image",
+          "canonicalEndpoint": "/feeds/v1/images.xml",
+          "projectEndpoint": "/feeds/v1/projects/project-r-score/bun-1.4/images.xml",
+          "publisher": {
+            "name": "Bun",
+            "url": "https://bun.com/"
+          },
+          "sourceManifest": "/registry/bun-1.4-assets.json",
+          "archivePolicy": "content-addressed-snapshot"
+        },
+        {
+          "id": "bun-1.4:video",
+          "canonicalEndpoint": "/feeds/v1/videos.xml",
+          "projectEndpoint": "/feeds/v1/projects/project-r-score/bun-1.4/videos.xml",
+          "publisher": {
+            "name": "Bun",
+            "url": "https://bun.com/"
+          },
+          "sourceManifest": "/registry/bun-1.4-assets.json",
+          "archivePolicy": "content-addressed-snapshot"
+        },
+        {
+          "id": "bun-1.4:embed",
+          "canonicalEndpoint": "/feeds/v1/embeds.xml",
+          "projectEndpoint": "/feeds/v1/projects/project-r-score/bun-1.4/embeds.xml",
+          "publisher": {
+            "name": "Bun",
+            "url": "https://bun.com/"
+          },
+          "sourceManifest": "/registry/bun-1.4-assets.json",
+          "archivePolicy": "content-addressed-snapshot"
+        }
+      ]
+    },
+    {
+      "projectId": "bun-file-analyzer",
+      "path": "projects/active/utilities/bun-file-analyzer",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "bun-toml-secrets-editor",
+      "path": "projects/active/utilities/bun-toml-secrets-editor",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "enterprise-dashboard",
+      "path": "projects/active/dashboards/enterprise-dashboard",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "factorywager",
+      "path": "projects/active/factorywager",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "fantasy42-fire22-registry",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "foxy-proxy",
+      "path": "projects/active/enterprise/foxy-proxy",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "full-stack-bun.io",
+      "path": "projects/active/enterprise/full-stack-bun.io",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "geelark",
+      "path": "projects/active/development/geelark",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "grok-security",
+      "path": "projects/active/analysis/grok-security",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "kal-poly-bot",
+      "path": "projects/active/development/kal-poly-bot",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "matrix-analysis",
+      "path": "projects/active/analysis/matrix-analysis",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "native-addon-tool",
+      "path": "projects/active/tools/native-addon-tool",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "playwriter-skill",
+      "path": "projects/active/playwriter-skill",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "proton-pass",
+      "path": "projects/active/utilities/proton-pass",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "quantum-terminal-dashboard",
+      "path": "projects/active/dashboards/quantum-terminal-dashboard",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "scanner",
+      "path": "projects/active/analysis/scanner",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "secrets-dashboard",
+      "path": "projects/active/dashboards/secrets-dashboard",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "shortcut-registry",
+      "path": "projects/active/utilities/shortcut-registry",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "sports-terminal-os",
+      "path": "projects/active/sports-terminal-os",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    },
+    {
+      "projectId": "toml-cli",
+      "path": "projects/active/utilities/toml-cli",
+      "repositoryRelation": "contained",
+      "repositoryRemote": "origin",
+      "feedStatus": "unregistered",
+      "reason": "no-authoritative-feed-registration",
+      "channels": []
+    }
+  ]
+}

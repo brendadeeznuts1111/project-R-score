@@ -1,0 +1,974 @@
+{
+  "schemaVersion": 3,
+  "release": "Bun 1.4",
+  "version": "1.4.0",
+  "sourcePage": "https://bun.com/blog/bun-v1.4",
+  "publishedAt": "2026-08-20T00:53:44.000Z",
+  "generatedAt": "2026-08-25T05:07:48.626Z",
+  "relationModel": "capability-references-assets",
+  "migration": {
+    "breakingChangesUrl": "https://github.com/oven-sh/bun/issues/28792",
+    "upgradeGuideUrl": "https://github.com/oven-sh/bun/pull/36463",
+    "reconciledTag": "bun-v1.4.0",
+    "underConsiderationShipped": false
+  },
+  "chapters": [
+    {
+      "id": "what-s-new",
+      "title": "What's new",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#what-s-new",
+      "order": 1
+    },
+    {
+      "id": "bun-install",
+      "title": "bun install",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-install",
+      "order": 2
+    },
+    {
+      "id": "bun-test",
+      "title": "bun test",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-test",
+      "order": 3
+    },
+    {
+      "id": "bun-build",
+      "title": "bun build",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-build",
+      "order": 4
+    },
+    {
+      "id": "faster",
+      "title": "Faster",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#faster",
+      "order": 5
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "bun-xml-native",
+      "domain": "runtime",
+      "symbol": "Bun.XML.parse / stringify",
+      "changeKind": "new",
+      "adoption": "integrated",
+      "summary": "Parses bytes with XML-declared encoding and serializes the versioned RSS boundary.",
+      "boundary": "RSS wire boundary; compact shapes are normalized once before domain use.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-xml",
+      "docsUrl": "https://bun.com/docs/runtime/xml",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-xml-native-contract.test.ts",
+        "tests/rss-xml-shape-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-image-metadata",
+      "domain": "runtime",
+      "symbol": "Bun.Image.metadata / maxPixels",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Sniffs image format and dimensions from bytes with a pre-allocation pixel limit.",
+      "boundary": "Bake-time inspection only; SVG remains separately validated and rights-gated.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-image",
+      "docsUrl": "https://bun.com/docs/runtime/image#metadata",
+      "assetIds": [
+        "bun-1.4-image-pipeline-src"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4-asset-validation.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-markdown-native",
+      "domain": "runtime",
+      "symbol": "Bun.markdown",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Renders Markdown for terminal evidence and generated summaries.",
+      "boundary": "Direct HTML is trusted-only; untrusted content uses the raw-HTML-off URL-safe wrapper.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-markdown",
+      "docsUrl": "https://bun.com/docs/runtime/markdown",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-markdown-ansi.test.ts",
+        "tests/bun-1.4-cli-example.test.ts",
+        "tests/markdown-safe-html.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "process-memory-pressure",
+      "domain": "observability",
+      "symbol": "process.on(\"memoryPressure\")",
+      "changeKind": "new",
+      "adoption": "contract",
+      "summary": "Emits warning or critical pressure so caches and idle resources can be released.",
+      "boundary": "Runtime signal only; the static gallery does not install process listeners.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#process-on-memorypressure",
+      "assetIds": [
+        "bun-1.4-memory-pressure"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4.0-observability-contract.test.ts"
+      ]
+    },
+    {
+      "id": "bun-spawn-cgroup",
+      "domain": "platform",
+      "symbol": "Bun.spawn({ cgroup })",
+      "changeKind": "new",
+      "adoption": "local-only",
+      "summary": "Places Linux children in an existing cgroup before their first instruction.",
+      "boundary": "Linux operator tooling only; unavailable to browser and Pages Functions code.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-spawn-cgroup",
+      "docsUrl": "https://bun.com/docs/runtime/child-process",
+      "assetIds": [
+        "bun-1.4-spawn-cgroup-poster",
+        "bun-1.4-spawn-cgroup"
+      ],
+      "contractFiles": []
+    },
+    {
+      "id": "bun-spawn-aborted-signal",
+      "domain": "platform",
+      "symbol": "Bun.spawn / spawnSync signal",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "An already-aborted signal throws AbortError with the signal reason and starts no child.",
+      "boundary": "Subprocess launch validation; unrelated to public browser execution.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-spawn",
+      "docsUrl": "https://bun.com/docs/runtime/child-process",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-behavior-contract.test.ts"
+      ]
+    },
+    {
+      "id": "bun-webview-local-qa",
+      "domain": "platform",
+      "symbol": "Bun.WebView",
+      "changeKind": "release-window",
+      "adoption": "local-only",
+      "summary": "Drives a system browser for interaction and screenshot QA.",
+      "boundary": "Local visual QA only; never imported by Pages Functions or portal browser modules.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-webview",
+      "docsUrl": "https://bun.com/docs/runtime/webview",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-terminal-local-tools",
+      "domain": "platform",
+      "symbol": "Bun.Terminal",
+      "changeKind": "release-window",
+      "adoption": "local-only",
+      "summary": "Provides a cross-platform native pseudo-terminal through Bun.spawn.",
+      "boundary": "Interactive local tooling only; not a static portal or edge-runtime dependency.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-terminal",
+      "docsUrl": "https://bun.com/docs/runtime/terminal",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-no-orphans",
+      "domain": "platform",
+      "symbol": "--no-orphans",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Exits with the original parent and recursively kills descendants on clean exit.",
+      "boundary": "Local process lifecycle; configured separately from feed and portal code.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#no-orphans",
+      "assetIds": [
+        "bun-1.4-no-orphans"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4.0-install-behavior-contract.test.ts"
+      ]
+    },
+    {
+      "id": "bun-string-width",
+      "domain": "runtime",
+      "symbol": "Bun.stringWidth",
+      "changeKind": "fixed",
+      "adoption": "contract",
+      "summary": "Measures terminal display width with corrected CJK and control-character behavior.",
+      "boundary": "Terminal reports only; browser layout remains CSS-owned.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-stringwidth",
+      "docsUrl": "https://bun.com/docs/runtime/utils",
+      "assetIds": [
+        "bun-1.4-stringwidth-cjk"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4.0-bugfix-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-yaml-conformance",
+      "domain": "runtime",
+      "symbol": "Bun.YAML",
+      "changeKind": "compatibility",
+      "adoption": "contract",
+      "summary": "Adds cyclic-anchor support and passes the upstream YAML test suite claimed by Bun.",
+      "boundary": "Configuration parsing; XML remains the feed wire format.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-yaml-passes-402-402-of-yaml-test-suite",
+      "docsUrl": "https://bun.com/docs/runtime/yaml",
+      "assetIds": [
+        "bun-1.4-yaml-cyclic-anchors"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4.0-bugfix-contract.test.ts"
+      ]
+    },
+    {
+      "id": "bun-cryptohasher-sha256",
+      "domain": "runtime",
+      "symbol": "Bun.CryptoHasher",
+      "changeKind": "changed",
+      "adoption": "integrated",
+      "summary": "Streams SHA-256 evidence and rejects odd-length hex input instead of truncating it.",
+      "boundary": "Checksums cover fetched bytes; they do not establish media republishing rights.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#other-behavior-changes",
+      "docsUrl": "https://bun.com/docs/runtime/hashing",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-behavior-contract.test.ts",
+        "tests/rss-fanout.test.ts"
+      ]
+    },
+    {
+      "id": "native-web-streams",
+      "domain": "runtime",
+      "symbol": "ReadableStream / WritableStream / TransformStream",
+      "changeKind": "changed",
+      "adoption": "integrated",
+      "summary": "Bun 1.4 moves Web Streams to native implementations with backpressure and cancellation semantics.",
+      "boundary": "Remote assets are consumed with bounded streaming reads before validation and hashing.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#streams-and-bodies",
+      "docsUrl": "https://bun.com/docs/runtime/streams",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/rss-image-fetch-policy.test.ts"
+      ]
+    },
+    {
+      "id": "bun-serve-file-routes",
+      "domain": "server",
+      "symbol": "Bun.serve routes: { dir }",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Serves normalized directory routes with native MIME, ETag, Last-Modified and Range handling.",
+      "boundary": "Candidate for local serving; Cloudflare Pages remains the public deployment boundary.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#serve-files-folders",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "assetIds": [],
+      "contractFiles": []
+    },
+    {
+      "id": "bun-serve-range-preconditions",
+      "domain": "server",
+      "symbol": "Bun.serve + Bun.file",
+      "changeKind": "changed",
+      "adoption": "integrated",
+      "summary": "File responses support 206 ranges and enforce If-Match / If-Unmodified-Since preconditions.",
+      "boundary": "Local approved MP4s only; external media is probed upstream without republishing.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#range-and-conditional-requests",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-other-behavior-serve-fetch.test.ts",
+        "tests/bun-1.4.0-web-api-contract.test.ts"
+      ]
+    },
+    {
+      "id": "bun-serve-head-fallback",
+      "domain": "server",
+      "symbol": "Bun.serve per-method routes",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "A GET method route now answers HEAD when no explicit HEAD handler exists.",
+      "boundary": "Feed responses still own explicit body suppression and content-length validation.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#other-behavior-changes",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-other-behavior-serve-fetch.test.ts",
+        "tests/rss-response.test.ts"
+      ]
+    },
+    {
+      "id": "bun-serve-invalid-response",
+      "domain": "server",
+      "symbol": "Bun.serve error()",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "Invalid-status responses such as Response.error() route through error() instead of status 0.",
+      "boundary": "Server error handling is probed independently from application response helpers.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#other-behavior-changes",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-other-behavior-serve-fetch.test.ts"
+      ]
+    },
+    {
+      "id": "fetch-redirect-error-statuses",
+      "domain": "network",
+      "symbol": "fetch redirect: \"error\"",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "Only 301, 302, 303, 307 and 308 reject as redirects; 304 resolves normally.",
+      "boundary": "Hostile media fetches use an explicit manual redirect allowlist instead.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#other-behavior-changes",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-other-behavior-serve-fetch.test.ts",
+        "tests/bun-1.4.0-fetch-deep-contract.test.ts",
+        "tests/rss-image-fetch-policy.test.ts"
+      ]
+    },
+    {
+      "id": "fetch-abort-settlement",
+      "domain": "network",
+      "symbol": "fetch + AbortSignal",
+      "changeKind": "fixed",
+      "adoption": "integrated",
+      "summary": "Already-aborted requests reject immediately and aborting a body errors its stream.",
+      "boundary": "All upstream fetches have deadlines, byte ceilings and explicit redirect policy.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#fetch",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-fetch-deep-contract.test.ts",
+        "tests/rss-image-fetch-policy.test.ts"
+      ]
+    },
+    {
+      "id": "fetch-request-compression",
+      "domain": "network",
+      "symbol": "fetch compress",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Buffered request bodies can be gzip, deflate, Brotli or zstd compressed by fetch.",
+      "boundary": "Not used for GET/HEAD media discovery; reserve for future bounded report uploads.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#fetch-request-compression",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": []
+    },
+    {
+      "id": "fetch-body-failure-state",
+      "domain": "network",
+      "symbol": "fetch Response.bodyUsed",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "A failed body read marks the body used; retries require a new fetch.",
+      "boundary": "Partial or failed media bodies must never be hashed into the committed manifest.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#fetch-network-errors-are-now-typeerror-and-a-failed-body-read-sets-bodyused",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-fetch-deep-contract.test.ts"
+      ]
+    },
+    {
+      "id": "fetch-clone-consumption",
+      "domain": "network",
+      "symbol": "Request.clone / Response.clone",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "Cloning after a body is read or its stream is locked now throws.",
+      "boundary": "Clone before splitting hash and decode work; never recover from a consumed response object.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#request-clone-and-response-clone-now-throw-once-the-body-has-been-read",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-fetch-deep-contract.test.ts"
+      ]
+    },
+    {
+      "id": "http-duplicate-headers",
+      "domain": "network",
+      "symbol": "Headers.get / getSetCookie",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "Duplicate fields combine with comma-space while Set-Cookie remains separately enumerable.",
+      "boundary": "Asset validators read singleton headers and reject ambiguous framing metadata.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#fetch-responses-and-bun-serve-requests-now-combine-duplicate-headers-with",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-fetch-deep-contract.test.ts"
+      ]
+    },
+    {
+      "id": "fetch-truncated-compression",
+      "domain": "network",
+      "symbol": "fetch decompression",
+      "changeKind": "fixed",
+      "adoption": "integrated",
+      "summary": "Truncated close-delimited compressed responses reject instead of yielding partial bytes.",
+      "boundary": "The media pipeline also requests identity encoding and rejects encoded responses.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#other-fetch-fixes",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/rss-image-fetch-policy.test.ts"
+      ]
+    },
+    {
+      "id": "bun-audit-fix",
+      "domain": "package-manager",
+      "symbol": "bun audit fix",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Applies compatible dependency upgrades for reported vulnerabilities.",
+      "boundary": "Review lockfile diffs; never run as an implicit gallery-side mutation.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-audit-fix",
+      "docsUrl": "https://bun.com/docs/pm/cli/audit",
+      "assetIds": [
+        "bun-1.4-bun-audit-fix-poster",
+        "bun-1.4-bun-audit-fix"
+      ],
+      "contractFiles": [],
+      "chapterId": "bun-install"
+    },
+    {
+      "id": "bun-dedupe",
+      "domain": "package-manager",
+      "symbol": "bun dedupe",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Rewrites the dependency graph to reduce duplicate package versions.",
+      "boundary": "Explicit maintenance command with lockfile review, not an install side effect.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-dedupe",
+      "docsUrl": "https://bun.com/docs/pm/cli/dedupe",
+      "assetIds": [
+        "bun-1.4-bun-dedupe-poster",
+        "bun-1.4-bun-dedupe"
+      ],
+      "contractFiles": [],
+      "chapterId": "bun-install"
+    },
+    {
+      "id": "bun-prune",
+      "domain": "package-manager",
+      "symbol": "bun prune",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Removes packages no longer reachable from the current dependency graph.",
+      "boundary": "Explicit maintenance command; generated media and registries are outside its scope.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-prune",
+      "docsUrl": "https://bun.com/docs/pm/cli/prune",
+      "assetIds": [
+        "bun-1.4-bun-prune-poster",
+        "bun-1.4-bun-prune"
+      ],
+      "contractFiles": [],
+      "chapterId": "bun-install"
+    },
+    {
+      "id": "bun-test-parallel",
+      "domain": "test-runner",
+      "symbol": "bun test --parallel",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Distributes test files across workers and implies isolation by default.",
+      "boundary": "Repository test lanes bound worker counts where shared resources require it.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-test-parallel",
+      "docsUrl": "https://bun.com/docs/test",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-test-changed.test.ts",
+        "tests/bun-test-changed-staged.test.ts"
+      ],
+      "chapterId": "bun-test"
+    },
+    {
+      "id": "bun-test-timings",
+      "domain": "test-runner",
+      "symbol": "bun test --timings",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Uses recorded file durations to balance parallel workers and CI shards.",
+      "boundary": "Timing files are scheduling evidence, not correctness baselines.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-test-timings",
+      "docsUrl": "https://bun.com/docs/test",
+      "assetIds": [
+        "bun-1.4-test-timings"
+      ],
+      "contractFiles": [],
+      "chapterId": "bun-test"
+    },
+    {
+      "id": "cpu-profile-markdown",
+      "domain": "observability",
+      "symbol": "--cpu-prof-md",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Writes hot functions and call trees as terminal-readable Markdown.",
+      "boundary": "Generated profiling evidence stays local and is not served by the gallery.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#cpu-prof-md",
+      "assetIds": [
+        "bun-1.4-cpu-prof-devtools"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4.0-observability-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "heap-profile-markdown",
+      "domain": "observability",
+      "symbol": "--heap-prof-md",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Writes retained types, objects and retaining chains as Markdown.",
+      "boundary": "Profiles can contain sensitive runtime data and remain local artifacts.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#heap-prof-md",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-observability-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bundle-metafile-markdown",
+      "domain": "bundler",
+      "symbol": "bun build --metafile-md",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Writes bundle size, entry-point and import-chain analysis as Markdown.",
+      "boundary": "Build evidence only; the JSON asset manifest remains the media source of truth.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-build-metafile-md",
+      "docsUrl": "https://bun.com/docs/bundler",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4-cli-example.test.ts"
+      ],
+      "chapterId": "bun-build"
+    },
+    {
+      "id": "node-sqlite-compatibility",
+      "domain": "runtime",
+      "symbol": "node:sqlite",
+      "changeKind": "compatibility",
+      "adoption": "contract",
+      "summary": "Bun reports full coverage of the referenced Node sqlite test module in 1.4.",
+      "boundary": "Compatibility claim is upstream; project behavior is separately contract-tested.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#node-sqlite",
+      "assetIds": [
+        "bun-1.4-node-sqlite"
+      ],
+      "contractFiles": [
+        "tests/bun-1.4.0-bugfix-contract.test.ts"
+      ]
+    },
+    {
+      "id": "node-test-compatibility",
+      "domain": "runtime",
+      "symbol": "Node.js compatibility",
+      "changeKind": "compatibility",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports 1,517 additional passing Node.js tests in the 1.4 release.",
+      "boundary": "Upstream suite counts are displayed as claims and are not re-benchmarked here.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#node-js-compatibility",
+      "assetIds": [
+        "bun-1.4-node-test-suite-progress"
+      ],
+      "contractFiles": []
+    },
+    {
+      "id": "react-compiler-built-in",
+      "domain": "bundler",
+      "symbol": "React Compiler",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Enables the React Compiler in Bun build flows without a separate Babel setup.",
+      "boundary": "Candidate for React build surfaces; not required by this static portal.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#built-in-react-compiler",
+      "assetIds": [
+        "bun-1.4-react-compiler"
+      ],
+      "contractFiles": [],
+      "chapterId": "bun-build"
+    },
+    {
+      "id": "ffi-performance-claim",
+      "domain": "runtime",
+      "symbol": "bun:ffi",
+      "changeKind": "performance",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports up to a threefold FFI call-speed improvement.",
+      "boundary": "Release benchmark claim only; no gallery code uses FFI.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#3x-faster-bun-ffi",
+      "assetIds": [
+        "bun-1.4-ffi-3x"
+      ],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "source-map-decoding-claim",
+      "domain": "runtime",
+      "symbol": "source-map decoding",
+      "changeKind": "performance",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports source-map decoding is 3.1 times faster in its release benchmark.",
+      "boundary": "Release benchmark claim only; portal source maps follow deployment policy.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#source-map-decoding-is-3-1-faster",
+      "assetIds": [
+        "bun-1.4-sourcemap-decoding"
+      ],
+      "contractFiles": [],
+      "chapterId": "faster"
+    },
+    {
+      "id": "windows-short-timers",
+      "domain": "platform",
+      "symbol": "setTimeout / setInterval",
+      "changeKind": "fixed",
+      "adoption": "upstream-claim",
+      "summary": "Windows timers below 15 milliseconds no longer inherit the old coarse scheduling floor.",
+      "boundary": "Windows-specific release behavior; this host does not claim a local probe.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#sub-15-ms-timers-on-windows",
+      "assetIds": [
+        "bun-1.4-windows-timers"
+      ],
+      "contractFiles": []
+    },
+    {
+      "id": "production-efficiency-claims",
+      "domain": "platform",
+      "symbol": "Bun runtime",
+      "changeKind": "performance",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports lower server memory, idle CPU and startup costs for the 1.4 runtime.",
+      "boundary": "Upstream workload measurements; repository gates do not present them as local benchmarks.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#production",
+      "assetIds": [
+        "bun-1.4-cpu-usage-cc",
+        "bun-1.4-idle-cpu",
+        "bun-1.4-nextjs-ssr-fetch-leak"
+      ],
+      "contractFiles": []
+    },
+    {
+      "id": "bun-1-4-overview",
+      "domain": "platform",
+      "symbol": "Bun 1.4",
+      "changeKind": "compatibility",
+      "adoption": "upstream-claim",
+      "summary": "Release-level context linking official overview media to the capability graph.",
+      "boundary": "Navigation relation only; detailed claims live on their specific records.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4",
+      "assetIds": [
+        "bun-1.4-og-image",
+        "bun-1.4-youtube-overview"
+      ],
+      "contractFiles": []
+    },
+    {
+      "id": "native-async-stack-traces",
+      "domain": "observability",
+      "symbol": "async native I/O stack traces",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Native I/O failures retain the JavaScript await site in their async stack trace.",
+      "boundary": "Diagnostic behavior only; stack contents can contain local paths and remain private.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#dev-tooling",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/regression/bun-1.3.12.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-no-env-file",
+      "domain": "platform",
+      "symbol": "--no-env-file / bunfig env = false",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Disables automatic dotenv loading while preserving explicit --env-file inputs.",
+      "boundary": "Runtime configuration only; secrets remain externally managed and value-free in proof.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#dev-tooling",
+      "docsUrl": "https://bun.com/docs/runtime/environment-variables",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-env-loading.test.ts",
+        "tests/portal-cli-bun-flags.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-serve-http3-experimental",
+      "domain": "server",
+      "symbol": "Bun.serve({ http3: true })",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Adds an experimental HTTP/3 listener beside TLS HTTP/1.1 on the same port.",
+      "boundary": "Not enabled in production, Pages Functions, serve-public, or gallery verification.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#http-3-in-bun-serve-experimental",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "fetch-http2-http3-experimental",
+      "domain": "network",
+      "symbol": "fetch({ protocol: \"http2\" | \"http3\" })",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Selects experimental HTTP/2 or HTTP/3 transports for fetch requests.",
+      "boundary": "The asset pipeline stays on default HTTPS behavior; no experimental protocol flags.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#http-2-http-3-in-fetch-experimental",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-serve-production-sourcemaps",
+      "domain": "server",
+      "symbol": "Bun.serve HTML route sourcemaps",
+      "changeKind": "changed",
+      "adoption": "candidate",
+      "summary": "Production HTML routes no longer serve source maps unless explicitly configured.",
+      "boundary": "Cloudflare deployment owns public sourcemap policy; this is not a Pages setting.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#html-routes-sourcemaps-disabled-in-production",
+      "docsUrl": "https://bun.com/docs/runtime/http/server",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "fetch-proxy-headers",
+      "domain": "network",
+      "symbol": "fetch({ proxy: { url, headers } })",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Allows proxy-specific headers for HTTP and HTTPS destinations.",
+      "boundary": "Credentials must come from the vault and must never enter manifests or feed output.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#fetch-proxy-headers",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "fetch-tls-session-resumption",
+      "domain": "network",
+      "symbol": "fetch TLS session cache",
+      "changeKind": "performance",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports a per-origin BoringSSL session cache for one-RTT cold reconnections.",
+      "boundary": "Transport optimization is upstream-owned and is not treated as a local benchmark.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#tls-session-resumption",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "fetch-connection-reuse",
+      "domain": "network",
+      "symbol": "fetch connection pooling",
+      "changeKind": "performance",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports connection reuse through HTTPS proxies and custom TLS configurations.",
+      "boundary": "Pooling is runtime-owned; request correctness never depends on a reused connection.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#connection-reuse",
+      "docsUrl": "https://bun.com/docs/runtime/networking/fetch",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-json5-native",
+      "domain": "runtime",
+      "symbol": "Bun.JSON5",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Provides built-in JSON5 parsing, serialization, and module loading.",
+      "boundary": "Use only where JSON5 is the declared wire format; do not loosen JSON contracts.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/reference/bun/JSON5",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-bugfix-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-jsonl-native",
+      "domain": "runtime",
+      "symbol": "Bun.JSONL.parse / parseChunk",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Parses complete or incrementally streamed newline-delimited JSON.",
+      "boundary": "Existing append-only JSONL owners keep their current validation until migrated.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/reference/bun/JSONL",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-jsonc-native",
+      "domain": "runtime",
+      "symbol": "Bun.JSONC.parse",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Parses JSON with comments and trailing commas using Bun’s built-in parser.",
+      "boundary": "Configuration boundary only; emitted registries remain strict JSON.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/reference/bun/JSONC",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-behavior-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-toml-native",
+      "domain": "runtime",
+      "symbol": "Bun.TOML.parse / stringify",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Parses TOML 1.1 and exposes serialization in the stable Bun 1.4 contract.",
+      "boundary": "TOML is configuration input; validated domain shapes remain separate.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/docs/runtime/toml",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-toml-version-contract.test.ts",
+        "tests/config-toml-snapshot.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-archive-native",
+      "domain": "runtime",
+      "symbol": "Bun.Archive",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Creates and extracts tar archives, including gzip-compressed release snapshots.",
+      "boundary": "Archives preserve reviewed release state; they never authorize media republication.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/reference/bun/Archive",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4-channel-release.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-ansi-layout-native",
+      "domain": "runtime",
+      "symbol": "Bun.sliceAnsi / wrapAnsi",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Provides ANSI- and grapheme-aware terminal slicing and wrapping.",
+      "boundary": "Terminal presentation only; browser layout remains CSS-owned.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/docs/runtime/utils",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/console-depth.test.ts",
+        "tests/regression/bun-1.3.11.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "urlpattern-native",
+      "domain": "runtime",
+      "symbol": "URLPattern",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Provides component-aware URL matching and parameter extraction without a package.",
+      "boundary": "Route classification uses precompiled patterns and validates decoded values separately.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-urlpattern.test.ts",
+        "tests/portal-url-planes.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "compression-streams-native",
+      "domain": "runtime",
+      "symbol": "CompressionStream / DecompressionStream",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Exposes Web-standard streaming compression for gzip, deflate, Brotli, and zstd.",
+      "boundary": "Remote media fetches still request identity encoding and reject encoded responses.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "response-text-stream",
+      "domain": "runtime",
+      "symbol": "Response.textStream()",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Streams a response body as decoded UTF-8 strings.",
+      "boundary": "Binary media validation continues to consume bounded bytes, not decoded text.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "post-quantum-webcrypto",
+      "domain": "runtime",
+      "symbol": "ML-DSA / ML-KEM",
+      "changeKind": "new",
+      "adoption": "candidate",
+      "summary": "Adds NIST post-quantum signatures and key encapsulation to WebCrypto and node:crypto.",
+      "boundary": "No protocol or stored-key migration is implied by runtime availability.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-repl-native",
+      "domain": "platform",
+      "symbol": "bun repl",
+      "changeKind": "release-window",
+      "adoption": "candidate",
+      "summary": "Provides a native interactive REPL with history, completion, highlighting, -e and -p.",
+      "boundary": "Interactive operator surface only; automation continues to use deterministic scripts.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/docs/runtime/repl",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-markdown-cli",
+      "domain": "platform",
+      "symbol": "bun ./README.md",
+      "changeKind": "release-window",
+      "adoption": "contract",
+      "summary": "Renders a Markdown file directly in the terminal without starting a JavaScript VM.",
+      "boundary": "Local presentation only; generated public HTML keeps its separate safety policy.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#also-built-in",
+      "docsUrl": "https://bun.com/docs/runtime/markdown",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/regression/bun-1.3.12.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    }
+  ]
+}
