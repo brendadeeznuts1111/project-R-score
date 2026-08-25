@@ -90,6 +90,8 @@ test(
         stderr: 'pipe',
       });
 
+      stderrDrain = new Response(child.stderr).text();
+
       let resolveOrigin!: (origin: string) => void;
       let rejectOrigin!: (error: Error) => void;
       const originReady = new Promise<string>((resolvePromise, rejectPromise) => {
@@ -115,12 +117,14 @@ test(
           if (done) break;
         }
         if (!originFound) {
+          const startupError = await stderrDrain;
           rejectOrigin(
-            new Error(`serve-public exited before reporting its origin:\n${startupOutput}`)
+            new Error(
+              `serve-public exited before reporting its origin:\n${startupOutput}\n${startupError}`
+            )
           );
         }
       })();
-      stderrDrain = new Response(child.stderr).text();
 
       const origin = await deadline(
         originReady,

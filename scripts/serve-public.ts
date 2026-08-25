@@ -704,7 +704,10 @@ async function npmPackageMetadata(req: Request, name: string): Promise<Response>
 
 // ── DOD / Channels ──────────────────────────────────────────────────
 
-const dodVerifier = new DODVerifier();
+// Share the configured operations database with the rest of serve-public. This
+// keeps OPS_DB_PATH authoritative in tests and ephemeral worktrees instead of
+// silently opening a second repository-local database.
+const dodVerifier = new DODVerifier(dbPath);
 
 async function dodApi(req: Request): Promise<Response> {
   const url = new URL(req.url);
