@@ -44,6 +44,12 @@ export const CLI_CATEGORIES: CliCategory[] = [
     priority: 0,
   },
   {
+    prefix: 'dependencies:',
+    label: 'Package Governance',
+    desc: 'Bun-native license, diff, dedupe, and prune review',
+    priority: 1,
+  },
+  {
     prefix: 'deps:',
     label: 'Repository Hygiene',
     desc: 'Evidence-first dependency and file cleanup',
@@ -131,6 +137,13 @@ export const CLI_SPECIAL: Record<string, string> = {
   'bun:api-drift:check':
     'Ratchet: active source uses only APIs present in the installed Bun runtime',
   'deps:rate-removal': 'Grade direct dependency removal evidence; advisory only',
+  'dependencies:governance:check': 'Bun 1.4 production-license shape + lockfile dedupe gate',
+  'dependencies:licenses': 'Path-free production dependency license summary',
+  'dependencies:licenses:json': 'Path-free production dependency license summary as JSON',
+  'dependencies:diff': 'Review package-version changes with bun pm diff',
+  'dependencies:dedupe:check': 'Fail when compatible bun.lock versions can collapse',
+  'dependencies:dedupe:dry-run': 'Preview compatible bun.lock version convergence',
+  'dependencies:prune:dry-run': 'Preview installed files not represented by bun.lock',
   'files:rate-removal':
     'SHA-256 duplicate, large-file, reference, and addressability grading; advisory only',
   'channels:bun-1.4:check': 'Verify Bun 1.4 manifest-derived XML feeds and ownership snapshot',

@@ -4,8 +4,8 @@
  *
  *   bun tools/bun-blog-assets.ts
  *   bun tools/bun-blog-assets.ts --check
- *   bun tools/bun-blog-assets.ts --vendor --confirm-rights
- *   bun tools/bun-blog-assets.ts --vendor --confirm-rights --vendor-dir /tmp/bun-1.4
+ *   bun tools/bun-blog-assets.ts --vendor --confirm-rights --rights-evidence approval.json
+ *   bun tools/bun-blog-assets.ts --vendor --confirm-rights --rights-evidence approval.json --vendor-dir /tmp/bun-1.4
  *   bun tools/bun-blog-assets.ts --help
  */
 import { parseCliOptions } from './bun-blog-assets/cli.ts';

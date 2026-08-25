@@ -139,7 +139,7 @@ function updateSummary(manifest) {
   setText('bun-capability-count', capabilities.length);
   setText('bun-behavior-count', capabilities.filter(item => item.changeKind !== 'new').length);
   setText('bun-local', assets.filter(asset => asset.localUrl).length);
-  setText('bun-rights', `Rights status: ${manifest.rightsStatus}`);
+  setText('bun-rights', `Rights status: ${manifest.rightsStatus} · ${manifest.rightsDelivery}`);
   setText('bun-generated', `Manifest: ${manifest.generated}`);
 }
 

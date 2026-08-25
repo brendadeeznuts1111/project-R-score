@@ -22,6 +22,7 @@ export function parseCliOptions(): CliOptions {
       markdown: { type: 'string' },
       manifest: { type: 'string' },
       'vendor-dir': { type: 'string' },
+      'rights-evidence': { type: 'string' },
       'timeout-ms': { type: 'string' },
       help: { type: 'boolean', short: 'h' },
     },
@@ -34,13 +35,15 @@ export function parseCliOptions(): CliOptions {
 Modes:
   (default)                         Fetch and write external-only manifest
   --check                           Fetch and validate committed manifest; no writes
-  --vendor --confirm-rights         Stage approved media and write local URLs
+  --vendor --confirm-rights --rights-evidence PATH
+                                    Stage media only with scoped approval evidence
 
 Options:
   --html PATH                       Use a saved HTML source instead of fetching
   --markdown PATH                   Use a saved Markdown source instead of fetching
   --manifest PATH                   Manifest path (default: ${DEFAULT_MANIFEST_PATH})
   --vendor-dir PATH                 Vendor directory (default: ${DEFAULT_VENDOR_DIR})
+  --rights-evidence PATH            JSON evidence approving Bun 1.4 blog-media republication
   --timeout-ms N                    Network timeout (default: ${DEFAULT_TIMEOUT_MS})
   --help                            Show this help
 `);
@@ -53,6 +56,10 @@ Options:
   if (vendor !== (mode === 'vendor')) fail(`--vendor and --mode=vendor must agree`);
   if (values.check && vendor) fail('--check cannot be combined with --vendor');
   if (values['confirm-rights'] && !vendor) fail('--confirm-rights requires --vendor');
+  if (values['rights-evidence'] && !vendor) fail('--rights-evidence requires --vendor');
+  if (vendor && typeof values['rights-evidence'] !== 'string') {
+    fail('--vendor requires --rights-evidence PATH');
+  }
   const timeoutMs = Number(values['timeout-ms'] ?? DEFAULT_TIMEOUT_MS);
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs <= 0) {
     fail('--timeout-ms must be a positive integer');
@@ -66,6 +73,10 @@ Options:
     markdownPath: typeof values.markdown === 'string' ? values.markdown : undefined,
     manifestPath: resolve(REPO_ROOT, String(values.manifest ?? DEFAULT_MANIFEST_PATH)),
     vendorDir: resolve(REPO_ROOT, String(values['vendor-dir'] ?? DEFAULT_VENDOR_DIR)),
+    rightsEvidencePath:
+      typeof values['rights-evidence'] === 'string'
+        ? resolve(REPO_ROOT, values['rights-evidence'])
+        : undefined,
     timeoutMs,
   };
 }

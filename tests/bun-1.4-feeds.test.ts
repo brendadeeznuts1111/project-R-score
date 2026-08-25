@@ -8,6 +8,7 @@ import {
   readCapabilityRegistry,
 } from '../tools/bun-blog-assets/capabilities.ts';
 import { buildBun14AssetFeeds } from '../tools/bun-blog-assets/feed.ts';
+import { buildMediaRights, parseRightsApprovalEvidence } from '../tools/bun-blog-assets/rights.ts';
 import { readManifest } from '../tools/bun-blog-assets/storage.ts';
 
 type XmlRecord = Record<string, unknown>;
@@ -178,6 +179,19 @@ describe('Bun 1.4 versioned media feeds', () => {
     const capabilities = await readCapabilityRegistry(manifest);
     const approved = structuredClone(manifest);
     approved.rightsStatus = 'approved';
+    approved.rights = buildMediaRights(
+      'approved',
+      parseRightsApprovalEvidence({
+        schemaVersion: 1,
+        scope: 'bun-1.4-release-blog-media',
+        status: 'approved',
+        approvalId: 'feed-fixture',
+        approvedBy: 'Test fixture',
+        approvedAt: '2026-08-25T00:00:00.000Z',
+        evidenceUrl: 'https://example.com/evidence/feed-fixture',
+        sourcePage: 'https://bun.com/blog/bun-v1.4',
+      })
+    );
     for (const asset of approved.assets) {
       if (asset.kind === 'embed') continue;
       asset.localUrl = `/portal/bun-1.4/media/${asset.id}`;

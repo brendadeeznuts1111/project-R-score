@@ -44,86 +44,94 @@
 // @updated Bun.file · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/file-io
-import { resolvePath as resolve } from '../../lib/path-bun';
 import {
-  buildBun14CapabilityRegistry,
-  syncBun14CapabilityRegistry,
-  validateCapabilityAnchors,
-} from './capabilities.ts';
-import { syncBun14ChannelRelease } from './channel-release.ts';
-import { REPO_ROOT } from './constants.ts';
-import { discoverAssets } from './discovery.ts';
-import { fail } from './errors.ts';
-import { syncBun14AssetFeeds } from './feed.ts';
-import { inspectAllAssets } from './inspection.ts';
-import { buildManifest } from './manifest-build.ts';
-import { compareManifestToInspection, parseManifestShape } from './manifest-validation.ts';
-import { readRightsApprovalEvidence } from './rights.ts';
-import { loadSourceDocuments } from './sources.ts';
-import { atomicWriteJson, readManifest, stageVendorAssets } from './storage.ts';
-import type { AssetManifest, CliOptions } from './types.ts';
+  BUN_14_MEDIA_RIGHTS_SCOPE,
+  BUN_14_SOURCE_URL,
+  BUN_LICENSE_URL,
+  BUN_PRESS_KIT_URL,
+  EXPECTED_ASSET_COUNT,
+  EXPECTED_YOUTUBE_URL,
+} from './constants.ts';
+import { parseEvidenceId } from '../../lib/types/branded.ts';
+import { fail, parseRecord } from './errors.ts';
+import type { MediaRights, RightsApprovalEvidence, RightsStatus } from './types.ts';
 
-export async function run(options: CliOptions): Promise<AssetManifest> {
-  if (options.vendor && !options.confirmRights) {
-    fail('vendor mode is blocked until --confirm-rights is supplied');
-  }
-  if (options.vendor && !options.rightsEvidencePath) {
-    fail('vendor mode is blocked until --rights-evidence PATH is supplied');
-  }
-  const approval = options.rightsEvidencePath
-    ? await readRightsApprovalEvidence(options.rightsEvidencePath)
-    : null;
-  const documents = await loadSourceDocuments(options);
-  const discovered = discoverAssets(documents);
-  const inspected = await inspectAllAssets(discovered.assets, options.timeoutMs, options.mode);
-  const manifest = parseManifestShape(
-    buildManifest(
-      documents,
-      discovered.assets,
-      inspected,
-      discovered.authors,
-      options.mode,
-      approval
-    ),
-    'generated manifest'
-  );
+function iso(value: unknown): value is string {
+  return typeof value === 'string' && Number.isFinite(Date.parse(value));
+}
 
-  if (options.check) {
-    const existing = await readManifest(options.manifestPath);
-    compareManifestToInspection(existing, manifest);
-    const capabilityRegistry = buildBun14CapabilityRegistry(existing);
-    validateCapabilityAnchors(capabilityRegistry, documents.html);
-    await syncBun14CapabilityRegistry(capabilityRegistry, true);
-    if (existing.rightsStatus === 'approved') {
-      for (const asset of existing.assets.filter(item => item.kind !== 'embed')) {
-        if (!asset.localUrl) fail(`approved asset ${asset.id} is missing localUrl`);
-        const localPath = resolve(REPO_ROOT, asset.localUrl.replace(/^\//, ''));
-        if (!(await Bun.file(localPath).exists())) {
-          fail(`approved local asset is missing: ${localPath}`);
+function httpsUrl(value: unknown): value is string {
+  if (typeof value !== 'string') return false;
+  try {
+    return new URL(value).protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+export function parseRightsApprovalEvidence(
+  value: unknown,
+  label = 'rights approval evidence'
+): RightsApprovalEvidence {
+  const record = parseRecord(value);
+  if (!record) fail(`${label}: expected a JSON object`);
+  if (
+    record.schemaVersion !== 1 ||
+    record.scope !== BUN_14_MEDIA_RIGHTS_SCOPE ||
+    record.status !== 'approved' ||
+    record.sourcePage !== BUN_14_SOURCE_URL
+  ) {
+    fail(`${label}: must approve the exact Bun 1.4 release-blog media scope`);
+  }
+  const approvalId = parseEvidenceId(record.approvalId);
+  if (typeof record.approvedBy !== 'string' || !record.approvedBy.trim()) {
+    fail(`${label}: approvedBy must be a non-empty string`);
+  }
+  if (!iso(record.approvedAt)) fail(`${label}: approvedAt must be ISO-8601`);
+  if (!httpsUrl(record.evidenceUrl)) fail(`${label}: evidenceUrl must be HTTPS`);
+  return { ...record, approvalId } as RightsApprovalEvidence;
+}
+
+export async function readRightsApprovalEvidence(path: string): Promise<RightsApprovalEvidence> {
+  try {
+    return parseRightsApprovalEvidence(JSON.parse(await Bun.file(path).text()), path);
+  } catch (error) {
+    if (error instanceof SyntaxError) fail(`${path}: invalid JSON`);
+    throw error;
+  }
+}
+
+export function buildMediaRights(
+  status: RightsStatus,
+  approval: RightsApprovalEvidence | null
+): MediaRights {
+  if (status === 'approved' && !approval) fail('approved media requires rights evidence');
+  if (status === 'pending' && approval) fail('pending media cannot carry approval evidence');
+  return {
+    scope: BUN_14_MEDIA_RIGHTS_SCOPE,
+    status,
+    delivery: status === 'approved' ? 'vendor-approved' : 'external-only',
+    evidence: approval
+      ? {
+          approvalId: approval.approvalId,
+          approvedBy: approval.approvedBy,
+          approvedAt: approval.approvedAt,
+          evidenceUrl: approval.evidenceUrl,
         }
-      }
-    }
-    await syncBun14AssetFeeds(existing, capabilityRegistry, true);
-    await syncBun14ChannelRelease({ check: true, archive: false, quiet: true });
-    console.log(
-      `bun-blog-assets: check passed (${existing.assets.length} assets; ` +
-        `${existing.rightsStatus} rights; source bytes verified in memory)`
-    );
-    return existing;
-  }
-
-  if (options.vendor) {
-    await stageVendorAssets(inspected, options.vendorDir);
-    console.log(`bun-blog-assets: staged approved media in ${options.vendorDir}`);
-  }
-  await atomicWriteJson(options.manifestPath, manifest);
-  const capabilityRegistry = buildBun14CapabilityRegistry(manifest);
-  validateCapabilityAnchors(capabilityRegistry, documents.html);
-  await syncBun14CapabilityRegistry(capabilityRegistry, false);
-  await syncBun14AssetFeeds(manifest, capabilityRegistry, false);
-  await syncBun14ChannelRelease({ check: false, archive: true, quiet: true });
-  console.log(
-    `bun-blog-assets: wrote ${manifest.assets.length}-asset ${manifest.rightsStatus} manifest to ${options.manifestPath}`
-  );
-  return manifest;
+      : null,
+    boundaries: {
+      softwareLicense: { classification: 'out-of-scope', sourceUrl: BUN_LICENSE_URL },
+      pressKit: { classification: 'separate-brand-assets', sourceUrl: BUN_PRESS_KIT_URL },
+      releaseBlogMedia: {
+        classification: status,
+        sourceUrl: BUN_14_SOURCE_URL,
+        assetCount: (EXPECTED_ASSET_COUNT - 1) as 25,
+      },
+      youtubeEmbed: {
+        classification: 'external-only',
+        sourceUrl: EXPECTED_YOUTUBE_URL,
+        assetCount: 1,
+      },
+    },
+  };
 }

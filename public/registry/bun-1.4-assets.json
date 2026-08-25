@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "release": "Bun 1.4",
   "version": "1.4.0",
   "sourcePage": "https://bun.com/blog/bun-v1.4",
@@ -7,6 +7,32 @@
   "publishedAt": "2026-08-20T00:53:44.000Z",
   "generatedAt": "2026-08-25T05:07:48.626Z",
   "rightsStatus": "pending",
+  "rights": {
+    "scope": "bun-1.4-release-blog-media",
+    "status": "pending",
+    "delivery": "external-only",
+    "evidence": null,
+    "boundaries": {
+      "softwareLicense": {
+        "classification": "out-of-scope",
+        "sourceUrl": "https://bun.com/docs/project/license"
+      },
+      "pressKit": {
+        "classification": "separate-brand-assets",
+        "sourceUrl": "https://bun.com/press-kit"
+      },
+      "releaseBlogMedia": {
+        "classification": "pending",
+        "sourceUrl": "https://bun.com/blog/bun-v1.4",
+        "assetCount": 25
+      },
+      "youtubeEmbed": {
+        "classification": "external-only",
+        "sourceUrl": "https://www.youtube.com/embed/i38DgEuaJwM",
+        "assetCount": 1
+      }
+    }
+  },
   "attribution": {
     "publisher": {
       "name": "Bun",

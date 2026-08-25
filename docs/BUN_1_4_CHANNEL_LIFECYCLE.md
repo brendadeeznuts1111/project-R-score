@@ -6,6 +6,10 @@ portal, and four Bun.XML RSS feeds are derived projections.
 Breaking-behavior and upgrade evidence is owned by
 [`BUN_1_4_MIGRATION.md`](./BUN_1_4_MIGRATION.md). The registry stores those
 sources once under `migration`; release-note anchors remain capability-local.
+Package governance is owned by
+[`BUN_1_4_PACKAGE_GOVERNANCE.md`](./BUN_1_4_PACKAGE_GOVERNANCE.md), while media
+classification and approval evidence are owned by
+[`BUN_1_4_MEDIA_RIGHTS.md`](./BUN_1_4_MEDIA_RIGHTS.md).
 
 ## Ownership and project scope
 

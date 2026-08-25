@@ -78,6 +78,10 @@ function normalizeManifest(raw) {
   return {
     assets: manifestAssets,
     rightsStatus,
+    rightsDelivery: text(
+      root.rights?.delivery,
+      rightsApproved ? 'vendor-approved' : 'external-only'
+    ),
     generated: text(first(root.generatedAt, root.generated, root.generated_at), 'unknown'),
     sourcePage: safeUrl(first(root.sourcePage, root.officialSource, root.sourceUrl), SOURCE_URL),
   };

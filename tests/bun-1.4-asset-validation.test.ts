@@ -13,6 +13,7 @@ import {
 } from '../tools/bun-blog-assets/media-validation.ts';
 import { fetchRemoteAssetBytes } from '../tools/bun-blog-assets/remote-asset.ts';
 import { run } from '../tools/bun-blog-assets/run.ts';
+import { buildMediaRights, parseRightsApprovalEvidence } from '../tools/bun-blog-assets/rights.ts';
 import type { AssetDraft, CliOptions } from '../tools/bun-blog-assets/types.ts';
 
 const pngBytes = new Uint8Array(
@@ -234,5 +235,55 @@ describe('Bun 1.4 SVG vendor policy', () => {
       timeoutMs: 1_000,
     };
     await expect(run(options)).rejects.toThrow('--confirm-rights is supplied');
+  });
+
+  test('requires scoped durable evidence after rights acknowledgement', async () => {
+    const options: CliOptions = {
+      check: false,
+      vendor: true,
+      confirmRights: true,
+      mode: 'vendor',
+      htmlPath: '/missing.html',
+      markdownPath: '/missing.md',
+      manifestPath: '/missing.json',
+      vendorDir: '/missing-media',
+      timeoutMs: 1_000,
+    };
+    await expect(run(options)).rejects.toThrow('--rights-evidence PATH');
+  });
+
+  test('separates software, press-kit, blog-media, and embed rights scopes', () => {
+    const approval = parseRightsApprovalEvidence({
+      schemaVersion: 1,
+      scope: 'bun-1.4-release-blog-media',
+      status: 'approved',
+      approvalId: 'approval-123',
+      approvedBy: 'Publisher representative',
+      approvedAt: '2026-08-25T00:00:00.000Z',
+      evidenceUrl: 'https://example.com/evidence/approval-123',
+      sourcePage: 'https://bun.com/blog/bun-v1.4',
+    });
+    const rights = buildMediaRights('approved', approval);
+    expect(rights.delivery).toBe('vendor-approved');
+    expect(rights.boundaries.softwareLicense.classification).toBe('out-of-scope');
+    expect(rights.boundaries.pressKit.classification).toBe('separate-brand-assets');
+    expect(rights.boundaries.releaseBlogMedia.assetCount).toBe(25);
+    expect(rights.boundaries.youtubeEmbed.classification).toBe('external-only');
+    expect(rights.evidence?.approvalId).toBe('approval-123');
+  });
+
+  test('rejects generic or non-durable rights claims', () => {
+    expect(() =>
+      parseRightsApprovalEvidence({
+        schemaVersion: 1,
+        scope: 'bun-assets',
+        status: 'approved',
+        approvalId: 'approval-123',
+        approvedBy: 'Approver',
+        approvedAt: '2026-08-25T00:00:00.000Z',
+        evidenceUrl: 'http://example.com/evidence',
+        sourcePage: 'https://bun.com/blog/bun-v1.4',
+      })
+    ).toThrow('exact Bun 1.4 release-blog media scope');
   });
 });

@@ -16,11 +16,37 @@ describe('Bun 1.4 asset gallery', () => {
     const assets = manifest.assets as Array<Record<string, unknown>>;
     const counts = manifest.counts as Record<string, unknown>;
 
-    expect(manifest.schemaVersion).toBe(1);
+    expect(manifest.schemaVersion).toBe(2);
     expect(manifest.release).toBe('Bun 1.4');
     expect(manifest.version).toBe('1.4.0');
     expect(manifest.publishedAt).toBe('2026-08-20T00:53:44.000Z');
     expect(manifest.rightsStatus).toBe('pending');
+    expect(manifest.rights).toEqual({
+      scope: 'bun-1.4-release-blog-media',
+      status: 'pending',
+      delivery: 'external-only',
+      evidence: null,
+      boundaries: {
+        softwareLicense: {
+          classification: 'out-of-scope',
+          sourceUrl: 'https://bun.com/docs/project/license',
+        },
+        pressKit: {
+          classification: 'separate-brand-assets',
+          sourceUrl: 'https://bun.com/press-kit',
+        },
+        releaseBlogMedia: {
+          classification: 'pending',
+          sourceUrl: 'https://bun.com/blog/bun-v1.4',
+          assetCount: 25,
+        },
+        youtubeEmbed: {
+          classification: 'external-only',
+          sourceUrl: 'https://www.youtube.com/embed/i38DgEuaJwM',
+          assetCount: 1,
+        },
+      },
+    });
     expect(counts).toEqual({ total: 26, image: 21, video: 4, embed: 1 });
     expect(assets).toHaveLength(26);
 
@@ -115,6 +141,7 @@ describe('Bun 1.4 asset gallery', () => {
     expect(html).toContain('id="bun-upgrade-guide"');
     expect(script).toContain('CAPABILITIES_URL');
     expect(script).toContain('normalizeMigrationSources');
+    expect(script).toContain('manifest.rightsDelivery');
     expect(capabilityScript).toContain('indexCapabilities');
     expect(capabilityScript).toContain('underConsiderationShipped !== false');
     expect(capabilityScript).toContain('normalizeReleaseChapters');

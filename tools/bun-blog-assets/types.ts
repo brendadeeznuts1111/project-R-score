@@ -1,7 +1,48 @@
-import type { ReleaseAssetId, ReleaseCapabilityId } from '../../lib/types/branded.ts';
+import type { EvidenceId, ReleaseAssetId, ReleaseCapabilityId } from '../../lib/types/branded.ts';
 
 export type MediaKind = 'image' | 'video' | 'embed';
 export type RightsStatus = 'pending' | 'approved';
+
+export type RightsApprovalEvidence = {
+  schemaVersion: 1;
+  scope: 'bun-1.4-release-blog-media';
+  status: 'approved';
+  approvalId: EvidenceId;
+  approvedBy: string;
+  approvedAt: string;
+  evidenceUrl: string;
+  sourcePage: string;
+};
+
+export type MediaRights = {
+  scope: 'bun-1.4-release-blog-media';
+  status: RightsStatus;
+  delivery: 'external-only' | 'vendor-approved';
+  evidence: Omit<
+    RightsApprovalEvidence,
+    'schemaVersion' | 'scope' | 'status' | 'sourcePage'
+  > | null;
+  boundaries: {
+    softwareLicense: {
+      classification: 'out-of-scope';
+      sourceUrl: string;
+    };
+    pressKit: {
+      classification: 'separate-brand-assets';
+      sourceUrl: string;
+    };
+    releaseBlogMedia: {
+      classification: RightsStatus;
+      sourceUrl: string;
+      assetCount: 25;
+    };
+    youtubeEmbed: {
+      classification: 'external-only';
+      sourceUrl: string;
+      assetCount: 1;
+    };
+  };
+};
 
 export type CapabilityDomain =
   | 'runtime'
@@ -103,6 +144,7 @@ export type AssetManifest = {
   publishedAt: string;
   generatedAt: string;
   rightsStatus: RightsStatus;
+  rights: MediaRights;
   attribution: Attribution;
   discovery: {
     html: string;
@@ -148,5 +190,6 @@ export type CliOptions = {
   markdownPath?: string;
   manifestPath: string;
   vendorDir: string;
+  rightsEvidencePath?: string;
   timeoutMs: number;
 };

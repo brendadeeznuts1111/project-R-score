@@ -7,6 +7,7 @@ import {
   MANIFEST_SCHEMA_VERSION,
 } from './constants.ts';
 import { fail } from './errors.ts';
+import { buildMediaRights } from './rights.ts';
 import type {
   AssetDraft,
   AssetManifest,
@@ -14,6 +15,7 @@ import type {
   Attribution,
   CliOptions,
   FetchedAsset,
+  RightsApprovalEvidence,
   SourceDocuments,
 } from './types.ts';
 
@@ -27,7 +29,8 @@ export function buildManifest(
   assets: AssetDraft[],
   inspected: FetchedAsset[],
   authors: Attribution['authors'],
-  mode: CliOptions['mode']
+  mode: CliOptions['mode'],
+  approval: RightsApprovalEvidence | null = null
 ): AssetManifest {
   const inspectedById = new Map(inspected.map(item => [item.asset.id, item]));
   const records = assets.map(asset => {
@@ -47,6 +50,7 @@ export function buildManifest(
       height: item.asset.height,
     } satisfies AssetRecord;
   });
+  const rightsStatus = mode === 'vendor' ? 'approved' : 'pending';
   return {
     schemaVersion: MANIFEST_SCHEMA_VERSION,
     release: 'Bun 1.4',
@@ -55,14 +59,15 @@ export function buildManifest(
     sourceMarkdown: BUN_14_MARKDOWN_URL,
     publishedAt: BUN_14_PUBLISHED_AT,
     generatedAt: new Date().toISOString(),
-    rightsStatus: mode === 'vendor' ? 'approved' : 'pending',
+    rightsStatus,
+    rights: buildMediaRights(rightsStatus, approval),
     attribution: {
       publisher: { name: 'Bun', url: 'https://bun.com/' },
       authors,
       sourcePage: BUN_14_SOURCE_URL,
       rightsNote:
         mode === 'vendor'
-          ? 'Vendor output was explicitly authorized with --confirm-rights; preserve Bun attribution.'
+          ? 'Vendor output carries scoped approval evidence; preserve Bun attribution.'
           : 'The source page does not declare a media license; binaries remain external until rights are approved.',
     },
     discovery: {

@@ -64,6 +64,17 @@ All commands run via `bun run <name>` from the project root:
 | `bun run format:check` | x prettier --check 'lib/**/*.ts' 'packages/**/*.ts' 'server/**/*.ts' 'config/**/*.ts' 'tools/**/*.ts' 'scripts/*.ts' 'scripts/fix-*.ts' 'tests/**/*.ts' |
 | `bun run format:staged` | x prettier --check |
 
+### Package Governance
+| Command | Description |
+|---------|-------------|
+| `bun run dependencies:dedupe:check` | Fail when compatible bun.lock versions can collapse |
+| `bun run dependencies:dedupe:dry-run` | Preview compatible bun.lock version convergence |
+| `bun run dependencies:diff` | Review package-version changes with bun pm diff |
+| `bun run dependencies:governance:check` | Bun 1.4 production-license shape + lockfile dedupe gate |
+| `bun run dependencies:licenses` | Path-free production dependency license summary |
+| `bun run dependencies:licenses:json` | Path-free production dependency license summary as JSON |
+| `bun run dependencies:prune:dry-run` | Preview installed files not represented by bun.lock |
+
 ### Repository Hygiene
 | Command | Description |
 |---------|-------------|
@@ -110,7 +121,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run test:bun:1.3.14` | test tests/regression/bun-1.3.14.test.ts tests/bun-1.3.14-web-api-fixes.test.ts tests/bun-toml-version-contract.test.ts |
 | `bun run test:bun:1.4.0` | test tests/bun-1.4.0-web-api-contract.test.ts tests/bun-1.4.0-cron-contract.test.ts tests/bun-1.4.0-breaking-changes-contract.test.ts tests/bun-1.4.0-behavior-contract.test.ts tests/bun-1.4.0-install-behavior-contract.test.ts tests/bun-1.4.0-other-behavior-batch2.test.ts tests/bun-1.4.0-other-behavior-serve-fetch.test.ts tests/bun-1.4.0-other-behavior-residual.test.ts tests/bun-1.4.0-other-behavior-snapshot.test.ts tests/bun-toml-version-contract.test.ts |
 | `bun run test:bun:assets` | test tests/bun-1.4-asset-validation.test.ts tests/bun-1.4-assets-portal.test.ts |
-| `bun run test:bun:release-contracts` | test tests/bun-channel-surfaces.test.ts tests/bun-1.3.14-web-api-fixes.test.ts tests/bun-1.4.0-web-api-contract.test.ts tests/bun-1.4.0-cron-contract.test.ts tests/bun-1.4.0-breaking-changes-contract.test.ts tests/bun-1.4.0-behavior-contract.test.ts tests/bun-1.4.0-fetch-deep-contract.test.ts tests/bun-1.4.0-install-behavior-contract.test.ts tests/bun-1.4.0-observability-contract.test.ts tests/bun-1.4.0-other-behavior-batch2.test.ts tests/bun-1.4.0-other-behavior-serve-fetch.test.ts tests/bun-1.4.0-other-behavior-residual.test.ts tests/bun-1.4.0-other-behavior-snapshot.test.ts tests/bun-1.4-capabilities.test.ts tests/bun-1.4-cli-example.test.ts tests/markdown-safe-html.test.ts tests/bun-toml-version-contract.test.ts tests/bun-xml-native-contract.test.ts |
+| `bun run test:bun:release-contracts` | test tests/bun-channel-surfaces.test.ts tests/bun-1.3.14-web-api-fixes.test.ts tests/bun-1.4.0-web-api-contract.test.ts tests/bun-1.4.0-cron-contract.test.ts tests/bun-1.4.0-breaking-changes-contract.test.ts tests/bun-1.4.0-behavior-contract.test.ts tests/bun-1.4.0-fetch-deep-contract.test.ts tests/bun-1.4.0-install-behavior-contract.test.ts tests/bun-1.4.0-observability-contract.test.ts tests/bun-1.4.0-other-behavior-batch2.test.ts tests/bun-1.4.0-other-behavior-serve-fetch.test.ts tests/bun-1.4.0-other-behavior-residual.test.ts tests/bun-1.4.0-other-behavior-snapshot.test.ts tests/bun-1.4-capabilities.test.ts tests/bun-1.4-cli-example.test.ts tests/bun-package-governance.test.ts tests/markdown-safe-html.test.ts tests/bun-toml-version-contract.test.ts tests/bun-xml-native-contract.test.ts |
 | `bun run test:changed` | Bun test --changed (or -- <ref> → --changed=REF) |
 | `bun run test:changed:main` | Bun test --changed via --main-head (origin/main|main|HEAD~1) |
 | `bun run test:changed:serial` | scripts/bun-test-changed.ts --serial |
@@ -327,7 +338,7 @@ All commands run via `bun run <name>` from the project root:
 | `bun run ci:harness:fast` | Quiet local parity (∥ cheap · test:changed dirty; no eslint) |
 | `bun run ci:portal-registry` | bash -c 'bun test --timeout=60000 tests/compliance-portal-bake.test.ts tests/harness-utilities.test.ts tests/ops-snapshot-cron.test.ts tests/portal-weave.test.ts tests/registry-contracts.test.ts && test -z "$(git status --porcelain --untracked-files=all -- public/)"' |
 | `bun run ci:r2:version:check` | scripts/ci-r2-version-check.ts |
-| `bun run ci:security` | security:guard:deps && bun run security:audit |
+| `bun run ci:security` | security:guard:deps && bun run dependencies:governance:check && bun run security:audit |
 | `bun run ci:types` | ts:verify && bun run imports:verify && bun run check:tsconfig-types -- --strict && bun run type-check:ci && bun run type-check:full && bun run check:concept-registry:types && bun run check:bun-native-comprehensive:types && bun run check:factory-color:types |
 | `bun run ci:validate` | --sequential standards:check |
 
