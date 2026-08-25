@@ -1,4 +1,15 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/project/benchmarking#markdown-output — --cpu-prof-md
+// @released --cpu-prof-md · released v1.4.0 · 2026-08-20 · https://bun.com/blog/bun-v1.4#cpu-prof-md
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @updated Bun.file · fixed v0.2.2 · 2022-10-27 · https://bun.com/blog/bun-v0.2.2
 // @updated Bun.file · changed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
@@ -98,6 +109,7 @@
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /** Local, clean-tree receipt for the fast pre-push proof. */
 import { ensureDir, writeJson } from './lib/fs-bun.ts';
+import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 
 const ROOT = `${import.meta.dir}/..`;
 const RECEIPT_DIR = `${ROOT}/.cache/ci-receipts`;
@@ -204,4 +216,32 @@ async function main(): Promise<number> {
   return 0;
 }
 
-if (import.meta.main) process.exit(await main());
+if (import.meta.main) {
+  // Opt-in Bun 1.4 Markdown CPU profile for a slow pre-push diagnosis.
+  if (Bun.env.PREPUSH_PROFILE === '1' && Bun.env.PREPUSH_PROFILE_CHILD !== '1') {
+    const profileDir = `${ROOT}/reports`;
+    const profileName = 'prepush-cpu.md';
+    await ensureDir(profileDir);
+    const child = Bun.spawn(
+      [
+        resolveVerificationBunBinary().path,
+        '--cpu-prof-md',
+        `--cpu-prof-dir=${profileDir}`,
+        `--cpu-prof-name=${profileName}`,
+        import.meta.path,
+        ...Bun.argv.slice(2),
+      ],
+      {
+        cwd: ROOT,
+        env: { ...Bun.env, PREPUSH_PROFILE_CHILD: '1' },
+        stdin: 'inherit',
+        stdout: 'inherit',
+        stderr: 'inherit',
+      }
+    );
+    const code = (await child.exited) ?? 1;
+    if (code === 0) console.info(`⏱  CPU profile → ${profileDir}/${profileName}`);
+    process.exit(code);
+  }
+  process.exit(await main());
+}
