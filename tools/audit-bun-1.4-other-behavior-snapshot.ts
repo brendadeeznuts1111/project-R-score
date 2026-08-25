@@ -134,6 +134,7 @@ export type OtherBehaviorSnapshot = {
   ok: boolean;
   bun: { version: string; revision: string };
   otherBehavior: {
+    claim: 'inventory-routing-not-test-results';
     total: number;
     covered: number;
     planned: number;
@@ -250,9 +251,10 @@ export async function buildOtherBehaviorSnapshot(
 
   const pct = other.length === 0 ? 0 : Math.round((100 * covered.length) / other.length);
   const snapshot: OtherBehaviorSnapshot = {
-    ok: covered.length === other.length && planned.length === 0 && image.ok,
+    ok: covered.length + planned.length === other.length && image.ok,
     bun: { version: Bun.version, revision: Bun.revision },
     otherBehavior: {
+      claim: 'inventory-routing-not-test-results',
       total: other.length,
       covered: covered.length,
       planned: planned.length,
@@ -280,7 +282,7 @@ if (isModuleEntrypoint(import.meta)) {
   } else {
     console.info(`Bun ${snap.bun.version} (${snap.bun.revision.slice(0, 12)})`);
     console.info(
-      `Other behavior: ${snap.otherBehavior.covered}/${snap.otherBehavior.total} covered (${snap.otherBehavior.pct}%)`
+      `Other-behavior inventory: ${snap.otherBehavior.covered}/${snap.otherBehavior.total} routed to executable contracts (${snap.otherBehavior.pct}%); ${snap.otherBehavior.planned} planned`
     );
     logTable(
       snap.byTestPath.map(r => ({

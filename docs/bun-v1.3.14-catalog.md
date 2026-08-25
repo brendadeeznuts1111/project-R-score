@@ -1,8 +1,13 @@
-# Bun v1.3.14 integration catalog
+# Bun v1.3.14 integration catalog (historical baseline)
 
 This catalog records Project R's adoption state for the official Bun v1.3.14
 release. It is an integration decision artifact, not a second copy of the
 release post or its code blocks.
+
+The repository’s current stable runtime is Bun **1.4.0**, selected by
+[`.bun-version`](../.bun-version) and `package.json`. This file remains the
+historical v1.3.14 adoption and deferral record; references to the v1.3.14
+runtime below describe release-specific probes, not the current production pin.
 
 ## Authority
 
@@ -26,7 +31,8 @@ catalog documentation links. These counts are derived data and are gated by
 - Keep exact release facts in the normalized artifact. Keep Project R rollout
   decisions in this catalog. Do not maintain a second personal-memory copy of
   either contract.
-- Treat `1.3.14` as the repository's pinned stable runtime, not as proof that
+- Treat `1.3.14` as a historical release probe, not as the repository's current
+  stable runtime; the current stable pin is `1.4.0`. Neither pin proves that
   every API in current Bun documentation was introduced by that release.
 - The release proves that Bun-targeted `using` and `await using` are no longer
   lowered. The pinned type inventory and runtime probes own which concrete Bun
@@ -43,7 +49,7 @@ catalog documentation links. These counts are derived data and are gated by
 
 | Feature group                                  | Release classification          | Project R disposition                                                                                                                                     | Owning proof or artifact                                                                       |
 | ---------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| Install and upgrade commands                   | Mixed/unknown                   | Runtime is already pinned to 1.3.14; no bootstrap change                                                                                                  | `.bun-version` · `package.json` · `bun run bun:channel:check`                                  |
+| Install and upgrade commands                   | Mixed/unknown                   | Historical v1.3.14 behavior was reviewed; the repository runtime is now pinned to stable 1.4.0, with no bootstrap change required                         | `.bun-version` · `package.json` · `bun run bun:channel:check`                                  |
 | `Bun.Image`                                    | Stable                          | Adopted for image generation, metadata, thumbnails, and evidence processing; no `sharp` package dependency is present                                     | `scripts/images-generate.ts` · `lib/image-metadata.ts` · `tests/regression/bun-1.3.14.test.ts` |
 | Global Virtual Store                           | Experimental                    | Adopted at the machine install-policy layer with the isolated linker; intentionally absent from project `bunfig.toml`                                     | `config/machine.bunfig.toml.template` · `docs/UNIFIED.md` · `bun run install:verify`           |
 | HTTP/3 server                                  | Highly experimental             | Not enabled in production or root defaults; retain as a release example only                                                                              | normalized knowledge artifact · skipped environment probe                                      |

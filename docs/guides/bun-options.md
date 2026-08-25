@@ -8,8 +8,8 @@ Authority: Bun documents the global prepend behavior in
 [Environment Variables](https://bun.com/docs/runtime/environment-variables#configuring-bun)
 and support in
 [standalone executables](https://bun.com/docs/bundler/executables#runtime-arguments-via-bun-options).
-The parsing and argv details below are verified on the repository pin, Bun
-1.3.14, by
+The parsing and argv details below are verified on the repository pin, stable
+Bun 1.4.0, by
 [`tests/bun-options-contract.test.ts`](../../tests/bun-options-contract.test.ts).
 
 ## Behavior table
@@ -17,7 +17,7 @@ The parsing and argv details below are verified on the repository pin, Bun
 | Aspect                 | Repository contract                                                      | Boundary                                                                                 |
 | ---------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
 | Scope                  | Prepended to every Bun execution inheriting the variable                 | A flag can be valid, ignored, or rejected depending on the selected subcommand           |
-| Syntax                 | Whitespace separates arguments; quoted groups stay together              | Bun 1.3.14 retains the quote characters instead of shell-unquoting the value             |
+| Syntax                 | Whitespace separates arguments; quoted groups stay together              | Stable Bun 1.4.0 retains the quote characters instead of shell-unquoting the value       |
 | Script arguments       | Does not insert entries into `process.argv`                              | User positional arguments keep their script-visible positions                            |
 | Runtime arguments      | Injected entries appear first in `process.execArgv`                      | Treat this as runtime state, not application input                                       |
 | Repeated flags         | A later explicit CLI value wins for the verified `--console-depth` case  | Do not generalize this observation to every flag without a focused proof                 |
@@ -37,7 +37,7 @@ Simple, space-free arguments are the portable shape:
 BUN_OPTIONS="--console-depth=5 --no-clear-screen" bun run dev
 ```
 
-Do not use shell quoting to smuggle spaces into a flag value. On Bun 1.3.14,
+Do not use shell quoting to smuggle spaces into a flag value. On stable Bun 1.4.0,
 this keeps the quotes as part of `process.title`:
 
 ```bash
@@ -60,7 +60,7 @@ BUN_OPTIONS="--console-depth=1" bun --console-depth=4 run inspect.ts
 
 Flags for Bun belong before `run`. Arguments after the package script name are
 script arguments, so `bun run dev --no-hot` is not a reliable way to negate a
-runtime option. Bun 1.3.14 does not advertise a `--no-hot` flag.
+runtime option. Stable Bun 1.4.0 does not advertise a `--no-hot` flag.
 
 The supported inspection-depth flag is `--console-depth`, not `--inspect-depth`:
 

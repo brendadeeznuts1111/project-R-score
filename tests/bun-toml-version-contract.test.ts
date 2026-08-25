@@ -13,7 +13,7 @@ onBun1314('Bun 1.3.14 exposes native TOML parsing but not TOML serialization', (
   expect(toml.stringify).toBeUndefined();
 });
 
-onBun140('Bun 1.4.0 canary exposes the observed TOML serialization candidate', () => {
+onBun140('Bun 1.4.0 stable exposes the TOML serialization contract', () => {
   expect(typeof toml.parse).toBe('function');
   expect(typeof toml.stringify).toBe('function');
 });

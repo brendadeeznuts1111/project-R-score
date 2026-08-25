@@ -19,11 +19,14 @@ describe('audit-bun-1.4-other-behavior-snapshot', () => {
     expect(image.terminals.inspect).toContain('digest');
   });
 
-  rt('Other-behavior snapshot is 100% covered and inspect.table renders', async () => {
+  rt('Other-behavior snapshot separates executable routes from planned behavior', async () => {
     const snap = await buildOtherBehaviorSnapshot();
-    expect(snap.otherBehavior.pct).toBe(100);
-    expect(snap.otherBehavior.covered).toBe(snap.otherBehavior.total);
-    expect(snap.otherBehavior.planned).toBe(0);
+    expect(snap.otherBehavior.claim).toBe('inventory-routing-not-test-results');
+    expect(snap.otherBehavior.covered + snap.otherBehavior.planned).toBe(
+      snap.otherBehavior.total
+    );
+    expect(snap.otherBehavior.planned).toBeGreaterThan(0);
+    expect(snap.otherBehavior.pct).toBeLessThan(100);
     expect(snap.inspectTable).toContain('testPath');
     expect(snap.image.ok).toBe(true);
     expect(snap.ok).toBe(true);

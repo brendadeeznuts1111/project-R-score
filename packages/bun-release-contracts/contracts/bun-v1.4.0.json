@@ -4,8 +4,8 @@
   "releaseVersion": "1.4.0",
   "sourceUrl": "https://bun.com/blog/bun-v1.4",
   "counts": {
-    "planned": 1798,
-    "executable": 103
+    "planned": 1823,
+    "executable": 78
   },
   "items": [
     {
@@ -2837,24 +2837,24 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "bun install and bun remove now drop a package from bun.lock when only an optional peer still points at it. A lockfile whose nested optional-peer placement differs from a fresh install may be rewritten once, on the first install after upgrading. #35681",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-f1db7bd8",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "trustedDependencies and --trust entries now match the exact package name. Before, they matched a truncated name hash. A package that only collides with an entry's hash no longer runs lifecycle scripts. If you meant to trust it, add the package's exact name. Entries loaded from a legacy bun.lockb still match by hash. #31218",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-f4a7aefb",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "bun install --registry <url> no longer sends the configured registry's credentials to <url> when it is a different host, or when it downgrades from https:// to http://. #36165",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-534f2e2b",
@@ -3005,8 +3005,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.Terminal#write() now returns the full input length, because the whole input is buffered. Before, it returned only the bytes flushed synchronously, and re-sending the rest duplicated input. drain now fires on POSIX. #34289",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-3a7823c7",
@@ -3085,8 +3085,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "S3Client.list() entries now expose checksumAlgorithm. The misspelled checksumAlgorithme still works but is non-enumerable. It no longer appears in Object.keys() or JSON.stringify() output. #36502",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-b41f766d",
@@ -3125,8 +3125,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "NaN or undefined seconds in RedisClient#expire() (before, sent EXPIRE key 0)",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-13b231f3",
@@ -3141,8 +3141,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.openInEditor() with no editor found (before, returned silently)",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-beb0bdfe",
@@ -3181,8 +3181,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "N-API status codes on validation and failure paths now match Node 26. For example, napi_wrap() on a non-object returns napi_invalid_arg. napi_reference_ref() returns 0 once the referent has been collected. napi_get_buffer_info() rejects a bare ArrayBuffer. Addons that branch on a specific status see Node's values. #36805 #36850",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-e566d203",
@@ -3205,8 +3205,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "On Windows, process.binding(\"uv\") and every node:fs error now use libuv's error numbers (-4058 for ENOENT). Before, the binding and some fs calls such as fs.access() reported CRT values like -2. POSIX is unchanged. #34505",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-d3932594",
@@ -3229,32 +3229,32 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "fs.watch() with recursive: true on Linux and FreeBSD now emits 'error' (for example ENOSPC, with the subdirectory's path) for a subdirectory it cannot watch. It keeps watching the rest. Before, the subdirectory was skipped silently. #36415",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-880aa6aa",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "session.remoteSettings in node:http2 is now {} while the session is connecting or destroyed, as in Node. Before, it was null. Reading a setting right after connect() now returns undefined instead of throwing. session.localSettings is {} at that point too. Before the peer's ACK, it shows only the defaults plus your customSettings. #34358",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-e7a4da1f",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "node:http2 stream.end(chunk) now sets END_STREAM on the DATA frame carrying chunk, as Node does. Before, it sent an empty frame after it. #34432",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-cebda7db",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "node:http2 pushStream() now reports invalid headers only through its callback, as Node does. The pushed stream no longer also emits 'error'. #36551",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-84999818",
@@ -3269,8 +3269,8 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "process.execve() now throws an error carrying code, syscall, errno, and path when the exec fails. This matches Node 26. Before, it printed an error and aborted.",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-1752c7b4",
@@ -3294,7 +3294,7 @@
       "section": "Other behavior changes v1.4.0",
       "announcement": "process.reallyExit() no longer emits 'exit' before exiting. This matches Node. If you rely on 'exit' listeners running, call process.exit(). #34997",
       "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "testPath": "tests/bun-1.4.0-breaking-changes-contract.test.ts"
     },
     {
       "key": "other-behavior-changes-v1-4-0-e1030f92",
@@ -3413,40 +3413,40 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.serve WebSocket connections now close with code 1006 and reason Received an incorrectly masked frame when a client sends an unmasked frame, per RFC 6455. Before, the frame was parsed as if it were masked. #32820",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-b6ff0c1d",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.serve now answers 413 and closes the connection when a single chunk of a chunked request carries more than 16 KiB of chunk extensions. This matches node:http. #34504",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-559f8d5a",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.serve HTML routes with development: false no longer emit sourceMappingURL or debugId comments. .map URLs answer 404. [serve.static] sourcemap = \"linked\" in bunfig.toml restores them. #36982",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-61e8b107",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.serve({ tls: [...] }) now enforces requestCert and rejectUnauthorized set on a per-serverName entry. Before, they were ignored. Clients of that name without an acceptable certificate are refused. With http3: true, they are enforced over QUIC too. #36174 #37669",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-8fc3ff97",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.serve now answers 400 to a request whose Transfer-Encoding names anything besides a single final chunked (gzip, chunked, chunked, chunked). Before, such requests got 200 with the body still encoded. node:http still accepts gzip, chunked but now rejects chunked, chunked. #35295",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-f83f0753",
@@ -3461,16 +3461,16 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "ws.subscribe() and ws.unsubscribe() now return false on a closed ServerWebSocket (and are typed boolean). #35236",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-75447100",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "ws.send() and publish() of an in-memory Blob now send its bytes as a binary frame. Before, they sent the text [object Blob]. A Bun.file() blob throws; read it first. #36032",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-49553786",
@@ -3501,32 +3501,32 @@
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.sql's connectionTimeout now bounds the whole handshake. Before, it restarted on every packet. A Postgres server that sends a second authentication request now fails the connection with ERR_POSTGRES_UNEXPECTED_MESSAGE. #36308",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-b9a61d08",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.sql now honors PGSSLMODE from the environment. A URL ?sslmode= still wins. PGSSLMODE=require against a server without TLS now fails. Before, it connected in plaintext. ?ssl= and ?ssl-mode= are accepted as spellings. tls: { caFile } enables verification like ca. #36840 #37669",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-4c687677",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "Bun.sql now decodes a Postgres date, timestamp, or timestamptz of infinity or -infinity as the number Infinity or -Infinity. Before, it was an invalid Date. Check for it before calling Date methods on the value. #35121",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "other-behavior-changes-v1-4-0-ef0a0b38",
       "category": "other-behavior-changes-v1-4-0",
       "section": "Other behavior changes v1.4.0",
       "announcement": "On Linux, Bun no longer sets prctl(PR_SET_THP_DISABLE) at startup. That flag was inherited across execve. It disabled transparent huge pages in every child process spawned via Bun.spawn, bun run, or lifecycle scripts. Bun's own allocations now opt out per-mapping via MADV_NOHUGEPAGE. Child processes inherit the system THP setting. #36990",
-      "status": "covered",
-      "testPath": "tests/bun-1.4.0-other-behavior-residual.test.ts"
+      "status": "planned",
+      "testPath": null
     },
     {
       "key": "changelog-02043059",

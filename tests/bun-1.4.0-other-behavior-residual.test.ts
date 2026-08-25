@@ -1,4 +1,4 @@
-// @see https://bun.com/blog/bun-v1.4#other-behavior-changes
+// @see https://github.com/oven-sh/bun/issues/28792 — reconciled Bun 1.4 breaking changes
 /**
  * Residual Bun 1.4.0 Other-behavior contracts: platform-gated, observational,
  * or constructor-only (no live Redis/Postgres/S3/N-API addon required).
@@ -14,17 +14,17 @@ const onWin = process.platform === 'win32';
 const onLinux = process.platform === 'linux';
 
 describe('Bun 1.4.0 Other — residual / platform', () => {
-  rt('process.title is a non-empty string (#31831)', () => {
-    expect(typeof process.title).toBe('string');
-    expect(process.title.length).toBeGreaterThan(0);
+  rt('process.title defaults to argv0 as invoked (#31831)', () => {
+    const proc = Bun.spawnSync([process.execPath, '-e', 'console.log(process.title)'], {
+      argv0: 'bun-1.4-title-contract',
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(proc.exitCode).toBe(0);
+    expect(proc.stdout.toString().trim()).toBe('bun-1.4-title-contract');
   });
 
-  rt('S3Client.list entry shape documents checksumAlgorithm (#36502)', () => {
-    // Constructor-level surface: misspelled alias may exist as non-enumerable.
-    expect(typeof Bun.S3Client).toBe('function');
-    const proto = Bun.S3Client.prototype as Record<string, unknown>;
-    expect(proto).toBeTruthy();
-  });
+  test.todo('S3Client.list checksumAlgorithm requires an isolated S3 integration (#36502)');
 
   rt('node:test skip suites do not run callback (#34444)', () => {
     const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-node-test-'));
@@ -39,6 +39,10 @@ describe("skipped", { skip: true }, () => {
   ran = true;
   test("inner", () => assert.fail("should not run"));
 });
+describe("skipped-and-todo", { skip: true, todo: true }, () => {
+  ran = true;
+  test("inner", () => assert.fail("should not run"));
+});
 test("probe", () => assert.equal(ran, false));
 `
       );
@@ -46,8 +50,8 @@ test("probe", () => assert.equal(ran, false));
         stdout: 'pipe',
         stderr: 'pipe',
       });
-      // Bun may use bun:test for *.test.js — accept pass or skip path.
-      expect([0, 1]).toContain(proc.exitCode);
+      expect(proc.exitCode).toBe(0);
+      expect(proc.stderr.toString()).not.toContain('should not run');
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
@@ -77,25 +81,39 @@ test("probe", () => assert.equal(ran, false));
     }
   );
 
-  rt('Bun.sql / Redis expire / http2 / Terminal / N-API documented as env-gated', () => {
-    // Presence checks only — live servers / native addons are out of unit scope.
-    expect(typeof Bun.sql).toBe('function');
-    expect(typeof Bun.RedisClient).toBe('function');
-    expect(typeof require('node:http2')).toBe('object');
-  });
+  test.todo('SQL, Redis, HTTP/2, Terminal and N-API behavior needs dedicated fixtures');
 
   rt('warnings printer format includes (node:PID) style when emitted (#31831)', () => {
     const proc = Bun.spawnSync(
       [
         process.execPath,
         '-e',
-        'process.emitWarning("contract","BunContractWarning");',
+        'console.log(process.listenerCount("warning")); process.on("warning", warning => console.log(`user:${warning.code}`)); console.log(process.listenerCount("warning")); process.emitWarning("contract", { code: "BUN14", type: "BunContractWarning" });',
       ],
       { stdout: 'pipe', stderr: 'pipe' }
     );
+    expect(proc.exitCode).toBe(0);
+    expect(proc.stdout.toString().trim().split('\n')).toEqual(['1', '2', 'user:BUN14']);
     const err = proc.stderr.toString();
-    // Bun may print node-style warnings
-    expect(err.length >= 0).toBe(true);
+    expect(err).toMatch(/^\(node:\d+\) \[BUN14\] BunContractWarning: contract/m);
+
+    const silenced = Bun.spawnSync(
+      [
+        process.execPath,
+        '-e',
+        'process.removeAllListeners("warning"); process.emitWarning("silent", { code: "BUN14" });',
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
+    expect(silenced.exitCode).toBe(0);
+    expect(silenced.stderr.toString()).toBe('');
+
+    const noWarnings = Bun.spawnSync(
+      [process.execPath, '--no-warnings', '-e', 'process.emitWarning("silent");'],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
+    expect(noWarnings.exitCode).toBe(0);
+    expect(noWarnings.stderr.toString()).toBe('');
   });
 
   rt('HTML routes development:false omit sourceMappingURL (#36982)', async () => {
@@ -129,27 +147,5 @@ test("probe", () => assert.equal(ran, false));
     }
   });
 
-  rt('trustedDependencies match exact package names (config shape #31218)', () => {
-    // Behavioral: truncated-hash matching is gone — exact names are required in bunfig.
-    // Observe that a random trustedDependencies entry does not crash install in tempdir.
-    const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-trust-'));
-    try {
-      writeFileSync(
-        join(dir, 'package.json'),
-        JSON.stringify({ name: 'trust-probe', version: '0.0.0', private: true })
-      );
-      writeFileSync(
-        join(dir, 'bunfig.toml'),
-        '[install]\nfrozenLockfile = false\ntrustedDependencies = ["definitely-not-installed-pkg"]\n'
-      );
-      const proc = Bun.spawnSync([process.execPath, 'install'], {
-        cwd: dir,
-        stdout: 'pipe',
-        stderr: 'pipe',
-      });
-      expect(proc.exitCode).toBe(0);
-    } finally {
-      rmSync(dir, { recursive: true, force: true });
-    }
-  });
+  test.todo('trustedDependencies exact-name behavior needs a lifecycle-script collision fixture (#31218)');
 });
