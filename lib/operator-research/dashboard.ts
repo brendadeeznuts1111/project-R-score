@@ -1,3 +1,12 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/http/server — Bun.serve
 // @see https://bun.com/docs/runtime/utils#bun-peek — Bun.peek
 import { joinPath } from '../path-bun.ts';
@@ -87,7 +96,6 @@ const AGENT_ODDS_V112 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.12.html');
 const AGENT_ODDS_V111 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.11.html');
 const AGENT_ODDS_V110 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.10.html');
 const AGENT_ODDS_V107 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.07.html');
-const AGENT_ODDS_EVENTS_V105 = joinPath(AGENT_ODDS_DIR, 'dashboard-events-v1.05.html');
 const AGENT_ODDS_V105 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.05.html');
 const AGENT_ODDS_V104 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.04.html');
 const AGENT_ODDS_V103 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.03.html');
@@ -102,7 +110,6 @@ async function agentOddsHtml(req: Request, preferred?: string): Promise<Response
         AGENT_ODDS_V111,
         AGENT_ODDS_V110,
         AGENT_ODDS_V107,
-        AGENT_ODDS_EVENTS_V105,
         AGENT_ODDS_V105,
         AGENT_ODDS_V104,
         AGENT_ODDS_V103,
@@ -112,7 +119,6 @@ async function agentOddsHtml(req: Request, preferred?: string): Promise<Response
         AGENT_ODDS_V111,
         AGENT_ODDS_V110,
         AGENT_ODDS_V107,
-        AGENT_ODDS_EVENTS_V105,
         AGENT_ODDS_V105,
         AGENT_ODDS_V104,
         AGENT_ODDS_V103,
@@ -1441,9 +1447,12 @@ export function startResearchDashboard(
       if (
         url.pathname === '/' ||
         url.pathname === '/index.html' ||
-        url.pathname === '/dashboard.html'
+        url.pathname === '/index.html'
       ) {
         return agentOddsHtml(req, AGENT_ODDS_V105);
+      }
+      if (url.pathname === '/dashboard.html' || url.pathname === '/dashboard-events-v1.05.html') {
+        return Response.redirect(new URL('/dashboard-v1.05.html', url), 301);
       }
       if (
         url.pathname === '/dashboard-v1.12.html' ||
@@ -1465,9 +1474,6 @@ export function startResearchDashboard(
       }
       if (url.pathname === '/dashboard-v1.07.html') {
         return agentOddsHtml(req, AGENT_ODDS_V107);
-      }
-      if (url.pathname === '/dashboard-events-v1.05.html') {
-        return agentOddsHtml(req, AGENT_ODDS_EVENTS_V105);
       }
       if (url.pathname === '/dashboard-v1.05.html') {
         return agentOddsHtml(req, AGENT_ODDS_V105);
