@@ -3,6 +3,11 @@ import { describe, expect, test } from 'bun:test';
 import { PORTAL_HTML_ROUTES } from '../lib/http/portal-route-manifest.ts';
 import { PORTAL_WEAVE_ARTIFACTS, PORTAL_WEAVE_SURFACES } from '../lib/http/portal-weave.ts';
 import { joinPath, resolvePath } from '../lib/path-bun.ts';
+import { normalizeManifest } from '../public/portal/bun-1.4/bun-1.4-assets.js';
+import {
+  normalizeCapabilityRegistry,
+  normalizeReleaseChapters,
+} from '../public/portal/bun-1.4/bun-1.4-capabilities.js';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
@@ -157,5 +162,45 @@ describe('Bun 1.4 asset gallery', () => {
     expect(mediaScript).toContain('asset.raw?.watchUrl || asset.raw?.sourcePage || asset.sourceUrl');
     expect(mediaScript).not.toContain('innerHTML');
     expect(styles).toContain('prefers-reduced-motion');
+  });
+
+  test('browser consumer rejects stale aliases and inconsistent rights before rendering', async () => {
+    const manifest = await readJson('public/registry/bun-1.4-assets.json');
+    expect(normalizeManifest(manifest).assets).toHaveLength(26);
+
+    const staleSchema = structuredClone(manifest);
+    staleSchema.schemaVersion = 1;
+    expect(() => normalizeManifest(staleSchema)).toThrow('schema/release/version');
+
+    const legacyAlias = structuredClone(manifest);
+    legacyAlias.assets = undefined;
+    legacyAlias.records = manifest.assets;
+    expect(() => normalizeManifest(legacyAlias)).toThrow('exactly 26 assets');
+
+    const mismatchedRights = structuredClone(manifest);
+    (mismatchedRights.rights as Record<string, unknown>).delivery = 'vendor-approved';
+    expect(() => normalizeManifest(mismatchedRights)).toThrow('rights contract');
+
+    const missingPoster = structuredClone(manifest);
+    const video = (missingPoster.assets as Array<Record<string, unknown>>).find(
+      asset => asset.kind === 'video'
+    );
+    expect(video).toBeDefined();
+    video!.posterId = 'missing-poster';
+    expect(() => normalizeManifest(missingPoster)).toThrow('requires a manifest poster');
+  });
+
+  test('browser capability consumer rejects stale or partial registry projections', async () => {
+    const registry = await readJson('public/registry/bun-1.4-capabilities.json');
+    expect(normalizeCapabilityRegistry(registry)).toHaveLength(60);
+    expect(normalizeReleaseChapters(registry)).toHaveLength(5);
+
+    const staleSchema = structuredClone(registry);
+    staleSchema.schemaVersion = 2;
+    expect(() => normalizeCapabilityRegistry(staleSchema)).toThrow('contract is unsupported');
+
+    const partial = structuredClone(registry);
+    (partial.capabilities as unknown[]).pop();
+    expect(() => normalizeCapabilityRegistry(partial)).toThrow('contract is unsupported');
   });
 });

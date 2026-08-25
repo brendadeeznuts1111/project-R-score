@@ -1,7 +1,28 @@
 import { safeUrl, text } from './bun-1.4-assets.js';
 
-function normalizeCapability(raw) {
-  const item = raw && typeof raw === 'object' ? raw : {};
+function capabilityRegistry(raw) {
+  if (
+    !raw ||
+    typeof raw !== 'object' ||
+    Array.isArray(raw) ||
+    raw.schemaVersion !== 3 ||
+    raw.release !== 'Bun 1.4' ||
+    raw.version !== '1.4.0' ||
+    !Array.isArray(raw.chapters) ||
+    raw.chapters.length !== 5 ||
+    !Array.isArray(raw.capabilities) ||
+    raw.capabilities.length !== 60
+  ) {
+    throw new TypeError('Bun 1.4 capability registry contract is unsupported');
+  }
+  return raw;
+}
+
+function normalizeCapability(raw, index = 0) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw) || !text(raw.id).trim()) {
+    throw new TypeError(`Bun 1.4 capabilities[${index}] requires an id`);
+  }
+  const item = raw;
   return {
     id: text(item.id),
     domain: text(item.domain, 'runtime'),
@@ -21,8 +42,7 @@ function normalizeCapability(raw) {
 }
 
 function normalizeReleaseChapters(raw) {
-  const root = raw && typeof raw === 'object' ? raw : {};
-  if (root.version !== '1.4.0' || !Array.isArray(root.chapters)) return [];
+  const root = capabilityRegistry(raw);
   return root.chapters
     .map(item => ({
       id: text(item?.id),
@@ -35,13 +55,16 @@ function normalizeReleaseChapters(raw) {
 }
 
 function normalizeCapabilityRegistry(raw) {
-  const root = raw && typeof raw === 'object' ? raw : {};
-  if (root.version !== '1.4.0' || !Array.isArray(root.capabilities)) return [];
-  return root.capabilities.map(normalizeCapability).filter(item => item.id);
+  const root = capabilityRegistry(raw);
+  const capabilities = root.capabilities.map(normalizeCapability);
+  if (new Set(capabilities.map(item => item.id)).size !== capabilities.length) {
+    throw new TypeError('Bun 1.4 capability registry contains duplicate ids');
+  }
+  return capabilities;
 }
 
 function normalizeMigrationSources(raw) {
-  const migration = raw && typeof raw === 'object' ? raw.migration : null;
+  const migration = capabilityRegistry(raw).migration;
   if (!migration || typeof migration !== 'object') return null;
   if (migration.reconciledTag !== 'bun-v1.4.0' || migration.underConsiderationShipped !== false) {
     return null;

@@ -204,16 +204,27 @@ async function mount() {
     setText('bun-count', '0 assets');
     return;
   }
-  const manifest = normalizeManifest(manifestResult.data);
+  let manifest;
+  try {
+    manifest = normalizeManifest(manifestResult.data);
+  } catch (error) {
+    showError(error instanceof Error ? error.message : 'Asset manifest failed validation.');
+    setText('bun-count', '0 assets');
+    return;
+  }
   assets = manifest.assets;
   if (capabilityResult.ok) {
-    capabilities = normalizeCapabilityRegistry(capabilityResult.data);
-    chapters = normalizeReleaseChapters(capabilityResult.data);
-    capabilitiesForAsset = indexCapabilities(capabilities);
-    const migration = normalizeMigrationSources(capabilityResult.data);
-    if (migration) {
-      setExternalLink('bun-breaking-changes', 'Breaking changes ↗', migration.breakingChangesUrl);
-      setExternalLink('bun-upgrade-guide', 'Bun 1.3 → 1.4 guide ↗', migration.upgradeGuideUrl);
+    try {
+      capabilities = normalizeCapabilityRegistry(capabilityResult.data);
+      chapters = normalizeReleaseChapters(capabilityResult.data);
+      capabilitiesForAsset = indexCapabilities(capabilities);
+      const migration = normalizeMigrationSources(capabilityResult.data);
+      if (migration) {
+        setExternalLink('bun-breaking-changes', 'Breaking changes ↗', migration.breakingChangesUrl);
+        setExternalLink('bun-upgrade-guide', 'Bun 1.3 → 1.4 guide ↗', migration.upgradeGuideUrl);
+      }
+    } catch (error) {
+      showError(error instanceof Error ? error.message : 'Capability registry failed validation.');
     }
   } else {
     showError(
