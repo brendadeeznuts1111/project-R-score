@@ -173,6 +173,66 @@ describe('file removal grading safety', () => {
     }
   });
 
+  test('retired project backups and content mirrors do not return', async () => {
+    const retired = [
+      'projects/experimental/tan-bun/TAKE-3/custom-server-app/public/tanstack-word-logo-white.svg',
+      'projects/active/development/kal-poly-bot/surgical-precision-mcp/bun.lock.bak',
+      'projects/active/enterprise/full-stack-bun.io/bunfig.toml.bak',
+      'projects/active/utilities/bun-toml-secrets-editor/package.json.backup',
+      'projects/active/development/geelark/.github/workflows/backup/deploy.yml',
+      'projects/active/development/geelark/.github/workflows/backup/feature-flag-test.yml',
+      'projects/active/development/geelark/.github/workflows/backup/security-scan.yml',
+      'projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/web-servers/https:/bun.com/reference',
+      'projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/web-servers/https:/dashboard-worker.brendawill2233.workers.dev/dashboard',
+      'projects/active/analysis/matrix-analysis/my-wager-v3/omega-dashboard-report.csv',
+      'projects/active/analysis/matrix-analysis/my-wager-v3/omega-dashboard-report.json',
+      'projects/active/analysis/matrix-analysis/.factory-wager/registry-cookies.jar',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/dependency-report-20250828-091719.json.formatted',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/dependency-report-20250828-092509.json.formatted',
+      'projects/active/analysis/matrix-analysis/scripts/monitoring/dashboard/index.html',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs-archive/data-schemas.md',
+      'projects/active/development/kal-poly-bot/docs/packages/BUN_UTILITIES_MEMORANDUM.md',
+      'projects/active/development/kal-poly-bot/docs/packages/IMPLEMENTATION_MEMORANDUM.md',
+      'projects/active/development/kal-poly-bot/docs/packages/CODING_STANDARDS.md',
+      'projects/active/development/kal-poly-bot/docs/packages/platform-architecture.mermaid.md',
+      'projects/active/development/kal-poly-bot/docs/packages/PLUGIN_SYSTEM.md',
+      'projects/active/development/kal-poly-bot/docs/packages/Bun_Configuration_Hardening_Guide.md',
+    ] as const;
+    const canonical = [
+      'projects/active/analysis/matrix-analysis/monitoring/dashboard/index.html',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/data-schemas.md',
+      'projects/active/development/kal-poly-bot/operation_surgical_precision/BUN_UTILITIES_MEMORANDUM.md',
+      'projects/active/development/kal-poly-bot/operation_surgical_precision/IMPLEMENTATION_MEMORANDUM.md',
+      'projects/active/development/kal-poly-bot/surgical-precision-mcp/CODING_STANDARDS.md',
+      'projects/active/development/kal-poly-bot/operation_surgical_precision/platform-architecture.mermaid.md',
+      'projects/active/development/kal-poly-bot/operation_surgical_precision/PLUGIN_SYSTEM.md',
+      'projects/active/development/kal-poly-bot/operation_surgical_precision/Bun_Configuration_Hardening_Guide.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/business/SPORTS-BETTING-ENHANCEMENT.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/business/LIVE-CASINO-ENHANCEMENT.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/development/BUN-FEATURES-ENHANCEMENT.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/docs/development/TYPE-SAFETY-PROGRESS.md',
+    ] as const;
+    const pointers = [
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/SPORTS-BETTING-ENHANCEMENT.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/LIVE-CASINO-ENHANCEMENT.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/BUN-FEATURES-ENHANCEMENT.md',
+      'projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/TYPE-SAFETY-PROGRESS.md',
+    ] as const;
+
+    for (const retiredPath of retired) {
+      expect(await Bun.file(joinPath(REPO_ROOT, retiredPath)).exists(), retiredPath).toBe(false);
+    }
+    for (const canonicalPath of canonical) {
+      expect(await Bun.file(joinPath(REPO_ROOT, canonicalPath)).exists(), canonicalPath).toBe(true);
+    }
+    for (const pointerPath of pointers) {
+      const pointer = Bun.file(joinPath(REPO_ROOT, pointerPath));
+      expect(await pointer.exists(), pointerPath).toBe(true);
+      expect(pointer.size, pointerPath).toBeLessThan(256);
+      expect(await pointer.text(), pointerPath).toContain('./docs/');
+    }
+  });
+
   test('only an unreferenced archived exact duplicate reaches very-safe-review', () => {
     const result = gradeFileRemoval(row(), options);
     expect(result.verdict).toBe('very-safe-review');

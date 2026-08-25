@@ -234,9 +234,8 @@ The environment includes:
 
 | Workflow | Purpose | Trigger |
 |----------|---------|---------|
-| `feature-flag-test.yml` | Feature flag testing | Push, PR |
-| `security-scan.yml` | Security scanning | Weekly, Push, PR |
-| `deploy.yml` | Deployment | Push to main, Tags |
+| `ci.yml` | Tests, type checks, build, and dependency audit | Push, PR |
+| `release.yml` | Tagged release packaging | Version tags |
 
 ### GitLab CI Alternative
 
