@@ -44,119 +44,61 @@
 // @updated Bun.file · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/file-io
-// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
-// @updated Bun.TOML.parse · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
-// @updated Bun.TOML.parse · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
-// @verified Bun.TOML.parse · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/toml#bun-toml-parse
-// @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.com/docs/runtime/toml — Bun.TOML.parse
-// @see https://bun.com/docs/runtime/environment-variables — Bun.env
-// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — port precedence
-/**
- * Optional `config/serve-public.toml` merged with Bun env for bind preferences.
- *
- * Env/CLI port chain wins over TOML (Bun.serve omits `port` so runtime reads env).
- * TOML `[server] port` applies only when BUN_PORT, PORT, NODE_PORT, and `--port` are all unset.
- */
+// @see https://bun.com/docs/runtime/markdown — Bun.markdown.ansi
+import { buildBun14CapabilityRegistry, syncBun14CapabilityRegistry } from './capabilities.ts';
+import { DEFAULT_CHANNEL_RELEASE_PATH, DEFAULT_MANIFEST_PATH } from './constants.ts';
+import { fail } from './errors.ts';
+import { syncBun14AssetFeeds } from './feed.ts';
 import {
-  BUN_SERVE_DEFAULT_PORT_ENV,
-  parseBunPortFlag,
-  resolveBunServeDefaultPort,
-} from './bun-serve-shape.ts';
+  verifyBun14ReleaseArchive,
+  writeBun14ReleaseArchive,
+  type ArchivedBun14Release,
+} from './release-archive.ts';
+import { buildBun14ReleaseSnapshot, type Bun14ReleaseSnapshot } from './release-snapshot.ts';
+import { atomicWriteJson, readManifest } from './storage.ts';
+import { syncProjectRSSChannelRegistry } from '../project-rss-channels.ts';
 
-export type ServePublicToml = {
-  metadata?: { version?: number; description?: string };
-  server?: { port?: number; host?: string };
-  dev?: { development?: boolean; hmr?: boolean };
+export type ChannelReleaseOptions = {
+  check: boolean;
+  archive: boolean;
+  quiet?: boolean;
 };
 
-export type ServePublicPortSource = 'bun-env' | 'toml' | 'bun-default';
-
-export type ServePublicBindPrefs = {
-  /** Passed to Bun.serve when TOML pins port; undefined → omit (Bun env/default). */
-  port?: number;
-  portSource: ServePublicPortSource;
-  /** For busy-port probe and manifest.requestedDefaultPort. */
-  requestedPort: number;
-  hostname?: string;
-  hostnameSource: 'env' | 'toml' | 'bun-default';
-  toml: ServePublicToml;
-};
-
-export async function loadServePublicToml(
-  path = 'config/serve-public.toml'
-): Promise<ServePublicToml> {
-  if (typeof Bun === 'undefined') return {};
-  const file = Bun.file(path);
-  if (!(await file.exists())) return {};
-  return Bun.TOML.parse(await file.text()) as ServePublicToml;
-}
-
-function envPortExplicit(env: Record<string, string | undefined>): number | undefined {
-  for (const key of BUN_SERVE_DEFAULT_PORT_ENV) {
-    const raw = env[key]?.trim();
-    if (!raw) continue;
-    const port = Number(raw);
-    if (Number.isInteger(port) && port >= 1 && port <= 65535) return port;
+export async function syncBun14ChannelRelease(
+  options: ChannelReleaseOptions
+): Promise<Bun14ReleaseSnapshot | ArchivedBun14Release> {
+  const manifest = await readManifest(DEFAULT_MANIFEST_PATH);
+  const capabilities = buildBun14CapabilityRegistry(manifest);
+  await syncProjectRSSChannelRegistry(options.check);
+  await syncBun14CapabilityRegistry(capabilities, options.check);
+  await syncBun14AssetFeeds(manifest, capabilities, options.check);
+  const { snapshot, input } = await buildBun14ReleaseSnapshot();
+  if (options.check) {
+    if (!(await Bun.file(DEFAULT_CHANNEL_RELEASE_PATH).exists())) {
+      fail(`Bun 1.4 channel release registry missing: ${DEFAULT_CHANNEL_RELEASE_PATH}`);
+    }
+    const existing = await Bun.file(DEFAULT_CHANNEL_RELEASE_PATH).text();
+    if (existing !== `${JSON.stringify(snapshot, null, 2)}\n`) {
+      fail(`Bun 1.4 channel release registry drift: ${DEFAULT_CHANNEL_RELEASE_PATH}`);
+    }
+  } else {
+    await atomicWriteJson(DEFAULT_CHANNEL_RELEASE_PATH, snapshot);
   }
-  return undefined;
-}
+  const result = options.archive ? await writeBun14ReleaseArchive(snapshot, input) : snapshot;
+  if ('archiveSha256' in result) await verifyBun14ReleaseArchive(result);
 
-/** True when Bun's env/CLI port chain is active (TOML port must not override bind). */
-export function isBunEnvPortChainActive(
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
-  argv: string[] = Bun.argv
-): boolean {
-  return parseBunPortFlag(argv) !== undefined || envPortExplicit(env) !== undefined;
-}
+  if (!options.quiet) {
+    const markdown = `# Bun 1.4 channel release
 
-/**
- * Resolve bind prefs from an optional TOML object plus runtime env.
- */
-export function resolveServePublicBindPrefs(
-  toml: ServePublicToml = {},
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
-  argv: string[] = Bun.argv
-): ServePublicBindPrefs {
-  const envHost = (env.HOST || env.BIND_HOST)?.trim() || undefined;
-  const tomlHost = toml.server?.host?.trim() || undefined;
-  const hostname = envHost ?? tomlHost;
-  const hostnameSource: ServePublicBindPrefs['hostnameSource'] = envHost
-    ? 'env'
-    : tomlHost
-      ? 'toml'
-      : 'bun-default';
-
-  if (isBunEnvPortChainActive(env, argv)) {
-    return {
-      port: undefined,
-      portSource: 'bun-env',
-      requestedPort: resolveBunServeDefaultPort(env, argv),
-      hostname,
-      hostnameSource,
-      toml,
-    };
+- Mode: ${options.check ? 'check' : 'rebuild'}
+- Owner: ${snapshot.owner.name}
+- Active items: ${snapshot.items.length}
+- Channels: ${snapshot.channels.length}
+- Release chapters: ${snapshot.chapters.length}
+- Snapshot: \`${snapshot.snapshotDigest}\`
+- Archive: ${'archivePath' in result ? `\`${result.archivePath}\`` : 'not written'}
+`;
+    process.stdout.write(Bun.markdown.ansi(markdown, { colors: Boolean(process.stdout.isTTY) }));
   }
-
-  const tomlPort = toml.server?.port;
-  if (tomlPort !== undefined && Number.isInteger(tomlPort) && tomlPort >= 0 && tomlPort <= 65535) {
-    return {
-      port: tomlPort,
-      portSource: 'toml',
-      requestedPort: tomlPort,
-      hostname,
-      hostnameSource,
-      toml,
-    };
-  }
-
-  return {
-    port: undefined,
-    portSource: 'bun-default',
-    requestedPort: resolveBunServeDefaultPort(env, argv),
-    hostname,
-    hostnameSource,
-    toml,
-  };
+  return result;
 }

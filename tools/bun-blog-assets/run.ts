@@ -44,119 +44,72 @@
 // @updated Bun.file · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/file-io
-// @see https://bun.com/reference/bun/TOML/parse — Bun.TOML.parse
-// @updated Bun.TOML.parse · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
-// @updated Bun.TOML.parse · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
-// @verified Bun.TOML.parse · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/toml#bun-toml-parse
-// @see https://bun.com/reference/bun/argv — Bun.argv
-// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
-// @see https://bun.com/docs/runtime/toml — Bun.TOML.parse
-// @see https://bun.com/docs/runtime/environment-variables — Bun.env
-// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — port precedence
-/**
- * Optional `config/serve-public.toml` merged with Bun env for bind preferences.
- *
- * Env/CLI port chain wins over TOML (Bun.serve omits `port` so runtime reads env).
- * TOML `[server] port` applies only when BUN_PORT, PORT, NODE_PORT, and `--port` are all unset.
- */
+import { resolvePath as resolve } from '../../lib/path-bun';
 import {
-  BUN_SERVE_DEFAULT_PORT_ENV,
-  parseBunPortFlag,
-  resolveBunServeDefaultPort,
-} from './bun-serve-shape.ts';
+  buildBun14CapabilityRegistry,
+  syncBun14CapabilityRegistry,
+  validateCapabilityAnchors,
+} from './capabilities.ts';
+import { syncBun14ChannelRelease } from './channel-release.ts';
+import { REPO_ROOT } from './constants.ts';
+import { discoverAssets } from './discovery.ts';
+import { fail } from './errors.ts';
+import { syncBun14AssetFeeds } from './feed.ts';
+import { inspectAllAssets } from './inspection.ts';
+import { buildManifest } from './manifest-build.ts';
+import { compareManifestToInspection, parseManifestShape } from './manifest-validation.ts';
+import { loadSourceDocuments } from './sources.ts';
+import { atomicWriteJson, readManifest, stageVendorAssets } from './storage.ts';
+import type { AssetManifest, CliOptions } from './types.ts';
 
-export type ServePublicToml = {
-  metadata?: { version?: number; description?: string };
-  server?: { port?: number; host?: string };
-  dev?: { development?: boolean; hmr?: boolean };
-};
-
-export type ServePublicPortSource = 'bun-env' | 'toml' | 'bun-default';
-
-export type ServePublicBindPrefs = {
-  /** Passed to Bun.serve when TOML pins port; undefined → omit (Bun env/default). */
-  port?: number;
-  portSource: ServePublicPortSource;
-  /** For busy-port probe and manifest.requestedDefaultPort. */
-  requestedPort: number;
-  hostname?: string;
-  hostnameSource: 'env' | 'toml' | 'bun-default';
-  toml: ServePublicToml;
-};
-
-export async function loadServePublicToml(
-  path = 'config/serve-public.toml'
-): Promise<ServePublicToml> {
-  if (typeof Bun === 'undefined') return {};
-  const file = Bun.file(path);
-  if (!(await file.exists())) return {};
-  return Bun.TOML.parse(await file.text()) as ServePublicToml;
-}
-
-function envPortExplicit(env: Record<string, string | undefined>): number | undefined {
-  for (const key of BUN_SERVE_DEFAULT_PORT_ENV) {
-    const raw = env[key]?.trim();
-    if (!raw) continue;
-    const port = Number(raw);
-    if (Number.isInteger(port) && port >= 1 && port <= 65535) return port;
+export async function run(options: CliOptions): Promise<AssetManifest> {
+  if (options.vendor && !options.confirmRights) {
+    fail('vendor mode is blocked until --confirm-rights is supplied');
   }
-  return undefined;
-}
+  const documents = await loadSourceDocuments(options);
+  const discovered = discoverAssets(documents);
+  const inspected = await inspectAllAssets(discovered.assets, options.timeoutMs, options.mode);
+  const manifest = parseManifestShape(
+    buildManifest(documents, discovered.assets, inspected, discovered.authors, options.mode),
+    'generated manifest'
+  );
 
-/** True when Bun's env/CLI port chain is active (TOML port must not override bind). */
-export function isBunEnvPortChainActive(
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
-  argv: string[] = Bun.argv
-): boolean {
-  return parseBunPortFlag(argv) !== undefined || envPortExplicit(env) !== undefined;
-}
-
-/**
- * Resolve bind prefs from an optional TOML object plus runtime env.
- */
-export function resolveServePublicBindPrefs(
-  toml: ServePublicToml = {},
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>,
-  argv: string[] = Bun.argv
-): ServePublicBindPrefs {
-  const envHost = (env.HOST || env.BIND_HOST)?.trim() || undefined;
-  const tomlHost = toml.server?.host?.trim() || undefined;
-  const hostname = envHost ?? tomlHost;
-  const hostnameSource: ServePublicBindPrefs['hostnameSource'] = envHost
-    ? 'env'
-    : tomlHost
-      ? 'toml'
-      : 'bun-default';
-
-  if (isBunEnvPortChainActive(env, argv)) {
-    return {
-      port: undefined,
-      portSource: 'bun-env',
-      requestedPort: resolveBunServeDefaultPort(env, argv),
-      hostname,
-      hostnameSource,
-      toml,
-    };
+  if (options.check) {
+    const existing = await readManifest(options.manifestPath);
+    compareManifestToInspection(existing, manifest);
+    const capabilityRegistry = buildBun14CapabilityRegistry(existing);
+    validateCapabilityAnchors(capabilityRegistry, documents.html);
+    await syncBun14CapabilityRegistry(capabilityRegistry, true);
+    if (existing.rightsStatus === 'approved') {
+      for (const asset of existing.assets.filter(item => item.kind !== 'embed')) {
+        if (!asset.localUrl) fail(`approved asset ${asset.id} is missing localUrl`);
+        const localPath = resolve(REPO_ROOT, asset.localUrl.replace(/^\//, ''));
+        if (!(await Bun.file(localPath).exists())) {
+          fail(`approved local asset is missing: ${localPath}`);
+        }
+      }
+    }
+    await syncBun14AssetFeeds(existing, capabilityRegistry, true);
+    await syncBun14ChannelRelease({ check: true, archive: false, quiet: true });
+    console.log(
+      `bun-blog-assets: check passed (${existing.assets.length} assets; ` +
+        `${existing.rightsStatus} rights; source bytes verified in memory)`
+    );
+    return existing;
   }
 
-  const tomlPort = toml.server?.port;
-  if (tomlPort !== undefined && Number.isInteger(tomlPort) && tomlPort >= 0 && tomlPort <= 65535) {
-    return {
-      port: tomlPort,
-      portSource: 'toml',
-      requestedPort: tomlPort,
-      hostname,
-      hostnameSource,
-      toml,
-    };
+  if (options.vendor) {
+    await stageVendorAssets(inspected, options.vendorDir);
+    console.log(`bun-blog-assets: staged approved media in ${options.vendorDir}`);
   }
-
-  return {
-    port: undefined,
-    portSource: 'bun-default',
-    requestedPort: resolveBunServeDefaultPort(env, argv),
-    hostname,
-    hostnameSource,
-    toml,
-  };
+  await atomicWriteJson(options.manifestPath, manifest);
+  const capabilityRegistry = buildBun14CapabilityRegistry(manifest);
+  validateCapabilityAnchors(capabilityRegistry, documents.html);
+  await syncBun14CapabilityRegistry(capabilityRegistry, false);
+  await syncBun14AssetFeeds(manifest, capabilityRegistry, false);
+  await syncBun14ChannelRelease({ check: false, archive: true, quiet: true });
+  console.log(
+    `bun-blog-assets: wrote ${manifest.assets.length}-asset ${manifest.rightsStatus} manifest to ${options.manifestPath}`
+  );
+  return manifest;
 }

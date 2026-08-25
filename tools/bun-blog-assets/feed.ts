@@ -1,0 +1,240 @@
+// @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
+// @updated Bun.file · fixed v0.2.2 · 2022-10-27 · https://bun.com/blog/bun-v0.2.2
+// @updated Bun.file · changed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
+// @updated Bun.file · fixed v0.6.5 · 2023-05-29 · https://bun.com/blog/bun-v0.6.5
+// @updated Bun.file · changed v0.6.12 · 2023-06-30 · https://bun.com/blog/bun-v0.6.12
+// @updated Bun.file · fixed v1.0.1 · 2023-09-12 · https://bun.com/blog/bun-v1.0.1
+// @updated Bun.file · fixed v1.0.2 · 2023-09-15 · https://bun.com/blog/bun-v1.0.2
+// @updated Bun.file · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.file · changed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.file · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.file · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.file · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.file · fixed v1.0.25 · 2024-01-21 · https://bun.com/blog/bun-v1.0.25
+// @updated Bun.file · fixed v1.0.26 · 2024-02-03 · https://bun.com/blog/bun-v1.0.26
+// @updated Bun.file · fixed v1.0.27 · 2024-02-17 · https://bun.com/blog/bun-v1.0.27
+// @updated Bun.file · fixed v1.0.28 · 2024-02-19 · https://bun.com/blog/bun-v1.0.28
+// @updated Bun.file · changed v1.0.36 · 2024-03-29 · https://bun.com/blog/bun-v1.0.36
+// @updated Bun.file · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.file · fixed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.file · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.file · changed v1.1.9 · 2024-05-22 · https://bun.com/blog/bun-v1.1.9
+// @updated Bun.file · fixed v1.1.11 · 2024-06-01 · https://bun.com/blog/bun-v1.1.11
+// @updated Bun.file · fixed v1.1.22 · 2024-08-07 · https://bun.com/blog/bun-v1.1.22
+// @updated Bun.file · fixed v1.1.27 · 2024-09-07 · https://bun.com/blog/bun-v1.1.27
+// @updated Bun.file · fixed v1.1.28 · 2024-09-18 · https://bun.com/blog/bun-v1.1.28
+// @updated Bun.file · fixed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.file · changed v1.1.39 · 2024-12-17 · https://bun.com/blog/bun-v1.1.39
+// @updated Bun.file · changed v1.1.43 · 2025-01-08 · https://bun.com/blog/bun-v1.1.43
+// @updated Bun.file · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @updated Bun.file · fixed v1.2.2 · 2025-02-01 · https://bun.com/blog/bun-v1.2.2
+// @updated Bun.file · changed v1.2.3 · 2025-02-22 · https://bun.com/blog/bun-v1.2.3
+// @updated Bun.file · fixed v1.2.3 · 2025-02-22 · https://bun.com/blog/bun-v1.2.3
+// @updated Bun.file · changed v1.2.19 · 2025-07-19 · https://bun.com/blog/bun-v1.2.19
+// @updated Bun.file · fixed v1.2.19 · 2025-07-19 · https://bun.com/blog/bun-v1.2.19
+// @updated Bun.file · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.file · changed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.file · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.file · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.file · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @updated Bun.file · fixed v1.3.11 · 2026-03-18 · https://bun.com/blog/bun-v1.3.11
+// @updated Bun.file · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @updated Bun.file · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated Bun.file · fixed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated Bun.file · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified Bun.file · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/file-io
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @updated Bun.write · fixed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.write · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated Bun.write · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.write · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated Bun.write · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.write · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.write · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.write · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.write · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.write · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.write · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.write · changed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.write · changed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.write · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.write · fixed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.write · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.write · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.write · Bun v1.4.0 · 2026-08-18 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
+// @see https://www.rssboard.org/rss-specification — RSS 2.0 channel/image/enclosure
+// @see https://www.rssboard.org/media-rss — Media RSS 1.5.1
+
+// eslint-disable-next-line no-restricted-imports -- Bun has no directory-creation API
+import { mkdir } from 'node:fs/promises';
+import { joinPath as join } from '../../lib/path-bun';
+import { buildRSSFanout, type RSSChannelContract } from '../../lib/rss/rss-fanout.ts';
+import type { RSSChannelImage, RSSMediaContent } from '../../lib/rss/rss-xml.ts';
+import { asFeedId } from '../../lib/types/branded.ts';
+import { capabilitiesByAsset } from './capabilities.ts';
+import {
+  BUN_14_CAPABILITY_CATEGORY_PREFIX,
+  BUN_14_CHAPTER_CATEGORY_PREFIX,
+  BUN_14_FEED_BASE_URL,
+  DEFAULT_FEEDS_DIR,
+} from './constants.ts';
+import { fail } from './errors.ts';
+import type { AssetManifest, AssetRecord, Bun14CapabilityRegistry } from './types.ts';
+
+const CHANNEL_KINDS = ['all', 'image', 'video', 'embed'] as const;
+export type Bun14FeedKind = (typeof CHANNEL_KINDS)[number];
+
+function feedUrl(kind: Bun14FeedKind, baseUrl: string): URL {
+  return new URL(`/feeds/v1/${kind === 'all' ? 'all' : `${kind}s`}.xml`, baseUrl);
+}
+
+function channelImage(manifest: AssetManifest, title: string, baseUrl: string): RSSChannelImage {
+  const artwork = manifest.assets.find(asset => asset.id === 'bun-1.4-og-image');
+  if (!artwork) fail('Bun 1.4 feed requires the release artwork asset');
+  return {
+    url: absolutePublicUrl(artwork, baseUrl),
+    title,
+    link: manifest.sourcePage,
+    width: 144,
+    height: 76,
+    description: 'Bun 1.4 release artwork, hosted by Bun.',
+  };
+}
+
+function channelTitle(kind: Bun14FeedKind): string {
+  const label = kind === 'all' ? 'All media' : `${kind[0]!.toUpperCase()}${kind.slice(1)}s`;
+  return `Bun 1.4 · ${label}`;
+}
+
+function channels(manifest: AssetManifest, baseUrl: string): RSSChannelContract[] {
+  const site = new URL('/portal/bun-1.4/', baseUrl);
+  return CHANNEL_KINDS.map(kind => {
+    const title = channelTitle(kind);
+    return {
+      key: asFeedId(`bun-1.4:${kind}`),
+      schemaVersion: 1,
+      endpoint: feedUrl(kind, baseUrl),
+      title,
+      site,
+      description:
+        `${title}. Official Bun-hosted sources with attribution; ` +
+        `republication rights are ${manifest.rightsStatus}.`,
+      ttl: 60,
+      image: channelImage(manifest, title, baseUrl),
+    };
+  });
+}
+
+function absolutePublicUrl(asset: AssetRecord, baseUrl: string): string {
+  return new URL(asset.publicUrl, baseUrl).href;
+}
+
+function assetMedia(
+  asset: AssetRecord,
+  assetsById: ReadonlyMap<string, AssetRecord>,
+  baseUrl: string
+): RSSMediaContent {
+  const common = {
+    width: asset.width ?? undefined,
+    height: asset.height ?? undefined,
+    credits: [{ value: 'Bun', role: 'publisher' }],
+  };
+  if (asset.kind === 'embed') {
+    return { ...common, playerUrl: asset.watchUrl ?? asset.sourceUrl };
+  }
+  if (asset.byteSize === null || asset.mimeType === null) {
+    fail(`Bun 1.4 feed asset ${asset.id} requires byte size and MIME type`);
+  }
+  const poster = asset.posterId ? assetsById.get(asset.posterId) : undefined;
+  return {
+    ...common,
+    url: absolutePublicUrl(asset, baseUrl),
+    fileSize: asset.byteSize,
+    type: asset.mimeType,
+    medium: asset.kind,
+    expression: 'full',
+    thumbnail: poster
+      ? {
+          url: absolutePublicUrl(poster, baseUrl),
+          width: poster.width ?? undefined,
+          height: poster.height ?? undefined,
+        }
+      : undefined,
+  };
+}
+
+export function buildBun14AssetFeeds(
+  manifest: AssetManifest,
+  capabilityRegistry: Bun14CapabilityRegistry,
+  baseUrl = BUN_14_FEED_BASE_URL
+) {
+  const assetsById = new Map(manifest.assets.map(asset => [asset.id, asset]));
+  const capabilities = capabilitiesByAsset(capabilityRegistry);
+  const allKey = asFeedId('bun-1.4:all');
+  const items = manifest.assets.map(asset => {
+    const media = assetMedia(asset, assetsById, baseUrl);
+    const relatedCapabilities = capabilities.get(asset.id) ?? [];
+    const chapterCategories = [
+      ...new Set(
+        relatedCapabilities
+          .map(capability => capability.chapterId)
+          .filter((chapterId): chapterId is NonNullable<typeof chapterId> => Boolean(chapterId))
+      ),
+    ].map(chapterId => `${BUN_14_CHAPTER_CATEGORY_PREFIX}${chapterId}`);
+    return {
+      guid: asFeedId(`bun-1.4:asset:${asset.id}`),
+      channelKeys: [allKey, asFeedId(`bun-1.4:${asset.kind}`)],
+      revisionDate: manifest.publishedAt,
+      title: asset.caption ?? asset.alt,
+      link: manifest.sourcePage,
+      description:
+        `${asset.alt} Source: Bun. Rights status: ${manifest.rightsStatus}. ` +
+        `Related section: ${asset.section}.`,
+      pubDate: manifest.publishedAt,
+      category: [
+        'Bun 1.4',
+        asset.kind,
+        asset.section,
+        ...relatedCapabilities.map(
+          capability => `${BUN_14_CAPABILITY_CATEGORY_PREFIX}${capability.id}`
+        ),
+        ...chapterCategories,
+      ],
+      enclosure:
+        asset.kind === 'embed'
+          ? undefined
+          : {
+              url: media.url!,
+              length: media.fileSize!,
+              type: media.type!,
+            },
+      media,
+    };
+  });
+  return buildRSSFanout(channels(manifest, baseUrl), items);
+}
+
+export async function syncBun14AssetFeeds(
+  manifest: AssetManifest,
+  capabilityRegistry: Bun14CapabilityRegistry,
+  check: boolean,
+  outputDir = DEFAULT_FEEDS_DIR
+): Promise<void> {
+  const documents = buildBun14AssetFeeds(manifest, capabilityRegistry);
+  if (!check) await mkdir(outputDir, { recursive: true });
+  for (const document of documents) {
+    const fileName = new URL(document.endpoint).pathname.split('/').at(-1);
+    if (!fileName) fail(`invalid Bun 1.4 feed endpoint ${document.endpoint}`);
+    const path = join(outputDir, fileName);
+    if (check) {
+      if (!(await Bun.file(path).exists()) || (await Bun.file(path).text()) !== document.xml) {
+        fail(`Bun 1.4 feed drift: ${path}`);
+      }
+    } else {
+      await Bun.write(path, document.xml);
+    }
+  }
+}

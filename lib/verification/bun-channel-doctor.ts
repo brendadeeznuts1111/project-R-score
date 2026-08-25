@@ -12,6 +12,8 @@
  * never runs `bun upgrade`, installs packages, or rewrites pins.
  */
 import { joinPath } from '../path-bun.ts';
+import { expandBunMinorVersion, versionFromBunBlogUrl } from '../docs/bun-blog-url.ts';
+import { parseRssChannelItems } from '../docs/bun-rss.ts';
 import { parseBunReleaseTag, parseCanaryRelease } from './channels.ts';
 
 export type BunChannelName = 'stable' | 'latest' | 'canary';
@@ -256,10 +258,21 @@ async function fetchChecked(
   return response;
 }
 
-function versionsFromFeed(text: string): string[] {
+function versionsFromGenericFeed(text: string): string[] {
   const versions = new Set<string>();
-  for (const match of text.matchAll(/(?:bun-v|Bun\s+v?)(\d+\.\d+\.\d+(?:-[\w.]+)?)/gi)) {
-    if (match[1]) versions.add(match[1]);
+  for (const match of text.matchAll(/(?:bun-v|Bun\s+v?)(\d+\.\d+(?:\.\d+)?(?:-[\w.]+)?)/gi)) {
+    if (!match[1]) continue;
+    const version = expandBunMinorVersion(match[1]);
+    if (/^\d+\.\d+\.\d+(?:-[\w.]+)?$/.test(version)) versions.add(version);
+  }
+  return [...versions];
+}
+
+function versionsFromBunRss(text: string): string[] {
+  const versions = new Set<string>();
+  for (const item of parseRssChannelItems(text)) {
+    const version = versionFromBunBlogUrl(item.link);
+    if (version) versions.add(version);
   }
   return [...versions];
 }
@@ -483,12 +496,12 @@ export async function runBunChannelDoctor(
     return {};
   });
   const rss = observe('bun-rss', generatedAt, config.sources.rss, async () => ({
-    versions: versionsFromFeed(
+    versions: versionsFromBunRss(
       await (await fetchChecked(fetchImpl, config.sources.rss, fetchTimeoutMs)).text()
     ),
   }));
   const atom = observe('github-atom', generatedAt, config.sources.atom, async () => ({
-    versions: versionsFromFeed(
+    versions: versionsFromGenericFeed(
       await (await fetchChecked(fetchImpl, config.sources.atom, fetchTimeoutMs)).text()
     ),
   }));

@@ -52,6 +52,14 @@ export const PORTAL_PAGE_CONCEPT_DEFINITIONS = [
     synonyms: ['Bun config', 'installation policy'],
   },
   {
+    path: '/portal/bun-1.4/',
+    id: 'page.bunRelease',
+    label: 'Bun 1.4 release gallery',
+    description:
+      'Versioned portal page for Bun 1.4 release capabilities, official media, attribution, and asset validation evidence.',
+    synonyms: ['Bun 1.4', 'release gallery', 'Bun release assets'],
+  },
+  {
     path: '/portal/catalog/',
     id: 'page.catalog',
     label: 'Account catalog',

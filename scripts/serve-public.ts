@@ -237,12 +237,16 @@ import {
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
 import { parseNpmPackageRequestPath } from '../lib/registry/npm-package-path.ts';
+import { projectRSSAliasRoutes } from '../lib/rss/project-channel-registry.ts';
 import {
   formatServePublicBindLines,
   writeServePublicBindManifest,
   type ServePublicBindManifest,
 } from '../lib/http/serve-public-bind.ts';
-import { resolveServePublicBindPrefs } from '../lib/http/serve-public-config.ts';
+import {
+  loadServePublicToml,
+  resolveServePublicBindPrefs,
+} from '../lib/http/serve-public-config.ts';
 import {
   attachServePublicErrorHandler,
   throwServePublicDevelopmentError,
@@ -261,7 +265,7 @@ import {
 applyUnknownLongOptionGuardFor('serve:public', Bun.argv.slice(2));
 
 /** Env/CLI/TOML bind prefs — omit port/hostname on Bun.serve when Bun env chain wins. */
-const bindPrefs = resolveServePublicBindPrefs(undefined, Bun.env, process.argv);
+const bindPrefs = resolveServePublicBindPrefs(await loadServePublicToml(), Bun.env, process.argv);
 /** Hint for live-reload gating before listen (runtime uses `localhost` when hostname omitted). */
 const BIND_HOST_HINT = bindPrefs.hostname ?? 'localhost';
 const dbPath = Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH;
@@ -926,10 +930,18 @@ async function staticFile(
       path.endsWith('.css') ||
       path.endsWith('.md') ||
       (path.startsWith('/registry/') && path.endsWith('.json')));
+  const responseHeaders =
+    path.startsWith('/feeds/v1/') && path.endsWith('.xml')
+      ? { 'Content-Type': 'application/rss+xml; charset=utf-8', 'Access-Control-Allow-Origin': '*' }
+      : path.endsWith('.mp4')
+        ? { 'Content-Type': 'video/mp4' }
+        : path.startsWith('/registry/')
+          ? portalCorsHeaders()
+          : undefined;
   const responseOptions = {
     cache: skipMemoryCache ? undefined : fileRouteCache,
     cacheControl,
-    headers: path.startsWith('/registry/') ? portalCorsHeaders() : undefined,
+    headers: responseHeaders,
   };
   // Limit raises are rebaked while the server is running. Keep this route on a
   // native BunFile response so every request sees current bytes and retains
@@ -2519,6 +2531,7 @@ function buildPublicRoutes() {
     '/portal': (req: Request) => Promise.resolve(canonicalSlashRedirect(req, '/portal/')),
     '/portal/': portalPage('/portal/index.html'),
     ...portalBoardRoutes(portalPage, PORTAL_BOARD_SLUGS),
+    ...projectRSSAliasRoutes(),
   };
 }
 

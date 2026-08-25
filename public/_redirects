@@ -7,6 +7,7 @@
 /portal/toc              /portal/toc/              301
 /portal                  /portal/                  301
 /monitoring              /monitoring/              301
+/portal/bun-1.4          /portal/bun-1.4/          301
 /portal/health           /portal/health/           301
 /portal/env              /portal/env/              301
 /portal/catalog          /portal/catalog/          301
@@ -41,6 +42,11 @@
 /portal/lanes            /portal/lanes/            301
 /portal/factory          /portal/factory/          301
 /portal/science          /portal/science/          301
+# Project-addressable RSS aliases. Canonical XML owns Atom self and validators.
+/feeds/v1/projects/project-r-score/bun-1.4/all.xml     /feeds/v1/all.xml     301
+/feeds/v1/projects/project-r-score/bun-1.4/images.xml  /feeds/v1/images.xml  301
+/feeds/v1/projects/project-r-score/bun-1.4/videos.xml  /feeds/v1/videos.xml  301
+/feeds/v1/projects/project-r-score/bun-1.4/embeds.xml  /feeds/v1/embeds.xml  301
 # legacy flat report path → directory index (ops:prediction / Pages pretty URL)
 /registry/prediction/report.html  /registry/prediction/report/  301
 # bare /health → Functions JSON (functions/health/index.ts); /health/ → portal UI redirect

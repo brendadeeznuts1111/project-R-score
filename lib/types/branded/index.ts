@@ -108,6 +108,8 @@ import type {
   StepId,
   WebhookId,
   FeedId,
+  ReleaseAssetId,
+  ReleaseCapabilityId,
   RunId,
   DecisionId,
   LoopId,
@@ -231,6 +233,8 @@ export type AnyId =
   | StepId
   | WebhookId
   | FeedId
+  | ReleaseAssetId
+  | ReleaseCapabilityId
   | RunId
   | DecisionId
   | LoopId

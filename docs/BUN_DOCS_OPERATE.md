@@ -1,64 +1,85 @@
 # Bun docs operate
 
-Four research planes — keep them separate. Do not collapse “token/catalog” or
-“blog/RSS” into one channel.
+Four official-docs research planes — keep them separate. Do not collapse
+“token/catalog” or “blog/RSS” into one channel.
 
-| Plane       | Owns                                                                                                                              | Does not own                                      |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Plane       | Owns                                                                                                                                   | Does not own                                      |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | **Token**   | `TokenRef` → `BunToken` · `bun-doc-refs` suggest / check / history / `@see` · [`README-token-ref.md`](../lib/docs/README-token-ref.md) | Materialized bake (`tools/bun-docs-catalog.json`) |
-| **Catalog** | Index + catalog bake · `docs:catalog:*` · `tools/bun-docs-catalog.ts` · coverage against catalog names                            | Agent export contract (`BunToken`)                |
-| **Blog**    | Marketing HTML URLs · scrape / canonicalize ([`bun-blog-url.ts`](../lib/docs/bun-blog-url.ts))                                   | Dated feed items                                  |
-| **RSS**     | Dated release feed ([`bun-rss.ts`](../lib/docs/bun-rss.ts) · `config/bun-channels.toml` `sources.rss`)                            | Blog index HTML                                   |
+| **Catalog** | Index + catalog bake · `docs:catalog:*` · `tools/bun-docs-catalog.ts` · coverage against catalog names                                 | Agent export contract (`BunToken`)                |
+| **Blog**    | Marketing HTML URLs · scrape / canonicalize ([`bun-blog-url.ts`](../lib/docs/bun-blog-url.ts))                                         | Dated feed items                                  |
+| **RSS**     | Dated release feed ([`bun-rss.ts`](../lib/docs/bun-rss.ts) · `config/bun-channels.toml` `sources.rss`)                                 | Blog index HTML                                   |
 
 Pin ↔ tip **type inventory** is a fifth pipeline (not these planes):
 [`design/bun-types-inventory.md`](./design/bun-types-inventory.md).
+
+The versioned **Bun 1.4 release graph** is another repository projection, not an
+official-docs authority. Its manifest, capability relations, feeds, and
+content-addressed snapshots are owned by
+[`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md). A graph record
+proves local adoption only when its `adoption` value and `contractFiles` satisfy
+that contract; its presence alone proves only release-note coverage.
 
 ## Day commands
 
 ### Token plane
 
-| Intent                    | Command                                                                                                                                                                                                 |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Suggest token             | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code                                                                                            |
-| Source `@see` gate        | `bun tools/bun-doc-refs.ts check <paths...>` · `--json` for file/line/column; missing / unsupported / empty / unreadable / malformed fail closed                                                         |
-| Missing-reference backlog | `bun tools/bun-doc-refs.ts backlog [--json] [--limit=N] [--max=N] <paths...>` · `--write` needs explicit targets, positive limit ≤ 100, compact `@see` only                                               |
-| Runtime API drift         | `bun run bun:api-drift:check` — executable static `Bun.*` / `"bun"` value imports vs installed runtime (not forward `bun-types`)                                                                         |
-| API history               | `bun tools/bun-doc-refs.ts history <api> [--json]` — version, publication date, evidence                                                                                                                |
-| Provenance gate           | `bun run docs:provenance:check` · `--json` · `--require-release` fails APIs without attested introduction                                                                                               |
-| Bundler sidebar           | `bun tools/bun-doc-refs.ts bundler` · [`bundler-nav.ts`](../lib/docs/bundler-nav.ts) · gaps [`bundler-gaps.ts`](../lib/docs/bundler-gaps.ts)                                                            |
-| Bundler anchors / gaps    | `bundler --anchors` · `bundler --gaps [--json] [--strict] [--group=Extensions]` · `bundler --tokens`                                                                                                     |
-| Integrity                 | `bun tools/bun-doc-refs.ts integrity` · `--fix` / `--fix-dry`                                                                                                                                            |
-| Status                    | `bun tools/bun-doc-refs.ts status`                                                                                                                                                                      |
-| Locus                     | `bun tools/bun-doc-refs.ts locus --depth=20`                                                                                                                                                            |
+| Intent                    | Command                                                                                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Suggest token             | `bun tools/bun-doc-refs.ts suggest <token>` — frozen `CANONICAL_REFS` wins; prints guide `example[lang]` code                                               |
+| Source `@see` gate        | `bun tools/bun-doc-refs.ts check <paths...>` · `--json` for file/line/column; missing / unsupported / empty / unreadable / malformed fail closed            |
+| Missing-reference backlog | `bun tools/bun-doc-refs.ts backlog [--json] [--limit=N] [--max=N] <paths...>` · `--write` needs explicit targets, positive limit ≤ 100, compact `@see` only |
+| Runtime API drift         | `bun run bun:api-drift:check` — executable static `Bun.*` / `"bun"` value imports vs installed runtime (not forward `bun-types`)                            |
+| API history               | `bun tools/bun-doc-refs.ts history <api> [--json]` — version, publication date, evidence                                                                    |
+| Provenance gate           | `bun run docs:provenance:check` · `--json` · `--require-release` fails APIs without attested introduction                                                   |
+| Bundler sidebar           | `bun tools/bun-doc-refs.ts bundler` · [`bundler-nav.ts`](../lib/docs/bundler-nav.ts) · gaps [`bundler-gaps.ts`](../lib/docs/bundler-gaps.ts)                |
+| Bundler anchors / gaps    | `bundler --anchors` · `bundler --gaps [--json] [--strict] [--group=Extensions]` · `bundler --tokens`                                                        |
+| Integrity                 | `bun tools/bun-doc-refs.ts integrity` · `--fix` / `--fix-dry`                                                                                               |
+| Status                    | `bun tools/bun-doc-refs.ts status`                                                                                                                          |
+| Locus                     | `bun tools/bun-doc-refs.ts locus --depth=20`                                                                                                                |
 
 ### Catalog plane
 
-| Intent                     | Command                                                                                                                                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full refresh               | `bun run docs:refresh` — RSS + reference + scrape + catalog + integrity JSONL                                                                                                                           |
-| Fast refresh (daily)       | `bun run docs:refresh:fast` — llms index + catalog + integrity only                                                                                                                                     |
-| Feed indexes only          | `bun run docs:refresh:feeds` — conditional GET RSS + `bun.com/reference`                                                                                                                                |
-| Legacy skip scrape         | `bun run docs:refresh -- --skip-scrape` — full minus blog scrape                                                                                                                                         |
-| Guide fences               | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain)                                                                     |
-| Catalog export             | `bun run docs:catalog:export`                                                                                                                                                                           |
-| Feed indexes               | `bun run docs:feeds:refresh` → `tools/bun-docs-feeds.json`                                                                                                                                              |
-| Curated demo verification  | `bun run docs:api-verify:check` — runnable oneliners + installed `bun-types` + official llms / reference / release-feed / source / runtime evidence                                                     |
-| Docs coverage verify       | `bun run verify:docs-coverage:save` → `public/registry/docs-coverage-proof.json`                                                                                                                        |
-| Unreleased Bun PR verify   | `bunx bun-pr <pr>` → `bun run bun:pr:verify <pr>` · [`bun-pr-verify.ts`](../tools/bun-pr-verify.ts) · [download PR builds](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) |
+| Intent                    | Command                                                                                                                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full refresh              | `bun run docs:refresh` — RSS + reference + scrape + catalog + integrity JSONL                                                                                                                                   |
+| Fast refresh (daily)      | `bun run docs:refresh:fast` — llms index + catalog + integrity only                                                                                                                                             |
+| Feed indexes only         | `bun run docs:refresh:feeds` — conditional GET RSS + `bun.com/reference`                                                                                                                                        |
+| Legacy skip scrape        | `bun run docs:refresh -- --skip-scrape` — full minus blog scrape                                                                                                                                                |
+| Guide fences              | Frozen [`bun-docs-guide-examples.ts`](../tools/bun-docs-guide-examples.ts); scrape via `generate-tokens-from-docs` (`guides` domain)                                                                            |
+| Catalog export            | `bun run docs:catalog:export`                                                                                                                                                                                   |
+| Feed indexes              | `bun run docs:feeds:refresh` → `tools/bun-docs-feeds.json`                                                                                                                                                      |
+| Curated demo verification | `bun run docs:api-verify:check` — runnable oneliners + installed `bun-types` + official llms / reference / release-feed / source / runtime evidence                                                             |
+| Docs coverage verify      | `bun run verify:docs-coverage:save` → `public/registry/docs-coverage-proof.json`                                                                                                                                |
+| Unreleased Bun PR verify  | `bunx bun-pr <pr>` → `bun run bun:pr:verify <pr>` · [`bun-pr-verify.ts`](../tools/bun-pr-verify.ts) · [download PR builds](https://bun.com/docs/project/contributing#download-release-build-from-pull-requests) |
 
 ### Blog plane
 
-| Intent         | Command                                                                                                                                                                              |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Blog ingestion | `CANONICAL_SOURCES.blog` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · `bun test tests/journey/blog-extraction.test.ts`                                               |
-| Blog URL shape | [`bun-site-url.ts`](../lib/docs/bun-site-url.ts) · [`bun-blog-url.ts`](../lib/docs/bun-blog-url.ts) (marketing vs `release-notes` canonicalize)                                       |
+| Intent         | Command                                                                                                                                         |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Blog ingestion | `CANONICAL_SOURCES.blog` + [`extract-metadata.ts`](../lib/docs/extract-metadata.ts) · `bun test tests/journey/blog-extraction.test.ts`          |
+| Blog URL shape | [`bun-site-url.ts`](../lib/docs/bun-site-url.ts) · [`bun-blog-url.ts`](../lib/docs/bun-blog-url.ts) (marketing vs `release-notes` canonicalize) |
 
 ### RSS plane
 
-| Intent          | Command                                                                                                                                                                |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RSS feed shape  | `CANONICAL_SOURCES.rss` + [`bun-rss.ts`](../lib/docs/bun-rss.ts) `parseRssChannelItems` · URL in `config/bun-channels.toml` `sources.rss`                              |
-| Fetch-page SSOT | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · claim `fetch-page-boundaries` · HTML + RSS Accept override; conditional GET (304) stays bare `fetch`                     |
+| Intent          | Command                                                                                                                                             |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RSS feed shape  | `CANONICAL_SOURCES.rss` + [`bun-rss.ts`](../lib/docs/bun-rss.ts) `parseRssChannelItems` · URL in `config/bun-channels.toml` `sources.rss`           |
+| Fetch-page SSOT | [`fetch-page.ts`](../lib/docs/fetch-page.ts) · claim `fetch-page-boundaries` · HTML + RSS Accept override; conditional GET (304) stays bare `fetch` |
+
+### Bun 1.4 release graph
+
+| Intent                  | Command / owner                                                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Source and asset check  | `bun run docs:blog-assets:check` · [`bun-1.4-assets.json`](../public/registry/bun-1.4-assets.json)                                      |
+| Capability shape        | [`bun-1.4-capabilities.json`](../public/registry/bun-1.4-capabilities.json) · `bun test tests/bun-1.4-capabilities.test.ts`             |
+| Feed and snapshot check | `bun run channels:bun-1.4:check` · [`bun-1.4-channel-release.json`](../public/registry/bun-1.4-channel-release.json)                    |
+| Project ownership map   | `bun run channels:projects:check` · [`project-rss-channels.json`](../public/registry/project-rss-channels.json)                         |
+| Lifecycle and removal   | [`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md) · active projection first, content-addressed archive before retirement |
+
+Do not copy the capability list into docs or skills. Point to the registry and
+retain the five adoption states; only `integrated` and `contract` carry local
+executable contract evidence.
 
 Loop: RSS index → reference index → scrape → **catalog** build → integrity log
 (`docs:refresh`). Token plane consumes the catalog via adapters; it does not
@@ -130,10 +151,14 @@ evidence is exact: an event for `1.3.99` cannot borrow the date or post for
 scalar event and every embedded `releaseHits` row with the matching RSS version,
 publication timestamp, and URL.
 
-RSS XML is parsed once through [`lib/docs/bun-rss.ts`](../lib/docs/bun-rss.ts)
-(`parseRssChannelItems`). Callers map items into release-index rows
-(`tools/bun-docs-releases.ts`), release-contract feed entries
-(`packages/bun-release-contracts`), or MCP blog notes
+The Bun-native XML shape is owned by [`BUN_XML.md`](./BUN_XML.md), grounded in
+the official Bun 1.4 guide/reference and direct runtime contract tests. RSS XML
+semantics are owned separately by
+[`RSS_XML_CONTRACT.md`](./RSS_XML_CONTRACT.md). RSS XML is parsed strictly
+through [`lib/docs/bun-rss.ts`](../lib/docs/bun-rss.ts) (`parseRssChannelItems`)
+with `Bun.XML`; malformed XML and invalid RSS roots fail closed. Callers map
+items into release-index rows (`tools/bun-docs-releases.ts`), release-contract
+feed entries (`packages/bun-release-contracts`), or MCP blog notes
 (`tools/bun-docs-mcp-lib.ts`) — do not add a fourth Bun.XML channel walk.
 
 The scraper reads the merged feed directly; a gitignored legacy
@@ -223,10 +248,13 @@ Env: `DOC_INTEGRITY_AUTOFIX=1` on schedule path.
 
 Agent entry: root [`AGENTS.md`](../AGENTS.md) § Bun API references ·
 capabilities: [BUN_NATIVE_CAPABILITIES.md](./BUN_NATIVE_CAPABILITIES.md) ·
-channel governance: [`design/bun-channel-governance.md`](./design/bun-channel-governance.md) ·
-profiling (cpu/heap markdown): [`harness/tenants/bun-bench-profiling.md`](./harness/tenants/bun-bench-profiling.md) ·
-Mintlify heap-md locus SSOT: [`lib/docs/benchmarking-profile-loci.ts`](../lib/docs/benchmarking-profile-loci.ts) ·
-`bun test tests/bun-benchmarking-profile-loci.test.ts` ·
-Observability contracts: `bun test tests/bun-1.4.0-observability-contract.test.ts`.
+channel governance:
+[`design/bun-channel-governance.md`](./design/bun-channel-governance.md) ·
+profiling (cpu/heap markdown):
+[`harness/tenants/bun-bench-profiling.md`](./harness/tenants/bun-bench-profiling.md)
+· Mintlify heap-md locus SSOT:
+[`lib/docs/benchmarking-profile-loci.ts`](../lib/docs/benchmarking-profile-loci.ts)
+· `bun test tests/bun-benchmarking-profile-loci.test.ts` · Observability
+contracts: `bun test tests/bun-1.4.0-observability-contract.test.ts`.
 
 Longer command encyclopedia: `git log -- docs/BUN_DOCS_OPERATE.md`.

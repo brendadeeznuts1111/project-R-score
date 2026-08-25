@@ -1,0 +1,244 @@
+<!doctype html>
+<!-- @see public/portal/_page-template.html · Bun 1.4 release gallery -->
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <title>Bun 1.4 · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Bun 1.4 all media"
+      href="/feeds/v1/all.xml"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Bun 1.4 images"
+      href="/feeds/v1/images.xml"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Bun 1.4 videos"
+      href="/feeds/v1/videos.xml"
+    />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Bun 1.4 embeds"
+      href="/feeds/v1/embeds.xml"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <link rel="stylesheet" href="/portal/bun-1.4/bun-1.4-layout.css" />
+    <link rel="stylesheet" href="/portal/bun-1.4/bun-1.4.css" />
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Bun 1.4</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a href="/" class="nav-link" data-group="other" data-domain="platform">Home</a>
+          <a href="/portal/ops/" class="nav-link" data-group="ops" data-domain="control">Ops</a>
+          <a href="/portal/" class="nav-link" data-group="registry" data-domain="platform"
+            >Registry</a
+          >
+          <a href="/portal/health/" class="nav-link" data-group="harness" data-domain="platform"
+            >Health</a
+          >
+          <a href="/portal/packages/" class="nav-link" data-group="registry" data-domain="platform"
+            >Packages</a
+          >
+          <a
+            href="/portal/bun-1.4/"
+            class="nav-link active"
+            aria-current="page"
+            data-group="registry"
+            data-domain="platform"
+            data-registry="/registry/bun-1.4-assets.json"
+            >Bun 1.4</a
+          >
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/health" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">Connecting…</span>
+          </a>
+        </div>
+      </div>
+    </header>
+    <main class="main portal-page bun-board">
+      <header class="portal-hero portal-hero--card bun-hero" aria-labelledby="bun-title">
+        <p class="portal-eyebrow">Runtime release gallery · external-source mode</p>
+        <h2 id="bun-title" class="portal-hero__title">
+          Bun 1.4: native runtime capabilities, captured media, and integration signals
+        </h2>
+        <p class="hero-sub">
+          A searchable evidence board for the Bun 1.4 release. Features are grouped by the way they
+          can improve this repository; media stays linked to Bun’s official source until
+          republishing rights are confirmed.
+        </p>
+        <div class="portal-hero-meta bun-hero-meta">
+          <span id="bun-rights" class="portal-gate">Rights status: loading…</span>
+          <span id="bun-generated" class="portal-baked">Manifest: loading…</span>
+          <a href="https://bun.com/blog/bun-v1.4" target="_blank" rel="noopener noreferrer"
+            >Official Bun 1.4 post ↗</a
+          >
+          <a id="bun-breaking-changes" href="/registry/bun-1.4-capabilities.json"
+            >Breaking changes: loading…</a
+          >
+          <a id="bun-upgrade-guide" href="/registry/bun-1.4-capabilities.json"
+            >Upgrade guide: loading…</a
+          >
+          <a href="/registry/bun-1.4-assets.json">Asset manifest</a>
+          <a href="/registry/bun-1.4-capabilities.json">Capability registry</a>
+          <a href="/registry/bun-1.4-channel-release.json">Channel release</a>
+          <a href="/registry/project-rss-channels.json">Project/channel map</a>
+          <a href="/feeds/v1/all.xml">RSS: all media</a>
+          <a href="/feeds/v1/projects/project-r-score/bun-1.4/all.xml">RSS: project alias</a>
+          <a href="/feeds/v1/videos.xml">RSS: videos</a>
+        </div>
+      </header>
+      <div id="bun-banner" class="portal-banner hidden" role="status"></div>
+      <section class="portal-stat-grid bun-stats" aria-label="Bun 1.4 gallery summary">
+        <div class="portal-card portal-card--stat">
+          <strong id="bun-assets">—</strong><span>manifest assets</span>
+        </div>
+        <div class="portal-card portal-card--stat">
+          <strong id="bun-images">—</strong><span>images / SVGs</span>
+        </div>
+        <div class="portal-card portal-card--stat">
+          <strong id="bun-videos">—</strong><span>MP4 demos</span>
+        </div>
+        <div class="portal-card portal-card--stat">
+          <strong id="bun-local">—</strong><span>local copies available</span>
+        </div>
+        <div class="portal-card portal-card--stat">
+          <strong id="bun-capability-count">—</strong><span>grounded capabilities</span>
+        </div>
+        <div class="portal-card portal-card--stat">
+          <strong id="bun-behavior-count">—</strong><span>changed / fixed / claimed</span>
+        </div>
+      </section>
+      <section class="portal-section" aria-labelledby="bun-features-title">
+        <h2 id="bun-features-title">Integration map</h2>
+        <p class="section-sub">
+          Release capabilities translated into practical repository surfaces, with Pages-safe
+          boundaries called out.
+        </p>
+        <div id="bun-capabilities" class="portal-card-grid bun-feature-grid" aria-live="polite">
+          <div class="portal-card bun-empty">
+            <strong>Loading capability registry…</strong>
+            <span>Connecting release facts to assets, channels, and executable contracts.</span>
+          </div>
+        </div>
+      </section>
+      <section class="portal-section" aria-labelledby="bun-chapters-title">
+        <h2 id="bun-chapters-title">Official release chapters</h2>
+        <p class="section-sub">
+          Canonical Bun sections act as navigation and media filters; capability and asset records
+          remain normalized rather than copied into chapter-specific registries.
+        </p>
+        <div id="bun-chapters" class="portal-card-grid bun-feature-grid" aria-live="polite">
+          <div class="portal-card bun-empty">
+            <strong>Loading release chapters…</strong>
+          </div>
+        </div>
+      </section>
+      <section class="portal-section" aria-labelledby="bun-media-title">
+        <div class="bun-section-heading">
+          <div>
+            <h2 id="bun-media-title">Release media</h2>
+            <p class="section-sub">
+              Every card is sourced from <code>/registry/bun-1.4-assets.json</code>. Videos load
+              only when near the viewport; external links remain available when local copies are not
+              authorized.
+            </p>
+          </div>
+          <span id="bun-count" class="portal-count" aria-live="polite">Loading…</span>
+        </div>
+        <div class="portal-toolbar" aria-label="Filter Bun 1.4 media">
+          <label
+            >Search
+            <input
+              id="bun-search"
+              type="search"
+              placeholder="title, section, or caption…"
+              autocomplete="off"
+          /></label>
+          <label
+            >Section
+            <select id="bun-section">
+              <option value="">All sections</option>
+            </select></label
+          >
+          <label
+            >Type
+            <select id="bun-kind">
+              <option value="">All media</option>
+              <option value="image">Images</option>
+              <option value="video">MP4 demos</option>
+              <option value="youtube">YouTube</option>
+            </select></label
+          >
+          <label
+            >Domain
+            <select id="bun-domain">
+              <option value="">All domains</option>
+            </select></label
+          >
+          <label
+            >Release chapter
+            <select id="bun-chapter">
+              <option value="">All release chapters</option>
+            </select></label
+          >
+          <label
+            >Capability
+            <select id="bun-capability">
+              <option value="">All capabilities</option>
+            </select></label
+          >
+          <button id="bun-clear" class="portal-clear" type="button">Clear filters</button>
+        </div>
+        <div id="bun-gallery" class="bun-gallery" aria-live="polite">
+          <div class="portal-card bun-empty">
+            <strong>Loading asset manifest…</strong
+            ><span>Fetching the versioned release evidence.</span>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> · <a href="/portal/">Registry</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/bun-1.4/">Bun 1.4</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="https://bun.com/blog/bun-v1.4" target="_blank" rel="noopener noreferrer"
+          >Bun source ↗</a
+        >
+      </p>
+      <p class="footer-meta">
+        project-R-score ·
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-bun></span> · <span data-footer-ts>…</span>
+      </p>
+    </footer>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/bun-1.4/bun-1.4-board.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
+</html>
