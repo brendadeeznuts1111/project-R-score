@@ -18,6 +18,7 @@ function args(partial: Partial<TestChangedArgs> = {}): TestChangedArgs {
     isolate: false,
     timings: true,
     mainHead: false,
+    excludeCiReserved: false,
     shard: undefined,
     flags: [],
     restPositionals: [],
@@ -48,6 +49,12 @@ describe('parseTestChangedArgs', () => {
     const parsed = parseTestChangedArgs(['--main-head']);
     expect(parsed.mainHead).toBe(true);
     expect(parsed.ref).toBeUndefined();
+  });
+
+  test('--exclude-ci-reserved is wrapper-owned and not forwarded as a Bun flag', () => {
+    const parsed = parseTestChangedArgs(['--exclude-ci-reserved', '--bail=1']);
+    expect(parsed.excludeCiReserved).toBe(true);
+    expect(parsed.flags).toEqual(['--bail=1']);
   });
 
   test('--serial and BUN_TEST_SERIAL opt out of parallel', () => {
@@ -247,6 +254,14 @@ describe('buildBunTestCommand', () => {
   test('omits adaptive timing flags when disabled', () => {
     const cmd = buildBunTestCommand(args({ timings: false }), undefined);
     expect(cmd).toEqual(['test', '--pass-with-no-tests', '--changed', '--parallel']);
+  });
+
+  test('adds root and reserved ignores only when CI ownership exclusion is requested', () => {
+    const cmd = buildBunTestCommand(args({ excludeCiReserved: true }), 'main');
+    expect(cmd).toContain('--path-ignore-patterns');
+    expect(cmd).toContain('node_modules/**');
+    expect(cmd).toContain('tests/fixtures/runtime-cli/**');
+    expect(cmd).toContain('tests/harness-ci-deploy.test.ts');
   });
 });
 

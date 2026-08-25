@@ -12,7 +12,7 @@
 /**
  * CI / agent harness envelope — quiet success; noise only on failure.
  *
- * Cheap ratchets run in parallel (path-bun · bun-env · invisible-chars · brands ·
+ * Cheap ratchets run in parallel (path-bun · bun-env · invisible-chars ·
  * project structure/syntax/Bun API drift · lib-domains · audit-verify). ESLint defaults to changed files (`lint`);
  * full tree only with --full-lint / HARNESS_FULL_LINT=1 (main push).
  *
@@ -25,6 +25,7 @@
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 import { logCompact } from '../lib/console-depth';
 import { githubTokenPresence, resolveGitHubRepositoryRef } from '../lib/github-repository-ref';
+import { buildReservedTestCommand } from '../lib/harness/ci-test-groups.ts';
 import { hasFlag } from './lib/cli-args';
 import { ensureDir, writeJson } from './lib/fs-bun';
 import { runGroupCommand } from './lib/harness-group-runner';
@@ -69,12 +70,6 @@ const CHEAP: Step[] = [
     cmd: ['bun', 'run', 'check:invisible-chars'],
     owner: 'scripts/check-invisible-chars.ts',
     repair: 'bun run check:invisible-chars',
-  },
-  {
-    name: 'brands-smart',
-    cmd: ['bun', 'tools/branded-id-check.ts', '--smart', '--strict', '--quiet'],
-    owner: 'lib/types/branded.ts · branded-ids skill',
-    repair: 'bun tools/branded-id-check.ts --smart --strict',
   },
   {
     name: 'projects-roots',
@@ -153,12 +148,12 @@ function testStep(mainHead: boolean): Step {
     // Bun 1.4's timing cache improves scheduling; cap merge-proof fan-out so the
     // larger main-head selection stays fast without saturating shared runners.
     cmd: mainHead
-      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--parallel=4']
-      : ['bun', 'run', 'test:changed'],
+      ? ['bun', 'run', 'test:changed', '--', '--main-head', '--parallel=4', '--exclude-ci-reserved']
+      : ['bun', 'run', 'test:changed', '--', '--exclude-ci-reserved'],
     owner: 'scripts/bun-test-changed.ts · --changed · --timings · --parallel/--serial',
     repair: mainHead
-      ? 'bun run test:changed:main -- --parallel=4  # use test:changed:serial to diagnose races'
-      : 'bun run test:changed  # or --serial / BUN_TEST_SERIAL=1',
+      ? 'bun run test:changed:main -- --parallel=4 --exclude-ci-reserved'
+      : 'bun run test:changed -- --exclude-ci-reserved',
   };
 }
 
@@ -254,52 +249,6 @@ if (!fast) {
 
 await runSerial([testStep(!fast)], verbose, timings, wantFailJson, mode);
 
-/** Bun-native boundary claims — always-on outside --fast (was human-only / test:changed luck). */
-const BOUNDARY_FIXTURES: Step = {
-  name: 'boundary-fixtures',
-  cmd: [
-    'bun',
-    'test',
-    'tests/fixtures/runtime-cli/',
-    'tests/fixtures/bun-shell/',
-    'tests/fixtures/security-hash/',
-    'tests/fixtures/social-metadata/',
-    'tests/fixtures/blog-extraction/',
-    'tests/fixtures/fetch-page/',
-    'tests/fetch-proxy-keepalive.test.ts',
-    'tests/bun-urlpattern.test.ts',
-    'tests/bun-site-url.test.ts',
-    'tests/factory-production.test.ts',
-    'tests/portal-url-planes.test.ts',
-    'tests/bun-docs-catalog.test.ts',
-    'tests/fs-bun.test.ts',
-    'tests/bun-glob-scan.test.ts',
-  ],
-  owner:
-    'runtime-cli · bun-shell · security-hash · social-metadata · blog-extraction · fetch-page · https-proxy-connect-reuse · url-pattern · bun-http-server-docs · fs-native ProofPaths',
-  repair:
-    'bun test tests/fixtures/runtime-cli/ tests/fixtures/bun-shell/ tests/fixtures/security-hash/ tests/fixtures/social-metadata/ tests/fixtures/blog-extraction/ tests/fixtures/fetch-page/ tests/fetch-proxy-keepalive.test.ts tests/bun-urlpattern.test.ts tests/bun-site-url.test.ts tests/factory-production.test.ts tests/portal-url-planes.test.ts tests/bun-docs-catalog.test.ts tests/fs-bun.test.ts tests/bun-glob-scan.test.ts',
-};
-
-/** Channel meta-verification — bake/release drift + suite isolation (claim channel-meta-verification-v1). */
-const CHANNEL_META_FIXTURES: Step = {
-  name: 'channel-meta-verification',
-  cmd: [
-    'bun',
-    'test',
-    'tests/channel-suite.test.ts',
-    'tests/verification-subsystem.test.ts',
-    'tests/bundler-loader-probes.test.ts',
-    'tests/networking-channel.test.ts',
-    'tests/verification-proof-taxonomy.test.ts',
-    'tests/channel-meta-refresh.test.ts',
-    'tests/verification-proof-consistency.test.ts',
-  ],
-  owner: 'channel-meta-verification-v1 ProofPath',
-  repair:
-    'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts · bun run verify:channel:meta',
-};
-
 if (!fast) {
   await runSerial(
     [
@@ -310,40 +259,25 @@ if (!fast) {
         repair:
           'bun run cloudflare:preflight · bun test tests/functions-edge-safety.test.ts tests/functions-import-graph.test.ts',
       },
-      BOUNDARY_FIXTURES,
-      CHANNEL_META_FIXTURES,
+      {
+        name: 'snapshot-catalog',
+        cmd: ['bun', 'run', 'check:snapshots'],
+        owner: 'lib/portal/bun-test-snapshots.ts',
+        repair: 'bun run check:snapshots',
+      },
+      {
+        name: 'reserved-contracts',
+        cmd: buildReservedTestCommand(),
+        owner:
+          'runtime-boundary · channel-contract · harness-contract · snapshot-contract · portal-registry',
+        repair: 'bun scripts/ci-execution-plan.ts',
+      },
     ],
     verbose,
     timings,
     wantFailJson,
     mode
   );
-}
-
-/** Dual-catalog parents + catalog meta — was human-only / test:changed luck. */
-const DUAL_CATALOG: Step[] = [
-  {
-    name: 'ci-deploy-runbooks',
-    cmd: ['bun', 'run', 'test:ci-deploy'],
-    owner: 'ci-deploy-runbooks ProofPath',
-    repair: 'bun run test:ci-deploy',
-  },
-  {
-    name: 'code-quality-tenants',
-    cmd: ['bun', 'run', 'test:code-quality'],
-    owner: 'code-quality-tenants · coverage · orphans · complexity ProofPaths',
-    repair: 'bun run test:code-quality',
-  },
-  {
-    name: 'fresh-rerun-contract',
-    cmd: ['bun', 'test', 'tests/harness-fresh-rerun-contract.test.ts'],
-    owner: 'ProofPath catalog meta · gateClass · freshRerunKind · gateRef',
-    repair: 'bun test tests/harness-fresh-rerun-contract.test.ts',
-  },
-];
-
-if (!fast) {
-  await runSerial(DUAL_CATALOG, verbose, timings, wantFailJson, mode);
 }
 
 const stepSum = timings.reduce((s, t) => s + t.ms, 0);

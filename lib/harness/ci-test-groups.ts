@@ -1,7 +1,12 @@
+// @see https://bun.com/docs/test/parallel#parallel — --parallel
+// @released --parallel · released v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @updated --parallel · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 /**
  * Canonical ownership inventory for tests that CI runs independently of
- * `bun test --changed`. This is deliberately descriptive first: execution
- * moves to these groups only after the overlap report has been reviewed.
+ * `bun test --changed`. The merge harness executes this complete inventory
+ * once; affected selection excludes it.
  */
 import { TEST_SNAPSHOT_SUITES } from '../portal/bun-test-snapshots.ts';
 
@@ -18,6 +23,30 @@ export type CiTestGroup = {
   repair: string;
   paths: readonly string[];
 };
+
+/**
+ * Mirrors bunfig.toml's [test].pathIgnorePatterns. Bun's CLI values replace
+ * (rather than merge) bunfig values, so affected-test execution must carry
+ * these root exclusions when it adds its reserved-group exclusions.
+ */
+export const ROOT_TEST_PATH_IGNORE_PATTERNS = [
+  'node_modules/**',
+  'dist/**',
+  'archive/**',
+  'scratch/**',
+  'docs/**',
+  'screenshots/**',
+  'bench/**',
+  'migrations/**',
+  'generated/**',
+  'vendor/**',
+  'toc-ops-repo/**',
+  'Kalshi-bot/**',
+  'projects/active/enterprise/foxy-proxy/**',
+  '.codex-worktrees/**',
+  'artifacts/**',
+  'artifacts-browser/**',
+] as const;
 
 const RUNTIME_BOUNDARY_PATHS = [
   'tests/fixtures/runtime-cli/',
@@ -92,6 +121,39 @@ export const CI_RESERVED_TEST_GROUPS: readonly CiTestGroup[] = [
     paths: PORTAL_REGISTRY_PATHS,
   },
 ] as const;
+
+/** Exact paths become direct globs; directory entries remain recursive globs. */
+export function reservedTestIgnorePatterns(
+  groups: readonly CiTestGroup[] = CI_RESERVED_TEST_GROUPS
+): string[] {
+  return [
+    ...new Set(
+      groups.flatMap(group => group.paths.map(path => `${path}${path.endsWith('/') ? '**' : ''}`))
+    ),
+  ];
+}
+
+/** Complete CLI ignore list for the affected `bun test --changed` invocation. */
+export function affectedTestIgnorePatterns(
+  groups: readonly CiTestGroup[] = CI_RESERVED_TEST_GROUPS
+): string[] {
+  return [...ROOT_TEST_PATH_IGNORE_PATTERNS, ...reservedTestIgnorePatterns(groups)];
+}
+
+/** One bounded Bun invocation owns every reserved test exactly once in merge CI. */
+export function buildReservedTestCommand(
+  groups: readonly CiTestGroup[] = CI_RESERVED_TEST_GROUPS
+): string[] {
+  return [
+    'bun',
+    'test',
+    '--timeout=60000',
+    '--parallel=4',
+    '--timings=.cache/bun-test-timings.json',
+    '--update-timings',
+    ...groups.flatMap(group => group.paths),
+  ];
+}
 
 export type TestGroupAudit = {
   groupCount: number;

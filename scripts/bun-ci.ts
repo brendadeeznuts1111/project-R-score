@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — --env-file · Bun.env
@@ -66,15 +72,10 @@ const steps: CiStep[] = [
     cwd: `${repoRoot}/projects/active/factorywager/registry`,
   },
   { name: 'core', command: ['bun', 'run', 'ci:core'], cwd: repoRoot },
-  {
-    name: 'snapshots',
-    command: ['bun', 'run', 'test:snapshots'],
-    cwd: repoRoot,
-  },
   { name: 'types', command: ['bun', 'run', 'ci:types'], cwd: repoRoot },
   { name: 'security', command: ['bun', 'run', 'ci:security'], cwd: repoRoot },
   {
-    name: 'portal-registry',
+    name: 'public-artifact-clean',
     command: ['bun', 'run', 'ci:portal-registry'],
     cwd: repoRoot,
   },

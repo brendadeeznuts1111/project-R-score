@@ -54,11 +54,12 @@ describe('repository governance', () => {
     expect(packageJson.scripts['bun:ci']).not.toContain('R2_BUCKET_NAME=');
     const localCi = await Bun.file(`${import.meta.dir}/../scripts/bun-ci.ts`).text();
     expect(localCi).toContain("['bun', 'run', 'ci:core']");
-    expect(localCi).toContain("['bun', 'run', 'test:snapshots']");
+    expect(localCi).not.toContain("['bun', 'run', 'test:snapshots']");
     expect(localCi).not.toContain("['bun', 'run', 'test:partner-cli:snapshots']");
     expect(localCi).toContain("['bun', 'run', 'ci:types']");
     expect(localCi).toContain("['bun', 'run', 'ci:security']");
     expect(localCi).toContain("['bun', 'run', 'ci:portal-registry']");
+    expect(packageJson.scripts['ci:portal-registry']).toBe('bun scripts/assert-public-clean.ts');
     expect(localCi).toContain("from '../lib/macros/git-commit.ts'");
     expect(localCi).not.toContain("type: 'macro'");
     expect(localCi).toContain("Bun.env.R2_BUCKET_NAME");

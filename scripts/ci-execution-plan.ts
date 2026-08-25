@@ -8,10 +8,9 @@
 // @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Report the current CI test ownership and command duplication baseline.
+ * Report the active CI test ownership and command de-duplication contract.
  *
- * This command intentionally does not execute checks or modify files. It is
- * the migration receipt for consolidating CI execution in later changes.
+ * This command intentionally does not execute checks or modify files.
  *
  *   bun scripts/ci-execution-plan.ts
  *   bun scripts/ci-execution-plan.ts --json
@@ -30,11 +29,6 @@ const COMMANDS: readonly CommandOwner[] = [
     id: 'ci-core:brand-adoption',
     command: ['bun', 'tools/branded-id-check.ts', '--smart', '--strict', '--quiet'],
     owner: 'ci:core',
-  },
-  {
-    id: 'ci-harness:brands-smart',
-    command: ['bun', 'tools/branded-id-check.ts', '--smart', '--strict', '--quiet'],
-    owner: 'ci:harness',
   },
 ];
 
@@ -61,10 +55,10 @@ const audit = auditReservedTestGroups();
 const report = {
   schemaVersion: 1,
   generatedAt: new Date().toISOString(),
-  executionMode: 'report-only',
+  executionMode: 'exclusive',
   affected: {
     command: 'bun test --changed',
-    note: 'Reserved groups are not excluded until the execution-consolidation change.',
+    excludes: 'root bunfig ignores plus every reserved test path',
   },
   reservedGroups: CI_RESERVED_TEST_GROUPS,
   audit,
@@ -76,7 +70,7 @@ if (Bun.argv.includes('--json')) {
   process.exit(0);
 }
 
-console.log(`CI execution plan · report-only · ${report.generatedAt}`);
+console.log(`CI execution plan · exclusive · ${report.generatedAt}`);
 console.log(`reserved groups: ${audit.groupCount} · unique explicit paths: ${audit.pathCount}`);
 console.log(`test overlap: ${audit.duplicatePaths.length}`);
 for (const group of CI_RESERVED_TEST_GROUPS) {

@@ -1173,6 +1173,7 @@ export const BUN_MIGRATE_ALLOWED_LONG = [
 export const TEST_CHANGED_ALLOWED_LONG = [
   'changed',
   'dry-run',
+  'exclude-ci-reserved',
   'isolate',
   'main-head',
   'no-timings',
