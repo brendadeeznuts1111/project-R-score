@@ -51,6 +51,7 @@ export const CI_JOB_OWNERS: Readonly<Record<string, string>> = {
   'typescript-checks.yml': 'typescript-ci',
   'repo-hygiene.yml': 'ci-core',
   'security-scanner.yml': 'ci-core',
+  'bun-1.4-release-drift.yml': 'ci-core',
 };
 
 /**

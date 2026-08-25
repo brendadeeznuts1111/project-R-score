@@ -12,6 +12,7 @@ import { applyHarnessUnknownLongOptionGuardFor } from '../lib/docs/flags/harness
 import {
   runCoreStep,
   writeCoreTimingReport,
+  type CoreStep,
   type CoreStepResult,
   type GateTiming,
 } from './lib/ci-core-runner';
