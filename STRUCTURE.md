@@ -118,11 +118,11 @@ three channels on purpose — see pin triple below.
 
 #### Bun channel pin triple (intentional)
 
-| Channel             | Artifact                                                         | Dist-tag / policy | Pin                            | Mutates?           |
-| ------------------- | ---------------------------------------------------------------- | ----------------- | ------------------------------ | ------------------ |
-| `bun-runtime`       | `bun` binary · `.bun-version` · `packageManager` · `engines.bun` | stable            | `1.3.14`                       | reviewed lane only |
-| `bun-types-wrapper` | `@types/bun` (`catalog:`)                                        | latest            | `1.3.14`                       | reviewed lane only |
-| `bun-types-defs`    | `bun-types` (`catalog:`)                                         | canary            | `1.4.0-canary.20260519T150915` | reviewed lane only |
+| Channel             | Artifact                                                         | Dist-tag / policy | Pin                  | Mutates?           |
+| ------------------- | ---------------------------------------------------------------- | ----------------- | -------------------- | ------------------ |
+| `bun-runtime`       | `bun` binary · `.bun-version` · `packageManager` · `engines.bun` | stable            | `1.4.0`              | reviewed lane only |
+| `bun-types-wrapper` | `@types/bun` (`catalog:`)                                        | latest            | `1.4.0`              | reviewed lane only |
+| `bun-types-defs`    | `bun-types` (`catalog:`)                                         | pinned-tip        | `1.4.0-tip.23d233b2` | reviewed lane only |
 
 Doctor reports the wrapper/defs split as **intentional**, not drift.
 Same-version lint would erase the experiment boundary. Observation artifact:

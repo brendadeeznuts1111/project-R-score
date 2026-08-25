@@ -60,8 +60,8 @@ may point to those owners but cannot override them.
 | direct `bun-types` declarations | Reviewed Bun `main` snapshot (`pinned-tip`) | Project R deliberately exercises a forward declaration surface without moving the runtime or floating on every upstream commit. |
 | Promotion                       | reviewed change                             | A human-reviewed lane updates pins and lockfile after the report is understood.                                                 |
 | Mutation                        | never in the doctor                         | Observation, promotion, and installation are separate authorities.                                                              |
-| OS schedule                     | system-local, as Bun 1.3.14 defines it      | Persistent `Bun.cron(path, schedule, title)` follows the host scheduler.                                                        |
-| In-process schedule             | UTC on selected Bun 1.3.14                  | Do not expose a timezone option until the selected runtime and declarations both ship one.                                      |
+| OS schedule                     | system-local, as stable Bun 1.4.0 defines it | Persistent `Bun.cron(path, schedule, title)` follows the host scheduler.                                                       |
+| In-process schedule             | UTC on selected stable Bun 1.4.0            | Do not expose a timezone option until the selected runtime and declarations both ship one.                                     |
 
 The stable wrapper and pinned-tip declaration versions are intentionally
 different. A same-version lint would erase the experiment boundary and is

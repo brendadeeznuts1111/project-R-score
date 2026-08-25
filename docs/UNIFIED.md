@@ -8,7 +8,7 @@ conflict. **Install policy keys** (`linker`, `globalStore`,
 `[install.cache].dir`, `minimumReleaseAge`, `minimumReleaseAgeExcludes`):
 **machine owns** — root project bunfig must not duplicate them (only dev
 overrides like `frozenLockfile = false`). Runtime pin: `packageManager`
-**bun@1.3.14**. Channel/type policy:
+**bun@1.4.0**. Channel/type policy:
 [`config/bun-channels.toml`](../config/bun-channels.toml).
 
 Not wire/brands — see [WIRE_BOUNDARY.md](./WIRE_BOUNDARY.md).
