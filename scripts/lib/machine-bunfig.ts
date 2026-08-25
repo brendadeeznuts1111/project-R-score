@@ -1,14 +1,14 @@
+// @see https://bun.com/docs/runtime/toml#bun-toml-parse — Bun.TOML
+// @verified Bun.TOML · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/toml#bun-toml-parse
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
 import { TOML } from 'bun';
 import { xdgShadowBunfigPath } from '../../lib/install/machine-bunfig-policy.ts';
-import {
-  bunfigInodeIsReadable,
-  inspectBunfigInode,
-  type BunfigInode,
-} from './bunfig-inode.ts';
+import { bunfigInodeIsReadable, inspectBunfigInode, type BunfigInode } from './bunfig-inode.ts';
 import { joinPath } from './fs-bun';
+
+export { formatGlobalBunfigRef, formatPolicySource } from './machine-bunfig-format.ts';
 
 export type BunfigInstall = {
   linker?: string;
@@ -184,30 +184,4 @@ export function resolveEffectiveInstallPolicy(
 export function isAbsoluteCachePath(cacheDir: string | null): boolean {
   if (!cacheDir) return false;
   return !cacheDir.startsWith('~/') && cacheDir !== '~' && !cacheDir.includes('/~/');
-}
-
-/** Operator label for the global bunfig Bun actually loaded. */
-export function formatGlobalBunfigRef(
-  bunfigPath: string | null,
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
-): string {
-  if (!bunfigPath) return 'global bunfig';
-  const home = resolveHome(env);
-  if (home && bunfigPath === joinPath(home, '.bunfig.toml')) return '~/.bunfig.toml';
-  const xdg = xdgShadowBunfigPath(env);
-  if (xdg && bunfigPath === xdg) return '$XDG_CONFIG_HOME/.bunfig.toml';
-  return bunfigPath;
-}
-
-export function formatPolicySource(
-  key: keyof EffectiveInstallPolicy['source'],
-  policy: EffectiveInstallPolicy,
-  env: Record<string, string | undefined> = Bun.env as Record<string, string | undefined>
-): string {
-  const src = policy.source[key];
-  if (src === 'machine') {
-    return `inherited from ${formatGlobalBunfigRef(policy.globalBunfigPath, env)}`;
-  }
-  if (src === 'project') return 'set in project bunfig.toml';
-  return 'unset';
 }
