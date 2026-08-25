@@ -126,6 +126,12 @@ export type AssetRecord = AssetDraft & {
   sha256: string | null;
   format: string | null;
   metadataSource: 'source-attributes' | 'remote-bytes' | 'not-fetched';
+  /** Repository operational owner; never asserts ownership of Bun source media. */
+  stewardship: {
+    team: 'project-r-score-release-channel';
+    reviewRole: 'release-channel-maintainer';
+    responsibility: 'metadata-routing-and-rights-review';
+  };
 };
 
 export type Attribution = {

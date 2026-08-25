@@ -41,6 +41,11 @@ describe('Bun 1.4 channel discovery', () => {
     const videos = manifest.assets.filter((asset: { kind: string }) => asset.kind === 'video');
     expect(videos).toHaveLength(4);
     for (const video of videos) {
+      expect(video.stewardship).toEqual({
+        team: 'project-r-score-release-channel',
+        reviewRole: 'release-channel-maintainer',
+        responsibility: 'metadata-routing-and-rights-review',
+      });
       const path = `public/channels/bun-1.4/videos/${video.id}/index.html`;
       const html = await Bun.file(path).text();
       expect(html).toContain(`property="og:video" content="${video.publicUrl}"`);
