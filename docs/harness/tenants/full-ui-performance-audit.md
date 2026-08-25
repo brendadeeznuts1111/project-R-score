@@ -94,9 +94,8 @@ PAGES_VERIFY_BASE=http://127.0.0.1:6111 bun run verify:pages-edge
 bun run verify:weave -- --summary
 ```
 
-The previous Pages runtime baseline produced 3,716,496 B, a 42.07% reduction.
-Re-record this measurement from the first successful 1.4.0 preview before
-treating it as current production evidence.
+Cloudflare Pages `BUN_VERSION=1.4.0` produces 4,372,672 B, a 35.27% reduction,
+in the successful `cdedc2502` preview build.
 
 ## Production proof
 
