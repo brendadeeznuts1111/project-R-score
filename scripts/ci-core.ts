@@ -47,6 +47,10 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'bun:release-contracts:check'],
   },
   {
+    name: 'bun-1.4-source-assets',
+    cmd: ['bun', 'run', 'docs:blog-assets:check'],
+  },
+  {
     name: 'bun-1.4-channel-release',
     cmd: ['bun', 'run', 'channels:bun-1.4:check'],
   },

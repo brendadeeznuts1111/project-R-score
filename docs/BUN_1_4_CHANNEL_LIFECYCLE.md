@@ -128,6 +128,12 @@ no writes. It reports added, removed, and changed stable asset IDs plus
 manifest-level metadata drift; use it before `refresh` when reviewing an
 upstream change.
 
+Merge proof runs `docs:blog-assets:check` before the manifest-derived channel
+check. The daily/manual
+[`bun-1.4-release-drift.yml`](../.github/workflows/bun-1.4-release-drift.yml)
+workflow repeats that source check; on failure it uploads the no-write refresh
+plan for review. Neither path refreshes, vendors, commits, or deploys media.
+
 `rebuild` derives capability and RSS outputs from the committed manifest, then
 writes a gzip-compressed tar archive and `latest.json` under
 `reports/channel-releases/bun-1.4/`. Reports are ignored by Git.
