@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-25T05:37:24.044Z",
+  "generatedAt": "2026-08-25T08:07:00.595Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -1698,11 +1698,11 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 18,
+        "references": 20,
         "constructors": {
           "as": 3,
           "try": 0,
-          "parse": 3
+          "parse": 4
         },
         "guards": 0,
         "files": [
@@ -1710,19 +1710,23 @@
           "lib/dod/evidence.ts",
           "lib/screenshot-remediation.ts",
           "lib/time.ts",
+          "tools/bun-blog-assets/rights.ts",
+          "tools/bun-blog-assets/types.ts",
           "tools/screenshot-cli.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 18,
-            "constructionCalls": 6,
+            "references": 20,
+            "constructionCalls": 7,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-usages.ts",
               "lib/dod/evidence.ts",
               "lib/screenshot-remediation.ts",
               "lib/time.ts",
+              "tools/bun-blog-assets/rights.ts",
+              "tools/bun-blog-assets/types.ts",
               "tools/screenshot-cli.ts"
             ]
           },
