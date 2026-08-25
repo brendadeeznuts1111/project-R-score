@@ -1,4 +1,25 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @updated Bun.write · fixed v0.4.0 · 2022-12-23 · https://bun.com/blog/bun-v0.4.0
+// @updated Bun.write · fixed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @updated Bun.write · fixed v0.7.2 · 2023-08-03 · https://bun.com/blog/bun-v0.7.2
+// @updated Bun.write · fixed v1.0.7 · 2023-10-20 · https://bun.com/blog/bun-v1.0.7
+// @updated Bun.write · changed v1.0.16 · 2023-12-10 · https://bun.com/blog/bun-v1.0.16
+// @updated Bun.write · fixed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.write · fixed v1.0.23 · 2024-01-16 · https://bun.com/blog/bun-v1.0.23
+// @updated Bun.write · fixed v1.0.24 · 2024-01-20 · https://bun.com/blog/bun-v1.0.24
+// @updated Bun.write · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.write · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated Bun.write · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.write · changed v1.1.37 · 2024-11-26 · https://bun.com/blog/bun-v1.1.37
+// @updated Bun.write · changed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.write · fixed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated Bun.write · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.write · fixed v1.3.5 · 2025-12-17 · https://bun.com/blog/bun-v1.3.5
+// @updated Bun.write · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.write · fixed v1.3.12 · 2026-04-09 · https://bun.com/blog/bun-v1.3.12
+// @verified Bun.write · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/file-io#writing-files-bun-write
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
@@ -38,6 +59,7 @@ import {
   runPmProbes,
 } from '../lib/verification/pm-registry-probes.ts';
 import { PROOF_TAXONOMY_CONTRACT_COUNT } from '../lib/verification/proof-taxonomy.ts';
+import { CLOUDFLARE_MCP_HTTP_SERVERS } from '../lib/verification/cloudflare-token-scope.ts';
 import {
   TOURNAMENT_OWNERSHIP_PROBE_SNAPS,
   TOURNAMENT_SERIES_GLOSSARY_IDS,
@@ -413,9 +435,14 @@ async function main() {
     check('production deploy proof', 'core', () => expectProductionDeployProof()),
     check('well-known/mcp.json', 'core', () =>
       expectJson('/.well-known/mcp.json', j => {
-        if (!Array.isArray(j.servers) || j.servers.length < 5) throw new Error('missing servers[]');
+        if (!Array.isArray(j.servers) || j.servers.length !== CLOUDFLARE_MCP_HTTP_SERVERS.length) {
+          throw new Error(
+            `expected ${CLOUDFLARE_MCP_HTTP_SERVERS.length} Cloudflare servers, got ${Array.isArray(j.servers) ? j.servers.length : 0}`
+          );
+        }
         const names = (j.servers as Array<{ name: string }>).map(s => s.name);
-        if (!names.includes('cloudflare') || !names.includes('cloudflare-docs')) {
+        const missing = CLOUDFLARE_MCP_HTTP_SERVERS.filter(({ name }) => !names.includes(name));
+        if (missing.length > 0) {
           throw new Error(`unexpected servers: ${names.join(', ')}`);
         }
         const auth = j.auth as { type?: string; env?: string } | undefined;
@@ -442,7 +469,7 @@ async function main() {
       expectJson('/registry/cloudflare-token-scope-proof.json', j => {
         if (j.type !== 'CloudflareTokenScopeProof') throw new Error(`type=${j.type}`);
         const catalog = j.mcpCatalog as { ok?: boolean; serverCount?: number } | undefined;
-        if (!catalog?.ok || (catalog.serverCount ?? 0) < 5) {
+        if (!catalog?.ok || catalog.serverCount !== CLOUDFLARE_MCP_HTTP_SERVERS.length) {
           throw new Error('mcpCatalog incomplete');
         }
       })
