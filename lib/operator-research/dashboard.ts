@@ -94,7 +94,6 @@ const AGENT_ODDS_DIR = joinPath(ROOT, 'public/portal/agent-odds');
 const PUBLIC_PORTAL_DIR = joinPath(ROOT, 'public/portal');
 const AGENT_ODDS_V112 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.12.html');
 const AGENT_ODDS_V111 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.11.html');
-const AGENT_ODDS_V110 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.10.html');
 const AGENT_ODDS_V107 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.07.html');
 const AGENT_ODDS_V105 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.05.html');
 const AGENT_ODDS_V104 = joinPath(AGENT_ODDS_DIR, 'dashboard-v1.04.html');
@@ -108,7 +107,6 @@ async function agentOddsHtml(req: Request, preferred?: string): Promise<Response
         preferred,
         AGENT_ODDS_V112,
         AGENT_ODDS_V111,
-        AGENT_ODDS_V110,
         AGENT_ODDS_V107,
         AGENT_ODDS_V105,
         AGENT_ODDS_V104,
@@ -117,7 +115,6 @@ async function agentOddsHtml(req: Request, preferred?: string): Promise<Response
     : [
         AGENT_ODDS_V112,
         AGENT_ODDS_V111,
-        AGENT_ODDS_V110,
         AGENT_ODDS_V107,
         AGENT_ODDS_V105,
         AGENT_ODDS_V104,
@@ -1444,15 +1441,14 @@ export function startResearchDashboard(
         return json(view);
       }
 
-      if (
-        url.pathname === '/' ||
-        url.pathname === '/index.html' ||
-        url.pathname === '/index.html'
-      ) {
+      if (url.pathname === '/' || url.pathname === '/index.html') {
         return agentOddsHtml(req, AGENT_ODDS_V105);
       }
       if (url.pathname === '/dashboard.html' || url.pathname === '/dashboard-events-v1.05.html') {
         return Response.redirect(new URL('/dashboard-v1.05.html', url), 301);
+      }
+      if (url.pathname === '/dashboard-v1.10.html') {
+        return Response.redirect(new URL('/dashboard-v1.11.html', url), 301);
       }
       if (
         url.pathname === '/dashboard-v1.12.html' ||
@@ -1468,9 +1464,6 @@ export function startResearchDashboard(
       }
       if (url.pathname === '/dashboard-v1.11.html') {
         return agentOddsHtml(req, AGENT_ODDS_V111);
-      }
-      if (url.pathname === '/dashboard-v1.10.html') {
-        return agentOddsHtml(req, AGENT_ODDS_V110);
       }
       if (url.pathname === '/dashboard-v1.07.html') {
         return agentOddsHtml(req, AGENT_ODDS_V107);

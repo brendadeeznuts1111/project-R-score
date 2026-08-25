@@ -35,7 +35,7 @@ function csrfHeaders(session: TestCsrfSession, json = false): Record<string, str
 }
 
 describe('Bun Agent dashboard v1.05', () => {
-  test('Pages redirects retired static aliases to the canonical v1.05 dashboard', async () => {
+  test('Pages redirects retired static aliases to their canonical dashboard', async () => {
     const redirects = await Bun.file('public/_redirects').text();
     expect(redirects).toContain(
       '/portal/agent-odds/dashboard.html  /portal/agent-odds/dashboard-v1.05.html  301'
@@ -43,8 +43,12 @@ describe('Bun Agent dashboard v1.05', () => {
     expect(redirects).toContain(
       '/portal/agent-odds/dashboard-events-v1.05.html  /portal/agent-odds/dashboard-v1.05.html  301'
     );
+    expect(redirects).toContain(
+      '/portal/agent-odds/dashboard-v1.10.html  /portal/agent-odds/dashboard-v1.11.html  301'
+    );
     expect(await Bun.file('public/portal/agent-odds/dashboard.html').exists()).toBe(false);
     expect(await Bun.file('public/portal/agent-odds/dashboard-events-v1.05.html').exists()).toBe(false);
+    expect(await Bun.file('public/portal/agent-odds/dashboard-v1.10.html').exists()).toBe(false);
   });
 
   test('TOML rules expose period, pattern, and edge', async () => {
@@ -85,10 +89,14 @@ describe('Bun Agent dashboard v1.05', () => {
         expect(await stable.text()).toContain('v1.05');
       }
 
-      for (const path of ['dashboard.html', 'dashboard-events-v1.05.html']) {
+      for (const [path, canonical] of [
+        ['dashboard.html', '/dashboard-v1.05.html'],
+        ['dashboard-events-v1.05.html', '/dashboard-v1.05.html'],
+        ['dashboard-v1.10.html', '/dashboard-v1.11.html'],
+      ]) {
         const legacy = await fetch(new URL(path, dash.url), { redirect: 'manual' });
         expect(legacy.status).toBe(301);
-        expect(new URL(legacy.headers.get('location')!).pathname).toBe('/dashboard-v1.05.html');
+        expect(new URL(legacy.headers.get('location')!).pathname).toBe(canonical);
       }
 
       const packages = await fetch(new URL('packages', dash.url));
