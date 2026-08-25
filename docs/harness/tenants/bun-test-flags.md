@@ -36,6 +36,18 @@ Example: bunfig `timeout = 10000`; `test:ci` passes `--timeout=30000` → **30s*
 Clear parent `BUN_OPTIONS` in wrappers/hooks so a shell cannot inject `--hot` /
 `--inspect` into `bun test` argv (see `bun-test-changed-staged.ts`).
 
+## Ownership boundary
+
+Bun owns the flags and their execution semantics. This tenant maps those native
+capabilities to repository wrappers; it does not redefine them. Project-owned
+policy includes which suite owns a test, pre-push proof receipts, compact-success
+output, and quality ratchets. A wrapper may pass a CLI `--path-ignore-patterns`
+override to partition a run between exclusive repo groups, but that is local
+orchestration; Bun’s ordinary `pathIgnorePatterns` use is discovery pruning.
+
+Native capability source: [Bun test configuration](https://bun.com/docs/test/configuration)
+and [Bun 1.4](https://bun.com/blog/bun-v1.4#bun-test).
+
 ## Defaults (Bun 1.4)
 
 - Day-loop prefers `bun run test:changed` (and `test:watch` while iterating).
