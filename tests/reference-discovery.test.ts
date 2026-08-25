@@ -38,6 +38,11 @@ describe('reference-discovery', () => {
     expect(isAllowedSimilarEnvPair('HTTPS_PROXY', 'NO_PROXY')).toBe(true);
   });
 
+  test('allows distinct pre-push profile child and kind controls', () => {
+    expect(isAllowedSimilarEnvPair('PREPUSH_PROFILE_CHILD', 'PREPUSH_PROFILE_KIND')).toBe(true);
+    expect(isAllowedSimilarEnvPair('PREPUSH_PROFILE_KIND', 'PREPUSH_PROFILE_CHILD')).toBe(true);
+  });
+
   test(
     'runReferenceDiscovery returns structured report',
     async () => {

@@ -39,8 +39,8 @@ flowchart TB
     O["Ops plane<br/>settle · telegram · VPS"]
   end
 
-  Start --> Claim["Claim one lane<br/>bun run lane:status"]
-  Claim --> Work
+  Start --> Inspect["Inspect lane state<br/>bun run lane:status"]
+  Inspect --> Work
   Work --> H
   Work --> P
   Work --> O
@@ -56,7 +56,7 @@ flowchart TB
 # Start
 bun run lane:status          # or --json for agents
 bun run harness:status
-git status                   # claim disjoint paths before edit
+git status                   # choose disjoint paths before edit
 
 # Stop
 # Commit on the lane branch, or:
@@ -131,7 +131,8 @@ bun run vault:health:bake    # when Proton / env available
 
 ```bash
 bun run lane:status
-# Remove clean worktrees idle >7 days (quarantine non-empty diffs first)
+# Review clean worktrees whose tip commit is >7 days old; tip age is not proof
+# of inactivity or permission to remove a lane
 # Prune branches already merged into origin/main
 
 bun run public:audit:verify
@@ -283,7 +284,7 @@ Run (read-only unless a command is explicitly a check):
 5. bun run monorepo:health
 
 Summarize in ≤12 bullets:
-- STALE / dirty worktrees and whether primary is on main
+- Inactive-candidate / dirty worktrees and whether primary is on main
 - First failing check (command + one-line cause)
 - Recommended plane to claim today (harness / public / ops)
 - Human-only leftovers worth glancing at (remaining-work.md Track A) if relevant
@@ -308,7 +309,8 @@ Then skim docs/harness/tenants/remaining-work.md Track A for open human items.
 
 Output:
 - Pass/fail table for each command
-- Worktrees idle >7 days that look safe to remove (list only; do not remove)
+- Clean worktrees with a tip commit older than 7 days (review candidates only;
+  do not infer inactivity or removal authority)
 - Branches already merged to origin/main that look pruneable (list only)
 - Top 3 actionable follow-ups with owning plane + exact next command
 

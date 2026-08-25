@@ -4,6 +4,7 @@ import {
   healthOf,
   nextFireIso,
   parseLaneCliOpts,
+  worktreeFlag,
   type LaneReport,
 } from '../tools/lane-status.ts';
 
@@ -101,5 +102,20 @@ describe('lane-status nextFireIso', () => {
     const next = nextFireIso('0 9 * * *', 'America/Chicago', from);
     expect(next).toBeString();
     expect(next!.endsWith('Z')).toBe(true);
+  });
+});
+
+describe('lane-status worktreeFlag', () => {
+  test('uses tip commit age only to identify a seven-day review candidate', () => {
+    expect(worktreeFlag(0, 168)).toBe('');
+    expect(worktreeFlag(0, 169)).toBe('INACTIVE-CANDIDATE');
+  });
+
+  test('reports dirty state instead of an inactive candidate', () => {
+    expect(worktreeFlag(1, 500)).toBe('dirty');
+  });
+
+  test('does not treat a missing tip timestamp as inactive', () => {
+    expect(worktreeFlag(0, -1)).toBe('');
   });
 });
