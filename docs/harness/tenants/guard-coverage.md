@@ -74,7 +74,7 @@ is not yet `Implemented`.
 
 ### `CTRL-002` Subprocess authority
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `runtime-tooling`
 
@@ -89,9 +89,14 @@ reintroduced after sanitization.
 
 **Fresh rerun** `bun run guard:subprocess:check`
 
+The guarded child contract binds an absolute executable, complete runtime argv,
+working directory, and a non-inherited environment to exact control grants. A
+growth ratchet inventories 349 raw process sites, but those sites have not been
+migrated through the wrapper; therefore this row is not yet `Implemented`.
+
 ### `REG-001` Registry read, write, and resolution planes
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `factory-registry`
 
@@ -106,6 +111,12 @@ and production auto-install fail closed. Runtime, dev, optional, peer, and
 **Target ratchet** `bun run guard:registry:check`
 
 **Fresh rerun** `bun run guard:registry:check`
+
+The registry SDK now separates metadata read, artifact read, publish, and mirror
+write grants, rejects credential-bearing origins, bounds and parses responses,
+and preserves runtime, development, optional, peer, and optional-peer edges.
+Native `.npmrc`, `bunfig.toml`, `publishConfig`, install, and publish precedence
+are not yet routed through the contract, so this row is not `Implemented`.
 
 ### `NET-001` Network authority
 
@@ -152,7 +163,7 @@ response-byte limit, timeout, and retry budget.
 
 ### `FEED-001` RSS, XML, and image ingestion
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `release-tracker`
 
@@ -167,6 +178,12 @@ by content digest rather than URL.
 **Target ratchet** `bun run guard:feeds:check`
 
 **Fresh rerun** `bun run guard:feeds:check`
+
+Both RSS parsers reject DTD/entity declarations and enforce input, depth, node,
+attribute, and text quotas. Feed images are MIME/dimension bounded and can store
+rights-gated originals and derived thumbnails as verified, related content
+references. The terminable XML boundary, central network migration, durable
+offline manifest, and R2 consumer remain open, so this row is not `Implemented`.
 
 ### `CHAN-001` Channel publication and aliases
 
@@ -205,10 +222,10 @@ application ContentStore.
 **Fresh rerun** `bun run guard:content-store:check`
 
 Branded content and locator identities, strict `ContentRef` parsing,
-operation-specific rights decisions, content/package relation separation, and
-the bounded memory adapter are tested. Atomic local/R2 adapters, alias storage,
-reachability, and consumer migration remain open, so this row is not yet
-`Implemented`.
+operation-specific rights decisions, content/package relation separation, the
+bounded memory adapter, and an atomic fsync-backed local adapter are tested.
+R2, alias storage, reachability, and complete consumer migration remain open,
+so this row is not yet `Implemented`.
 
 ### `RIGHTS-001` Content rights and lifecycle
 
@@ -321,6 +338,7 @@ commit without skipped gates or foreign-lane evidence.
 
 ## Current closure condition
 
-The objective is incomplete while any row is below `Proven`. At this map's
-baseline, `BASE-001` is implemented and every other row is open; therefore the
-map is a work queue, not a completion claim.
+The objective is incomplete while any row is below `Proven`. The current states
+record only evidence already present on the integration candidate. Any row
+below `Proven` remains active work; therefore this map is a work queue, not a
+completion claim.
