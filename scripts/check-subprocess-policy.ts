@@ -49,6 +49,7 @@
 // @verified Bun.file · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/file-io
 import ts from 'typescript';
 import { relativePath } from '../lib/path-bun.ts';
+import { compareSubprocessInventory } from '../lib/security/subprocess-consumer-inventory.ts';
 
 const ROOT = new URL('../', import.meta.url).pathname;
 const MANIFEST_PATH = `${ROOT}scripts/subprocess-authority-inventory.json`;
@@ -56,6 +57,8 @@ const SCAN_ROOTS = ['lib', 'packages', 'scripts', 'tools'] as const;
 
 type AuthorityClass =
   | 'guarded-authority-primitive'
+  | 'guarded-registry-consumer'
+  | 'intentional-native-probe'
   | 'typed-registry-planner'
   | 'raw-bun-package-manager-probe'
   | 'raw-bun-runtime-tooling'
@@ -65,10 +68,26 @@ type AuthorityClass =
 type InventoryEntry = {
   readonly id: string; // brand-ok — opaque, deterministic inventory identity
   readonly file: string;
-  readonly callee: 'Bun.spawn' | 'Bun.spawnSync';
+  readonly callee:
+    'Bun.spawn' | 'Bun.spawnSync' | 'spawnRegistryCommandPlan' | 'spawnRegistryCommandPlanSync';
   readonly authority: AuthorityClass;
   readonly expressionHash: string;
+  readonly controlSpellings: readonly string[];
+  readonly exception?: { readonly owner: string; readonly reason: string };
 };
+
+const INVENTORIED_CONTROL_SPELLINGS = [
+  '--registry',
+  '--connect',
+  '-O',
+  '-R',
+  '--experimental-http2-fetch',
+  '--experimental-http3-fetch',
+  '-r',
+  '--preload',
+  '--require',
+  '--import',
+] as const;
 
 type InventoryManifest = {
   readonly schema: 'factorywager.subprocess-authority-inventory.v1';
@@ -82,6 +101,12 @@ function sha256(value: string): string {
 }
 
 function spawnCallee(node: ts.CallExpression): InventoryEntry['callee'] | undefined {
+  if (ts.isIdentifier(node.expression)) {
+    if (node.expression.text === 'spawnRegistryCommandPlan') return 'spawnRegistryCommandPlan';
+    if (node.expression.text === 'spawnRegistryCommandPlanSync') {
+      return 'spawnRegistryCommandPlanSync';
+    }
+  }
   if (!ts.isPropertyAccessExpression(node.expression)) return undefined;
   if (!ts.isIdentifier(node.expression.expression) || node.expression.expression.text !== 'Bun') {
     return undefined;
@@ -105,7 +130,17 @@ function classifyCall(
   printed: string
 ): AuthorityClass {
   const sourceWithComments = source.text.slice(node.getFullStart(), node.end);
+  if (
+    ts.isIdentifier(node.expression) &&
+    (node.expression.text === 'spawnRegistryCommandPlan' ||
+      node.expression.text === 'spawnRegistryCommandPlanSync')
+  ) {
+    return 'guarded-registry-consumer';
+  }
   if (file === 'lib/security/guarded-bun-process.ts') return 'guarded-authority-primitive';
+  if (sourceWithComments.includes('subprocess-native-probe-reviewed')) {
+    return 'intentional-native-probe';
+  }
   if (sourceWithComments.includes('registry-command-plan-reviewed'))
     return 'typed-registry-planner';
   const command = firstLiteralCommand(node);
@@ -122,6 +157,44 @@ function classifyCall(
     return 'raw-bun-runtime-tooling';
   }
   return 'dynamic-process-boundary';
+}
+
+function nativeProbeException(sourceWithComments: string): InventoryEntry['exception'] | undefined {
+  const match = sourceWithComments.match(
+    /subprocess-native-probe-reviewed\s+owner=([^\s]+)\s+reason="([^"]+)"/
+  );
+  return match?.[1] && match[2] ? { owner: match[1], reason: match[2] } : undefined;
+}
+
+function controlSpellings(node: ts.CallExpression, authority: AuthorityClass): readonly string[] {
+  if (authority === 'non-bun-utility') return [];
+  if (
+    ts.isIdentifier(node.expression) &&
+    (node.expression.text === 'spawnRegistryCommandPlan' ||
+      node.expression.text === 'spawnRegistryCommandPlanSync')
+  ) {
+    return ['--registry'];
+  }
+  const discovered = new Set<string>();
+  const visit = (child: ts.Node): void => {
+    if (ts.isStringLiteralLike(child) || ts.isNoSubstitutionTemplateLiteral(child)) {
+      for (const spelling of INVENTORIED_CONTROL_SPELLINGS) {
+        if (child.text === spelling || child.text.startsWith(`${spelling}=`)) {
+          discovered.add(spelling);
+        }
+      }
+    }
+    if (ts.isTemplateExpression(child)) {
+      for (const spelling of INVENTORIED_CONTROL_SPELLINGS) {
+        if (child.head.text === spelling || child.head.text.startsWith(`${spelling}=`)) {
+          discovered.add(spelling);
+        }
+      }
+    }
+    ts.forEachChild(child, visit);
+  };
+  visit(node);
+  return INVENTORIED_CONTROL_SPELLINGS.filter(spelling => discovered.has(spelling));
 }
 
 async function currentInventory(): Promise<readonly InventoryEntry[]> {
@@ -148,17 +221,27 @@ async function currentInventory(): Promise<readonly InventoryEntry[]> {
         if (ts.isCallExpression(node)) {
           const callee = spawnCallee(node);
           if (callee) {
+            const sourceWithComments = source.text.slice(node.getFullStart(), node.end);
             const printed = printer.printNode(ts.EmitHint.Expression, node, source);
             const expressionHash = sha256(printed);
             const duplicateKey = `${file}\0${callee}\0${expressionHash}`;
             const ordinal = (duplicateCount.get(duplicateKey) ?? 0) + 1;
             duplicateCount.set(duplicateKey, ordinal);
+            const authority = classifyCall(file, node, source, printed);
+            const exception = nativeProbeException(sourceWithComments);
+            if (authority === 'intentional-native-probe' && !exception) {
+              throw new TypeError(
+                `${file} native probe requires exact owner and quoted reason on its reviewed marker`
+              );
+            }
             entries.push({
               id: `${file}#${callee}#${expressionHash.slice(0, 16)}#${ordinal}`,
               file,
               callee,
-              authority: classifyCall(file, node, source, printed),
+              authority,
               expressionHash,
+              controlSpellings: controlSpellings(node, authority),
+              ...(exception ? { exception } : {}),
             });
           }
         }
@@ -173,10 +256,28 @@ async function currentInventory(): Promise<readonly InventoryEntry[]> {
 function summarize(entries: readonly InventoryEntry[]): string {
   const counts = new Map<AuthorityClass, number>();
   for (const entry of entries) counts.set(entry.authority, (counts.get(entry.authority) ?? 0) + 1);
-  return [...counts.entries()]
+  const classes = [...counts.entries()]
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([authority, count]) => `${authority}=${count}`)
     .join(', ');
+  const unowned = entries.filter(entry =>
+    [
+      'dynamic-process-boundary',
+      'raw-bun-package-manager-probe',
+      'raw-bun-runtime-tooling',
+      'typed-registry-planner',
+    ].includes(entry.authority)
+  ).length;
+  const controls = Object.entries(
+    Object.groupBy(
+      entries.flatMap(entry => entry.controlSpellings),
+      spelling => spelling
+    )
+  )
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([spelling, values]) => `${spelling}=${values?.length ?? 0}`)
+    .join(', ');
+  return `${classes}, unowned=${unowned}, controls=[${controls || 'none'}]`;
 }
 
 const entries = await currentInventory();
@@ -193,19 +294,25 @@ if (Bun.argv.includes('--write')) {
 }
 
 const expected = (await Bun.file(MANIFEST_PATH).json()) as InventoryManifest;
+const comparison = compareSubprocessInventory(entries, expected.entries);
+const metadataDrift = entries.filter(entry => {
+  const prior = expected.entries.find(candidate => candidate.id === entry.id);
+  return prior && JSON.stringify(prior) !== JSON.stringify(entry);
+});
 if (
   expected.schema !== manifest.schema ||
-  JSON.stringify(expected.entries) !== JSON.stringify(entries)
+  comparison.additions.length ||
+  comparison.removals.length ||
+  comparison.classificationChanges.length ||
+  metadataDrift.length
 ) {
-  const expectedIds = new Set(expected.entries.map(entry => entry.id));
-  const actualIds = new Set(entries.map(entry => entry.id));
-  const additions = entries.filter(entry => !expectedIds.has(entry.id));
-  const removals = expected.entries.filter(entry => !actualIds.has(entry.id));
   throw new Error(
     [
       'Subprocess authority inventory drifted; additions and removals require explicit review.',
-      ...additions.map(entry => `+ ${entry.id} [${entry.authority}]`),
-      ...removals.map(entry => `- ${entry.id} [${entry.authority}]`),
+      ...comparison.additions.map(id => `+ ${id}`),
+      ...comparison.removals.map(id => `- ${id}`),
+      ...comparison.classificationChanges.map(change => `~ ${change}`),
+      ...metadataDrift.map(entry => `~ ${entry.id} [metadata]`),
       'After review: bun scripts/check-subprocess-policy.ts --write',
     ].join('\n')
   );

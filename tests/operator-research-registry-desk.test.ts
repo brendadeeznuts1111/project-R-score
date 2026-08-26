@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'bun:test';
 import {
-  buildBunPublishArgs,
   getRegistryPackage,
   listPresets,
   packageNameFromPathSuffix,
@@ -50,29 +49,6 @@ describe('registry-desk presets + paths', () => {
       '@factorywager/registry-client'
     );
     expect(packageNameFromPathSuffix('event-store')).toBe('event-store');
-  });
-});
-
-describe('registry-desk publish argv', () => {
-  test('buildBunPublishArgs defaults dry-run + forces --registry local', () => {
-    const args = buildBunPublishArgs({}, REGISTRY_PRESETS.local.url);
-    expect(args[0]).toBe('publish');
-    expect(args).toContain('--dry-run');
-    expect(args).toContain('--registry');
-    expect(args[args.indexOf('--registry') + 1]).toBe('http://localhost:3000/');
-  });
-
-  test('buildBunPublishArgs omits dry-run when dryRun false', () => {
-    const args = buildBunPublishArgs(
-      { dryRun: false, access: 'public', tag: 'next', tolerateRepublish: true },
-      REGISTRY_PRESETS.local.url
-    );
-    expect(args).not.toContain('--dry-run');
-    expect(args).toContain('--access');
-    expect(args).toContain('public');
-    expect(args).toContain('--tag');
-    expect(args).toContain('next');
-    expect(args).toContain('--tolerate-republish');
   });
 });
 

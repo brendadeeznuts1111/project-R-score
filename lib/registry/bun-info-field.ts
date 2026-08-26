@@ -11,7 +11,7 @@
  * "Property … not found" (e.g. react.dependencies is null in the manifest).
  */
 
-import { planBunInfo } from './command-policy.ts';
+import { planBunInfo, spawnRegistryCommandPlan } from './command-policy.ts';
 
 /** Manifest object fields that are `{}` when absent, not errors. */
 export const NULLABLE_OBJECT_FIELDS = new Set([
@@ -116,10 +116,7 @@ function bunInfoPlan(
 }
 
 function spawnBunInfoPlan(plan: ReturnType<typeof bunInfoPlan>, inherit = false) {
-  return Bun.spawn([plan.executable, ...plan.argv], {
-    // registry-command-plan-reviewed — exact metadata plane planner
-    cwd: plan.cwd,
-    env: { ...plan.env },
+  return spawnRegistryCommandPlan(plan, {
     stdout: inherit ? 'inherit' : 'pipe',
     stderr: inherit ? 'inherit' : 'pipe',
     stdin: 'ignore',

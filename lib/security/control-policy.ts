@@ -399,6 +399,55 @@ const ENV_ALIASES = aliasesFor('environment');
 const BUNFIG_ALIASES = aliasesFor('bunfig');
 const REQUEST_ALIASES = aliasesFor('request');
 
+/**
+ * Exact spellings observed in older CLI inventories but not owned by Bun 1.4.
+ * They are denial sentinels, not aliases: a future Bun help addition must be
+ * classified before any guarded child can forward it.
+ */
+export const RESERVED_UNOWNED_BUN_CONTROLS = ['--connect', '-O', '-R'] as const;
+
+/**
+ * Select only authority-bearing controls from an already exact-bound child
+ * argv. Ordinary command flags remain protected by the caller's complete argv
+ * authority while this subset is evaluated by the shared control kernel.
+ */
+export function bunAuthorityControlArgv(
+  argv: readonly string[],
+  command: ControlCommand
+): readonly string[] {
+  const input = command === 'runtime' ? argv : argv.slice(1);
+  const selected: string[] = [];
+  for (let index = 0; index < input.length; index += 1) {
+    const token = input[index] ?? '';
+    if (token === '--') break;
+    if (!token.startsWith('-') || token === '-') {
+      if (command === 'runtime') break;
+      continue;
+    }
+    const equalsIndex = token.indexOf('=');
+    const spelling = equalsIndex === -1 ? token : token.slice(0, equalsIndex);
+    const matched = CLI_ALIASES.get(spelling);
+    if (!matched) {
+      if (
+        command === 'runtime' ||
+        RESERVED_UNOWNED_BUN_CONTROLS.includes(spelling as '--connect' | '-O' | '-R')
+      ) {
+        selected.push(token);
+      }
+      continue;
+    }
+    selected.push(token);
+    if (equalsIndex === -1 && matched.spec.value.kind !== 'boolean') {
+      const value = input[index + 1];
+      if (value !== undefined && !value.startsWith('-')) {
+        selected.push(value);
+        index += 1;
+      }
+    }
+  }
+  return selected;
+}
+
 type WireControlValue = string | boolean | object;
 type ParsedControlValue = string | boolean | object;
 
@@ -902,7 +951,7 @@ export function bunHelpControlDrift(
   ];
   // These short/legacy spellings have no owner in Bun 1.4. If a later runtime
   // advertises one, the control policy must classify it before wrappers accept it.
-  const unowned = ['--connect', '-O', '-R'].flatMap(flag => {
+  const unowned = RESERVED_UNOWNED_BUN_CONTROLS.flatMap(flag => {
     const escaped = flag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const advertised = new RegExp(`^\\s*${escaped}(?:[=,\\s]|$)`, 'm');
     return [

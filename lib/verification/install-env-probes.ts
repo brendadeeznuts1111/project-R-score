@@ -25,6 +25,7 @@ import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { resolveVerificationBunBinary } from './resolve-bun-binary.ts';
 import { withSubsystem } from './subsystem.ts';
 import type { VerificationResult } from './types.ts';
+import { planBunInfo, spawnRegistryCommandPlanSync } from '../registry/command-policy.ts';
 
 export const INSTALL_ENV_PROOF_REPORT_PATH = '/registry/install-env-proof.json';
 export const INSTALL_ENV_VERIFY_SOURCE = 'tools/verify-install-env.ts';
@@ -92,13 +93,17 @@ function spawnInstall(
   args: string[] = []
 ): SpawnResult {
   const bunPath = resolveVerificationBunBinary().path;
-  const proc = Bun.spawnSync([bunPath, 'install', ...args], {
-    cwd,
-    env: { ...Bun.env, ...envPatch },
-    stdout: 'pipe',
-    stderr: 'pipe',
-    stdin: 'ignore',
-  });
+  const proc = Bun.spawnSync(
+    // subprocess-native-probe-reviewed owner=install-env-verification reason="Exercises Bun install environment behavior in disposable directories; shared policy would suppress the behavior under test."
+    [bunPath, 'install', ...args],
+    {
+      cwd,
+      env: { ...Bun.env, ...envPatch },
+      stdout: 'pipe',
+      stderr: 'pipe',
+      stdin: 'ignore',
+    }
+  );
   return {
     exitCode: proc.exitCode ?? 1,
     stdout: decodeOutput(proc.stdout),
@@ -212,8 +217,24 @@ async function freshScopedProbeDir(registryUrl: string): Promise<string> {
 function spawnBunInfo(registryUrl: string, pkg: string): SpawnResult {
   const bunPath = resolveVerificationBunBinary().path;
   const registry = registryUrl.replace(/\/$/, '');
-  const proc = Bun.spawnSync([bunPath, 'info', `--registry=${registry}`, pkg, '--json'], {
-    env: Bun.env,
+  const plan = planBunInfo({
+    executable: bunPath,
+    cwd: process.cwd(),
+    profile: 'ci',
+    registry: { cli: registry },
+    grants: [
+      {
+        operation: 'metadata-read',
+        origins: [new URL(registry).origin],
+        access: 'read',
+        reason: 'install environment scoped-registry verification',
+      },
+    ],
+    packageName: pkg,
+    json: true,
+    environment: { PATH: Bun.env.PATH, CI: Bun.env.CI },
+  });
+  const proc = spawnRegistryCommandPlanSync(plan, {
     stdout: 'pipe',
     stderr: 'pipe',
     stdin: 'ignore',

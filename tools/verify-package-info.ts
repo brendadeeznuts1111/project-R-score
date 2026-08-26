@@ -42,7 +42,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 import { CryptoHasher, inspect } from 'bun';
-import { planBunInfo } from '../lib/registry/command-policy.ts';
+import { planBunInfo, spawnRegistryCommandPlanSync } from '../lib/registry/command-policy.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 import { factoryWagerNpmRegistryUrlFromEnv } from '../config/r2-env.ts';
 
@@ -76,10 +76,7 @@ async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
       json: true,
       environment: { PATH: Bun.env.PATH, CI: Bun.env.CI },
     });
-    const proc = Bun.spawnSync([plan.executable, ...plan.argv], {
-      // registry-command-plan-reviewed — exact metadata plane planner
-      cwd: plan.cwd,
-      env: { ...plan.env },
+    const proc = spawnRegistryCommandPlanSync(plan, {
       stdout: 'pipe',
       stderr: 'pipe',
       stdin: 'ignore',
@@ -108,10 +105,7 @@ async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
         field: 'readme',
         environment: { PATH: Bun.env.PATH, CI: Bun.env.CI },
       });
-      const rProc = Bun.spawnSync([readmePlan.executable, ...readmePlan.argv], {
-        // registry-command-plan-reviewed — exact metadata plane planner
-        cwd: readmePlan.cwd,
-        env: { ...readmePlan.env },
+      const rProc = spawnRegistryCommandPlanSync(readmePlan, {
         stdout: 'pipe',
         stderr: 'pipe',
         stdin: 'ignore',

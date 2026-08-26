@@ -14,6 +14,12 @@
 // @updated --production · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
 // @verified --production · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/bundler/fullstack#production-mode
 import type { ControlProfile } from '../security/control-policy.ts';
+import {
+  prepareGuardedBunChild,
+  spawnGuardedBunChild,
+  spawnGuardedBunChildSync,
+  type PreparedBunChild,
+} from '../security/guarded-bun-process.ts';
 import type { RegistryOperation as RegistrySdkOperation } from '../../packages/registry-client/src/index.ts';
 
 export const REGISTRY_OPERATIONS = [
@@ -58,6 +64,77 @@ export interface RegistryCommandPlan {
   readonly env: Readonly<Record<string, string>>;
   readonly registry: ResolvedRegistry;
   readonly profile: ControlProfile;
+}
+
+type RegistryCommandIo = {
+  readonly stdin?: 'ignore' | 'inherit' | 'pipe';
+  readonly stdout?: 'ignore' | 'inherit' | 'pipe';
+  readonly stderr?: 'ignore' | 'inherit' | 'pipe';
+};
+
+function registryCommandAuthority(plan: RegistryCommandPlan) {
+  const command = plan.argv[0];
+  if (command !== 'install' && command !== 'info' && command !== 'publish') {
+    throw new TypeError(`Registry command plan has unsupported command ${command ?? '<missing>'}`);
+  }
+  return {
+    executable: plan.executable,
+    argv: plan.argv,
+    cwd: plan.cwd,
+    environment: Object.fromEntries(
+      Object.entries(plan.env).map(([name, value]) => [name, [value]])
+    ),
+    profile: plan.profile,
+    command,
+    controlGrants: [
+      {
+        control: 'registry' as const,
+        values: [plan.registry.origin],
+        reason: `${plan.registry.operation} registry plane`,
+      },
+    ],
+    reason: `guarded ${plan.registry.operation} registry command`,
+  };
+}
+
+/** Pure before-spawn composition of registry planning and Bun control policy. */
+export function prepareRegistryCommandPlan(plan: RegistryCommandPlan): PreparedBunChild {
+  return prepareGuardedBunChild({
+    authority: registryCommandAuthority(plan),
+    executable: plan.executable,
+    argv: plan.argv,
+    cwd: plan.cwd,
+    environment: plan.env,
+  });
+}
+
+export function spawnRegistryCommandPlan(plan: RegistryCommandPlan, io: RegistryCommandIo = {}) {
+  return spawnGuardedBunChild(
+    {
+      authority: registryCommandAuthority(plan),
+      executable: plan.executable,
+      argv: plan.argv,
+      cwd: plan.cwd,
+      environment: plan.env,
+    },
+    io
+  );
+}
+
+export function spawnRegistryCommandPlanSync(
+  plan: RegistryCommandPlan,
+  io: RegistryCommandIo = {}
+) {
+  return spawnGuardedBunChildSync(
+    {
+      authority: registryCommandAuthority(plan),
+      executable: plan.executable,
+      argv: plan.argv,
+      cwd: plan.cwd,
+      environment: plan.env,
+    },
+    io
+  );
 }
 
 const ENV_REGISTRY_KEYS = [
@@ -203,6 +280,7 @@ function commandEnvironment(environment: Readonly<Record<string, string | undefi
         'TMP',
         'TEMP',
         'CI',
+        'NO_COLOR',
         'LANG',
         'LC_ALL',
         'SSL_CERT_FILE',
@@ -304,6 +382,9 @@ export interface BunPublishPlanInput extends PlanBase {
   readonly tarball?: string;
   readonly dryRun?: boolean;
   readonly tag?: string;
+  readonly access?: 'public' | 'restricted';
+  readonly tolerateRepublish?: boolean;
+  readonly gzipLevel?: number;
 }
 
 export function planBunPublish(input: BunPublishPlanInput): RegistryCommandPlan {
@@ -317,6 +398,12 @@ export function planBunPublish(input: BunPublishPlanInput): RegistryCommandPlan 
   if (input.tag !== undefined && !/^[a-z0-9][a-z0-9._-]*$/.test(input.tag)) {
     throw new TypeError('bun publish tag is invalid');
   }
+  if (
+    input.gzipLevel !== undefined &&
+    (!Number.isInteger(input.gzipLevel) || input.gzipLevel < 0 || input.gzipLevel > 9)
+  ) {
+    throw new TypeError('bun publish gzip level must be an integer from 0 through 9');
+  }
   return {
     executable: input.executable,
     argv: [
@@ -324,6 +411,9 @@ export function planBunPublish(input: BunPublishPlanInput): RegistryCommandPlan 
       ...(input.tarball ? [input.tarball] : []),
       `--registry=${registry.url}`,
       ...(input.tag ? ['--tag', input.tag] : []),
+      ...(input.access ? ['--access', input.access] : []),
+      ...(input.tolerateRepublish ? ['--tolerate-republish'] : []),
+      ...(input.gzipLevel !== undefined ? ['--gzip-level', String(input.gzipLevel)] : []),
       ...(input.dryRun ? ['--dry-run'] : []),
     ],
     cwd: input.cwd,

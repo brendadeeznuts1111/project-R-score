@@ -1,3 +1,12 @@
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @updated Bun.spawnSync · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawnSync · changed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.spawnSync · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawnSync · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated Bun.spawnSync · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @verified Bun.spawnSync · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 /**
  * Exact, default-deny authority for Bun child processes.
@@ -10,6 +19,7 @@
 
 import { resolvePath } from '../path-bun.ts';
 import {
+  bunAuthorityControlArgv,
   evaluateControlPolicy,
   type ControlCommand,
   type ControlGrant,
@@ -65,15 +75,14 @@ function equalValues(left: readonly string[], right: readonly string[]): boolean
   return left.length === right.length && left.every((value, index) => value === right[index]);
 }
 
-function controlArgv(command: ControlCommand, argv: readonly string[]): readonly string[] {
-  if (command === 'runtime') return argv;
+function assertCommandArgv(command: ControlCommand, argv: readonly string[]): void {
+  if (command === 'runtime') return;
   if (argv[0] !== command) {
     throw new BunChildAuthorityError(
       `Declared ${command} authority requires argv to begin with ${command}`,
       'argv-denied'
     );
   }
-  return argv.slice(1);
 }
 
 /** Validate and sanitize a child launch without creating a process. */
@@ -91,6 +100,7 @@ export function prepareGuardedBunChild(input: GuardedBunChildInput): PreparedBun
   if (!equalValues(input.argv, authority.argv)) {
     throw new BunChildAuthorityError('Child argv is not exactly authorized', 'argv-denied');
   }
+  assertCommandArgv(authority.command, input.argv);
 
   const requestedCwd = resolvePath(input.cwd);
   const authorizedCwd = resolvePath(authority.cwd);
@@ -121,7 +131,7 @@ export function prepareGuardedBunChild(input: GuardedBunChildInput): PreparedBun
   const evaluation = evaluateControlPolicy({
     profile: authority.profile,
     command: authority.command,
-    argv: controlArgv(authority.command, input.argv),
+    argv: bunAuthorityControlArgv(input.argv, authority.command),
     environment: input.environment,
     grants: authority.controlGrants,
   });
@@ -147,6 +157,25 @@ export function spawnGuardedBunChild(
 ) {
   const prepared = prepareGuardedBunChild(input);
   return Bun.spawn([...prepared.cmd], {
+    // guarded-spawn-reviewed — exact child authority primitive
+    cwd: prepared.cwd,
+    env: { ...prepared.env },
+    stdin: io.stdin ?? 'ignore',
+    stdout: io.stdout ?? 'pipe',
+    stderr: io.stderr ?? 'pipe',
+  });
+}
+
+export function spawnGuardedBunChildSync(
+  input: GuardedBunChildInput,
+  io: {
+    readonly stdin?: 'ignore' | 'inherit' | 'pipe';
+    readonly stdout?: 'ignore' | 'inherit' | 'pipe';
+    readonly stderr?: 'ignore' | 'inherit' | 'pipe';
+  } = {}
+) {
+  const prepared = prepareGuardedBunChild(input);
+  return Bun.spawnSync([...prepared.cmd], {
     // guarded-spawn-reviewed — exact child authority primitive
     cwd: prepared.cwd,
     env: { ...prepared.env },

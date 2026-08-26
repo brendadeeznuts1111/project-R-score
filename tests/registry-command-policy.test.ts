@@ -3,6 +3,7 @@ import {
   planBunInfo,
   planBunInstall,
   planBunPublish,
+  prepareRegistryCommandPlan,
   resolveRegistryConfiguration,
   type RegistryPlaneGrant,
 } from '../lib/registry/command-policy.ts';
@@ -255,6 +256,9 @@ describe('guarded Bun package-manager planners', () => {
         ],
         tarball: '/tmp/package.tgz',
         tag: 'canary',
+        access: 'public',
+        tolerateRepublish: true,
+        gzipLevel: 7,
         dryRun: true,
       }).argv
     ).toEqual([
@@ -263,7 +267,51 @@ describe('guarded Bun package-manager planners', () => {
       '--registry=https://publish.example',
       '--tag',
       'canary',
+      '--access',
+      'public',
+      '--tolerate-republish',
+      '--gzip-level',
+      '7',
       '--dry-run',
     ]);
+  });
+
+  test('denies reserved, experimental, preload, and changed registry controls before spawn', () => {
+    const plan = planBunInfo({
+      executable,
+      cwd,
+      profile: 'ci',
+      registry: { cli: 'https://cli.example' },
+      grants: [readGrant],
+      packageName: 'react',
+      json: true,
+      noCache: true,
+    });
+    expect(prepareRegistryCommandPlan(plan).cmd).toEqual([executable, ...plan.argv]);
+
+    for (const flag of [
+      '--connect',
+      '-O',
+      '-R',
+      '--experimental-http2-fetch',
+      '--experimental-http3-fetch',
+      '--preload=./side-effect.ts',
+      '--require=./side-effect.ts',
+      '--import=./side-effect.ts',
+      '-r',
+    ]) {
+      expect(() => prepareRegistryCommandPlan({ ...plan, argv: [...plan.argv, flag] })).toThrow(
+        'Bun child controls denied'
+      );
+    }
+
+    expect(() =>
+      prepareRegistryCommandPlan({
+        ...plan,
+        argv: plan.argv.map(arg =>
+          arg.startsWith('--registry=') ? '--registry=https://other.example' : arg
+        ),
+      })
+    ).toThrow('--registry: missing-grant');
   });
 });

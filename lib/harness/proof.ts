@@ -1561,16 +1561,19 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'guard-subprocess-authority-v1',
     claim:
-      'The guarded Bun child-process boundary binds executable, argv, cwd, environment, and control grants while an exact hashed repository inventory rejects added, removed, or changed raw spawn expressions',
+      'The guarded Bun child-process boundary binds executable, argv, cwd, environment, and control grants while an exact bidirectional inventory classifies raw and guarded consumers and rejects additions, removals, or authority changes',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
       'bun run guard:subprocess:check',
       'lib/security/guarded-bun-process.ts',
+      'lib/security/subprocess-consumer-inventory.ts',
       'scripts/check-subprocess-policy.ts',
       'scripts/subprocess-authority-inventory.json',
       'tests/guarded-bun-process.test.ts',
+      'tests/subprocess-consumer-inventory.test.ts',
+      'tests/registry-command-policy.test.ts',
       'docs/harness/tenants/guard-coverage.md',
     ],
     freshRerun: 'bun run guard:subprocess:check',
