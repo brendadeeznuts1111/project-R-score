@@ -11,6 +11,10 @@ import { getDb } from "@db/index";
 import { logWebhook } from "@utils/tableLogger";
 import { NotFoundError, ValidationError } from "@utils/errors";
 import { createHash, randomUUID } from "crypto";
+import {
+  fetchWebhookEndpoint,
+  validateWebhookEndpointConfig,
+} from "@utils/webhook-endpoints";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -198,11 +202,16 @@ export function createWebhook(input: CreateWebhookInput): WebhookConfig {
   if (!input.name?.trim()) throw ValidationError.field("name", "required");
   if (!input.url?.trim()) throw ValidationError.field("url", "required");
 
-  // Basic URL validation
   try {
-    new URL(input.url);
-  } catch {
-    throw ValidationError.field("url", "must be a valid URL", input.url);
+    const endpoint = validateWebhookEndpointConfig({
+      url: input.url,
+      method: input.method ?? "POST",
+      headers: input.headers ?? { "Content-Type": "application/json" },
+      timeoutMs: input.timeoutMs ?? 30000,
+    });
+    input = { ...input, ...endpoint };
+  } catch (error) {
+    throw ValidationError.field("url", error instanceof Error ? error.message : "is not allowed", input.url);
   }
 
   const headersJson = JSON.stringify(input.headers ?? { "Content-Type": "application/json" });
@@ -321,14 +330,24 @@ export function updateWebhook(webhookId: string, input: UpdateWebhookInput): Web
     params.push(input.name.trim());
   }
 
+  try {
+    const endpoint = validateWebhookEndpointConfig({
+      url: input.url ?? existing.url,
+      method: input.method ?? existing.method,
+      headers: input.headers ?? existing.headers,
+      timeoutMs: input.timeoutMs ?? existing.timeoutMs,
+    });
+    if (input.url !== undefined) input.url = endpoint.url;
+    if (input.method !== undefined) input.method = endpoint.method;
+    if (input.headers !== undefined) input.headers = endpoint.headers;
+    if (input.timeoutMs !== undefined) input.timeoutMs = endpoint.timeoutMs;
+  } catch (error) {
+    throw ValidationError.field("url", error instanceof Error ? error.message : "is not allowed", input.url);
+  }
+
   if (input.url !== undefined) {
-    try {
-      new URL(input.url);
-    } catch {
-      throw ValidationError.field("url", "must be a valid URL", input.url);
-    }
     updates.push("url = ?");
-    params.push(input.url.trim());
+    params.push(input.url);
   }
 
   if (input.method !== undefined) {
@@ -450,21 +469,19 @@ export async function testWebhook(webhookId: string): Promise<WebhookTestResult>
   const startTime = performance.now();
 
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), config.timeoutMs);
-
-    const response = await fetch(config.url, {
-      method: config.method,
-      headers: {
+    const response = await fetchWebhookEndpoint(
+      {
+        url: config.url,
+        method: config.method,
+        headers: {
         ...config.headers,
         "X-Webhook-Test": "true",
         "X-Webhook-Id": config.webhookId,
+        },
+        timeoutMs: config.timeoutMs,
       },
-      body: JSON.stringify(testPayload),
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
+      { body: JSON.stringify(testPayload) }
+    );
 
     const durationMs = Math.round(performance.now() - startTime);
     const responseBody = await response.text().catch(() => undefined);
