@@ -44,7 +44,7 @@
 // @updated Bun.file · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/file-io
-import { join } from 'node:path';
+import { joinPath } from '../../lib/path-bun.ts';
 import { isRecord, type ExpectedBinary, type ReleaseTarget } from './release-target-contract.ts';
 
 export interface PackageManifest {
@@ -137,7 +137,7 @@ export async function validatePackageFiles(
   for (const file of target.requiredPackageFiles) {
     if (!isPackageFileIncluded(file, pkg.files))
       throw new Error(`package file is excluded by package files: ${file}`);
-    if (!(await Bun.file(join(packageDirectory, file)).exists()))
+    if (!(await Bun.file(joinPath(packageDirectory, file)).exists()))
       throw new Error(`required package file does not exist: ${file}`);
   }
   return targets;
@@ -154,7 +154,7 @@ export async function validateExportClosure(
   for (const file of targets) {
     if (!isPackageFileIncluded(file, pkg.files))
       throw new Error(`package file is excluded by package files: ${file}`);
-    if (!(await Bun.file(join(packageDirectory, file)).exists()))
+    if (!(await Bun.file(joinPath(packageDirectory, file)).exists()))
       throw new Error(`required package file does not exist: ${file}`);
   }
   return targets;

@@ -2,7 +2,7 @@
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
-import { isAbsolute, relative } from 'node:path';
+import { relativePath } from '../../lib/path-bun.ts';
 
 export async function commandText(command: string[], cwd: string): Promise<string> {
   const process = Bun.spawn(command, { cwd, stdout: 'pipe', stderr: 'pipe' });
@@ -34,8 +34,8 @@ export async function assertRealPathInside(
     commandText(['realpath', root], root),
     commandText(['realpath', candidate], root),
   ]);
-  const path = relative(realRoot, realCandidate);
-  if (path.startsWith('..') || isAbsolute(path))
+  const path = relativePath(realRoot, realCandidate);
+  if (path.startsWith('..') || path.startsWith('/'))
     throw new Error(`${context} resolves outside the repository: ${candidate}`);
 }
 

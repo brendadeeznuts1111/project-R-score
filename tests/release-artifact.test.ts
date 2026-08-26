@@ -43,6 +43,7 @@ function target(overrides: Partial<ReleaseTarget> = {}): ReleaseTarget {
       '.bun-version',
       'bun.lock',
       'config/release-targets.json',
+      'lib/path-bun.ts',
       'package.json',
       'packages/registry-client/LICENSE',
       'packages/registry-client/README.md',

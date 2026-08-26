@@ -1,4 +1,4 @@
-import { isAbsolute, relative, resolve } from 'node:path';
+import { relativePath, resolvePath } from '../../lib/path-bun.ts';
 
 export interface ExpectedBinary {
   name: string;
@@ -57,8 +57,8 @@ function parseList(value: unknown, context: string, allowEmpty = true): string[]
 
 function safePath(value: string, context: string): void {
   const base = '/release-contract-root';
-  const candidate = relative(base, resolve(base, value.replaceAll('\\', '/')));
-  if (isAbsolute(value) || !value || candidate.startsWith('..')) {
+  const candidate = relativePath(base, resolvePath(base, value.replaceAll('\\', '/')));
+  if (value.startsWith('/') || !value || candidate.startsWith('..')) {
     throw new Error(`${context} must stay inside the package directory: ${value}`);
   }
 }

@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/file-io — Bun.file
 
-import { join, relative, resolve, sep } from 'node:path';
+import { joinPath, relativePath, resolvePath } from '../../lib/path-bun.ts';
 import { validateJunitXml, type JunitSummary } from './release-junit-contract.ts';
 import {
   validateExpectedBinaries,
@@ -46,8 +46,7 @@ export interface ReleaseReceipt {
 }
 
 const display = (root: string, path: string): string => {
-  const value = relative(root, path);
-  return (value || '.').split(sep).join('/');
+  return relativePath(root, path);
 };
 
 export async function runReleaseGate(
@@ -57,19 +56,19 @@ export async function runReleaseGate(
   const root = await repositoryRoot(cwd);
   const target = await loadTarget(root, options.manifest, options.target);
   validateChannel(target, options.channel);
-  const directory = resolve(root, target.packageDirectory);
+  const directory = resolvePath(root, target.packageDirectory);
   await assertRealPathInside(root, directory, 'release package directory');
-  const pkg = (await Bun.file(join(directory, 'package.json')).json()) as PackageManifest;
+  const pkg = (await Bun.file(joinPath(directory, 'package.json')).json()) as PackageManifest;
   if (pkg.name !== target.packageName || typeof pkg.version !== 'string' || !pkg.version)
     throw new Error('package identity/version mismatch');
   validateExpectedBinaries(pkg, target);
   validatePackageReleaseMetadata(pkg, target);
   await validatePackageFiles(directory, pkg, target);
   for (const file of target.requiredPackageFiles)
-    await assertRealPathInside(root, join(directory, file), 'required package file');
+    await assertRealPathInside(root, joinPath(directory, file), 'required package file');
   const sources = await Promise.all(
     target.sourceInputs.map(async path => {
-      const source = resolve(root, path);
+      const source = resolvePath(root, path);
       await commandText(['git', 'ls-files', '--error-unmatch', '--', path], root);
       await assertRealPathInside(root, source, 'release source input');
       return { path, sha256: await sha256File(source) };
@@ -83,9 +82,9 @@ export async function runReleaseGate(
   );
   if (unexpected.length)
     throw new Error(`release package has untracked build inputs/files: ${unexpected.join(', ')}`);
-  const tarball = resolve(
+  const tarball = resolvePath(
     root,
-    options.tarball || join(target.archiveDirectory, `${target.target}-${pkg.version}.tgz`)
+    options.tarball || joinPath(target.archiveDirectory, `${target.target}-${pkg.version}.tgz`)
   );
   const packed = await tarballFiles(tarball, root);
   const expected = new Set(target.requiredPackageFiles);
@@ -103,7 +102,7 @@ export async function runReleaseGate(
     throw new Error('embedded tarball package identity/version mismatch');
   validatePackageReleaseMetadata(packedManifest, target);
   const gitCommit = await commandText(['git', 'rev-parse', 'HEAD'], root);
-  const junitPath = resolve(root, options.junit || target.junitPath);
+  const junitPath = resolvePath(root, options.junit || target.junitPath);
   const junit = validateJunitXml(
     await Bun.file(junitPath).text(),
     gitCommit,
@@ -114,10 +113,10 @@ export async function runReleaseGate(
   const artifacts = await Promise.all(
     target.hashArtifacts.map(async path => ({
       path: `${target.packageDirectory}/${path}`,
-      sha256: await sha256File(join(directory, path)),
+      sha256: await sha256File(joinPath(directory, path)),
     }))
   );
-  const manifestPath = resolve(root, options.manifest);
+  const manifestPath = resolvePath(root, options.manifest);
   const receipt: ReleaseReceipt = {
     schemaVersion: 1,
     target: target.target,
@@ -136,7 +135,7 @@ export async function runReleaseGate(
     },
     artifacts,
   };
-  const receiptPath = resolve(
+  const receiptPath = resolvePath(
     root,
     options.receipt ||
       `tmp/releases/${target.target}-${pkg.version}-${options.channel}.receipt.json`
