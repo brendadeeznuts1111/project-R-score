@@ -1,3 +1,5 @@
+import { fetchFinalServer } from '../../../../../../src/security/final-outbound.ts';
+
 /**
  * Fantasy402 Adapter - Protocol Translation Layer
  * Domain-Driven Design Implementation
@@ -109,7 +111,7 @@ export class Fantasy402Adapter {
         RRO: '1',
       });
 
-      const response = await fetch(`${this.config.apiUrl}/System/authenticateCustomer`, {
+      const response = await fetchFinalServer(`${this.config.apiUrl}/System/authenticateCustomer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -211,10 +213,12 @@ export class Fantasy402Adapter {
       ...this.getAuthHeaders(),
       ...options.headers,
     };
+    const method = (options.method ?? 'GET').toUpperCase();
+    const maxAttempts = method === 'GET' || method === 'HEAD' ? retries : 1;
 
-    for (let attempt = 1; attempt <= retries; attempt++) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
-        const response = await fetch(url, {
+        const response = await fetchFinalServer(url, {
           ...options,
           headers,
           signal: AbortSignal.timeout(this.config.requestTimeout),
@@ -229,9 +233,9 @@ export class Fantasy402Adapter {
       } catch (error) {
         console.warn(`❌ Fantasy402 Adapter: Request attempt ${attempt} failed:`, error);
 
-        if (attempt === retries) {
+        if (attempt === maxAttempts) {
           throw new Error(
-            `Request failed after ${retries} attempts: ${error instanceof Error ? error.message : String(error)}`
+            `Request failed after ${maxAttempts} attempts: ${error instanceof Error ? error.message : String(error)}`
           );
         }
 

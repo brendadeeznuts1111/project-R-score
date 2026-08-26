@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalDeployment } from '../../../../src/security/final-outbound.ts';
+
 /**
  * Domain Validation Script - Cross-Platform Bun Shell
  * TypeScript-powered domain health checking with full autocomplete
@@ -72,7 +74,7 @@ async function makeHTTPRequest(
   method: 'GET' | 'HEAD' = 'HEAD'
 ): Promise<HTTPResponse> {
   try {
-    const response = await fetch(url, { method });
+    const response = await fetchFinalDeployment(url, { method });
 
     return {
       status: response.status,

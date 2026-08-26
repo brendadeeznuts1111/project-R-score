@@ -1,3 +1,5 @@
+import { fetchFinalEdge } from '../../src/security/final-outbound.ts';
+
 /**
  * Cloudflare Worker for Automated Documentation Serving
  * Crystal Clear Architecture - Documentation CDN
@@ -339,7 +341,7 @@ class DocsCDN {
       headers['Authorization'] = `token ${this.env.GITHUB_TOKEN}`;
     }
 
-    const response = await fetch(githubUrl, { headers });
+    const response = await fetchFinalEdge(githubUrl, { headers });
 
     if (!response.ok) {
       throw new Error(`GitHub fetch failed: ${response.status} ${response.statusText}`);
@@ -541,7 +543,7 @@ class DocsCDN {
   private async checkPagesHealth(pagesUrl: string): Promise<{status: string, responseTime: number}> {
     try {
       const startTime = Date.now();
-      const response = await fetch(`${pagesUrl}/api/health`, {
+      const response = await fetchFinalEdge(`${pagesUrl}/api/health`, {
         signal: AbortSignal.timeout(5000)
       });
       const responseTime = Date.now() - startTime;

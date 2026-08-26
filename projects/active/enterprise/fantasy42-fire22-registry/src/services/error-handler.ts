@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { fetchFinalServer } from '../security/final-outbound.ts';
+
 /**
  * 🚨 Advanced Error Handling System
  *
@@ -593,7 +595,7 @@ export class AdvancedErrorHandler extends EventEmitter {
     this.errorBatch = [];
 
     try {
-      const response = await fetch(this.reportingEndpoint, {
+      const response = await fetchFinalServer(this.reportingEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

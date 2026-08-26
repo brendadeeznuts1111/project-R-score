@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalServer } from '../security/final-outbound.ts';
+
 /**
  * 🎯 Fantasy402 Integration Service
  *
@@ -645,7 +647,6 @@ class Fantasy402Client extends EventEmitter {
     const url = `${this.config.apiUrl}${endpoint}`;
 
     const requestOptions: RequestInit = {
-      timeout: this.config.timeout,
       headers: {
         'User-Agent': 'Fantasy42-Fire22-Registry/5.1.0',
         Accept: 'application/json',
@@ -653,12 +654,14 @@ class Fantasy402Client extends EventEmitter {
       },
       ...options,
     };
+    const method = (requestOptions.method ?? 'GET').toUpperCase();
+    const maxAttempts = method === 'GET' || method === 'HEAD' ? this.config.retryAttempts : 1;
 
     let lastError: Error | null = null;
 
-    for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
-        const response = await fetch(url, requestOptions);
+        const response = await fetchFinalServer(url, requestOptions);
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -673,9 +676,9 @@ class Fantasy402Client extends EventEmitter {
         };
       } catch (error) {
         lastError = error as Error;
-        console.error(`❌ Request attempt ${attempt}/${this.config.retryAttempts} failed:`, error);
+        console.error(`❌ Request attempt ${attempt}/${maxAttempts} failed:`, error);
 
-        if (attempt < this.config.retryAttempts) {
+        if (attempt < maxAttempts) {
           await new Promise(resolve => setTimeout(resolve, this.config.retryDelay * attempt));
         }
       }

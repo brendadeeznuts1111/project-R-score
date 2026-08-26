@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalServer } from '../../../../src/security/final-outbound.ts';
+
 /**
  * Cross-Platform Demonstration Script
  * Shows Bun Shell working perfectly on Windows, Mac, and Linux
@@ -185,7 +187,7 @@ async function testNetworkConnectivity(): Promise<NetworkTest[]> {
     const startTime = Date.now();
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchFinalServer(url, {
         method: 'HEAD',
         signal: AbortSignal.timeout(5000), // 5 second timeout
       });

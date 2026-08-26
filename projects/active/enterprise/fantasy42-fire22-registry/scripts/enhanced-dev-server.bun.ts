@@ -9,6 +9,7 @@
 import { existsSync, readFileSync, writeFileSync, watch } from 'fs';
 import { join, extname, dirname } from 'path';
 import { serve, file } from 'bun';
+import { fetchFinalServer } from '../src/security/final-outbound.ts';
 
 interface DevConfig {
   port: number;
@@ -128,7 +129,7 @@ class EnhancedDevServer {
     this.log(`Proxying API request to: ${targetUrl}`);
 
     try {
-      const response = await fetch(targetUrl, {
+      const response = await fetchFinalServer(targetUrl, {
         method: request.method,
         headers: {
           ...Object.fromEntries(request.headers.entries()),

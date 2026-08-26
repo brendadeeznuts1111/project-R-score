@@ -14,6 +14,7 @@ import {
 } from './html-templates';
 import { TimezoneUtils } from './timezone-configuration';
 import { envConfig } from './environment-configuration';
+import { fetchFinalServer } from '../../../src/security/final-outbound.ts';
 
 export interface ServerConfig {
   port?: number;
@@ -450,7 +451,7 @@ export async function demoETagCaching(): Promise<void> {
   try {
     // First request - should get ETag
     console.info('📡 First request (should get ETag)...');
-    const firstResponse = await fetch(demoUrl);
+    const firstResponse = await fetchFinalServer(demoUrl);
     const etag = firstResponse.headers.get('etag');
     console.info(`   📋 Status: ${firstResponse.status}`);
     console.info(`   🏷️  ETag: ${etag}`);
@@ -459,7 +460,7 @@ export async function demoETagCaching(): Promise<void> {
     if (etag) {
       // Second request with If-None-Match - should get 304
       console.info('\n📡 Second request (with If-None-Match)...');
-      const secondResponse = await fetch(demoUrl, {
+      const secondResponse = await fetchFinalServer(demoUrl, {
         headers: {
           'If-None-Match': etag,
         },

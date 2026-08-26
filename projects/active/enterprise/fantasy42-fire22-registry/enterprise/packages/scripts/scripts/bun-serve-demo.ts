@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchFinalServer } from '../../../../src/security/final-outbound.ts';
 /**
  * Bun.serve() HTTP Server Demo
  * Demonstrating Bun's built-in HTTP server capabilities
@@ -213,7 +215,7 @@ async function testServer() {
   console.info('🔍 Testing HTTP endpoints:');
   for (const endpoint of endpoints) {
     try {
-      const response = await fetch(`${baseUrl}${endpoint.path}`);
+      const response = await fetchFinalServer(`${baseUrl}${endpoint.path}`);
       const status = response.ok ? '✅' : '❌';
       console.info(`   ${status} ${endpoint.path} - ${response.status} (${endpoint.description})`);
     } catch (error) {

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalServer } from '../../../../../src/security/final-outbound.ts';
+
 /**
  * 🔒 Fantasy42 Secure HTTP Client
  *
@@ -117,10 +119,12 @@ export class Fantasy42SecureClient {
     const envConfig = EnvironmentConfig[this.environment as keyof typeof EnvironmentConfig];
     const timeout = config.timeout || envConfig?.timeout || 10000;
     const maxRetries = config.retryAttempts || envConfig?.retryAttempts || 3;
+    const method = (config.method || 'GET').toUpperCase();
+    const maxAttempts = method === 'GET' || method === 'HEAD' ? maxRetries : 1;
 
     let lastError: Error | null = null;
 
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
         const requestOptions: RequestInit = {
           method: config.method || 'GET',
@@ -128,7 +132,7 @@ export class Fantasy42SecureClient {
           ...(config.body && { body: JSON.stringify(config.body) }),
         };
 
-        const response = await fetch(url, {
+        const response = await fetchFinalServer(url, {
           ...requestOptions,
           signal: AbortSignal.timeout(timeout),
         });
@@ -172,9 +176,9 @@ export class Fantasy42SecureClient {
         }
 
         // Wait before retry (exponential backoff)
-        if (attempt < maxRetries) {
+        if (attempt < maxAttempts) {
           const delay = Math.pow(2, attempt) * 1000;
-          console.info(`⏳ Retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+          console.info(`⏳ Retrying in ${delay}ms (attempt ${attempt + 1}/${maxAttempts})`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
@@ -300,7 +304,7 @@ export class Fantasy42SecureClient {
       const monitoringURL = process.env.FANTASY42_MONITORING_URL;
       if (!monitoringURL) return;
 
-      await fetch(monitoringURL, {
+      await fetchFinalServer(monitoringURL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

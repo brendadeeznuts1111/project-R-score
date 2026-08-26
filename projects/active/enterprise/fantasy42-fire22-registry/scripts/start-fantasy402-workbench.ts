@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalServer } from '../src/security/final-outbound.ts';
+
 /**
  * 🚀 Fantasy402 Testing Workbench Startup Script
  *
@@ -224,7 +226,7 @@ class Fantasy402WorkbenchLauncher {
 
     for (let i = 0; i < maxRetries; i++) {
       try {
-        const response = await fetch(
+        const response = await fetchFinalServer(
           `http://${this.config.host}:${this.config.port}/api/fantasy402/health`
         );
 
@@ -290,7 +292,7 @@ class Fantasy402WorkbenchLauncher {
     // Setup periodic health checks
     setInterval(async () => {
       try {
-        const response = await fetch(
+        const response = await fetchFinalServer(
           `http://${this.config.host}:${this.config.port}/api/fantasy402/health`
         );
         if (!response.ok) {
