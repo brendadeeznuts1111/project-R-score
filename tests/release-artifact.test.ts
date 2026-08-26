@@ -73,6 +73,7 @@ function target(overrides: Partial<ReleaseTarget> = {}): ReleaseTarget {
       'dist/index.d.ts',
     ],
     hashArtifacts: ['dist/index.js', 'dist/index.d.ts'],
+    allowedGeneratedFiles: ['tsconfig.tsbuildinfo'],
     publicationRoutes: {
       'native-npm': { enabled: false },
       'factory-artifact': { enabled: false },

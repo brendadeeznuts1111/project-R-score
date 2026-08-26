@@ -19,6 +19,7 @@ export interface ReleaseTarget {
   expectedBinaries: ExpectedBinary[];
   requiredPackageFiles: string[];
   hashArtifacts: string[];
+  allowedGeneratedFiles: string[];
   publicationRoutes: Record<string, { enabled: false; endpoint?: string }>;
 }
 
@@ -93,6 +94,7 @@ export function parseReleaseTargets(value: unknown): ReleaseTargetsManifest {
         'expectedBinaries',
         'requiredPackageFiles',
         'hashArtifacts',
+        'allowedGeneratedFiles',
         'publicationRoutes',
       ],
       context
@@ -147,7 +149,13 @@ export function parseReleaseTargets(value: unknown): ReleaseTargetsManifest {
       false
     );
     const hashArtifacts = parseList(raw.hashArtifacts, `${context}.hashArtifacts`);
-    [...requiredPackageFiles, ...hashArtifacts].forEach(path => safePath(path, context));
+    const allowedGeneratedFiles = parseList(
+      raw.allowedGeneratedFiles,
+      `${context}.allowedGeneratedFiles`
+    );
+    [...requiredPackageFiles, ...hashArtifacts, ...allowedGeneratedFiles].forEach(path =>
+      safePath(path, context)
+    );
     if (hashArtifacts.some(path => !requiredPackageFiles.includes(path)))
       throw new Error(`${context}.hashArtifacts must also be required package files`);
     return {
@@ -164,6 +172,7 @@ export function parseReleaseTargets(value: unknown): ReleaseTargetsManifest {
       expectedBinaries,
       requiredPackageFiles,
       hashArtifacts,
+      allowedGeneratedFiles,
       publicationRoutes,
     };
   });

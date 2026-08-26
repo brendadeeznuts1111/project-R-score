@@ -75,7 +75,9 @@ export async function runReleaseGate(
     })
   );
   const allowed = new Set(
-    target.requiredPackageFiles.map(path => `${target.packageDirectory}/${path}`)
+    [...target.requiredPackageFiles, ...target.allowedGeneratedFiles].map(
+      path => `${target.packageDirectory}/${path}`
+    )
   );
   const unexpected = [...(await packageUntracked(root, target.packageDirectory))].filter(
     path => !allowed.has(path) && !path.startsWith(`${target.packageDirectory}/node_modules/`)
