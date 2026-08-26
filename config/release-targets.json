@@ -28,6 +28,13 @@
         "packages/registry-client/tsconfig.json",
         "packages/registry-client/src/index.ts",
         "scripts/release-artifact.ts",
+        "scripts/lib/release-artifact-io.ts",
+        "scripts/lib/release-artifact-lifecycle.ts",
+        "scripts/lib/release-artifact-runner.ts",
+        "scripts/lib/release-junit-contract.ts",
+        "scripts/lib/release-package-contract.ts",
+        "scripts/lib/release-receipt-io.ts",
+        "scripts/lib/release-target-contract.ts",
         "scripts/run-with-junit-env.ts",
         "scripts/verify-registry-client-package.ts",
         "tests/registry-sdk.test.ts"
