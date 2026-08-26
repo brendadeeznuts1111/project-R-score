@@ -17,6 +17,11 @@ import { RegistryAuth, AuthConfigs } from '@factorywager/registry-core/auth';
 import type { PackageManifest, PackageVersion, PublishRequest } from '@factorywager/registry-core/types';
 import { CLOUDFLARE_DEFAULTS } from '../../../../../../../config/r2-env.ts';
 import { resolveR2InfraConfig } from '../../../../../../../lib/security/infra-secrets';
+import {
+  createFactoryRegistryOutboundAuthority,
+  fetchFactoryRegistryOutbound,
+  type FactoryRegistryOutboundAuthority,
+} from '../../../src/outbound.ts';
 
 export interface ServerOptions {
   port?: number;
@@ -38,6 +43,7 @@ export class NPMRegistryServer {
   private storage: R2StorageAdapter;
   private auth: RegistryAuth;
   private options: ServerOptions;
+  private upstreamAuthority: FactoryRegistryOutboundAuthority;
   private server?: ReturnType<typeof Bun.serve>;
 
   constructor(options: ServerOptions = {}) {
@@ -51,6 +57,10 @@ export class NPMRegistryServer {
       upstreamRegistry: 'https://registry.npmjs.org',
       ...options,
     };
+    this.upstreamAuthority = createFactoryRegistryOutboundAuthority(
+      'npm-registry',
+      this.options.upstreamRegistry!
+    );
 
     this.storage = new R2StorageAdapter({
       accountId: options.storage?.accountId,
@@ -300,7 +310,11 @@ export class NPMRegistryServer {
     // If not found and proxy enabled, fetch from upstream
     if (!manifest && this.options.allowProxy) {
       try {
-        const upstreamResponse = await fetch(`${this.options.upstreamRegistry}/${packageName}`);
+        const upstreamUrl = `${this.options.upstreamRegistry!.replace(/\/$/, '')}/${packageName}`;
+        const upstreamResponse = await fetchFactoryRegistryOutbound(
+          this.upstreamAuthority,
+          upstreamUrl
+        );
         if (upstreamResponse.ok) {
           manifest = await upstreamResponse.json();
         }

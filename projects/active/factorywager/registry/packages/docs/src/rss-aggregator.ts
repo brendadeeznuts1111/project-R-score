@@ -11,6 +11,10 @@
 
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
+import {
+  createFactoryRegistryOutboundAuthority,
+  fetchFactoryRegistryOutbound,
+} from '../../../src/outbound.ts';
 
 export interface RSSFeed {
   id: string;
@@ -161,7 +165,8 @@ export class RSSAggregator {
   private async fetchFeed(feed: RSSFeed): Promise<RSSItem[]> {
     console.info(styled(`📡 Fetching: ${feed.name}`, 'info'));
 
-    const response = await fetch(feed.url, {
+    const authority = createFactoryRegistryOutboundAuthority('rss-feed', feed.url);
+    const response = await fetchFactoryRegistryOutbound(authority, feed.url, {
       headers: {
         'User-Agent': 'factorywager-rss-aggregator/1.0',
         'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml',

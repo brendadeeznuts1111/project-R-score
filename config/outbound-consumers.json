@@ -2543,42 +2543,9 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/factorywager/registry/apps/cli/src/cli.ts#fetch#054f1f7151d19486#1",
-      "path": "projects/active/factorywager/registry/apps/cli/src/cli.ts",
-      "line": 239,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "054f1f7151d19486",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/apps/cli/src/cli.ts#fetch#f94df70e420acf98#1",
-      "path": "projects/active/factorywager/registry/apps/cli/src/cli.ts",
-      "line": 282,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "f94df70e420acf98",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/apps/cli/src/cli.ts#fetch#09ed20af2ee7df29#1",
-      "path": "projects/active/factorywager/registry/apps/cli/src/cli.ts",
-      "line": 298,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "09ed20af2ee7df29",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/factorywager/registry/apps/cli/src/cli.ts#fetchRegistryReadTokenless#e385b2442d0d6517#1",
       "path": "projects/active/factorywager/registry/apps/cli/src/cli.ts",
-      "line": 331,
+      "line": 336,
       "column": 30,
       "callee": "fetchRegistryReadTokenless",
       "fingerprint": "e385b2442d0d6517",
@@ -2589,7 +2556,7 @@
     {
       "id": "projects/active/factorywager/registry/apps/cli/src/cli.ts#fetchRegistryReadTokenless#38209327739df14d#1",
       "path": "projects/active/factorywager/registry/apps/cli/src/cli.ts",
-      "line": 400,
+      "line": 405,
       "column": 30,
       "callee": "fetchRegistryReadTokenless",
       "fingerprint": "38209327739df14d",
@@ -2600,35 +2567,13 @@
     {
       "id": "projects/active/factorywager/registry/apps/cli/src/cli.ts#fetchRegistryReadTokenless#f9cd0a0bb796737b#1",
       "path": "projects/active/factorywager/registry/apps/cli/src/cli.ts",
-      "line": 434,
+      "line": 439,
       "column": 30,
       "callee": "fetchRegistryReadTokenless",
       "fingerprint": "f9cd0a0bb796737b",
       "classification": "owned-policy-boundary",
       "owner": "network-policy",
       "reason": "Typed guarded boundary call with explicit route, authority, credentials, redirect, deadline, and response policy."
-    },
-    {
-      "id": "projects/active/factorywager/registry/apps/profile-cli/src/cli.ts#fetch#da9a8005c0e4533a#1",
-      "path": "projects/active/factorywager/registry/apps/profile-cli/src/cli.ts",
-      "line": 93,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "da9a8005c0e4533a",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/apps/server/src/server.ts#fetch#25fcb5ff14f3d7d9#1",
-      "path": "projects/active/factorywager/registry/apps/server/src/server.ts",
-      "line": 303,
-      "column": 40,
-      "callee": "fetch",
-      "fingerprint": "25fcb5ff14f3d7d9",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
       "id": "projects/active/factorywager/registry/packages/bunx/src/index.ts#fetchRegistryReadTokenless#efe05be933986b42#1",
@@ -2664,193 +2609,6 @@
       "reason": "Typed guarded boundary call with explicit route, authority, credentials, redirect, deadline, and response policy."
     },
     {
-      "id": "projects/active/factorywager/registry/packages/dev-dashboard/src/alerts/webhook.ts#fetch#aa17d9e29aa495da#1",
-      "path": "projects/active/factorywager/registry/packages/dev-dashboard/src/alerts/webhook.ts",
-      "line": 347,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "aa17d9e29aa495da",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/dev-dashboard/src/alerts/webhook.ts#fetch#51bec8bcbc6d011a#1",
-      "path": "projects/active/factorywager/registry/packages/dev-dashboard/src/alerts/webhook.ts",
-      "line": 483,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "51bec8bcbc6d011a",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/dev-dashboard/src/duoplus/fragment-loader.ts#fetch#6ab9cd88f5a695f2#1",
-      "path": "projects/active/factorywager/registry/packages/dev-dashboard/src/duoplus/fragment-loader.ts",
-      "line": 90,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "6ab9cd88f5a695f2",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#38c1de6f484c4cdd#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 113,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "38c1de6f484c4cdd",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#a7ca4bb31a1eac75#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 143,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "a7ca4bb31a1eac75",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#74426296d461d6f4#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 174,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "74426296d461d6f4",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#a7ca4bb31a1eac75#2",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 197,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "a7ca4bb31a1eac75",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#2db38d665700a8c2#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 235,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "2db38d665700a8c2",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#7c2e9361d90d6a4a#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 256,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "7c2e9361d90d6a4a",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#8718ab581f460515#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 274,
-      "column": 34,
-      "callee": "fetch",
-      "fingerprint": "8718ab581f460515",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#33a010bab072e378#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 310,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "33a010bab072e378",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts#fetch#ea20c1ae7420262e#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/docs-sync.ts",
-      "line": 325,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "ea20c1ae7420262e",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts#fetch#e7c3dab15f272638#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts",
-      "line": 118,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "e7c3dab15f272638",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts#fetch#ee41cd386f4daf05#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts",
-      "line": 170,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "ee41cd386f4daf05",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts#fetch#9f1e3740a19af179#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts",
-      "line": 180,
-      "column": 31,
-      "callee": "fetch",
-      "fingerprint": "9f1e3740a19af179",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts#fetch#c174f819a39bf6c5#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/package-docs.ts",
-      "line": 238,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "c174f819a39bf6c5",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/docs/src/rss-aggregator.ts#fetch#32042b219f44714c#1",
-      "path": "projects/active/factorywager/registry/packages/docs/src/rss-aggregator.ts",
-      "line": 164,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "32042b219f44714c",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-outbound.ts#fetchWithPolicy#5cd84cd6a1341552#1",
       "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-outbound.ts",
       "line": 125,
@@ -2862,15 +2620,26 @@
       "reason": "Account-bound R2 boundary owns exact HTTPS authority, bucket/key/query validation, scoped Authorization, direct routing, protocol policy, deadlines, response bounds, offline denial, and unsafe write replay classification."
     },
     {
-      "id": "projects/active/factorywager/registry/packages/user-profile/src/core.ts#fetch#c124a040ae28e1ee#1",
-      "path": "projects/active/factorywager/registry/packages/user-profile/src/core.ts",
-      "line": 306,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "c124a040ae28e1ee",
-      "classification": "unowned",
+      "id": "projects/active/factorywager/registry/src/outbound.ts#fetchWithPolicy#64a9bc89c6960d6f#1",
+      "path": "projects/active/factorywager/registry/src/outbound.ts",
+      "line": 198,
+      "column": 10,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "64a9bc89c6960d6f",
+      "classification": "owned-policy-boundary",
       "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "The Factory registry outbound boundary binds npm and unpkg to fixed production origins, dashboard access to HTTP loopback, and configured RSS, DuoPlus, and webhook calls to exact HTTPS-or-loopback authorities and paths. It denies destination escape, ambient credentials, redirects, proxy/TLS/protocol extensions, private production DNS, and offline sockets while enforcing deadlines, response bounds, and explicit replay classes."
+    },
+    {
+      "id": "projects/active/factorywager/registry/src/registry-planes.ts#fetchWithPolicy#8c612ddeca3c5b17#1",
+      "path": "projects/active/factorywager/registry/src/registry-planes.ts",
+      "line": 196,
+      "column": 10,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "8c612ddeca3c5b17",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/factorywager/registry",
+      "reason": "The Factory registry local-write boundary accepts only an explicitly selected credential-free HTTP loopback plane, scopes authorization to PUT and DELETE mutations inside that exact origin and path prefix, and denies production fallback, redirects, proxy/TLS/protocol extensions, offline sockets, and automatic replay while bounding deadline and response size."
     },
     {
       "id": "projects/active/sports-terminal-os/integrations/kimi-plugin/sports-mcp-server/lib/tools.ts#fetch#12ffe844781ee058#1",

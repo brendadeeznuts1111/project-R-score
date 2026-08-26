@@ -7,6 +7,12 @@
  * API: POST /api/v1/cloudPhone/info with body { image_id }
  */
 
+import {
+  createFactoryRegistryOutboundAuthority,
+  fetchFactoryRegistryOutbound,
+  type FactoryRegistryOutboundAuthority,
+} from '../../../../src/outbound.ts';
+
 const COOKIE_PREFIX = 'dw_';
 const MY_DEVICES_COOKIE = COOKIE_PREFIX + 'my_devices';
 const DEVICE_CACHE_PREFIX = COOKIE_PREFIX + 'device_';
@@ -37,11 +43,13 @@ export interface DuoPlusFragmentOptions {
 
 export class DuoPlusFragmentLoader {
   private apiBaseUrl: string;
+  private apiAuthority: FactoryRegistryOutboundAuthority;
   private apiKey?: string;
   private deviceCache = new Map<string, { data: DuoPlusDeviceInfo; timestamp: number }>();
 
   constructor(options: DuoPlusFragmentOptions) {
     this.apiBaseUrl = options.apiBaseUrl.replace(/\/$/, '');
+    this.apiAuthority = createFactoryRegistryOutboundAuthority('duoplus-api', this.apiBaseUrl);
     this.apiKey = options.apiKey;
   }
 
@@ -87,7 +95,7 @@ export class DuoPlusFragmentLoader {
       };
       if (this.apiKey) headers['Authorization'] = `Bearer ${this.apiKey}`;
 
-      const response = await fetch(url, {
+      const response = await fetchFactoryRegistryOutbound(this.apiAuthority, url, {
         method: 'POST',
         headers,
         body: JSON.stringify({ image_id: imageId }),

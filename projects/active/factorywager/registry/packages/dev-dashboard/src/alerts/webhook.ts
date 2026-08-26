@@ -25,6 +25,10 @@
  */
 
 import { logger } from '../../../user-profile/src/index.ts';
+import {
+  createFactoryRegistryOutboundAuthority,
+  fetchFactoryRegistryOutbound,
+} from '../../../../src/outbound.ts';
 
 // Type for Bun.file() return value
 type BunFile = ReturnType<typeof Bun.file>;
@@ -344,7 +348,8 @@ export async function sendWebhookAlert(
         fetchOptions.tls = options.tls;
       }
       
-      const response = await fetch(webhookUrl, fetchOptions);
+      const authority = createFactoryRegistryOutboundAuthority('webhook', webhookUrl);
+      const response = await fetchFactoryRegistryOutbound(authority, webhookUrl, fetchOptions);
       
       // Validate response status
       if (!response.ok) {
@@ -480,7 +485,8 @@ async function sendWebhookAlertFastPath(
       ...(options.headers ?? {}),
     };
     
-    const response = await fetch(webhookUrl, {
+    const authority = createFactoryRegistryOutboundAuthority('webhook', webhookUrl);
+    const response = await fetchFactoryRegistryOutbound(authority, webhookUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify(payload),

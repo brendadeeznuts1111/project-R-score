@@ -8,6 +8,10 @@
 
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
+import {
+  createFactoryRegistryOutboundAuthority,
+  fetchFactoryRegistryOutbound,
+} from '../../../src/outbound.ts';
 
 export interface PackageDoc {
   name: string;
@@ -115,7 +119,8 @@ export class PackageDocumentationFetcher {
 
     console.info(styled(`🌐 Fetching: ${url}`, 'info'));
 
-    const response = await fetch(url, {
+    const authority = createFactoryRegistryOutboundAuthority('npm-registry', registryUrl);
+    const response = await fetchFactoryRegistryOutbound(authority, url, {
       headers: {
         'Accept': 'application/json',
         'User-Agent': 'factorywager-docs-fetcher/1.0',
@@ -167,7 +172,11 @@ export class PackageDocumentationFetcher {
   private async fetchReadme(packageName: string, version: string): Promise<string | null> {
     try {
       const url = `https://unpkg.com/${packageName}@${version}/README.md`;
-      const response = await fetch(url, { 
+      const authority = createFactoryRegistryOutboundAuthority(
+        'unpkg-readme',
+        'https://unpkg.com'
+      );
+      const response = await fetchFactoryRegistryOutbound(authority, url, {
         headers: { 'User-Agent': 'factorywager-docs-fetcher/1.0' }
       });
       
@@ -177,7 +186,7 @@ export class PackageDocumentationFetcher {
 
       // Try lowercase
       const url2 = `https://unpkg.com/${packageName}@${version}/readme.md`;
-      const response2 = await fetch(url2, { 
+      const response2 = await fetchFactoryRegistryOutbound(authority, url2, {
         headers: { 'User-Agent': 'factorywager-docs-fetcher/1.0' }
       });
       
@@ -235,7 +244,9 @@ export class PackageDocumentationFetcher {
     const registryUrl = process.env.NPM_REGISTRY || 'https://registry.npmjs.org';
     
     try {
-      const response = await fetch(
+      const authority = createFactoryRegistryOutboundAuthority('npm-registry', registryUrl);
+      const response = await fetchFactoryRegistryOutbound(
+        authority,
         `${registryUrl}/-/v1/search?text=${encodeURIComponent(query)}&size=${limit}`,
         {
           headers: {
