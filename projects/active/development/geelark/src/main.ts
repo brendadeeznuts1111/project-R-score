@@ -18,7 +18,7 @@ async function main() {
   console.info("=".repeat(50));
 
   // Show build analysis in development
-  if (feature("ENV_DEVELOPMENT")) {
+  if ((feature("ENV_DEVELOPMENT") ? true : false)) {
     BuildOptimizer.analyzeBuild();
     BuildOptimizer.verifyDeadCodeElimination();
   }
@@ -56,7 +56,7 @@ async function main() {
   console.info(`📝 Description: ${getFeatureDescription()}`);
 
   // Start dashboard if monitoring is enabled
-  if (feature("FEAT_ADVANCED_MONITORING")) {
+  if ((feature("FEAT_ADVANCED_MONITORING") ? true : false)) {
     console.info("\n📈 Starting advanced monitoring dashboard...");
     // Dashboard would be initialized here
     console.info("✅ Dashboard started");
@@ -69,7 +69,7 @@ async function main() {
   }
 
   // Test Unicode width in development
-  if (feature("ENV_DEVELOPMENT")) {
+  if ((feature("ENV_DEVELOPMENT") ? true : false)) {
     testStringWidth();
   }
 
@@ -80,19 +80,19 @@ async function main() {
   FeatureFlags.platformSpecificInit();
 
   // Show feature dashboard in development
-  if (feature("ENV_DEVELOPMENT")) {
+  if ((feature("ENV_DEVELOPMENT") ? true : false)) {
     const features = {
-      "ENV_DEVELOPMENT": feature("ENV_DEVELOPMENT"),
-      "ENV_PRODUCTION": feature("ENV_PRODUCTION"),
-      "FEAT_PREMIUM": feature("FEAT_PREMIUM"),
-      "FEAT_ENCRYPTION": feature("FEAT_ENCRYPTION"),
-      "FEAT_MOCK_API": feature("FEAT_MOCK_API"),
-      "FEAT_EXTENDED_LOGGING": feature("FEAT_EXTENDED_LOGGING"),
-      "FEAT_ADVANCED_MONITORING": feature("FEAT_ADVANCED_MONITORING"),
-      "FEAT_BATCH_PROCESSING": feature("FEAT_BATCH_PROCESSING"),
-      "PLATFORM_ANDROID": feature("PLATFORM_ANDROID"),
-      "PLATFORM_IOS": feature("PLATFORM_IOS"),
-      "PLATFORM_WEB": feature("PLATFORM_WEB"),
+      "ENV_DEVELOPMENT": (feature("ENV_DEVELOPMENT") ? true : false),
+      "ENV_PRODUCTION": (feature("ENV_PRODUCTION") ? true : false),
+      "FEAT_PREMIUM": (feature("FEAT_PREMIUM") ? true : false),
+      "FEAT_ENCRYPTION": (feature("FEAT_ENCRYPTION") ? true : false),
+      "FEAT_MOCK_API": (feature("FEAT_MOCK_API") ? true : false),
+      "FEAT_EXTENDED_LOGGING": (feature("FEAT_EXTENDED_LOGGING") ? true : false),
+      "FEAT_ADVANCED_MONITORING": (feature("FEAT_ADVANCED_MONITORING") ? true : false),
+      "FEAT_BATCH_PROCESSING": (feature("FEAT_BATCH_PROCESSING") ? true : false),
+      "PLATFORM_ANDROID": (feature("PLATFORM_ANDROID") ? true : false),
+      "PLATFORM_IOS": (feature("PLATFORM_IOS") ? true : false),
+      "PLATFORM_WEB": (feature("PLATFORM_WEB") ? true : false),
     };
 
     console.info("\n" + TerminalWidth.createFeatureDashboard(features).join("\n"));
@@ -109,7 +109,7 @@ async function main() {
   console.info("\n🎉 System initialized successfully!");
 
   // Keep alive for dashboard
-  if (feature("FEAT_ADVANCED_MONITORING")) {
+  if ((feature("FEAT_ADVANCED_MONITORING") ? true : false)) {
     console.info("\n⏳ Keeping process alive for dashboard...");
     await new Promise(() => {
       // Keep process alive
@@ -203,7 +203,7 @@ async function handleCliArgs(): Promise<boolean> {
   }
 
   if (args.includes("--dashboard")) {
-    if (!feature("FEAT_ADVANCED_MONITORING")) {
+    if (!(feature("FEAT_ADVANCED_MONITORING") ? true : false)) {
       console.error("❌ Advanced monitoring feature not enabled");
       process.exit(1);
     }

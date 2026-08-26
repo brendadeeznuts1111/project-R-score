@@ -669,8 +669,11 @@ export class ServiceFactory {
  * const mockFeature = (flag: string) => flag === "FEAT_MOCK_API";
  * const factory = createServiceFactory(mockFeature);
  */
-export const createServiceFactory = (featureFn?: FeatureFn): ServiceFactory => {
-  return new ServiceFactory(featureFn);
+export const createServiceFactory = (
+  featureFn?: FeatureFn,
+  outboundOptions: BrowserOutboundOptions = {},
+): ServiceFactory => {
+  return new ServiceFactory(featureFn, outboundOptions);
 };
 
 /**

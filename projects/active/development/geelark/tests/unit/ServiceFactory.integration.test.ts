@@ -3,19 +3,19 @@ import { createServiceFactory, type FeatureFn } from "../../src/services/Service
 
 // Mock fetch for API testing
 let mockFetchCalls: any[] = [];
-global.fetch = mock((url: string, options?: any) => {
-  mockFetchCalls.push({ url, options });
-  return Promise.resolve({
-    ok: true,
-    status: 200,
-    statusText: "OK",
-    json: () => Promise.resolve({
-      success: true,
-      data: "test",
-      url,
-      method: options?.method || "GET"
-    }),
-  });
+const mockFetch = mock((url: RequestInfo | URL, options?: RequestInit) => {
+  mockFetchCalls.push({ url: url.toString(), options });
+  return Promise.resolve(Response.json({
+    success: true,
+    data: "test",
+    url: url.toString(),
+    method: options?.method || "GET",
+  }));
+});
+
+const createTestFactory = (featureFn: FeatureFn) => createServiceFactory(featureFn, {
+  baseOrigin: "https://geelark.test",
+  fetcher: mockFetch,
 });
 
 beforeEach(() => {
@@ -28,29 +28,29 @@ describe("ServiceFactory - Integration Tests", () => {
     const mockFeature: FeatureFn = (flag) =>
       ["FEAT_EXTENDED_LOGGING", "FEAT_ADVANCED_MONITORING"].includes(flag);
 
-    const factory = createServiceFactory(mockFeature);
+    const factory = createTestFactory(mockFeature);
     const apiService = factory.createApiService();
     const loggingService = factory.createLoggingService();
 
     // Make API call
-    const response = await apiService.request("/api/test");
+    const response = await apiService.request("/api/health");
 
     // Log the response
     loggingService.log("API call completed", {
-      endpoint: "/api/test",
+      endpoint: "/api/health",
       success: response.success
     });
 
     expect(response.success).toBe(true);
     expect(mockFetchCalls).toHaveLength(1);
-    expect(mockFetchCalls[0].url).toBe("/api/test");
+    expect(mockFetchCalls[0].url).toBe("https://geelark.test/api/health");
   });
 
   test("should integrate monitoring with API service", async () => {
     const mockFeature: FeatureFn = (flag) =>
       ["FEAT_ADVANCED_MONITORING", "FEAT_PREMIUM"].includes(flag);
 
-    const factory = createServiceFactory(mockFeature);
+    const factory = createTestFactory(mockFeature);
     const apiService = factory.createApiService();
     const monitoringService = factory.createMonitoringService();
 
@@ -59,7 +59,7 @@ describe("ServiceFactory - Integration Tests", () => {
     monitoringService.trackMetric("response_time", 150);
 
     // Make API call
-    await apiService.request("/api/monitoring");
+    await apiService.request("/api/monitoring/summary");
 
     expect(monitoringService.metrics.get("api_calls")).toBe(1);
     expect(monitoringService.metrics.get("response_time")).toBe(150);
@@ -68,12 +68,12 @@ describe("ServiceFactory - Integration Tests", () => {
   test("should integrate cache with API service", async () => {
     const mockFeature: FeatureFn = (flag) => flag === "FEAT_CACHE_OPTIMIZED";
 
-    const factory = createServiceFactory(mockFeature);
+    const factory = createTestFactory(mockFeature);
     const apiService = factory.createApiService();
     const cacheService = factory.createCacheService();
 
     // Cache API response
-    const cacheKey = "/api/cached_data";
+    const cacheKey = "/api/health";
     const response = await apiService.request(cacheKey);
     cacheService.set(cacheKey, JSON.stringify(response));
 
