@@ -3,7 +3,10 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
 // @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
-import { contentRightsContractIssues } from '../lib/content-store/index.ts';
+import {
+  contentRightsContractIssues,
+  contentRightsStoreContractIssues,
+} from '../lib/content-store/index.ts';
 
 function main(): void {
   const argv = Bun.argv.slice(2);
@@ -12,7 +15,7 @@ function main(): void {
     process.exitCode = 2;
     return;
   }
-  const issues = contentRightsContractIssues();
+  const issues = [...contentRightsContractIssues(), ...contentRightsStoreContractIssues()];
   if (issues.length > 0) {
     process.stderr.write(`${JSON.stringify({ issues }, null, 2)}\n`);
     process.exitCode = 1;

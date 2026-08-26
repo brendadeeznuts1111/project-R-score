@@ -245,7 +245,7 @@ function assertCanonicalLocator(locator: string): void {
   }
 }
 
-function parseAuthority(value: unknown, field: string): ContentAuthorityRef {
+export function parseContentAuthorityRef(value: unknown, field = 'authority'): ContentAuthorityRef {
   const record = parseRecord(value, field);
   if (record.kind === 'identity') {
     assertOnlyKeys(record, ['kind', 'identityId'], field);
@@ -266,17 +266,17 @@ function parseAuthorities(value: unknown): ContentAuthorities {
     'authorities'
   );
   return {
-    publisher: parseAuthority(record.publisher, 'authorities.publisher'),
-    storageSteward: parseAuthority(record.storageSteward, 'authorities.storageSteward'),
-    rightsReviewAuthority: parseAuthority(
+    publisher: parseContentAuthorityRef(record.publisher, 'authorities.publisher'),
+    storageSteward: parseContentAuthorityRef(record.storageSteward, 'authorities.storageSteward'),
+    rightsReviewAuthority: parseContentAuthorityRef(
       record.rightsReviewAuthority,
       'authorities.rightsReviewAuthority'
     ),
-    aliasPublisher: parseAuthority(record.aliasPublisher, 'authorities.aliasPublisher'),
+    aliasPublisher: parseContentAuthorityRef(record.aliasPublisher, 'authorities.aliasPublisher'),
   };
 }
 
-function parseRights(value: unknown): ContentRights {
+export function parseContentRights(value: unknown): ContentRights {
   const record = parseRecord(value, 'rights');
   if (record.state === 'unknown' || record.state === 'pending-review') {
     assertOnlyKeys(record, ['state'], 'rights');
@@ -445,7 +445,7 @@ export function parseContentRef(value: unknown): ContentRef {
     sources,
     contentRelations,
     packageDependencies,
-    rights: parseRights(record.rights),
+    rights: parseContentRights(record.rights),
     authorities: parseAuthorities(record.authorities),
   };
 }

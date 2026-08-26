@@ -3,8 +3,10 @@ import { describe, expect, test } from 'bun:test';
 import {
   CONTENT_REF_VERSION,
   ChannelAliasPolicyError,
+  MemoryContentRightsStore,
   MemoryContentStore,
   R2ChannelAliasStore,
+  R2ContentRightsStore,
   contentDigestForBytes,
   createContentSourceLocator,
   type ContentAuthorityRef,
@@ -121,6 +123,23 @@ function contentRef(stored: StoredContent): ContentRef {
   };
 }
 
+async function approvedRightsStore(
+  targets: readonly ContentRef[],
+  clock: () => Date = () => new Date('2026-08-26T12:00:00.000Z')
+): Promise<MemoryContentRightsStore> {
+  const store = new MemoryContentRightsStore(clock);
+  for (const target of targets) {
+    if (target.rights.state !== 'approved-vendor') throw new Error('Expected approved test target');
+    await store.decide({
+      target,
+      actor: reviewer,
+      rights: target.rights,
+      expectedRevision: 0,
+    });
+  }
+  return store;
+}
+
 function expectCode(error: unknown, code: ChannelAliasPolicyError['code']): boolean {
   expect(error).toBeInstanceOf(ChannelAliasPolicyError);
   expect((error as ChannelAliasPolicyError).code).toBe(code);
@@ -145,17 +164,19 @@ describe('R2ChannelAliasStore', () => {
     const contentStore = new MemoryContentStore();
     const stored = await contentStore.put(new TextEncoder().encode('<rss/>'));
     const clock = () => new Date('2026-08-26T12:00:00.000Z');
-    const firstStore = new R2ChannelAliasStore(bucket, contentStore, undefined, clock);
+    const ref = contentRef(stored);
+    const rightsStore = await approvedRightsStore([ref], clock);
+    const firstStore = new R2ChannelAliasStore(bucket, contentStore, rightsStore, undefined, clock);
     const promoted = await firstStore.promote({
       aliasId,
       sourceChannelId,
-      target: contentRef(stored),
+      target: ref,
       actor: aliasPublisher,
       expectedRevision: 0,
     });
 
     expect(promoted.revision).toBe(1);
-    const reopened = new R2ChannelAliasStore(bucket, contentStore, undefined, clock);
+    const reopened = new R2ChannelAliasStore(bucket, contentStore, rightsStore, undefined, clock);
     expect(await reopened.resolve(aliasId)).toEqual(promoted);
   });
 
@@ -165,11 +186,12 @@ describe('R2ChannelAliasStore', () => {
     const first = await contentStore.put(new TextEncoder().encode('first'));
     const second = await contentStore.put(new TextEncoder().encode('second'));
     const third = await contentStore.put(new TextEncoder().encode('third'));
-    const store = new R2ChannelAliasStore(bucket, contentStore);
+    const refs = [contentRef(first), contentRef(second), contentRef(third)] as const;
+    const store = new R2ChannelAliasStore(bucket, contentStore, await approvedRightsStore(refs));
     const initial = await store.promote({
       aliasId,
       sourceChannelId,
-      target: contentRef(first),
+      target: refs[0],
       actor: aliasPublisher,
       expectedRevision: 0,
     });
@@ -178,7 +200,7 @@ describe('R2ChannelAliasStore', () => {
       store.promote({
         aliasId,
         sourceChannelId,
-        target: contentRef(second),
+        target: refs[1],
         actor: aliasPublisher,
         expectedRevision: initial.revision,
         expectedCurrentDigest: first.digest,
@@ -186,7 +208,7 @@ describe('R2ChannelAliasStore', () => {
       store.promote({
         aliasId,
         sourceChannelId,
-        target: contentRef(third),
+        target: refs[2],
         actor: aliasPublisher,
         expectedRevision: initial.revision,
         expectedCurrentDigest: first.digest,
@@ -204,11 +226,16 @@ describe('R2ChannelAliasStore', () => {
     const bucket = new FakeAliasBucket();
     const contentStore = new MemoryContentStore();
     const stored = await contentStore.put(new TextEncoder().encode('release'));
-    const store = new R2ChannelAliasStore(bucket, contentStore);
+    const ref = contentRef(stored);
+    const store = new R2ChannelAliasStore(
+      bucket,
+      contentStore,
+      await approvedRightsStore([ref])
+    );
     const active = await store.promote({
       aliasId,
       sourceChannelId,
-      target: contentRef(stored),
+      target: ref,
       actor: aliasPublisher,
       expectedRevision: 0,
     });
@@ -225,13 +252,48 @@ describe('R2ChannelAliasStore', () => {
       store.promote({
         aliasId,
         sourceChannelId,
-        target: contentRef(stored),
+        target: ref,
         actor: aliasPublisher,
         expectedRevision: revoked.revision,
         expectedCurrentDigest: stored.digest,
       }),
       'ALIAS_REVOKED'
     );
+  });
+
+  test('consults the durable reviewer ledger so revocation disables an active R2 alias', async () => {
+    const bucket = new FakeAliasBucket();
+    const contentStore = new MemoryContentStore();
+    const stored = await contentStore.put(new TextEncoder().encode('licensed-release'));
+    const ref = contentRef(stored);
+    const clock = () => new Date('2026-08-26T12:00:00.000Z');
+    const rightsStore = new R2ContentRightsStore(bucket, clock);
+    if (ref.rights.state !== 'approved-vendor') throw new Error('Expected approved test rights');
+    const decision = await rightsStore.decide({
+      target: ref,
+      actor: reviewer,
+      rights: ref.rights,
+      expectedRevision: 0,
+    });
+    const aliases = new R2ChannelAliasStore(bucket, contentStore, rightsStore, undefined, clock);
+    const active = await aliases.promote({
+      aliasId,
+      sourceChannelId,
+      target: ref,
+      actor: aliasPublisher,
+      expectedRevision: 0,
+    });
+    await rightsStore.revoke({
+      target: ref,
+      actor: reviewer,
+      reviewEvidenceId: asEvidenceId('durable-rights-revocation'),
+      expectedRevision: decision.revision,
+      expectedRecordDigest: decision.recordDigest,
+      reason: 'Durable vendor approval withdrawn',
+    });
+
+    await expectRejection(aliases.resolve(aliasId), 'RIGHTS_INELIGIBLE');
+    expect((await aliases.get(aliasId))?.target.digest).toBe(active.target.digest);
   });
 
   test('fails closed on malformed persisted JSON and mismatched metadata', async () => {
@@ -243,7 +305,7 @@ describe('R2ChannelAliasStore', () => {
       etag: 'bad-json',
       customMetadata: {},
     });
-    const store = new R2ChannelAliasStore(bucket, contentStore);
+    const store = new R2ChannelAliasStore(bucket, contentStore, new MemoryContentRightsStore());
     await expect(store.get(aliasId)).rejects.toThrow('unknown lifecycle');
 
     bucket.objects.set(key, {
@@ -261,11 +323,16 @@ describe('R2ChannelAliasStore', () => {
     const bucket = new FakeAliasBucket();
     const contentStore = new MemoryContentStore();
     const stored = await contentStore.put(new TextEncoder().encode('release'));
-    const store = new R2ChannelAliasStore(bucket, contentStore);
+    const ref = contentRef(stored);
+    const store = new R2ChannelAliasStore(
+      bucket,
+      contentStore,
+      await approvedRightsStore([ref])
+    );
     await store.promote({
       aliasId,
       sourceChannelId,
-      target: contentRef(stored),
+      target: ref,
       actor: aliasPublisher,
       expectedRevision: 0,
     });

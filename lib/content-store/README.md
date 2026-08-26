@@ -36,6 +36,15 @@ Core invariants:
   records with exact-revision and exact-digest compare-and-swap. Resolution
   re-verifies content, expiry, rights, and authority separation before exposing
   an active target. Rights lifecycle changes never rewrite byte identity.
+- `MemoryContentRightsStore` is the independent live rights authority. Only the
+  exact reviewer may append exact-revision/hash decisions; revocation is
+  terminal, while the immutable `ContentRef.rights` remains provenance.
+- `R2ContentRightsStore` writes immutable hash-chain history objects before an
+  ETag-conditional current pointer. Alias promote/resolve consults that current
+  decision, so reviewer expiry or revocation disables an otherwise-active alias
+  without rewriting its content digest or locator snapshot.
+- Rights history has no deletion API. Retention/erasure policy must be decided
+  before any lifecycle rule or administrative delete surface is introduced.
 
 An R2 alias adapter remains deferred until its conditional-write contract can
 provide the same exact revision/digest CAS and post-write verification.

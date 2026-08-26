@@ -22,6 +22,7 @@ import {
   type RevokedChannelAliasRecord,
 } from './channel-alias-store.ts';
 import type { ContentStore } from './memory-content-store.ts';
+import type { ContentRightsStore } from './content-rights-store.ts';
 import type { R2Conditional, R2ObjectBody, R2ObjectMetadata } from './r2-content-store.ts';
 
 // @see https://developers.cloudflare.com/r2/api/workers/workers-api-reference/#conditional-operations
@@ -65,6 +66,7 @@ export class R2ChannelAliasStore implements ChannelAliasStore {
   constructor(
     readonly bucket: R2ChannelAliasBucket,
     readonly contentStore: ContentStore,
+    readonly rightsStore: ContentRightsStore,
     readonly policy: ChannelAliasPolicy = DEFAULT_CHANNEL_ALIAS_POLICY,
     readonly clock: () => Date = () => new Date()
   ) {}
@@ -103,6 +105,7 @@ export class R2ChannelAliasStore implements ChannelAliasStore {
   private policyStore(snapshot: AliasSnapshot | undefined): MemoryChannelAliasStore {
     return new MemoryChannelAliasStore(
       this.contentStore,
+      this.rightsStore,
       this.policy,
       this.clock,
       snapshot ? [[snapshot.record.aliasId, snapshot.record]] : []

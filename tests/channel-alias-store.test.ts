@@ -3,6 +3,7 @@ import { describe, expect, test } from 'bun:test';
 import {
   ChannelAliasPolicyError,
   MemoryChannelAliasStore,
+  MemoryContentRightsStore,
   MemoryContentStore,
   contentKeyForDigest,
   createContentSourceLocator,
@@ -72,6 +73,23 @@ function contentRef(
   });
 }
 
+async function approvedRightsStore(
+  targets: readonly ContentRef[],
+  clock: () => Date = () => new Date('2026-08-26T12:00:00.000Z')
+): Promise<MemoryContentRightsStore> {
+  const store = new MemoryContentRightsStore(clock);
+  for (const target of targets) {
+    if (target.rights.state !== 'approved-vendor') throw new Error('Expected approved test target');
+    await store.decide({
+      target,
+      actor: target.authorities.rightsReviewAuthority,
+      rights: target.rights,
+      expectedRevision: 0,
+    });
+  }
+  return store;
+}
+
 function expectPolicyCode(error: unknown, code: ChannelAliasPolicyError['code']): boolean {
   expect(error).toBeInstanceOf(ChannelAliasPolicyError);
   expect((error as ChannelAliasPolicyError).code).toBe(code);
@@ -96,8 +114,10 @@ describe('MemoryChannelAliasStore', () => {
     const contentStore = new MemoryContentStore();
     const stored = await contentStore.put(bytes);
     const original = contentRef(stored);
+    const rightsStore = await approvedRightsStore([original]);
     const store = new MemoryChannelAliasStore(
       contentStore,
+      rightsStore,
       undefined,
       () => new Date('2026-08-26T12:00:00.000Z')
     );
@@ -133,7 +153,7 @@ describe('MemoryChannelAliasStore', () => {
     const elsewhere = new MemoryContentStore();
     const missing = await elsewhere.put(new TextEncoder().encode('missing'));
     await expectPolicyRejection(
-      new MemoryChannelAliasStore(missingStore).promote({
+      new MemoryChannelAliasStore(missingStore, new MemoryContentRightsStore()).promote({
         aliasId,
         sourceChannelId,
         target: contentRef(missing),
@@ -148,7 +168,7 @@ describe('MemoryChannelAliasStore', () => {
     const corrupt = await corruptStore.put(new TextEncoder().encode('trusted'));
     backing.set(corrupt.digest, new TextEncoder().encode('tampered'));
     await expectPolicyRejection(
-      new MemoryChannelAliasStore(corruptStore).promote({
+      new MemoryChannelAliasStore(corruptStore, new MemoryContentRightsStore()).promote({
         aliasId,
         sourceChannelId,
         target: contentRef(corrupt),
@@ -162,6 +182,7 @@ describe('MemoryChannelAliasStore', () => {
     const stored = await contentStore.put(new TextEncoder().encode('bytes'));
     const store = new MemoryChannelAliasStore(
       contentStore,
+      new MemoryContentRightsStore(),
       undefined,
       () => new Date('2026-08-26T12:00:00.000Z')
     );
@@ -206,7 +227,7 @@ describe('MemoryChannelAliasStore', () => {
   test('defaults to distinct ownership and exact alias-publisher authority', async () => {
     const contentStore = new MemoryContentStore();
     const stored = await contentStore.put(new TextEncoder().encode('release'));
-    const store = new MemoryChannelAliasStore(contentStore);
+    const store = new MemoryChannelAliasStore(contentStore, new MemoryContentRightsStore());
 
     await expectPolicyRejection(
       store.promote({
@@ -236,11 +257,12 @@ describe('MemoryChannelAliasStore', () => {
     const first = await contentStore.put(new TextEncoder().encode('first'));
     const second = await contentStore.put(new TextEncoder().encode('second'));
     const third = await contentStore.put(new TextEncoder().encode('third'));
-    const store = new MemoryChannelAliasStore(contentStore);
+    const refs = [contentRef(first), contentRef(second), contentRef(third)] as const;
+    const store = new MemoryChannelAliasStore(contentStore, await approvedRightsStore(refs));
     const initial = await store.promote({
       aliasId,
       sourceChannelId,
-      target: contentRef(first),
+      target: refs[0],
       actor: aliasPublisher,
       expectedRevision: 0,
     });
@@ -249,7 +271,7 @@ describe('MemoryChannelAliasStore', () => {
       store.promote({
         aliasId,
         sourceChannelId,
-        target: contentRef(second),
+        target: refs[1],
         actor: aliasPublisher,
         expectedRevision: initial.revision,
         expectedCurrentDigest: first.digest,
@@ -257,7 +279,7 @@ describe('MemoryChannelAliasStore', () => {
       store.promote({
         aliasId,
         sourceChannelId,
-        target: contentRef(third),
+        target: refs[2],
         actor: aliasPublisher,
         expectedRevision: initial.revision,
         expectedCurrentDigest: first.digest,
@@ -274,7 +296,7 @@ describe('MemoryChannelAliasStore', () => {
       store.promote({
         aliasId,
         sourceChannelId,
-        target: contentRef(second),
+        target: refs[1],
         actor: aliasPublisher,
         expectedRevision: 2,
         expectedCurrentDigest: first.digest,
@@ -288,7 +310,8 @@ describe('MemoryChannelAliasStore', () => {
     const contentStore = new MemoryContentStore();
     const stored = await contentStore.put(new TextEncoder().encode('immutable'));
     const original = contentRef(stored);
-    const store = new MemoryChannelAliasStore(contentStore, undefined, () => now);
+    const rightsStore = await approvedRightsStore([original], () => now);
+    const store = new MemoryChannelAliasStore(contentStore, rightsStore, undefined, () => now);
     const promoted = await store.promote({
       aliasId,
       sourceChannelId,
@@ -335,7 +358,7 @@ describe('MemoryChannelAliasStore', () => {
     expect(revoked.target.key).toBe(promoted.target.key);
     await expectPolicyRejection(store.resolve(aliasId), 'ALIAS_REVOKED');
 
-    now = new Date('2026-08-28T00:00:00.000Z');
+    now = new Date('2028-08-28T00:00:00.000Z');
     await expectPolicyRejection(
       store.promote({
         aliasId: asChannelAliasId('expired-target'),
@@ -348,15 +371,50 @@ describe('MemoryChannelAliasStore', () => {
     );
   });
 
+  test('propagates independent reviewer revocation without rewriting active alias identity', async () => {
+    const contentStore = new MemoryContentStore();
+    const stored = await contentStore.put(new TextEncoder().encode('licensed-image'));
+    const target = contentRef(stored);
+    const rightsStore = await approvedRightsStore([target]);
+    const store = new MemoryChannelAliasStore(contentStore, rightsStore);
+    const promoted = await store.promote({
+      aliasId,
+      sourceChannelId,
+      target,
+      actor: aliasPublisher,
+      expectedRevision: 0,
+    });
+    const currentRights = await rightsStore.get(target.digest);
+    await rightsStore.revoke({
+      target,
+      actor: reviewer,
+      reviewEvidenceId: asEvidenceId('independent-revocation'),
+      expectedRevision: currentRights!.revision,
+      expectedRecordDigest: currentRights!.recordDigest,
+      reason: 'License withdrawn by reviewer',
+    });
+
+    await expectPolicyRejection(store.resolve(aliasId), 'RIGHTS_INELIGIBLE');
+    const retained = await store.get(aliasId);
+    expect(retained?.lifecycle).toBe('active');
+    expect(retained?.target.digest).toBe(promoted.target.digest);
+    expect(retained?.target.key).toBe(promoted.target.key);
+    expect(retained?.revision).toBe(promoted.revision);
+  });
+
   test('fails closed when stored bytes become corrupt after promotion', async () => {
     const backing = new Map();
     const contentStore = new MemoryContentStore({ backing });
     const stored = await contentStore.put(new TextEncoder().encode('trusted'));
-    const store = new MemoryChannelAliasStore(contentStore);
+    const target = contentRef(stored);
+    const store = new MemoryChannelAliasStore(
+      contentStore,
+      await approvedRightsStore([target])
+    );
     await store.promote({
       aliasId,
       sourceChannelId,
-      target: contentRef(stored),
+      target,
       actor: aliasPublisher,
       expectedRevision: 0,
     });

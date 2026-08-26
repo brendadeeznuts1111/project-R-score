@@ -7,12 +7,12 @@ import {
 } from '../types/branded.ts';
 import {
   contentKeyForDigest,
-  decideContentRights,
   parseContentRef,
   type ContentAuthorityRef,
   type ContentRef,
 } from './content-contract.ts';
 import type { ContentStore } from './memory-content-store.ts';
+import { ContentRightsStoreError, type ContentRightsStore } from './content-rights-store.ts';
 
 export const CHANNEL_ALIAS_SCHEMA = 'factorywager.channel-alias' as const;
 export const CHANNEL_ALIAS_VERSION = 1 as const;
@@ -378,6 +378,7 @@ export class MemoryChannelAliasStore implements ChannelAliasStore {
 
   constructor(
     readonly contentStore: ContentStore,
+    readonly rightsStore: ContentRightsStore,
     readonly policy: ChannelAliasPolicy = DEFAULT_CHANNEL_ALIAS_POLICY,
     readonly clock: () => Date = () => new Date(),
     initialRecords: Iterable<readonly [ChannelAliasId, ChannelAliasRecord]> = []
@@ -425,6 +426,7 @@ export class MemoryChannelAliasStore implements ChannelAliasStore {
     const now = this.clock();
     const issuedAt = isoTimestamp(now);
     const target = cloneAndFreezeTarget(input.target);
+    const authorities = assertAuthorities(target, input.actor, this.policy);
     const verification = await this.contentStore.verify(target.digest);
     if (verification.status === 'missing') {
       throw new ChannelAliasPolicyError('CONTENT_MISSING', 'Alias target is missing');
@@ -441,27 +443,19 @@ export class MemoryChannelAliasStore implements ChannelAliasStore {
         'Alias target byte length does not match verified content'
       );
     }
-    const rightsDecision = decideContentRights(target.rights, 'publish-active-alias', now);
-    if (!rightsDecision.allowed) {
-      throw new ChannelAliasPolicyError(
-        'RIGHTS_INELIGIBLE',
-        `Alias target rights are ineligible: ${rightsDecision.reason}`
-      );
-    }
+    const rightsAuthorization = await authorizeCurrentRights(this.rightsStore, target, now);
     const expiresAt = parseExpiry(input.expiresAt, now);
     if (
       expiresAt !== undefined &&
-      target.rights.state === 'approved-vendor' &&
-      target.rights.validUntil !== undefined &&
-      Date.parse(expiresAt) > Date.parse(target.rights.validUntil)
+      rightsAuthorization.record.rights.state === 'approved-vendor' &&
+      rightsAuthorization.record.rights.validUntil !== undefined &&
+      Date.parse(expiresAt) > Date.parse(rightsAuthorization.record.rights.validUntil)
     ) {
       throw new ChannelAliasPolicyError(
         'INVALID_EXPIRY',
         'Alias expiry cannot exceed the rights validity window'
       );
     }
-    const authorities = assertAuthorities(target, input.actor, this.policy);
-
     // No await after this point: observe, compare, and swap are one event-loop turn.
     const current = this.#records.get(input.aliasId);
     if (current === undefined) {
@@ -569,10 +563,7 @@ export class MemoryChannelAliasStore implements ChannelAliasStore {
     if (current.expiresAt !== undefined && Date.parse(current.expiresAt) <= now.getTime()) {
       throw new ChannelAliasPolicyError('ALIAS_EXPIRED', 'Alias is expired');
     }
-    const rightsDecision = decideContentRights(current.target.rights, 'publish-active-alias', now);
-    if (!rightsDecision.allowed) {
-      throw new ChannelAliasPolicyError('RIGHTS_INELIGIBLE', rightsDecision.reason);
-    }
+    const rightsBefore = await authorizeCurrentRights(this.rightsStore, current.target, now);
     const verification = await this.contentStore.verify(current.target.digest);
     if (verification.status === 'missing') {
       throw new ChannelAliasPolicyError('CONTENT_MISSING', 'Alias target is missing');
@@ -586,7 +577,29 @@ export class MemoryChannelAliasStore implements ChannelAliasStore {
     if (this.#records.get(aliasId) !== current) {
       throw new ChannelAliasPolicyError('STALE_REVISION', 'Alias changed while resolving');
     }
+    const rightsAfter = await this.rightsStore.get(current.target.digest);
+    if (rightsAfter?.recordDigest !== rightsBefore.record.recordDigest) {
+      throw new ChannelAliasPolicyError(
+        'STALE_REVISION',
+        'Rights decision changed while resolving'
+      );
+    }
     return current;
+  }
+}
+
+async function authorizeCurrentRights(
+  rightsStore: ContentRightsStore,
+  target: ContentRef,
+  now: Date
+) {
+  try {
+    return await rightsStore.authorize(target, 'publish-active-alias', now);
+  } catch (error) {
+    if (error instanceof ContentRightsStoreError) {
+      throw new ChannelAliasPolicyError('RIGHTS_INELIGIBLE', error.message);
+    }
+    throw error;
   }
 }
 
