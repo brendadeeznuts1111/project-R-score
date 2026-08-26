@@ -1,5 +1,6 @@
 import { dns, write } from "bun";
 import { fetchTomlConfigured } from "../http/configured-outbound.ts";
+import type { ConfiguredOutboundOptions } from "../http/configured-outbound.ts";
 
 /**
  * Response Buffering Utilities for bun-toml-secrets-editor
@@ -9,8 +10,11 @@ import { fetchTomlConfigured } from "../http/configured-outbound.ts";
 export interface BufferingOptions {
   timeout?: number;
   maxRetries?: number;
+  retryDelayMs?: number;
   bufferSize?: number;
   streamToFile?: boolean;
+  dnsPrefetch?: boolean;
+  outbound?: ConfiguredOutboundOptions;
 }
 
 export interface FetchResult<T = any> {
@@ -31,32 +35,32 @@ export async function optimizedFetch<T = any>(
   const {
     timeout = 30000,
     maxRetries = 3,
+    retryDelayMs = 1000,
     bufferSize = 1024 * 1024, // 1MB
     streamToFile = false,
+    dnsPrefetch = true,
+    outbound,
     ...fetchOptions
   } = options;
 
   // DNS prefetch for performance
   try {
     const urlObj = new URL(url);
-    dns.prefetch(urlObj.hostname);
+    if (dnsPrefetch) dns.prefetch(urlObj.hostname);
   } catch (error) {
     console.warn(`DNS prefetch failed for ${url}:`, error);
   }
 
   // Retry logic with exponential backoff
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-      const response = await fetchTomlConfigured(url, {
-        ...fetchOptions,
-        signal: controller.signal,
-        verbose: process.env.DEBUG === 'true'
-      });
-
-      clearTimeout(timeoutId);
+      const response = await fetchTomlConfigured(
+        url,
+        { ...fetchOptions, signal: controller.signal },
+        outbound,
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -106,8 +110,10 @@ export async function optimizedFetch<T = any>(
       }
       
       // Exponential backoff
-      const delay = Math.pow(2, attempt) * 1000;
+      const delay = Math.pow(2, attempt) * retryDelayMs;
       await new Promise(resolve => setTimeout(resolve, delay));
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
@@ -120,9 +126,10 @@ export async function optimizedFetch<T = any>(
 export async function streamingFetch(
   url: string,
   onChunk: (chunk: Uint8Array) => void,
-  options: RequestInit = {}
+  options: RequestInit & { outbound?: ConfiguredOutboundOptions } = {}
 ): Promise<void> {
-  const response = await fetchTomlConfigured(url, options);
+  const { outbound, ...request } = options;
+  const response = await fetchTomlConfigured(url, request, outbound);
   
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);

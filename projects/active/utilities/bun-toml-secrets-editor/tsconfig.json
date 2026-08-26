@@ -4,6 +4,11 @@
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
 		"module": "ES2022",
 		"moduleResolution": "bundler",
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@bun-toml/core": ["packages/core/src/index.ts"]
+    },
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true,
 		"allowJs": true,

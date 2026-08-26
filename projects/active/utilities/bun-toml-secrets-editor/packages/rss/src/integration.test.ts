@@ -17,10 +17,10 @@ test("RSS Monitor lifecycle", () => {
 		userAgent: "test",
 	});
 
-	const id = monitor.addFeed("https://example.com/rss", { title: "Test" });
+  const id = monitor.addFeed("https://fixture.invalid/rss", { title: "Test" });
 	expect(id).toBeTruthy();
-	expect(monitor.feeds.size).toBe(1);
+  expect(monitor.getAllFeeds()).toHaveLength(1);
 
 	monitor.removeFeed(id);
-	expect(monitor.feeds.size).toBe(0);
+  expect(monitor.getAllFeeds()).toHaveLength(0);
 });
