@@ -225,6 +225,22 @@ export {
   type FeedImageSource,
   type FeedImageThumbnail,
 } from './rss/feed-image';
+export {
+  FeedSnapshotWriter,
+  createFeedSnapshotContentRef,
+  type FeedSnapshotAssetInput,
+  type PublishFeedSnapshotInput,
+} from './rss/feed-snapshot-writer';
+export { MemoryFeedSnapshotArchive } from './rss/memory-feed-snapshot-archive';
+export {
+  R2FeedSnapshotArchive,
+  type R2FeedSnapshotAliasBucket,
+} from './rss/r2-feed-snapshot-archive';
+export {
+  loadArchivedFeedSnapshot,
+  type FeedSnapshotArchive,
+  type FeedSnapshotArchivePublisher,
+} from './rss/feed-snapshot-archive';
 
 /**
  * FactoryWager Library Info — paths are repo-relative (see CANONICAL_REPO_DOCS).

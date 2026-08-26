@@ -23,7 +23,11 @@ import {
   parseFeedSnapshotManifest,
   type FeedSnapshotManifest,
 } from './feed-snapshot-manifest.ts';
-import type { R2FeedSnapshotAliasBucket } from './r2-feed-snapshot-bucket.ts';
+import {
+  FEED_SNAPSHOT_ALIAS_SCHEMA as ALIAS_SCHEMA,
+  FEED_SNAPSHOT_ALIAS_VERSION as ALIAS_VERSION,
+  type R2FeedSnapshotAliasBucket,
+} from './r2-feed-snapshot-bucket.ts';
 export type { R2FeedSnapshotAliasBucket } from './r2-feed-snapshot-bucket.ts';
 
 type AliasWire = {
@@ -38,8 +42,6 @@ type AliasSnapshot = PublishedFeedSnapshotAlias & {
   readonly serialized: string;
 };
 
-const ALIAS_SCHEMA = 'factorywager.feed-snapshot-alias';
-const ALIAS_VERSION = 1;
 const MAX_ALIAS_BYTES = MAX_FEED_SNAPSHOT_BYTES + 1_024;
 
 function aliasKey(source: ContentSourceLocator): string {
