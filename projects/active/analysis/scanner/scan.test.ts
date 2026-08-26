@@ -1,4 +1,15 @@
 import {describe, test, expect} from 'bun:test';
+
+const SCAN_TS = `${import.meta.dir}/scan.ts`;
+const SUBPROCESS_FIXTURE_ROOT = `${import.meta.dir}/testing/fixtures/projects-root`;
+const scanCommand = (...args: string[]): string[] => [
+	process.execPath,
+	'run',
+	SCAN_TS,
+	'--root',
+	SUBPROCESS_FIXTURE_ROOT,
+	...args,
+];
 import {
 	isFeatureFlagActive,
 	classifyEnvFlag,
@@ -175,6 +186,7 @@ describe('--help output (covers platformHelp internally)', () => {
 		expect(out).toContain('bun scan.ts');
 		expect(out).toContain('Usage');
 		expect(out).toContain('Modes');
+		expect(out).toContain('--root');
 	});
 });
 
@@ -489,8 +501,6 @@ describe('ThreatFeedItemSchema (Zod validation)', () => {
 });
 
 describe('Bun API integration (scanner uses Bun.hash, Bun.file, Bun.semver, dns)', () => {
-	const scanTs = `${import.meta.dir}/scan.ts`;
-
 	test('Bun.hash.wyhash produces consistent hex lockHash', () => {
 		const content = 'lockfile content v1';
 		const hash1 = Bun.hash.wyhash(content).toString(16);
@@ -671,9 +681,11 @@ describe('Bun API integration (scanner uses Bun.hash, Bun.file, Bun.semver, dns)
 	});
 
 	test('--json output includes all ProjectInfo fields for every project', async () => {
-		const proc = Bun.spawn(['bun', 'run', scanTs, '--json'], {
+		const proc = Bun.spawn(scanCommand('--json'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
+			env: {...process.env, BUN_PLATFORM_HOME: '/not-the-scanner-fixture'},
 		});
 		const out = await new Response(proc.stdout).text();
 		await proc.exited;
@@ -714,7 +726,8 @@ describe('Bun API integration (scanner uses Bun.hash, Bun.file, Bun.semver, dns)
 	});
 
 	test('every project with a lockfile has a non-empty lockHash', async () => {
-		const proc = Bun.spawn(['bun', 'run', scanTs, '--json'], {
+		const proc = Bun.spawn(scanCommand('--json'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 		});
@@ -731,7 +744,8 @@ describe('Bun API integration (scanner uses Bun.hash, Bun.file, Bun.semver, dns)
 	});
 
 	test('all projects with package.json are scanned (none dropped)', async () => {
-		const proc = Bun.spawn(['bun', 'run', scanTs, '--json'], {
+		const proc = Bun.spawn(scanCommand('--json'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 		});
@@ -740,8 +754,7 @@ describe('Bun API integration (scanner uses Bun.hash, Bun.file, Bun.semver, dns)
 		const projects = JSON.parse(out);
 
 		const withPkg = projects.filter((p: ProjectInfo) => p.hasPkg);
-		// Must match the known project count from --audit (50)
-		expect(withPkg.length).toBeGreaterThanOrEqual(50);
+		expect(withPkg.map((p: ProjectInfo) => p.folder).sort()).toEqual(['alpha', 'beta']);
 
 		// Every project with package.json should have a name
 		for (const p of withPkg) {
@@ -754,10 +767,9 @@ describe('Bun API integration (scanner uses Bun.hash, Bun.file, Bun.semver, dns)
 });
 
 describe('timezone subprocess (real TZ from command line)', () => {
-	const scanTs = `${import.meta.dir}/scan.ts`;
-
 	test('--tz flag sets timezone in output', async () => {
-		const proc = Bun.spawn(['bun', 'run', scanTs, '--tz=Asia/Tokyo'], {
+		const proc = Bun.spawn(scanCommand('--tz=Asia/Tokyo'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 		});
@@ -768,7 +780,8 @@ describe('timezone subprocess (real TZ from command line)', () => {
 	});
 
 	test('TZ env var sets timezone in output', async () => {
-		const proc = Bun.spawn(['bun', 'run', scanTs], {
+		const proc = Bun.spawn(scanCommand(), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 			env: {...process.env, TZ: 'America/New_York'},
@@ -781,7 +794,8 @@ describe('timezone subprocess (real TZ from command line)', () => {
 
 	test('Chicago dev and Tokyo dev get same project count', async () => {
 		const run = (tz: string) => {
-			const proc = Bun.spawn(['bun', 'run', scanTs, '--json'], {
+			const proc = Bun.spawn(scanCommand('--json'), {
+				cwd: import.meta.dir,
 				stdout: 'pipe',
 				stderr: 'pipe',
 				env: {...process.env, TZ: tz},
@@ -798,7 +812,8 @@ describe('timezone subprocess (real TZ from command line)', () => {
 	test('snapshot from Chicago dev is readable by Tokyo dev', async () => {
 		const snapshotPath = `${import.meta.dir}/.audit/xref-snapshot.json`;
 		// Chicago dev saves snapshot
-		const save = Bun.spawn(['bun', 'run', scanTs, '--snapshot'], {
+		const save = Bun.spawn(scanCommand('--snapshot'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 			env: {...process.env, TZ: 'America/Chicago'},
@@ -810,7 +825,8 @@ describe('timezone subprocess (real TZ from command line)', () => {
 		expect(snapshot.timestamp).toContain('T'); // ISO format present
 
 		// Tokyo dev compares against Chicago dev's snapshot
-		const cmp = Bun.spawn(['bun', 'run', scanTs, '--compare'], {
+		const cmp = Bun.spawn(scanCommand('--compare'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 			env: {...process.env, TZ: 'Asia/Tokyo'},
@@ -870,7 +886,8 @@ describe('timezone subprocess (real TZ from command line)', () => {
 		const snapshotPath = `${import.meta.dir}/.audit/xref-snapshot.json`;
 
 		// Save snapshot from Tokyo (UTC+9)
-		const save = Bun.spawn(['bun', 'run', scanTs, '--snapshot'], {
+		const save = Bun.spawn(scanCommand('--snapshot'), {
+			cwd: import.meta.dir,
 			stdout: 'pipe',
 			stderr: 'pipe',
 			env: {...process.env, TZ: 'Asia/Tokyo'},
@@ -1064,7 +1081,7 @@ describe('NO_COLOR awareness', () => {
 
 describe('DNS prefetch dry-run', () => {
 	test('--fix-dns --dry-run produces domain output without errors', async () => {
-		const proc = Bun.spawn(['bun', 'run', 'scan.ts', '--fix-dns', '--dry-run'], {
+		const proc = Bun.spawn(scanCommand('--fix-dns', '--dry-run'), {
 			cwd: import.meta.dir,
 			env: {...process.env, NO_COLOR: '1'},
 			stdout: 'pipe',

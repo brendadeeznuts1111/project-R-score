@@ -1,0 +1,10 @@
+{
+	"name": "scanner-fixture-alpha",
+	"version": "1.0.0",
+	"dependencies": {
+		"zod": "4.3.6"
+	},
+	"scripts": {
+		"test": "bun test"
+	}
+}

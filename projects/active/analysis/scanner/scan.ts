@@ -5,6 +5,7 @@ import {existsSync} from 'node:fs';
 import {readdir, appendFile, mkdir} from 'node:fs/promises';
 import {availableParallelism} from 'node:os';
 import {createHmac, createHash} from 'node:crypto';
+import {resolve as resolvePath} from 'node:path';
 import {dns} from 'bun';
 import {z} from 'zod';
 import {BUN_SCANNER_COLUMNS} from './src/scan-columns';
@@ -66,6 +67,7 @@ const {values: flags, positionals} = parseArgs({
 		'sort': {type: 'string'},
 		'filter': {type: 'string'},
 		'json': {type: 'boolean', default: false},
+		'root': {type: 'string'},
 		'with-bunfig': {type: 'boolean', default: false},
 		'workspaces': {type: 'boolean', default: false},
 		'without-pkg': {type: 'boolean', default: false},
@@ -1399,19 +1401,23 @@ const BUN_DEFAULT_TRUSTED = new Set([
 ]);
 
 // ── CONSTANTS: Configuration ────────────────────────────────────────────
-const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? (() => {
-	const mainDir = Bun.main.slice(0, Bun.main.lastIndexOf('/'));
-	// Walk up to find platform root (where .husky, docs/, tools/ exist)
-	let current = mainDir;
-	while (current !== '/' && current !== '') {
-		if (existsSync(`${current}/.husky`) && existsSync(`${current}/docs`)) {
-			return current;
-		}
-		current = current.slice(0, current.lastIndexOf('/'));
-	}
-	// Fallback: use parent of current file's directory
-	return mainDir.split('/').slice(0, -2).join('/') || process.cwd();
-})();
+const PROJECTS_ROOT = resolvePath(
+	flags.root ??
+		Bun.env.BUN_PLATFORM_HOME ??
+		(() => {
+			const mainDir = Bun.main.slice(0, Bun.main.lastIndexOf('/'));
+			// Walk up to find platform root (where .husky, docs/, tools/ exist)
+			let current = mainDir;
+			while (current !== '/' && current !== '') {
+				if (existsSync(`${current}/.husky`) && existsSync(`${current}/docs`)) {
+					return current;
+				}
+				current = current.slice(0, current.lastIndexOf('/'));
+			}
+			// Fallback: use parent of current file's directory
+			return mainDir.split('/').slice(0, -2).join('/') || process.cwd();
+		})(),
+);
 const projectDir = (p: {folder: string}): string => `${PROJECTS_ROOT}/${p.folder}`;
 
 // ── EXPORTS: Keychain/Secrets ──────────────────────────────────────────
@@ -2690,8 +2696,8 @@ export async function scanProject(dir: string): Promise<ProjectInfo> {
 				if (editorMatch) base.debugEditor = editorMatch[1];
 			}
 		} catch {
-    console.error('Unhandled error:', error);
-  }
+			console.error('Unhandled error:', error);
+		}
 	}
 	profMark('bunfig');
 
@@ -2716,8 +2722,8 @@ export async function scanProject(dir: string): Promise<ProjectInfo> {
 				base.authReady = content.includes('_authToken');
 			}
 		} catch {
-    console.error('Unhandled error:', error);
-  }
+			console.error('Unhandled error:', error);
+		}
 	}
 	profMark('npmrc');
 
@@ -2748,7 +2754,7 @@ type IPCFromWorker = z.infer<typeof IPCFromWorkerSchema>;
 async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 	const cpuCount = availableParallelism();
 	const poolSize = Math.min(cpuCount, dirs.length, 8);
-	const workerPath = Bun.fileURLToPath(new URL('./scan-worker.ts', import.meta.url));
+	const workerPath = Bun.fileURLToPath(new URL('./src/scan-worker.ts', import.meta.url));
 	const results = new Map<number, ProjectInfo>();
 	let nextIdx = 0;
 
@@ -2771,8 +2777,8 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 				try {
 					w.kill();
 				} catch {
-    console.error('Unhandled error:', error);
-  }
+					console.error('Unhandled error:', error);
+				}
 			}
 		}
 
@@ -2821,7 +2827,7 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 		}
 
 		for (let i = 0; i < poolSize; i++) {
-			const worker = Bun.spawn(['bun', workerPath], {
+			const worker = Bun.spawn([process.execPath, workerPath], {
 				stdio: ['ignore', 'ignore', 'ignore'],
 				ipc(message) {
 					try {
@@ -2836,6 +2842,13 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 				},
 			});
 			workers.push(worker);
+			void worker.exited.then(exitCode => {
+				if (!settled && exitCode !== 0) {
+					settled = true;
+					cleanup();
+					reject(new Error(`IPC worker exited before completing scans (code ${exitCode})`));
+				}
+			});
 		}
 
 		const sigHandler = (): void => {
@@ -3634,8 +3647,8 @@ async function renderAudit(projects: ProjectInfo[]): Promise<void> {
 					const pkg = await Bun.file(path).json();
 					classifyPkg(name, pkg.scripts ?? {});
 				} catch {
-    console.error('Unhandled error:', error);
-  }
+					console.error('Unhandled error:', error);
+				}
 			}),
 		);
 		xrefData.push(xref);
@@ -4505,20 +4518,20 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 					try {
 						domains.add(new URL(regMatch[1]).hostname);
 					} catch {
-    console.error('Unhandled error:', error);
-  }
+						console.error('Unhandled error:', error);
+					}
 				}
 				// [install.scopes] urls
 				for (const m of toml.matchAll(/url\s*=\s*"([^"]+)"/g)) {
 					try {
 						domains.add(new URL(m[1]).hostname);
 					} catch {
-    console.error('Unhandled error:', error);
-  }
+						console.error('Unhandled error:', error);
+					}
 				}
 			} catch {
-    console.error('Unhandled error:', error);
-  }
+				console.error('Unhandled error:', error);
+			}
 		}
 
 		// Extract from .npmrc
@@ -4531,20 +4544,20 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 					try {
 						domains.add(new URL(m[1].trim()).hostname);
 					} catch {
-    console.error('Unhandled error:', error);
-  }
+						console.error('Unhandled error:', error);
+					}
 				}
 				// scoped registries
 				for (const m of npmrc.matchAll(/^@[^:\s]+:registry\s*=\s*(.+)$/gm)) {
 					try {
 						domains.add(new URL(m[1].trim()).hostname);
 					} catch {
-    console.error('Unhandled error:', error);
-  }
+						console.error('Unhandled error:', error);
+					}
 				}
 			} catch {
-    console.error('Unhandled error:', error);
-  }
+				console.error('Unhandled error:', error);
+			}
 		}
 
 		// Extract from package.json publishConfig
@@ -4557,12 +4570,12 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 					try {
 						domains.add(new URL(pubReg).hostname);
 					} catch {
-    console.error('Unhandled error:', error);
-  }
+						console.error('Unhandled error:', error);
+					}
 				}
 			} catch {
-    console.error('Unhandled error:', error);
-  }
+				console.error('Unhandled error:', error);
+			}
 		}
 
 		// Always include npmjs as fallback
@@ -4981,8 +4994,8 @@ async function fixTrusted(projects: ProjectInfo[], dryRun: boolean): Promise<voi
 						}
 					}
 				} catch {
-    console.error('Unhandled error:', error);
-  }
+					console.error('Unhandled error:', error);
+				}
 			}),
 		);
 
@@ -5785,8 +5798,8 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 						const allDeps = {...pkgJson.dependencies, ...pkgJson.devDependencies};
 						if (allDeps[bareName]) return `${p.folder} ${c.dim(allDeps[bareName])}`;
 					} catch {
-    console.error('Unhandled error:', error);
-  }
+						console.error('Unhandled error:', error);
+					}
 					return null;
 				}),
 		)
@@ -5805,7 +5818,9 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 
 // ── Main ───────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-	const retiredRegistryFlag = ['fix-registry', 'fix-scopes', 'fix-npmrc'].find(flag => flags[flag as keyof typeof flags]);
+	const retiredRegistryFlag = ['fix-registry', 'fix-scopes', 'fix-npmrc'].find(
+		flag => flags[flag as keyof typeof flags],
+	);
 	if (retiredRegistryFlag) {
 		console.error(
 			`${c.red('error:')} --${retiredRegistryFlag} is retired because it conflated registry read, write, and auth planes`,
@@ -5993,6 +6008,7 @@ ${c.bold('  Modes:')}
     ${c.cyan('--advisory-feed')} <url>              Fetch & cross-ref security advisory RSS/Atom feed
 
 ${c.bold('  Filters:')}
+    ${c.cyan('--root')} <directory>                 Explicit project-container root (overrides BUN_PLATFORM_HOME)
     ${c.cyan('--filter')} <glob|bool>               Filter by name, folder, or boolean field
     ${c.cyan('--with-bunfig')}                      Only projects with bunfig.toml
     ${c.cyan('--workspaces')}                       Only workspace roots
@@ -6514,7 +6530,9 @@ ${c.bold("  Discovery (removal-preparation, mark don't delete):")}
 			content += '\nBUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_PLATFORM_HOME}/.bun-cache\n';
 			changed = true;
 			if (dryRun) {
-				console.info(`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
+				console.info(
+					`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`,
+				);
 			} else {
 				console.info(`  ${c.green('FIX')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
 			}

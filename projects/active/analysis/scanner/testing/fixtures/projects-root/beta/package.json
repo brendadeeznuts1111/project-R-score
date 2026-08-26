@@ -1,0 +1,15 @@
+{
+	"name": "scanner-fixture-beta",
+	"version": "2.0.0",
+	"devDependencies": {
+		"typescript": "5.9.2"
+	},
+	"peerDependencies": {
+		"bun-types": "1.4.0"
+	},
+	"peerDependenciesMeta": {
+		"bun-types": {
+			"optional": true
+		}
+	}
+}
