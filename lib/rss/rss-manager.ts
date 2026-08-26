@@ -8,6 +8,7 @@ import { withCircuitBreaker } from '../core/circuit-breaker';
 import { CacheManager } from '../core/cache-manager';
 import { AtomicFileOperations } from '../core/atomic-file-operations';
 import { FeedImageEnricher, type FeedImageSource } from './feed-image.ts';
+import { loadArchivedFeedSnapshot, type FeedSnapshotArchive } from './feed-snapshot-archive.ts';
 import { fetchFeedXml } from './fetch-feed-xml.ts';
 import { generateRSS, parseRSSFeed, type RSSFeed, type RSSFeedItem } from './rss-xml.ts';
 import { parseRSSFeedUntrusted, requireRSSXmlBoundaryValue } from './rss-xml-untrusted.ts';
@@ -33,13 +34,26 @@ export type RSSManagerOptions = {
   feedTimeoutMs?: number;
   feedParseDeadlineMs?: number;
   allowedFeedOrigins?: string[];
+  snapshotArchive?: FeedSnapshotArchive;
 };
+
+export interface RSSPublishStorage {
+  getOrCreateBucket(packageName: string): Promise<string>;
+  put(
+    bucket: string,
+    key: string,
+    data: Uint8Array,
+    crc32Hex?: string,
+    contentType?: string
+  ): Promise<void>;
+  publicObjectUrl(bucket: string, key: string): string;
+}
 
 export class RSSManager {
   private feeds: Map<string, RSSFeed>;
   private subscriptions: FeedSubscription[];
   private cache: CacheManager;
-  private r2Storage?: any; // R2Storage type
+  private readonly publishStorage?: RSSPublishStorage;
   private readonly fetcher: typeof fetch;
   private readonly imageEnricher: FeedImageEnricher;
   private readonly enrichImages: boolean;
@@ -49,12 +63,13 @@ export class RSSManager {
   private readonly feedTimeoutMs: number;
   private readonly feedParseDeadlineMs: number;
   private readonly allowedFeedOrigins?: ReadonlySet<string>;
+  private readonly snapshotArchive?: FeedSnapshotArchive;
 
-  constructor(r2Storage?: any, options: RSSManagerOptions = {}) {
+  constructor(publishStorage?: RSSPublishStorage, options: RSSManagerOptions = {}) {
     this.feeds = new Map();
     this.subscriptions = [];
     this.cache = new CacheManager({ defaultTTL: 300000, maxSize: 100 });
-    this.r2Storage = r2Storage;
+    this.publishStorage = publishStorage;
     this.fetcher = options.fetcher ?? fetch;
     this.imageEnricher = options.imageEnricher ?? new FeedImageEnricher({ fetcher: this.fetcher });
     this.enrichImages = options.enrichImages ?? true;
@@ -66,6 +81,7 @@ export class RSSManager {
     this.allowedFeedOrigins = options.allowedFeedOrigins
       ? new Set(options.allowedFeedOrigins.map(origin => new URL(origin).origin))
       : undefined;
+    this.snapshotArchive = options.snapshotArchive;
     this.loadSubscriptions();
   }
 
@@ -111,23 +127,24 @@ export class RSSManager {
       // Cache with CacheManager (TTL handled by manager)
       await this.cache.set(feedUrl, feed, { tags: ['rss'] });
 
-      // Store in R2 if available
-      if (this.r2Storage) {
-        await this.r2Storage.putJson(`rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`, feed);
-      }
-
       return feed;
     } catch (error) {
-      console.error(`Failed to fetch RSS feed ${feedUrl}:`, error);
-
-      // Try to get from R2 cache
-      if (this.r2Storage) {
-        const cachedFeed = await this.r2Storage.getJson(
-          `rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`
-        );
-        if (cachedFeed) return cachedFeed;
+      if (this.snapshotArchive) {
+        const archived = await loadArchivedFeedSnapshot({
+          archive: this.snapshotArchive,
+          sourceUrl: feedUrl,
+        });
+        if (archived) {
+          return requireRSSXmlBoundaryValue(
+            await parseRSSFeedUntrusted(archived.feedXml, {
+              deadlineMs: this.feedParseDeadlineMs,
+              quotas: { maxInputBytes: this.maxFeedBytes },
+            })
+          );
+        }
       }
 
+      console.error(`Failed to fetch RSS feed ${feedUrl}:`, error);
       throw error;
     }
   }
@@ -215,16 +232,22 @@ export class RSSManager {
   }
 
   async publishPackageFeed(packageName: string, feed: RSSFeed): Promise<string> {
-    if (!this.r2Storage) {
+    if (!this.publishStorage) {
       throw new Error('R2 storage required for publishing feeds');
     }
 
     const xml = generateRSS(feed);
-    const bucket = await this.r2Storage.getOrCreateBucket(packageName);
+    const bucket = await this.publishStorage.getOrCreateBucket(packageName);
+    const key = `feeds/${packageName}.rss`;
+    await this.publishStorage.put(
+      bucket,
+      key,
+      new TextEncoder().encode(xml),
+      undefined,
+      'application/rss+xml; charset=utf-8'
+    );
 
-    await this.r2Storage.put(bucket, `feeds/${packageName}.rss`, new TextEncoder().encode(xml));
-
-    return `https://${bucket}.${this.r2Storage['config'].accountId}.r2.dev/feeds/${packageName}.rss`;
+    return this.publishStorage.publicObjectUrl(bucket, key);
   }
 
   private async enrichFeedImages(feed: RSSFeed, feedUrl: string): Promise<void> {

@@ -1,3 +1,5 @@
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @verified Bun.gunzipSync · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-gunzipsync
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/s3#basic-usage — S3File read/write/list
 // @see https://bun.com/docs/runtime/utils#bun-gzipsync — Bun.gzipSync / gunzipSync
@@ -360,6 +362,19 @@ export class R2Storage {
       undefined,
       'text/plain; charset=utf-8'
     );
+  }
+
+  /** Build the public R2 development URL without exposing storage credentials. */
+  public publicObjectUrl(bucket: string, key: string): string {
+    if (!bucket || bucket !== bucket.trim() || bucket.includes('/') || bucket.includes('\0')) {
+      throw new TypeError('R2 public object bucket is invalid');
+    }
+    if (!key || key.startsWith('/') || key.includes('\0')) {
+      throw new TypeError('R2 public object key is invalid');
+    }
+    const url = new URL(`https://${bucket}.${this.config.accountId}.r2.dev/`);
+    url.pathname = `/${key.split('/').map(encodeURIComponent).join('/')}`;
+    return url.toString();
   }
 
   /** Public for RSS / package consumers (was private; typed as any before). */

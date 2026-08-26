@@ -46,8 +46,8 @@ Core invariants:
 - Rights history has no deletion API. Retention/erasure policy must be decided
   before any lifecycle rule or administrative delete surface is introduced.
 
-An R2 alias adapter remains deferred until its conditional-write contract can
-provide the same exact revision/digest CAS and post-write verification.
+The R2 alias adapter uses the binding's ETag conditional-write contract for
+exact revision/digest CAS and performs post-write verification before success.
 
 ## Area map
 
@@ -57,4 +57,5 @@ provide the same exact revision/digest CAS and post-write verification.
 | Bounded process-local adapter                    | `memory-content-store.ts` |
 | Atomic persistent local adapter                  | `local-content-store.ts`  |
 | Guarded immutable channel aliases                | `channel-alias-store.ts`  |
+| Durable R2 bytes, rights, and aliases            | `r2-*.ts`                 |
 | Stable module exports                            | `index.ts`                |

@@ -75,4 +75,15 @@ describe('R2Storage S3Client ground', () => {
     const { storage } = makeStorage();
     await expect(storage.getOrCreateBucket('')).rejects.toThrow(/Invalid package name/);
   });
+
+  test('builds encoded public object URLs without exposing credentials', () => {
+    const { storage } = makeStorage();
+    expect(storage.publicObjectUrl('docs-bucket', 'feeds/@scope/demo rss.xml')).toBe(
+      'https://docs-bucket.acct-test-r2.r2.dev/feeds/%40scope/demo%20rss.xml'
+    );
+    expect(() => storage.publicObjectUrl('../other', 'feed.xml')).toThrow(
+      'bucket is invalid'
+    );
+    expect(() => storage.publicObjectUrl('docs-bucket', '/feed.xml')).toThrow('key is invalid');
+  });
 });

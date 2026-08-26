@@ -25,6 +25,7 @@ semantics are owned by
 | [`rss-manager.ts`](./rss-manager.ts)                       | Cache, enrich, generate, and publish normalized RSS feeds.                                                           |
 | [`feed-image.ts`](./feed-image.ts)                         | Validate/enrich images, persist rights-gated original/thumbnail `ContentRef`s, and perform strict offline CAS reads. |
 | [`feed-snapshot-manifest.ts`](./feed-snapshot-manifest.ts) | Strict versioned source-to-CAS feed manifests, channel membership, freshness policy, and cache-only verified loads.  |
+| [`feed-snapshot-archive.ts`](./feed-snapshot-archive.ts)   | Exact source-alias resolution into strictly parsed manifests and digest-verified offline bytes, with no fetch seam. |
 | [`remote-fetch.ts`](./remote-fetch.ts)                     | Shared HTTPS, origin, redirect, deadline, identity-encoding, and streaming-byte policy.                              |
 | [`fetch-feed-xml.ts`](./fetch-feed-xml.ts)                 | Bounded XML retrieval and MIME validation before parsing.                                                            |
 | [`fetch-image-bytes.ts`](./fetch-image-bytes.ts)           | Image-specific adapter over the shared remote-fetch boundary.                                                        |
@@ -50,6 +51,12 @@ caller-supplied URLs; it does not invent npm RSS paths or assume a package name
 is a GitHub `owner/repository`. Generated package feeds omit dates when their
 source model has no revision timestamp and sort records before serialization, so
 equal inputs produce equal XML.
+
+`RSSManager` no longer accepts or returns free-form R2 JSON as an offline
+fallback. An optional `FeedSnapshotArchive` must return an exact source-bound,
+versioned manifest plus a `ContentStore`; every referenced byte is rehashed and
+the XML is reparsed in the terminable worker before use. Publishing uses the
+separate typed `RSSPublishStorage` surface and cannot read storage credentials.
 
 `Bun.Image.metadata()` supplies width, height, and format only. Byte size,
 SHA-256, dominant color, branding, channel assignment, and payload versioning
