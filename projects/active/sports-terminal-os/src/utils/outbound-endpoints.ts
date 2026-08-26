@@ -6,6 +6,38 @@ import {
 import type { PredictionProvider } from './types';
 import { h2Fetch } from './h2-fetch';
 
+export type FixedExternalProvider = 'kimi-risk' | 'pinnacle';
+
+export const FIXED_EXTERNAL_OUTBOUND_POLICIES = {
+  'kimi-risk': {
+    name: 'kimi-risk-api',
+    allowedOrigins: ['https://api.moonshot.cn'],
+    allowedMethods: ['POST'],
+    credentialMode: 'scoped',
+    credentialHeaders: ['authorization'],
+    redirect: 'error',
+    timeoutMs: 20_000,
+  },
+  pinnacle: {
+    name: 'pinnacle-odds-api',
+    allowedOrigins: ['https://api.pinnacle.com'],
+    allowedMethods: ['GET'],
+    credentialMode: 'scoped',
+    credentialHeaders: ['authorization'],
+    redirect: 'error',
+    timeoutMs: 15_000,
+  },
+} as const satisfies Record<FixedExternalProvider, OutboundEndpointPolicy>;
+
+export function fetchFixedExternalProvider(
+  provider: FixedExternalProvider,
+  input: string | URL,
+  init: RequestInit = {},
+  fetcher: OutboundFetch = fetch
+): Promise<Response> {
+  return fetchWithPolicy(input, init, FIXED_EXTERNAL_OUTBOUND_POLICIES[provider], fetcher);
+}
+
 export const PREDICTION_PROVIDER_OUTBOUND_POLICIES = {
   kalshi: {
     name: 'prediction-kalshi',
