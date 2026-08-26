@@ -1,4 +1,25 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @updated Bun.CryptoHasher · changed v0.5.0 · 2023-01-18 · https://bun.com/blog/bun-v0.5.0
+// @updated Bun.CryptoHasher · fixed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.CryptoHasher · changed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.CryptoHasher · fixed v1.1.11 · 2024-06-01 · https://bun.com/blog/bun-v1.1.11
+// @updated Bun.CryptoHasher · fixed v1.1.32 · 2024-10-21 · https://bun.com/blog/bun-v1.1.32
+// @updated Bun.CryptoHasher · fixed v1.1.35 · 2024-11-19 · https://bun.com/blog/bun-v1.1.35
+// @verified Bun.CryptoHasher · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/hashing#bun-cryptohasher
+// @see https://bun.com/docs/runtime/utils#bun-inspect — Bun.inspect
+// @updated Bun.inspect · fixed v1.1.43 · 2025-01-08 · https://bun.com/blog/bun-v1.1.43
+// @updated Bun.inspect · fixed v1.2.1 · 2025-01-27 · https://bun.com/blog/bun-v1.2.1
+// @updated Bun.inspect · fixed v1.2.19 · 2025-07-19 · https://bun.com/blog/bun-v1.2.19
+// @updated Bun.inspect · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated Bun.inspect · fixed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
+// @verified Bun.inspect · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-inspect
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
@@ -16,18 +37,19 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 import { CryptoHasher, inspect } from 'bun';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
+import { factoryWagerNpmRegistryUrlFromEnv } from '../config/r2-env.ts';
 
 const argv = import.meta.main
   ? applyUnknownLongOptionGuardFor('verify:package-info', Bun.argv.slice(2))
   : Bun.argv.slice(2);
 const SAVE_PATH = 'public/registry/package-info.json';
 const SHOULD_SAVE = argv.includes('--save');
-const LOCAL = Bun.env.REGISTRY_URL || 'http://localhost:3000';
+const FACTORY_NPM_READ_URL = factoryWagerNpmRegistryUrlFromEnv();
 
 type PkgCheck = { name: string; registry: string; version: string; readme: string; ok: boolean };
 
 async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
-  const url = registry === 'npm' ? 'https://registry.npmjs.org' : LOCAL;
+  const url = registry === 'npm' ? 'https://registry.npmjs.org' : FACTORY_NPM_READ_URL;
   const bunPath = resolveVerificationBunBinary().path;
   try {
     const proc = Bun.spawnSync([bunPath, 'info', name, `--registry=${url}`, '--json']);

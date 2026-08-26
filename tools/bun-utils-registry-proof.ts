@@ -12,7 +12,8 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun tools/bun-utils-registry-proof.ts
  *   bun tools/bun-utils-registry-proof.ts --write
  *   bun tools/bun-utils-registry-proof.ts --write --json
- *   REGISTRY_URL=… API_KEY=… bun tools/bun-utils-registry-proof.ts --publish
+ *   FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL=http://localhost:3000 \
+ *     FACTORY_WAGER_LOCAL_REGISTRY_TOKEN=… bun tools/bun-utils-registry-proof.ts --publish
  *
  * Writes under public/registry/@factorywager/bun-utils-test/ (Pages static +
  * allowlisted for /api/registry/@factorywager/* when mirrored to R2).
@@ -20,7 +21,11 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * @see lib/bun-utils-proof.ts
  * @see docs/registry-client.md
  */
-import { factoryWagerPagesCustomUrl, factoryWagerRegistryUrlFromEnv } from '../config/r2-env.ts';
+import {
+  factoryWagerLocalRegistryWriteUrlFromEnv,
+  factoryWagerPagesCustomUrl,
+  factoryWagerRegistryUrlFromEnv,
+} from '../config/r2-env.ts';
 import { buildBunUtilsProof, tableRows, type BunUtilsProofResult } from '../lib/bun-utils-proof.ts';
 import { jsonOut, logTable } from '../lib/console-depth.ts';
 
@@ -33,8 +38,9 @@ const jsonOnly = argv.includes('--json');
 const strictExit = !argv.includes('--no-fail');
 
 const registryUrl = factoryWagerRegistryUrlFromEnv().replace(/\/$/, '');
+const localWriteUrl = factoryWagerLocalRegistryWriteUrlFromEnv();
 const pagesUrl = factoryWagerPagesCustomUrl().replace(/\/$/, '');
-const API_KEY = Bun.env.API_KEY || Bun.env.REGISTRY_API_KEY || Bun.env.CLOUDFLARE_API_TOKEN;
+const LOCAL_WRITE_TOKEN = Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_TOKEN;
 const PACKAGE_NAME = Bun.env.PACKAGE_NAME || '@factorywager/bun-utils-test';
 const VERSION =
   Bun.env.VERSION || `v${new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)}`;
@@ -72,11 +78,13 @@ if (writeLocal) {
 }
 
 if (publishRemote) {
-  if (!API_KEY) {
-    console.error('Publish requires API_KEY / REGISTRY_API_KEY / CLOUDFLARE_API_TOKEN');
+  if (!Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL || !LOCAL_WRITE_TOKEN) {
+    console.error(
+      'Local publish requires FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL and FACTORY_WAGER_LOCAL_REGISTRY_TOKEN'
+    );
     process.exit(2);
   }
-  if (!jsonOnly) console.log(`\nPublishing proof to ${registryUrl} …`);
+  if (!jsonOnly) console.log(`\nPublishing proof to local gateway ${localWriteUrl} …`);
 
   const form = new FormData();
   form.append(
@@ -97,27 +105,27 @@ if (publishRemote) {
     })
   );
 
-  const res = await fetch(`${registryUrl}/api/registry/${PACKAGE_NAME}/versions`, {
+  const res = await fetch(`${localWriteUrl}/api/registry/${PACKAGE_NAME}/versions`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${API_KEY}` },
+    headers: { Authorization: `Bearer ${LOCAL_WRITE_TOKEN}` },
     body: form,
   });
 
   if (res.ok) {
     if (!jsonOnly) {
       console.log(`Published ${PACKAGE_NAME}@${VERSION}`);
-      console.log(`  ${registryUrl}/api/registry/${PACKAGE_NAME}/versions/${VERSION}`);
+      console.log(`  ${localWriteUrl}/api/registry/${PACKAGE_NAME}/versions/${VERSION}`);
     }
   } else {
     console.error(`Publish failed: ${res.status} ${await res.text()}`);
     console.error(
-      'Note: Pages /api/registry is GET-only today. Prefer --write + deploy, or R2 put of the same key.'
+      'The local gateway is the only SDK write route. Production writes require separate direct-to-R2 authority.'
     );
     process.exit(1);
   }
 } else if (!writeLocal && !jsonOnly) {
   console.log('\nTip: --write → public/registry/@factorywager/bun-utils-test/');
-  console.log('     --publish needs a POST registry endpoint + API_KEY (optional).');
+  console.log('     --publish needs explicit loopback URL + local token (optional).');
 }
 
 if (!jsonOnly) {

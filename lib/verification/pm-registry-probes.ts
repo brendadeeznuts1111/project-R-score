@@ -1,3 +1,12 @@
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+// @updated Bun.fileURLToPath · changed v1.0.30 · 2024-03-04 · https://bun.com/blog/bun-v1.0.30
+// @verified Bun.fileURLToPath · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
 // @see https://bun.com/docs/api/spawn — Bun.spawnSync
@@ -10,8 +19,8 @@
  * local `bun pm` state ↔ private npm registry (`registry.factory-wager.com`)
  * parity for the one publishable workspace package.
  *
- * Network probes are fail-soft: an unreachable registry or a missing
- * `FACTORY_WAGER_TOKEN` yields `{ skipped: true }` rows, never hard failures.
+ * Network probes are fail-soft: an unreachable public read registry yields
+ * `{ skipped: true }` rows, never hard failures. The read plane is tokenless.
  * The tool layer (`verify-pages-edge --pm --strict-pm`) promotes skips.
  *
  * @see docs/harness/tenants/monorepo-workspaces.md
@@ -22,11 +31,11 @@ import {
   publishPlaneModeConceptId,
   type PublishPlaneColorBlock,
 } from './publish-plane-color.ts';
+import { factoryWagerNpmRegistryUrlFromEnv } from '../../config/r2-env.ts';
 
 export const PM_PACKAGE_NAME = '@factorywager/registry-client';
 export const PM_PACKAGE_DIR = 'packages/registry-client';
 export const PM_REGISTRY_ENV = 'PM_VERIFY_REGISTRY';
-export const PM_REGISTRY_TOKEN_ENV = 'FACTORY_WAGER_TOKEN';
 export const PM_PROOF_REL = 'public/registry/pm-proof.json' as const;
 export const PM_PROOF_REPORT_PATH = '/registry/pm-proof.json' as const;
 export const PM_PROOF_SCHEMA = 'factorywager.pm-proof.v1' as const;
@@ -41,7 +50,7 @@ export const PM_PROOF_BOARD_PATH = '/portal/packages/' as const;
 export const PM_PROOF_WEAVE_PATH = '/registry/portal-weave.json' as const;
 
 const REPO_ROOT = Bun.fileURLToPath(new URL('../../', import.meta.url));
-const DEFAULT_REGISTRY = 'https://registry.factory-wager.com/api/npm';
+const DEFAULT_REGISTRY = factoryWagerNpmRegistryUrlFromEnv();
 
 export interface PmSpawnResult {
   exitCode: number;
@@ -123,25 +132,13 @@ export function manifestsEqual(
   return Bun.deepEquals(cleanManifest(local), cleanManifest(published), true);
 }
 
-/** Registry base URL: env override → root package.json publishConfig → default. */
+/** Public read URL: explicit probe override → canonical npm read helper. */
 export async function resolveRegistryUrl(
-  env: Record<string, string | undefined> = Bun.env,
-  readRootPkg: () => Promise<Record<string, unknown>> = readRootPackageJson
+  env: Record<string, string | undefined> = Bun.env
 ): Promise<string> {
   const fromEnv = env[PM_REGISTRY_ENV]?.trim();
   if (fromEnv) return fromEnv.replace(/\/$/, '');
-  try {
-    const pkg = await readRootPkg();
-    const publishConfig = pkg.publishConfig as { registry?: string } | undefined;
-    if (publishConfig?.registry) return publishConfig.registry.replace(/\/$/, '');
-  } catch {
-    // fall through to default
-  }
   return DEFAULT_REGISTRY.replace(/\/$/, '');
-}
-
-async function readRootPackageJson(): Promise<Record<string, unknown>> {
-  return (await Bun.file(`${REPO_ROOT}package.json`).json()) as Record<string, unknown>;
 }
 
 export function scopedPackumentUrl(registry: string, pkg: string): string {
@@ -381,18 +378,7 @@ export function pmLsSanity(spawn: PmSpawn = defaultSpawn): PmProbeRow {
   return row('pm ls sanity', true, 'dependency tree resolves');
 }
 
-/** 6 — scoped-registry token presence (never fails unauthenticated runs). */
-export function scopeTokenPresence(env: Record<string, string | undefined> = Bun.env): PmProbeRow {
-  const token = env[PM_REGISTRY_TOKEN_ENV]?.trim();
-  if (token) return row('scope token presence', true, `${PM_REGISTRY_TOKEN_ENV} set`);
-  return row(
-    'scope token presence',
-    true,
-    `${PM_REGISTRY_TOKEN_ENV} absent (read-only probes only)`,
-    true
-  );
-}
-
+/** Public read-plane probes; no registry credential is read or required. */
 export async function runPmProbes(opts?: {
   spawn?: PmSpawn;
   fetchImpl?: typeof fetch;
@@ -407,7 +393,6 @@ export async function runPmProbes(opts?: {
   rows.push(await readmeMetadata(packument));
   rows.push(await packDryRun(opts?.spawn));
   rows.push(pmLsSanity(opts?.spawn));
-  rows.push(scopeTokenPresence());
   return rows;
 }
 

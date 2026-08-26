@@ -1,36 +1,21 @@
-// FactoryWager registry baseline (permanent repo config)
+// FactoryWager registry plane baseline (permanent repo config)
 {
-  name: "FactoryWager Private Registry",
-  url: "https://registry.factory-wager.com",
-  storage: {
-    type: "r2",
-    bucket: "npm-registry",
-    prefix: "packages/",
-  },
-  cdn: {
-    enabled: true,
-    url: "https://registry.factory-wager.com",
-    signedUrls: false,
-    expirySeconds: 3600,
-  },
-  auth: {
-    type: "jwt",
-    tokenExpiry: "7d",
-  },
-  packages: [
-    {
-      pattern: "@factory-wager/*",
-      access: "authenticated",
-      publish: ["admin", "developer"],
+  read: {
+    origin: "https://registry.factory-wager.com",
+    npm: {
+      url: "https://registry.factory-wager.com/api/npm",
+      methods: ["GET", "HEAD"],
+      authenticated: false,
     },
-    {
-      pattern: "@factorywager/*",
-      access: "authenticated",
-      publish: ["admin", "developer"],
-    },
-    {
-      pattern: "*",
-      access: "all",
-    },
-  ],
+  },
+  localWrite: {
+    type: "registry-client-multipart",
+    url: "http://localhost:3000",
+    credentialSource: "runtime-env",
+  },
+  productionWrite: {
+    type: "r2-sigv4",
+    bucket: "factory-wager-registry",
+    credentialSource: "proton-pass",
+  },
 }
