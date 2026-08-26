@@ -4,6 +4,7 @@
 // lib/rss/rss-manager.ts — RSS feed integration with caching and storage
 
 import type { PackageInfo } from '../package/package-manager';
+import { parsePackageDependencyRecords } from '../registry/package-dependencies.ts';
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { CacheManager } from '../core/cache-manager';
 import { AtomicFileOperations } from '../core/atomic-file-operations';
@@ -214,17 +215,23 @@ export class RSSManager {
       }
     }
 
-    // Add dependency updates
-    for (const [dep, version] of Object.entries(packageInfo.dependencies || {}).sort(([a], [b]) =>
-      a.localeCompare(b)
-    )) {
+    // Preserve dependency plane and peer optionality in both presentation and identity.
+    const packageDependencies =
+      packageInfo.packageDependencies ?? parsePackageDependencyRecords(packageInfo);
+    for (const dependency of packageDependencies) {
+      const peerQualifier =
+        dependency.kind === 'peer' ? (dependency.peer?.optional ? ':optional' : ':required') : '';
+      const kindLabel =
+        dependency.kind === 'peer' && dependency.peer?.optional
+          ? 'peer (optional)'
+          : dependency.kind;
       feed.items.push({
-        title: `Dependency: ${dep}@${version}`,
-        link: `https://www.npmjs.com/package/${dep}`,
-        description: `Package depends on ${dep} version ${version}`,
+        title: `Dependency [${kindLabel}]: ${dependency.packageName}@${dependency.range}`,
+        link: `https://www.npmjs.com/package/${dependency.packageName}`,
+        description: `${packageName} declares ${dependency.packageName} ${dependency.range} as a ${kindLabel} dependency`,
         pubDate: '',
-        category: ['dependencies'],
-        guid: `dep:${packageName}:${dep}:${version}`,
+        category: ['dependencies', `dependency:${dependency.kind}`],
+        guid: `dep:${packageName}:${dependency.kind}${peerQualifier}:${dependency.packageName}:${dependency.range}`,
       });
     }
 

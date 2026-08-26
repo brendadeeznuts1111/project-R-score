@@ -8,6 +8,8 @@
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { ConcurrencyManagers } from '../core/safe-concurrency';
 import { fetchPublicResource } from '../http/public-resource-client';
+import type { PackageDependencyRecord } from '../content-store/index.ts';
+import { parsePackageDependencyRecords } from '../registry/package-dependencies.ts';
 
 const NPM_REGISTRY_BASE_URL = Bun.env.NPM_REGISTRY_BASE_URL ?? 'https://registry.npmjs.org';
 
@@ -17,6 +19,10 @@ export interface PackageInfo {
   description: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
+  optionalDependencies: Record<string, string>;
+  peerDependencies: Record<string, string>;
+  peerDependenciesMeta: Record<string, { optional: boolean }>;
+  packageDependencies: readonly PackageDependencyRecord[];
   bunDocs?: Array<{
     api: string;
     url: string;
@@ -43,6 +49,10 @@ interface PackageManifest {
   description: string;
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
+  optionalDependencies: Record<string, string>;
+  peerDependencies: Record<string, string>;
+  peerDependenciesMeta: Record<string, { optional: boolean }>;
+  packageDependencies: readonly PackageDependencyRecord[];
   rss?: string;
 }
 
@@ -50,21 +60,37 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
-function readStringRecord(value: unknown): Record<string, string> {
-  if (!isRecord(value)) return {};
-  return Object.fromEntries(
-    Object.entries(value).filter((entry): entry is [string, string] => typeof entry[1] === 'string')
-  );
-}
-
 function parsePackageManifest(value: unknown): PackageManifest {
   if (!isRecord(value)) throw new Error('package.json must contain an object');
+  const packageDependencies = parsePackageDependencyRecords(value);
+  const dependencies: Record<string, string> = {};
+  const devDependencies: Record<string, string> = {};
+  const optionalDependencies: Record<string, string> = {};
+  const peerDependencies: Record<string, string> = {};
+  const peerDependenciesMeta: Record<string, { optional: boolean }> = {};
+  for (const dependency of packageDependencies) {
+    if (dependency.kind === 'runtime') dependencies[dependency.packageName] = dependency.range;
+    if (dependency.kind === 'development')
+      devDependencies[dependency.packageName] = dependency.range;
+    if (dependency.kind === 'optional')
+      optionalDependencies[dependency.packageName] = dependency.range;
+    if (dependency.kind === 'peer') {
+      peerDependencies[dependency.packageName] = dependency.range;
+      peerDependenciesMeta[dependency.packageName] = {
+        optional: dependency.peer?.optional ?? false,
+      };
+    }
+  }
   return {
     name: typeof value.name === 'string' && value.name ? value.name : 'unknown',
     version: typeof value.version === 'string' && value.version ? value.version : '1.0.0',
     description: typeof value.description === 'string' ? value.description : '',
-    dependencies: readStringRecord(value.dependencies),
-    devDependencies: readStringRecord(value.devDependencies),
+    dependencies,
+    devDependencies,
+    optionalDependencies,
+    peerDependencies,
+    peerDependenciesMeta,
+    packageDependencies,
     rss: typeof value.rss === 'string' ? value.rss : undefined,
   };
 }
@@ -107,6 +133,10 @@ export class PackageManager {
       description: pkg.description,
       dependencies: pkg.dependencies,
       devDependencies: pkg.devDependencies,
+      optionalDependencies: pkg.optionalDependencies,
+      peerDependencies: pkg.peerDependencies,
+      peerDependenciesMeta: pkg.peerDependenciesMeta,
+      packageDependencies: pkg.packageDependencies,
       bunDocs: bunApis,
       r2Config,
       rssFeed,
@@ -188,7 +218,9 @@ export class PackageManager {
     if (pkg.rss) return pkg.rss;
 
     // Check dependencies for known RSS-capable packages
-    const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
+    const allDeps = Object.fromEntries(
+      pkg.packageDependencies.map(dependency => [dependency.packageName, dependency.range])
+    );
     const rssPackages = ['rss-parser', 'feed', 'rss-feed-emitter'];
 
     for (const dep of Object.keys(allDeps)) {

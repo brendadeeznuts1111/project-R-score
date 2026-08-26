@@ -230,8 +230,11 @@ synchronous parser. Central network migration and complete production feed/R2
 binding consumer migration remain open. `RSSManager` now rejects its former
 free-form URL-keyed R2 JSON fallback: offline recovery requires an exact
 source-bound manifest, verified CAS bytes, freshness policy, and a second pass
-through the terminable XML worker. A durable archive writer and complete
-production binding migration remain open, so this row is not `Implemented`.
+through the terminable XML worker. Package manifests are parsed once into
+deterministically ordered runtime, development, optional, and peer dependency
+records; optional-peer metadata and dependency kind are retained in package-feed
+categories and stable GUIDs. A durable archive writer and complete production
+binding migration remain open, so this row is not `Implemented`.
 
 ### `CHAN-001` Channel publication and aliases
 
