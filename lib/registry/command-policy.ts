@@ -18,6 +18,7 @@ import {
   prepareGuardedBunChild,
   spawnGuardedBunChild,
   spawnGuardedBunChildSync,
+  type BunChildAuthority,
   type PreparedBunChild,
 } from '../security/guarded-bun-process.ts';
 import type { RegistryOperation as RegistrySdkOperation } from '../../packages/registry-client/src/index.ts';
@@ -72,7 +73,7 @@ type RegistryCommandIo = {
   readonly stderr?: 'ignore' | 'inherit' | 'pipe';
 };
 
-function registryCommandAuthority(plan: RegistryCommandPlan) {
+function registryCommandAuthority(plan: RegistryCommandPlan): BunChildAuthority {
   const command = plan.argv[0];
   if (command !== 'install' && command !== 'info' && command !== 'publish') {
     throw new TypeError(`Registry command plan has unsupported command ${command ?? '<missing>'}`);

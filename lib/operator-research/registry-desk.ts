@@ -518,6 +518,12 @@ function* linesOf(text: string): Generator<string> {
   for (const line of parts) yield line;
 }
 
+function subprocessOutputText(
+  output: number | ReadableStream<Uint8Array> | null | undefined
+): Promise<string> {
+  return output instanceof ReadableStream ? Bun.readableStreamToText(output) : Promise.resolve('');
+}
+
 async function* spawnEvents(
   cmd: string[],
   cwd: string,
@@ -542,8 +548,8 @@ async function* spawnEvents(
   let exitCode = 1;
   try {
     const [stdoutText, stderrText, code] = await Promise.all([
-      proc.stdout ? Bun.readableStreamToText(proc.stdout) : Promise.resolve(''),
-      proc.stderr ? Bun.readableStreamToText(proc.stderr) : Promise.resolve(''),
+      subprocessOutputText(proc.stdout),
+      subprocessOutputText(proc.stderr),
       proc.exited,
     ]);
     exitCode = code;
