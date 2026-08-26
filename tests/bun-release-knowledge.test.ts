@@ -115,7 +115,20 @@ describe('Bun release knowledge', () => {
 
   test('normalizes stable IDs, exact API matches, provenance, and conservative execution metadata', () => {
     const result = knowledge();
-    expect(result.counts).toEqual({ examples: 3, runnable: 0, documented: 3 });
+    expect(result.counts).toEqual({ examples: 3, runnable: 0, documented: 3, astNodes: 7 });
+    expect(result.ast?.nodes.map(node => node.type)).toEqual([
+      'document',
+      'heading',
+      'codeBlock',
+      'heading',
+      'codeBlock',
+      'heading',
+      'codeBlock',
+    ]);
+    const root = result.ast?.nodes[0];
+    const headings = result.ast?.nodes.filter(node => node.type === 'heading') ?? [];
+    expect(root?.childIds).toEqual([headings[0]?.id, headings[1]?.id]);
+    expect(headings[1]?.childIds).toContain(headings[2]?.id);
     expect(result.publishedAt).toBe('2026-05-13T03:19:35.000Z');
     expect(result.examples[0]).toMatchObject({
       feature: 'Bun.Image',
@@ -147,6 +160,38 @@ describe('Bun release knowledge', () => {
     expect(cleanupExample).toMatchObject({
       runnable: false,
       requiresSetup: ['external-bindings'],
+    });
+  });
+
+  test('preserves media directive metadata and links asset AST nodes', () => {
+    const result = knowledge(`---
+title: Fixture
+---
+
+## Media
+
+{% image src="/images/blog/bun-1.4/cpu.png" alt="CPU dropped 42.3%" /%}
+<iframe src="https://www.youtube.com/embed/example" title="Overview"></iframe>
+
+\`\`\`ts title="probe"
+console.log("ok");
+\`\`\`
+`);
+    const assets = result.ast?.nodes.filter(node => node.type === 'asset') ?? [];
+    expect(assets).toHaveLength(2);
+    expect(assets[0]).toMatchObject({
+      directive: 'image',
+      assetIds: ['bun-1.3.14-cpu'],
+      metadata: { alt: 'CPU dropped 42.3%', src: '/images/blog/bun-1.4/cpu.png' },
+    });
+    expect(assets[1]).toMatchObject({
+      directive: 'iframe',
+      assetIds: ['bun-1.3.14-youtube-overview'],
+    });
+    expect(result.ast?.nodes.find(node => node.type === 'codeBlock')).toMatchObject({
+      language: 'ts',
+      meta: 'title="probe"',
+      childIds: [],
     });
   });
 

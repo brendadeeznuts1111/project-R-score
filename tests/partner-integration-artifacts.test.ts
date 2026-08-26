@@ -40,6 +40,10 @@ describe('checked-in partner integration artifacts', () => {
     // Mapped CODEs produce observations; demo/unmapped nodes remain unresolved.
     expect(changes.observations.length).toBeGreaterThan(0);
     expect(changes.observations.every(row => !row.currentExecutionCeiling)).toBe(true);
-    expect(changes.unresolvedTreeNodeIds.length).toBeGreaterThanOrEqual(0);
+    expect(changes.unresolvedTreeNodeIds.length).toBeGreaterThan(0);
+    expect(changes.unresolvedTreeNodeIds).toContain('partner-42');
+    expect(
+      changes.unresolvedTreeNodeIds.every(id => id.startsWith('limit-demo-') || id === 'partner-42')
+    ).toBe(true);
   });
 });

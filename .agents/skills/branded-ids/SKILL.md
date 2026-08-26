@@ -37,14 +37,14 @@ bun tools/brand-catalog.ts AccountId
 bun tools/brand-catalog.ts StateCode --json
 ```
 
-The current contract is 92 branded values across 10 domains:
+The current contract is 97 branded values across 10 domains:
 
-- 70 IDs represented by `AnyId`, including partner out, ledger, provenance,
-  adapter, and external-source identities
+- 75 IDs represented by `AnyId`, including release knowledge nodes, partner out,
+  ledger, provenance, adapter, and external-source identities
 - 3 keys represented by `AnyBrandedValue`, including `PartnerProfileKey`
 - 19 validated codes represented by `AnyBrandedValue`, including partner code,
   call sign, profile version, currency, and attention reason
-- all 92 represented by `AnyBrandedValue`
+- all 97 represented by `AnyBrandedValue`
 - Portal keymap joins glossary synonyms (`scrape.book` ↔ `SportsbookId`,
   `scrape.jurisdiction` ↔ `StateCode`) and design-kernel domain colors
 

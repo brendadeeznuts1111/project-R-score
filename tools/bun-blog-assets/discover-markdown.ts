@@ -13,7 +13,7 @@ import {
 import type { AssetDraft } from './types.ts';
 
 export function parseMarkdownMedia(markdown: string, map: Map<string, AssetDraft>): void {
-  const imagePattern = /\{%\s*image\s+([^%]+?)\s*\/\s*%\}/gi;
+  const imagePattern = /\{%\s*image\s+(.+?)\s*\/\s*%\}/gi;
   for (const match of markdown.matchAll(imagePattern)) {
     const attrs = parseAttributes(match[1] ?? '');
     const rawSrc = attrs.src;
@@ -36,7 +36,7 @@ export function parseMarkdownMedia(markdown: string, map: Map<string, AssetDraft
     });
   }
 
-  const videoPattern = /\{%\s*lazyVideo\s+([^%]+?)\s*\/\s*%\}/gi;
+  const videoPattern = /\{%\s*lazyVideo\s+(.+?)\s*\/\s*%\}/gi;
   for (const match of markdown.matchAll(videoPattern)) {
     const attrs = parseAttributes(match[1] ?? '');
     if (!attrs.src || !attrs.poster) continue;

@@ -15,11 +15,14 @@ export type ZoneId = BrandedString<'ZoneId'>;
 export type DocTokenId = BrandedString<'DocTokenId'>;
 /** Stable identity of one normalized example in a Bun release knowledge artifact. */
 export type ReleaseKnowledgeExampleId = BrandedString<'ReleaseKnowledgeExampleId'>;
+/** Stable identity of one structural node in a Bun release knowledge document. */
+export type ReleaseKnowledgeNodeId = BrandedString<'ReleaseKnowledgeNodeId'>;
 
 const document = defineBrandConstructors('DocumentId');
 const zone = defineBrandConstructors('ZoneId');
 const docToken = defineBrandConstructors('DocTokenId');
 const releaseKnowledgeExample = defineBrandConstructors('ReleaseKnowledgeExampleId');
+const releaseKnowledgeNode = defineBrandConstructors('ReleaseKnowledgeNodeId');
 
 export const asDocumentId = document.as;
 export const tryDocumentId = document.try;
@@ -36,6 +39,10 @@ export const parseDocTokenId = docToken.parse;
 export const asReleaseKnowledgeExampleId = releaseKnowledgeExample.as;
 export const tryReleaseKnowledgeExampleId = releaseKnowledgeExample.try;
 export const parseReleaseKnowledgeExampleId = releaseKnowledgeExample.parse;
+
+export const asReleaseKnowledgeNodeId = releaseKnowledgeNode.as;
+export const tryReleaseKnowledgeNodeId = releaseKnowledgeNode.try;
+export const parseReleaseKnowledgeNodeId = releaseKnowledgeNode.parse;
 
 export const DOCUMENT_BRAND_SPECS = [
   {
@@ -65,5 +72,12 @@ export const DOCUMENT_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'Normalized Bun release knowledge example identity',
+  },
+  {
+    name: 'ReleaseKnowledgeNodeId',
+    domain: 'documents',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Structural Bun release knowledge document node identity',
   },
 ] as const satisfies readonly BrandSpec[];

@@ -59,6 +59,7 @@ import type {
   ReleaseAssetId,
   ReleaseCapabilityId,
   ReleaseKnowledgeExampleId,
+  ReleaseKnowledgeNodeId,
   ResourceId,
   SessionId,
   SnapshotId,
@@ -137,6 +138,7 @@ import {
   asReleaseAssetId,
   asReleaseCapabilityId,
   asReleaseKnowledgeExampleId,
+  asReleaseKnowledgeNodeId,
   asResourceId,
   asRunId,
   asSessionId,
@@ -316,6 +318,9 @@ const sameUser: UserId = userId;
 const sameJob: JobId = asJobId('job-1');
 const releaseKnowledgeExampleId: ReleaseKnowledgeExampleId = asReleaseKnowledgeExampleId(
   'bun-1.3.14-bun-image-deadbeef'
+);
+const releaseKnowledgeNodeId: ReleaseKnowledgeNodeId = asReleaseKnowledgeNodeId(
+  'bun-1.4.0-heading-deadbeef'
 );
 
 // ─── 3. Branded value IS assignable to plain string ─────────────────────────

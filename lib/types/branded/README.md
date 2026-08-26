@@ -10,7 +10,7 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 92 values across 10 domains: 70 IDs, 3 keys, and 19 codes
+- **Inventory:** 97 values across 10 domains: 75 IDs, 3 keys, and 19 codes
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -55,7 +55,7 @@ format-aware (FQDN vs host/path) — never use a path-bearing Access domain as a
 
 | Helper                                            | Role                                     |
 | ------------------------------------------------- | ---------------------------------------- |
-| `splitHostId` / `hostIdFromParts`                 | apex + subdomain ↔ `HostId`             |
+| `splitHostId` / `hostIdFromParts`                 | apex + subdomain ↔ `HostId`              |
 | `FACTORY_WAGER_APEX` / `PROJECT_R_SCORE_PAGES`    | canonical apex + Pages project           |
 | `tryPagesProjectIdFromBackend`                    | parse `cloudflare-pages:…` backend field |
 | `accessDomainFromHost(host, path?)`               | compose Access domain from `HostId`      |

@@ -4,6 +4,7 @@ import type { ReleaseKnowledgeExampleId } from '../../../lib/types/branded.ts';
 import { blogUrlForVersion, normalizeVersion } from './generator.ts';
 import { enrichKnowledgeExample } from './knowledge-enrichment.ts';
 import { extractMarkdownCodeExamples, knowledgeSlug } from './knowledge-markdown.ts';
+import { extractReleaseKnowledgeAst } from './knowledge-ast.ts';
 import { validateReleaseTimestamp } from './knowledge-schema.ts';
 import type {
   KnowledgeCatalogEntry,
@@ -69,8 +70,13 @@ export function normalizeReleaseKnowledge(options: {
   if (new Set(examples.map(example => example.id)).size !== examples.length) {
     throw new Error('Normalized release examples contain duplicate IDs');
   }
+  const ast = extractReleaseKnowledgeAst(
+    options.markdown,
+    releaseVersion,
+    new Map(examples.map(example => [example.sourceLine, example.id]))
+  );
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     runtime: 'bun',
     releaseVersion,
     sourceUrl,
@@ -80,7 +86,9 @@ export function normalizeReleaseKnowledge(options: {
       examples: examples.length,
       runnable: examples.filter(example => example.runnable).length,
       documented: examples.filter(example => example.docsLinks.length > 0).length,
+      astNodes: ast.nodes.length,
     },
     examples,
+    ast,
   };
 }

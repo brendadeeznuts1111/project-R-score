@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-25T13:33:22.063Z",
+  "generatedAt": "2026-08-26T09:04:00.798Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,18 +12,18 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 96,
+    "brands": 97,
     "domains": 10,
-    "ids": 74,
+    "ids": 75,
     "keys": 3,
     "codes": 19,
-    "covered": 75,
+    "covered": 76,
     "referencedUnconstructed": 7,
     "unused": 14,
     "cataloguedProjects": 35,
     "trackedProjects": 31,
-    "adoptedProjects": 2,
-    "canonicalProjects": 1,
+    "adoptedProjects": 3,
+    "canonicalProjects": 2,
     "localPatternProjects": 1,
     "glossaryLinked": 3
   },
@@ -71,7 +71,7 @@
     {
       "name": "documents",
       "module": "lib/types/branded/documents.ts",
-      "brandCount": 4,
+      "brandCount": 5,
       "colorKey": "green",
       "color": "#3fb950",
       "tone": "ok"
@@ -305,30 +305,35 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 6,
+        "references": 14,
         "constructors": {
-          "as": 1,
+          "as": 2,
           "try": 0,
           "parse": 1
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
+          "projects/active/dashboards/secrets-dashboard/server.ts",
           "projects/active/sports-terminal-os/src/middleware/security.ts"
         ],
         "scopes": {
           "spine": {
-            "status": "unused",
-            "references": 0,
+            "status": "referenced-unconstructed",
+            "references": 2,
             "constructionCalls": 0,
             "guardCalls": 0,
-            "files": []
+            "files": [
+              "lib/docs/bun-brand-usages.ts"
+            ]
           },
           "projects": {
             "status": "covered",
-            "references": 6,
-            "constructionCalls": 2,
+            "references": 12,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "projects/active/dashboards/secrets-dashboard/server.ts",
               "projects/active/sports-terminal-os/src/middleware/security.ts"
             ]
           }
@@ -1052,7 +1057,7 @@
         "status": "covered",
         "references": 4,
         "constructors": {
-          "as": 39,
+          "as": 47,
           "try": 0,
           "parse": 0
         },
@@ -1067,7 +1072,7 @@
           "spine": {
             "status": "covered",
             "references": 4,
-            "constructionCalls": 39,
+            "constructionCalls": 47,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-contract.ts",
@@ -1119,14 +1124,15 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 4,
+        "references": 7,
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 1
+          "parse": 2
         },
         "guards": 0,
         "files": [
+          "packages/bun-release-contracts/src/knowledge-ast.ts",
           "packages/bun-release-contracts/src/knowledge-normalize.ts",
           "packages/bun-release-contracts/src/knowledge-schema.ts",
           "packages/bun-release-contracts/src/knowledge-types.ts"
@@ -1134,11 +1140,81 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 4,
-            "constructionCalls": 2,
+            "references": 7,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "packages/bun-release-contracts/src/knowledge-ast.ts",
               "packages/bun-release-contracts/src/knowledge-normalize.ts",
+              "packages/bun-release-contracts/src/knowledge-schema.ts",
+              "packages/bun-release-contracts/src/knowledge-types.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ReleaseKnowledgeNodeId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Structural Bun release knowledge document node identity",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asReleaseKnowledgeNodeId",
+        "try": "tryReleaseKnowledgeNodeId",
+        "parse": "parseReleaseKnowledgeNodeId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseKnowledgeNodeId",
+      "shortName": "releaseKnowledgeNodeId",
+      "envName": "RELEASE_KNOWLEDGE_NODE_ID",
+      "colorKey": "green",
+      "color": "#3fb950",
+      "tone": "ok",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 10,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 3
+        },
+        "guards": 0,
+        "files": [
+          "packages/bun-release-contracts/src/knowledge-ast-id.ts",
+          "packages/bun-release-contracts/src/knowledge-ast.ts",
+          "packages/bun-release-contracts/src/knowledge-schema.ts",
+          "packages/bun-release-contracts/src/knowledge-types.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 10,
+            "constructionCalls": 4,
+            "guardCalls": 0,
+            "files": [
+              "packages/bun-release-contracts/src/knowledge-ast-id.ts",
+              "packages/bun-release-contracts/src/knowledge-ast.ts",
               "packages/bun-release-contracts/src/knowledge-schema.ts",
               "packages/bun-release-contracts/src/knowledge-types.ts"
             ]
@@ -3279,14 +3355,18 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 7,
+        "references": 15,
         "constructors": {
-          "as": 3,
+          "as": 5,
           "try": 0,
           "parse": 0
         },
         "guards": 0,
         "files": [
+          "lib/docs/bun-brand-usages.ts",
+          "packages/bun-release-contracts/src/knowledge-ast-id.ts",
+          "packages/bun-release-contracts/src/knowledge-ast.ts",
+          "packages/bun-release-contracts/src/knowledge-types.ts",
           "tools/bun-blog-assets/html.ts",
           "tools/bun-blog-assets/release-snapshot-contract.ts",
           "tools/bun-blog-assets/types.ts"
@@ -3294,10 +3374,14 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 7,
-            "constructionCalls": 3,
+            "references": 15,
+            "constructionCalls": 5,
             "guardCalls": 0,
             "files": [
+              "lib/docs/bun-brand-usages.ts",
+              "packages/bun-release-contracts/src/knowledge-ast-id.ts",
+              "packages/bun-release-contracts/src/knowledge-ast.ts",
+              "packages/bun-release-contracts/src/knowledge-types.ts",
               "tools/bun-blog-assets/html.ts",
               "tools/bun-blog-assets/release-snapshot-contract.ts",
               "tools/bun-blog-assets/types.ts"
@@ -6850,12 +6934,14 @@
     {
       "project": "projects/active/dashboards/secrets-dashboard",
       "sourceFiles": 1,
-      "brandedFiles": 0,
-      "brands": [],
+      "brandedFiles": 1,
+      "brands": [
+        "RequestId"
+      ],
       "localBrandTypes": [],
-      "constructorCalls": 0,
+      "constructorCalls": 1,
       "guardCalls": 0,
-      "status": "governed-no-usage"
+      "status": "adopted"
     },
     {
       "project": "projects/active/utilities/bun-file-analyzer",
@@ -6929,7 +7015,7 @@
     },
     {
       "project": "projects/active/enterprise/foxy-proxy",
-      "sourceFiles": 87,
+      "sourceFiles": 88,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7026,7 +7112,7 @@
     },
     {
       "project": "projects/active/analysis/scanner",
-      "sourceFiles": 58,
+      "sourceFiles": 59,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7096,7 +7182,7 @@
     },
     {
       "project": "projects/active/factorywager",
-      "sourceFiles": 75,
+      "sourceFiles": 76,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],

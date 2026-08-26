@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-25T05:11:24.179Z",
+  "generatedAt": "2026-08-26T08:53:02.143Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 96,
+  "brandCount": 97,
   "domainCount": 10,
   "domains": [
     "audit",
@@ -17,7 +17,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 74,
+    "id": 75,
     "key": 3,
     "code": 19
   },
@@ -35,7 +35,7 @@
     {
       "name": "documents",
       "module": "lib/types/branded/documents.ts",
-      "brandCount": 4
+      "brandCount": 5
     },
     {
       "name": "governance",
@@ -493,6 +493,34 @@
       "guard": "BRAND_GUARDS.isReleaseKnowledgeExampleId",
       "shortName": "releaseKnowledgeExampleId",
       "envName": "RELEASE_KNOWLEDGE_EXAMPLE_ID"
+    },
+    {
+      "name": "ReleaseKnowledgeNodeId",
+      "domain": "documents",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Structural Bun release knowledge document node identity",
+      "kind": "id",
+      "module": "lib/types/branded/documents.ts",
+      "constructors": {
+        "as": "asReleaseKnowledgeNodeId",
+        "try": "tryReleaseKnowledgeNodeId",
+        "parse": "parseReleaseKnowledgeNodeId"
+      },
+      "validation": {
+        "shape": "nonblank",
+        "ingressNormalization": "trim"
+      },
+      "guard": "BRAND_GUARDS.isReleaseKnowledgeNodeId",
+      "shortName": "releaseKnowledgeNodeId",
+      "envName": "RELEASE_KNOWLEDGE_NODE_ID"
     },
     {
       "name": "ChallengeId",
