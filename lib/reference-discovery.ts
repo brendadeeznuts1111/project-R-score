@@ -383,6 +383,15 @@ export function isAllowedSimilarEnvPair(a: string, b: string): boolean {
     return true;
   }
 
+  // Pre-push profiling: CHILD prevents recursive profiling in the spawned
+  // process; KIND selects the parent-requested profile mode.
+  if (
+    (a === 'PREPUSH_PROFILE_CHILD' && b === 'PREPUSH_PROFILE_KIND') ||
+    (a === 'PREPUSH_PROFILE_KIND' && b === 'PREPUSH_PROFILE_CHILD')
+  ) {
+    return true;
+  }
+
   return false;
 }
 

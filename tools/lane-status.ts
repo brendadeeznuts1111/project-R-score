@@ -77,7 +77,7 @@ export { LANE_STATUS_ALLOWED_LONG };
 
 const DEFAULT_WATCH_CRON = '*/5 * * * *';
 const DEFAULT_TZ = 'America/Chicago';
-const STALE_HOURS = 48;
+const INACTIVE_CANDIDATE_TIP_AGE_HOURS = 7 * 24;
 
 export type LaneHealth = 'ok' | 'warn' | 'fail';
 
@@ -120,7 +120,7 @@ export type LaneReport = {
     path: string;
     branch: string;
     dirty: number;
-    ageHours: number;
+    tipAgeHours: number;
     flag: string;
   }>;
   mergedBranches: string[];
@@ -128,10 +128,10 @@ export type LaneReport = {
     health: LaneHealth;
     elapsedMs: number;
     elapsedLabel: string;
-    staleHours: number;
+    inactiveCandidateTipAgeHours: number;
     worktreeTotal: number;
     worktreeDirty: number;
-    worktreeStale: number;
+    worktreeInactiveCandidates: number;
     tz?: string;
     nextFire?: string | null;
   };
@@ -217,9 +217,14 @@ type WorktreeProbe = {
   path: string;
   branch: string;
   dirty: number;
-  ageHours: number;
+  tipAgeHours: number;
   flag: string;
 };
+
+export function worktreeFlag(dirty: number, tipAgeHours: number): string {
+  if (dirty > 0) return 'dirty';
+  return tipAgeHours > INACTIVE_CANDIDATE_TIP_AGE_HOURS ? 'INACTIVE-CANDIDATE' : '';
+}
 
 async function probeWorktree(
   wtPath: string,
@@ -233,14 +238,13 @@ async function probeWorktree(
   ]);
   const entries = parseGitStatusPorcelain(statusOut);
   const commitUnix = Number(commitRaw);
-  const ageHours = commitUnix ? Math.floor((nowSec - commitUnix) / 3600) : -1;
-  const stale = entries.length === 0 && ageHours > STALE_HOURS;
+  const tipAgeHours = commitUnix ? Math.floor((nowSec - commitUnix) / 3600) : -1;
   return {
     path: shortPath(wtPath, home),
     branch: wtBranch,
     dirty: entries.length,
-    ageHours,
-    flag: stale ? 'STALE' : entries.length > 0 ? 'dirty' : '',
+    tipAgeHours,
+    flag: worktreeFlag(entries.length, tipAgeHours),
   };
 }
 
@@ -289,7 +293,7 @@ export async function collectReport(
     probes.push(probeWorktree(wtPath, wtBranch, home, nowSec));
   }
 
-  const worktrees = (await Promise.all(probes)).sort((a, b) => b.ageHours - a.ageHours);
+  const worktrees = (await Promise.all(probes)).sort((a, b) => b.tipAgeHours - a.tipAgeHours);
 
   const mergedRaw = git(['branch', '--merged', 'origin/main', '--format=%(refname:short)'], root);
   const mergedBranches = mergedRaw
@@ -324,10 +328,10 @@ export async function collectReport(
       health: 'ok',
       elapsedMs: 0,
       elapsedLabel: '',
-      staleHours: STALE_HOURS,
+      inactiveCandidateTipAgeHours: INACTIVE_CANDIDATE_TIP_AGE_HOURS,
       worktreeTotal: worktrees.length,
       worktreeDirty: worktrees.filter(w => w.dirty > 0).length,
-      worktreeStale: worktrees.filter(w => w.flag === 'STALE').length,
+      worktreeInactiveCandidates: worktrees.filter(w => w.flag === 'INACTIVE-CANDIDATE').length,
       ...metaExtra,
     },
   };
@@ -396,7 +400,7 @@ function printCount(report: LaneReport): void {
       `mainBehind=${report.localMain.behindOriginMain}`,
       `worktrees=${meta.worktreeTotal}`,
       `wtDirty=${meta.worktreeDirty}`,
-      `wtStale=${meta.worktreeStale}`,
+      `wtInactiveCandidates=${meta.worktreeInactiveCandidates}`,
       `merged=${mergedBranches.length}`,
       `health=${meta.health}`,
       `elapsed=${meta.elapsedLabel}`,
@@ -503,7 +507,7 @@ function printHuman(report: LaneReport, opts: LaneCliOpts): void {
     const shown = opts.verbose ? worktrees : worktrees.filter(w => w.flag !== '');
     console.info(
       section(
-        `== worktrees ${opts.verbose ? '(all)' : '(flagged)'} · dirty=${meta.worktreeDirty} stale=${meta.worktreeStale} / ${meta.worktreeTotal} ==`
+        `== worktrees ${opts.verbose ? '(all)' : '(flagged)'} · dirty=${meta.worktreeDirty} inactiveCandidates=${meta.worktreeInactiveCandidates} / ${meta.worktreeTotal} ==`
       )
     );
     if (shown.length === 0) {
@@ -513,7 +517,7 @@ function printHuman(report: LaneReport, opts: LaneCliOpts): void {
         shown.map(w => ({
           branch: w.branch,
           dirty: w.dirty,
-          ageH: w.ageHours,
+          tipAgeH: w.tipAgeHours,
           flag: w.flag,
           path: fitPath(w.path),
         }))
@@ -525,7 +529,7 @@ function printHuman(report: LaneReport, opts: LaneCliOpts): void {
     console.info(
       statusLine(
         'worktrees',
-        `dirty=${meta.worktreeDirty} stale=${meta.worktreeStale} total=${meta.worktreeTotal} merged=${mergedBranches.length}`
+        `dirty=${meta.worktreeDirty} inactiveCandidates=${meta.worktreeInactiveCandidates} total=${meta.worktreeTotal} merged=${mergedBranches.length}`
       )
     );
   }

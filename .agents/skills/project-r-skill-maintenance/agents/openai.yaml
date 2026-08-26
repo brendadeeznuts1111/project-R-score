@@ -1,4 +1,4 @@
 interface:
   display_name: "Skill Maintenance"
   short_description: "Keep Project R skills and machine guidance current"
-  default_prompt: "Use $project-r-skill-maintenance to update the owning repository skill, consolidate repeated audits behind fail-closed owner commands, separate Bun evidence layers, and validate the package."
+  default_prompt: "Use $project-r-skill-maintenance to update the repository-owned skill, remove duplicate policy planes and stale pointers, preserve explicit ownership boundaries, and validate the package."

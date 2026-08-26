@@ -1,4 +1,4 @@
 interface:
   display_name: "Project R Ops"
   short_description: "Profile and run Project R channels, CI, and recovery"
-  default_prompt: "Use $project-r-ops-management to inspect the pinned Bun runtime and lane state, use timing evidence to fix the earliest owned friction, then run the smallest proof plus clean local CI."
+  default_prompt: "Use $project-r-ops-management to inspect runtime and lane state, identify the owning package and severity, fix the earliest owned failure, then run claim-scoped proof before clean local CI."

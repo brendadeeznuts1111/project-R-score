@@ -50,7 +50,8 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
 ## Operating rules
 
 - **Inspect before editing.** Run `git status` and `bun run lane:status`. Keep
-  work disjoint from dirty files owned by other sessions.
+  work disjoint from dirty files owned by other sessions. Status and commit age
+  are observations, not ownership claims or retirement authority.
 - **Use worktrees.** The primary checkout tracks `main`; feature work belongs in
   a worktree. Run `bun install` once there so Husky is wired. Copy only required
   gitignored runtime files from the primary checkout.
@@ -65,8 +66,8 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
   ESLint. Nested standalone products may keep their explicitly pinned tools.
 - **Use Bun's test lanes.** Development prefers `bun run test:changed` /
   `test:watch` over bare `bun test --dots`; staged gates run before commit;
-  `bun run bun:ci` is merge proof. Do not introduce `bun-git-hooks` or
-  Node-only flags such as `--runInBand`.
+  `bun run bun:ci` is merge proof. Do not introduce `bun-git-hooks` or Node-only
+  flags such as `--runInBand`.
 - **Deliver through a PR.** `main` is squash-only and branch-protected. Keep all
   headings from [the PR template](.github/pull_request_template.md) and run
   `bun run bun:ci` before merge. Hosted Actions are not merge authority.
@@ -78,6 +79,9 @@ contract is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md).
 - **Record foreign failures.** If a gate fails only on another active lane,
   record its command, output, and owner. Use `SKIP_TEST_CHANGED=1` only with
   that evidence in the commit message.
+- **Select release ownership.** Build, pack, channel, and publish commands must
+  resolve in an explicitly selected package. Never infer the private monorepo
+  root or substitute a native registry publish for the Factory artifact route.
 
 Task commands and domain owners live in [`docs/AGENTS.md`](docs/AGENTS.md).
 Shared staged-gate mechanics live in

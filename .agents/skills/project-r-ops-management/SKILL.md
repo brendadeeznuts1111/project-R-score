@@ -60,6 +60,13 @@ description: >
 
 - Repository scripts own runnable commands; machine-wide doctors do not replace
   Project R gates.
+- Start with claim-scoped proof. A warning remains visible but does not become a
+  global blocker unless an owning contract explicitly promotes it or the current
+  change introduces new ratcheted debt. Attribute an existing failure to its
+  owner instead of making every unrelated lane repair it.
+- `lane:status` reports repository state; it does not claim paths or establish
+  an owner. Commit-tip age is not session activity, and an inactive candidate is
+  never permission to edit or retire a lane.
 - For Factory templates, prove source preflight, materialized output, a fresh
   install, and the release route. Require `bun.lock` existence and schema before
   using `bun install --frozen-lockfile --dry-run --ignore-scripts` as the
@@ -109,3 +116,7 @@ description: >
   or weaken freshness without its owning authority.
 - If a command in the command map is absent from `package.json`, repair the
   SSOT; do not invent a substitute.
+- A release must select an owning package and its declared artifact/channel
+  contract. Never infer the private monorepo root as a publish target, invent a
+  missing `build-all`/`publish-gate`, or send a native publish to a read-only
+  metadata or Factory artifact plane.
