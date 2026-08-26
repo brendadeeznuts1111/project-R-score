@@ -26,6 +26,8 @@ import type {
   AuditEntryId,
   ChallengeId,
   CorrelationId,
+  ContentDigest,
+  ContentKey,
   CurrencyCode,
   DeploymentId,
   DocumentId,
@@ -63,6 +65,7 @@ import type {
   ResourceId,
   SessionId,
   SnapshotId,
+  SourceLocatorId,
   SourceSystemId,
   SportsbookId,
   StateCode,
@@ -91,6 +94,8 @@ import {
   asEvidenceId,
   asChallengeId,
   asCorrelationId,
+  asContentDigest,
+  asContentKey,
   asCurrencyCode,
   asDecisionId,
   asDeploymentId,
@@ -143,6 +148,7 @@ import {
   asRunId,
   asSessionId,
   asSnapshotId,
+  asSourceLocatorId,
   asSourceSystemId,
   asSportsbookId,
   asStepId,
@@ -178,6 +184,9 @@ const forecastIssueId: LimitForecastIssueId = asLimitForecastIssueId('forecast-1
 const sportsbookId: SportsbookId = asSportsbookId('draftkings');
 const requestId: RequestId = asRequestId('req-1');
 const documentId: DocumentId = asDocumentId('doc-1');
+const contentDigest: ContentDigest = asContentDigest(`sha256:${'a'.repeat(64)}`);
+const contentKey: ContentKey = asContentKey(`sha256/aa/${'a'.repeat(64)}`);
+const sourceLocatorId: SourceLocatorId = asSourceLocatorId(`locator-sha256:${'b'.repeat(64)}`);
 const releaseAssetId: ReleaseAssetId = asReleaseAssetId('bun-1.4-og-image');
 const releaseCapabilityId: ReleaseCapabilityId = asReleaseCapabilityId('bun-xml-native');
 const portalTenantId: PortalTenantId = asPortalTenantId('factory');
@@ -261,6 +270,12 @@ const crossAsToken: TokenId = sessionId;
 
 // @ts-expect-error — DocumentId is not a FeedId
 const crossAsFeed: FeedId = documentId;
+
+// @ts-expect-error — locator identity is not byte identity
+const locatorAsContentDigest: ContentDigest = sourceLocatorId;
+
+// @ts-expect-error — a storage key is not a byte digest
+const keyAsContentDigest: ContentDigest = contentKey;
 
 // @ts-expect-error — a release asset is not a release capability
 const crossReleaseAssetAsCapability: ReleaseCapabilityId = releaseAssetId;
@@ -401,6 +416,7 @@ const everyId: readonly AnyId[] = [
   asStepId('st'),
   asWebhookId('wh'),
   asFeedId('f'),
+  sourceLocatorId,
   asReleaseAssetId('bun-1.4-og-image'),
   asReleaseCapabilityId('bun-xml-native'),
   asRunId('run'),
@@ -445,6 +461,8 @@ const everyBrandedValue: readonly AnyBrandedValue[] = [
   githubIssueLabelKey,
   asGithubIssuePriorityCode('p1'),
   asPartnerProfileKey('profile-key'),
+  contentDigest,
+  contentKey,
   asStateCode('MA'),
   asZipCode('02139'),
   asSurfaceStatusCode('live'),

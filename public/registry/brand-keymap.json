@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T09:51:44.571Z",
+  "generatedAt": "2026-08-26T12:06:29.165Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,12 +12,13 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 97,
+    "brands": 100,
     "domains": 10,
-    "ids": 75,
-    "keys": 3,
+    "ids": 76,
+    "keys": 4,
     "codes": 19,
-    "covered": 76,
+    "digests": 1,
+    "covered": 79,
     "referencedUnconstructed": 7,
     "unused": 14,
     "cataloguedProjects": 35,
@@ -95,7 +96,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 41,
+      "brandCount": 44,
       "colorKey": "accent",
       "color": "#58a6ff",
       "tone": "info"
@@ -659,14 +660,15 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 16,
+        "references": 18,
         "constructors": {
           "as": 5,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
+          "lib/content-store/content-contract.ts",
           "lib/docs/bun-brand-usages.ts",
           "lib/identity/identity.ts",
           "lib/identity/timeline.ts",
@@ -675,10 +677,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 16,
-            "constructionCalls": 5,
+            "references": 18,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
+              "lib/content-store/content-contract.ts",
               "lib/docs/bun-brand-usages.ts",
               "lib/identity/identity.ts",
               "lib/identity/timeline.ts",
@@ -1776,14 +1779,15 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 20,
+        "references": 22,
         "constructors": {
           "as": 3,
           "try": 0,
-          "parse": 4
+          "parse": 5
         },
         "guards": 0,
         "files": [
+          "lib/content-store/content-contract.ts",
           "lib/docs/bun-brand-usages.ts",
           "lib/dod/evidence.ts",
           "lib/screenshot-remediation.ts",
@@ -1795,10 +1799,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 20,
-            "constructionCalls": 7,
+            "references": 22,
+            "constructionCalls": 8,
             "guardCalls": 0,
             "files": [
+              "lib/content-store/content-contract.ts",
               "lib/docs/bun-brand-usages.ts",
               "lib/dod/evidence.ts",
               "lib/screenshot-remediation.ts",
@@ -3312,6 +3317,202 @@
               "tools/bun-blog-assets/feed-build.ts",
               "tools/bun-blog-assets/release-snapshot-contract.ts",
               "tools/bun-blog-assets/release-snapshot-feeds.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ContentDigest",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Algorithm-qualified SHA-256 identity of exact application content bytes",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^sha256:[a-f0-9]{64}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "digest",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentDigest",
+        "try": "tryContentDigest",
+        "parse": "parseContentDigest"
+      },
+      "guard": "BRAND_GUARDS.isContentDigest",
+      "shortName": "contentDigest",
+      "envName": "CONTENT_DIGEST",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 21,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 5
+        },
+        "guards": 0,
+        "files": [
+          "lib/content-store/content-contract.ts",
+          "lib/content-store/memory-content-store.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 21,
+            "constructionCalls": 6,
+            "guardCalls": 0,
+            "files": [
+              "lib/content-store/content-contract.ts",
+              "lib/content-store/memory-content-store.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ContentKey",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Immutable application content-store key derived from a content digest",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^sha256/[a-f0-9]{2}/[a-f0-9]{64}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "key",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentKey",
+        "try": "tryContentKey",
+        "parse": "parseContentKey"
+      },
+      "guard": "BRAND_GUARDS.isContentKey",
+      "shortName": "contentKey",
+      "envName": "CONTENT_KEY",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 5,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "lib/content-store/content-contract.ts",
+          "lib/content-store/memory-content-store.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 5,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/content-store/content-contract.ts",
+              "lib/content-store/memory-content-store.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "SourceLocatorId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "SHA-256 identity of a source locator string, never of fetched bytes",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^locator-sha256:[a-f0-9]{64}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asSourceLocatorId",
+        "try": "trySourceLocatorId",
+        "parse": "parseSourceLocatorId"
+      },
+      "guard": "BRAND_GUARDS.isSourceLocatorId",
+      "shortName": "sourceLocatorId",
+      "envName": "SOURCE_LOCATOR_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "covered",
+        "references": 3,
+        "constructors": {
+          "as": 1,
+          "try": 0,
+          "parse": 1
+        },
+        "guards": 0,
+        "files": [
+          "lib/content-store/content-contract.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "covered",
+            "references": 3,
+            "constructionCalls": 2,
+            "guardCalls": 0,
+            "files": [
+              "lib/content-store/content-contract.ts"
             ]
           },
           "projects": {
@@ -4865,14 +5066,15 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 16,
+        "references": 18,
         "constructors": {
           "as": 2,
           "try": 0,
-          "parse": 16
+          "parse": 17
         },
         "guards": 0,
         "files": [
+          "lib/content-store/content-contract.ts",
           "packages/partners/src/adapters/accounting-ledger.ts",
           "packages/partners/src/adapters/lifecycle.ts",
           "packages/partners/src/adapters/limit-changes.ts",
@@ -4883,16 +5085,16 @@
           "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/build-partner-records.ts",
           "packages/partners/src/boundary/dashboard-artifact.ts",
-          "packages/partners/src/boundary/out-capability-snapshot.ts",
-          "packages/partners/src/boundary/reconcile-partner-facts.ts"
+          "packages/partners/src/boundary/out-capability-snapshot.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 16,
-            "constructionCalls": 18,
+            "references": 18,
+            "constructionCalls": 19,
             "guardCalls": 0,
             "files": [
+              "lib/content-store/content-contract.ts",
               "packages/partners/src/adapters/accounting-ledger.ts",
               "packages/partners/src/adapters/lifecycle.ts",
               "packages/partners/src/adapters/limit-changes.ts",
@@ -4903,8 +5105,7 @@
               "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/build-partner-records.ts",
               "packages/partners/src/boundary/dashboard-artifact.ts",
-              "packages/partners/src/boundary/out-capability-snapshot.ts",
-              "packages/partners/src/boundary/reconcile-partner-facts.ts"
+              "packages/partners/src/boundary/out-capability-snapshot.ts"
             ]
           },
           "projects": {
@@ -7094,7 +7295,7 @@
     },
     {
       "project": "projects/active/sports-terminal-os",
-      "sourceFiles": 180,
+      "sourceFiles": 183,
       "brandedFiles": 2,
       "brands": [
         "RequestId",

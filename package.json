@@ -2048,6 +2048,7 @@
     "brand:manifest:check": "bun tools/brand-manifest.ts --check",
     "check:brands": "bun tools/branded-id-check.ts --smart --strict",
     "check:brands:staged": "bun tools/branded-id-check.ts --staged --strict",
+    "guard:content-store:check": "bun test tests/content-store-contract.test.ts tests/branded-catalog.test.ts && bun x tsc -p tests/tsconfig.content-store.json && bun run check:brands:all && bun tools/brand-keymap.ts --check",
     "brand:baseline": "bun tools/branded-id-check.ts --write-baseline",
     "harness:violations": "bun tools/harness-violations.ts",
     "check:docs": "bun scripts/check-docs.ts && bun tools/doc-map-check.ts && bun tools/bun-doc-refs.ts provenance-check",

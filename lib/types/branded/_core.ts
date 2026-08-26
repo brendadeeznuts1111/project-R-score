@@ -51,8 +51,8 @@ export type BrandDomain =
   | 'operations'
   | 'portal'
   | 'surfaces';
-export type BrandName = `${string}Id` | `${string}Key` | `${string}Code`;
-export type BrandKind = 'id' | 'key' | 'code';
+export type BrandName = `${string}Id` | `${string}Key` | `${string}Code` | `${string}Digest`;
+export type BrandKind = 'id' | 'key' | 'code' | 'digest';
 export type BrandIngressNormalization = 'trim' | 'trim-uppercase';
 
 export type BrandValidationSpec =
@@ -90,6 +90,7 @@ export type BrandConstructorNames<Name extends BrandName = BrandName> = {
 
 export function brandKindFromName(name: BrandName): BrandKind {
   if (name.endsWith('Id')) return 'id';
+  if (name.endsWith('Digest')) return 'digest';
   if (name.endsWith('Key')) return 'key';
   return 'code';
 }

@@ -114,6 +114,9 @@ import type {
   StepId,
   WebhookId,
   FeedId,
+  ContentDigest,
+  ContentKey,
+  SourceLocatorId,
   ReleaseAssetId,
   ReleaseCapabilityId,
   RunId,
@@ -240,6 +243,7 @@ export type AnyId =
   | StepId
   | WebhookId
   | FeedId
+  | SourceLocatorId
   | ReleaseAssetId
   | ReleaseCapabilityId
   | RunId
@@ -279,7 +283,7 @@ export type AnyId =
   | PublishLaneId
   | AccessDomainId;
 
-/** Union of all branded strings, including IDs, keys, and validated codes. */
+/** Union of all branded strings, including IDs, keys, digests, and validated codes. */
 export type AnyBrandedValue =
   | AnyId
   | GithubIssueLabelKey
@@ -294,6 +298,8 @@ export type AnyBrandedValue =
   | GithubIssueUrgencyCode
   | GithubIssueConcernCode
   | PartnerProfileKey
+  | ContentKey
+  | ContentDigest
   | PartnerCode
   | PartnerCallSignCode
   | PartnerProfileVersionCode
