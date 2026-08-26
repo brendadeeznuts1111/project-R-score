@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "readRegistryUrl": "https://registry.factory-wager.com/api/npm",
+  "targets": [
+    {
+      "target": "registry-client",
+      "packageName": "@factorywager/registry-client",
+      "packageDirectory": "packages/registry-client",
+      "buildCommand": ["bun", "run", "build"],
+      "testCommand": [
+        "bun",
+        "scripts/run-with-junit-env.ts",
+        "test",
+        "tests/registry-sdk.test.ts",
+        "--reporter=junit",
+        "--reporter-outfile=tmp/releases/registry-client/junit.xml"
+      ],
+      "junitPath": "tmp/releases/registry-client/junit.xml",
+      "expectedJunitFiles": ["tests/registry-sdk.test.ts"],
+      "sourceInputs": [
+        "config/release-targets.json",
+        "packages/registry-client/LICENSE",
+        "packages/registry-client/README.md",
+        "packages/registry-client/package.json",
+        "packages/registry-client/tsconfig.json",
+        "packages/registry-client/src/index.ts",
+        "scripts/release-artifact.ts",
+        "scripts/run-with-junit-env.ts",
+        "scripts/verify-registry-client-package.ts",
+        "tests/registry-sdk.test.ts"
+      ],
+      "archiveDirectory": "tmp/releases/registry-client",
+      "allowedChannels": ["latest", "next"],
+      "expectedBinaries": [],
+      "requiredPackageFiles": [
+        "package.json",
+        "LICENSE",
+        "README.md",
+        "dist/index.js",
+        "dist/index.d.ts"
+      ],
+      "hashArtifacts": ["dist/index.js", "dist/index.d.ts"],
+      "publicationRoutes": {
+        "native-npm": {
+          "enabled": false
+        },
+        "factory-artifact": {
+          "enabled": false
+        }
+      }
+    }
+  ]
+}

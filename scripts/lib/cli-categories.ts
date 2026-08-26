@@ -82,6 +82,12 @@ export const CLI_CATEGORIES: CliCategory[] = [
   { prefix: 'cheatsheet:', label: 'Cheatsheet', desc: 'Generate cheat sheets', priority: 10 },
   { prefix: 'demo:', label: 'Demo', desc: 'Demo contracts', priority: 11 },
   { prefix: 'deploy', label: 'Deploy', desc: 'Deploy helpers', priority: 12 },
+  {
+    prefix: 'release:artifact:',
+    label: 'Release',
+    desc: 'Manifest-backed package build, test, pack, and gate commands',
+    priority: 13,
+  },
   { prefix: 'search:', label: 'Search', desc: 'Search governance and benchmarks', priority: 14 },
   { prefix: 'wiki:', label: 'Wiki', desc: 'Wiki generation and live preview', priority: 15 },
   { prefix: 'markdown', label: 'Markdown', desc: 'Markdown render', priority: 16 },

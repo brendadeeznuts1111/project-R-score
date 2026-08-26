@@ -287,6 +287,7 @@ lib/auth/*
 config/*
 !config/bun-channels.toml
 !config/machine.bunfig.toml.template
+!config/release-targets.json
 !config/domain-branding.json
 !config/vault-map.json
 !config/vault-map.toml

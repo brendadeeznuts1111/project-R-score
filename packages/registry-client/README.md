@@ -8,15 +8,16 @@ import { RegistryClient } from '@factorywager/registry-client';
 
 const client = new RegistryClient({
   baseUrl: 'https://registry.factory-wager.com',
-  publishUrl: 'https://registry-write.internal.factory-wager.com',
-  apiKey: runtimeConfig.factoryWagerToken,
 });
 
 const artifact = await client.resolve('@factorywager/routing-algorithms');
 const bytes = await client.download('@factorywager/routing-algorithms');
 ```
 
-`download()` verifies both the indexed byte length and SHA-256 checksum.
-Publishing targets the authenticated private registry API; the Cloudflare
-Pages/R2 endpoint remains read-only. The API key is sent only to `publishUrl`;
-anonymous health, index, and artifact requests never receive it.
+`download()` verifies both the indexed byte length and SHA-256 checksum. The
+production HTTP origin is read-only. There is no production native npm or SDK
+write endpoint; release artifacts are created locally and, with separate
+operator authority, uploaded through `bun run factory:publish -- <archive>`.
+
+`RegistryClient.publish()` remains available for the explicitly configured local
+development gateway. Never point `publishUrl` at the production read origin.

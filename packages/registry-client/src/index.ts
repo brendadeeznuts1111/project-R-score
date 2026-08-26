@@ -2,8 +2,8 @@
 /**
  * @factorywager/registry-client
  *
- * Runtime-neutral HTTP SDK for the FactoryWager registry read plane and the
- * authenticated private publish endpoint. It uses Web APIs only, so the same
+ * Runtime-neutral HTTP SDK for the FactoryWager registry read plane and an
+ * explicitly configured local publish gateway. It uses Web APIs only, so the same
  * package works in Bun, browsers, and Cloudflare Workers.
  */
 
@@ -69,7 +69,7 @@ export type RegistryFetch = (input: RequestInfo | URL, init?: RequestInit) => Pr
 export interface RegistryClientOptions {
   /** Anonymous/read-only Pages or CDN origin. */
   readonly baseUrl: string;
-  /** Authenticated Bun publish origin. Defaults to baseUrl. */
+  /** Explicit local development publish origin. Never inferred from the read plane. */
   readonly publishUrl?: string;
   readonly apiKey?: string;
   readonly fetcher?: RegistryFetch;
@@ -89,6 +89,15 @@ function normalizeBaseUrl(value: string): string {
   const url = new URL(value);
   url.pathname = url.pathname.replace(/\/+$/, '');
   return url.toString().replace(/\/$/, '');
+}
+
+function isLocalPublishHost(hostname: string): boolean {
+  return (
+    hostname === 'localhost' ||
+    hostname.endsWith('.localhost') ||
+    hostname === '127.0.0.1' ||
+    hostname === '[::1]'
+  );
 }
 
 function encodePath(value: string): string {
@@ -137,7 +146,7 @@ export function uint8TotalBytes(data: Uint8Array): number {
 
 export class RegistryClient {
   readonly baseUrl: string;
-  readonly publishUrl: string;
+  readonly publishUrl?: string;
   private readonly apiKey?: string;
   private readonly fetcher: RegistryFetch;
 
@@ -149,7 +158,7 @@ export class RegistryClient {
         ? { baseUrl: baseUrlOrOptions, apiKey }
         : baseUrlOrOptions;
     this.baseUrl = normalizeBaseUrl(options.baseUrl);
-    this.publishUrl = normalizeBaseUrl(options.publishUrl ?? options.baseUrl);
+    this.publishUrl = options.publishUrl ? normalizeBaseUrl(options.publishUrl) : undefined;
     this.apiKey = options.apiKey;
     this.fetcher = options.fetcher ?? fetch;
   }
@@ -214,6 +223,12 @@ export class RegistryClient {
   ): Promise<PublishResult> {
     if (!this.apiKey) {
       throw new Error('Registry publish requires an API key');
+    }
+    if (!this.publishUrl) {
+      throw new Error('Registry publish requires an explicit publishUrl');
+    }
+    if (!isLocalPublishHost(new URL(this.publishUrl).hostname)) {
+      throw new Error('Registry publishUrl must use an explicit local development origin');
     }
     const blob =
       artifact instanceof Blob
