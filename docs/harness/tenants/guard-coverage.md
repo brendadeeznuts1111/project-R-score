@@ -102,8 +102,8 @@ reintroduced after sanitization.
 The guarded child contract binds an absolute executable, complete runtime argv,
 working directory, and a non-inherited environment to exact control grants. The
 first migrated set covers five registry info/publish consumers, including the
-operator publish lane, and rejects changed registry, reserved `--connect` /
-`-O` / `-R`, experimental HTTP, and runtime preload controls before spawn. The
+operator publish lane, and rejects changed registry, reserved `--connect` / `-O`
+/ `-R`, experimental HTTP, and runtime preload controls before spawn. The
 bidirectional hashed inventory records guarded consumers and exact native-probe
 owner/reason exceptions; 182 raw or dynamic consumers remain explicit unowned
 gaps, so this row is not yet `Implemented`.
@@ -189,11 +189,11 @@ response-byte limit, timeout, and retry budget.
 
 Sports Terminal's inventoried server-side provider, webhook, internal-proxy, and
 Telegram consumers route through reviewed policy boundaries and their focused
-suite passes. The repository-wide AST ratchet exactly matches 824 structural
-rows: 38 owned policy boundaries, 45 intentional native probes, and 741 explicit
+suite passes. The repository-wide AST ratchet exactly matches 671 structural
+rows: 44 owned policy boundaries, 61 intentional native probes, and 566 explicit
 unowned gaps. It rejects additions and removals and requires each row to retain
 an owner, reason, and classification, but classification is not consumer
-migration. The 741 unowned consumers keep this row below `Implemented`.
+migration. The 566 unowned consumers keep this row below `Implemented`.
 
 ### `FEED-001` RSS, XML, and image ingestion
 

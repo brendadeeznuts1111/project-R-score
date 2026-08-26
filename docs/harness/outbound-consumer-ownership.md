@@ -20,17 +20,18 @@ Every row has one classification and a non-empty owner and reason:
 - `unowned` — a visible migration gap. These rows are not silently allowlisted;
   the exact debt remains queryable and cannot drift without review.
 
-The current repository-wide baseline records 824 exact rows: 38 guarded-boundary
-calls, 45 native verification calls, and 741 explicit unowned calls. That volume
-is evidence that the repository-wide ownership goal is not yet complete. This
-change closes three high-risk configurable consumers: Bun documentation HEAD
-validation, npm package metadata reads, and operator-research URL retries. They
-now use the public-resource boundary, which requires HTTPS, rejects URL/header
-credentials, redirects, proxy/TLS/protocol/experimental overrides, non-public or
-mixed DNS answers, and over-limit streamed responses. Its offline mode rejects
-before DNS resolution or fetch.
+The current repository-wide baseline records 671 exact rows: 44 guarded-boundary
+calls, 61 native verification calls, and 566 explicit unowned calls. That volume
+is evidence that the repository-wide ownership goal is not yet complete. The
+reviewed migrations now include high-risk configurable root consumers plus the
+Matrix, Kal Poly Bot, and a bounded Fantasy42 tranche. Their typed boundaries
+require exact origins and methods, bind credentials, reject redirects and
+proxy/TLS/protocol/experimental overrides unless explicitly owned, classify
+replay safety, bound deadlines and response bytes, and reject offline requests
+before DNS resolution or transport effects.
 
-The largest remaining domains are nested standalone products under
-`projects/active/`, followed by root operational/Telegram consumers and registry
-storage/webhook implementations. Their rows deliberately remain `unowned` until
-each owning domain supplies a typed policy and hermetic negative proof.
+The largest remaining domain is the still-unmigrated portion of Fantasy42,
+followed by other nested products, root operational/Telegram consumers, and
+registry storage/webhook implementations. Their rows deliberately remain
+`unowned` until each owning domain supplies a typed policy and hermetic negative
+proof.
