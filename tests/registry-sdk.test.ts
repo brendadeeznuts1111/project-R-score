@@ -6,7 +6,7 @@ import {
   uint8TotalBytes,
   type RegistryFetch,
   type RegistryIndex,
-} from '@factorywager/registry-client';
+} from '../packages/registry-client/src/index.ts';
 
 async function checksum(data: Uint8Array): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', data);
@@ -100,14 +100,37 @@ describe('@factorywager/registry-client', () => {
       withoutKey.publish('demo', '1.0.0', new Uint8Array([1]))
     ).rejects.toThrow('requires an API key');
 
+    const readPlaneOnly = new RegistryClient({
+      baseUrl: 'https://registry.example',
+      apiKey: 'secret',
+      fetcher: async () => {
+        throw new Error('publish must fail before network');
+      },
+    });
+    await expect(
+      readPlaneOnly.publish('demo', '1.0.0', new Uint8Array([1]))
+    ).rejects.toThrow('requires an explicit publishUrl');
+
+    const productionReadPlane = new RegistryClient({
+      baseUrl: 'https://registry.factory-wager.com',
+      publishUrl: 'https://registry.factory-wager.com',
+      apiKey: 'secret',
+      fetcher: async () => {
+        throw new Error('publish must fail before network');
+      },
+    });
+    await expect(
+      productionReadPlane.publish('demo', '1.0.0', new Uint8Array([1]))
+    ).rejects.toThrow('local development origin');
+
     let authorization: string | null = null;
     let bodyIsFormData = false;
     const withKey = new RegistryClient({
       baseUrl: 'https://registry.example',
-      publishUrl: 'https://registry-write.example',
+      publishUrl: 'http://registry-write.localhost:3000',
       apiKey: 'secret',
       fetcher: async (input, init) => {
-        expect(String(input)).toStartWith('https://registry-write.example/');
+        expect(String(input)).toStartWith('http://registry-write.localhost:3000/');
         authorization = new Headers(init?.headers).get('Authorization');
         bodyIsFormData = init?.body instanceof FormData;
         return Response.json({ success: true, version: '1.0.0' });

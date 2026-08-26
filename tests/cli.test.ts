@@ -155,7 +155,7 @@ describe('CLI — create subcommand', () => {
       const { stdout, stderr, exitCode } = await runCli(['templates', 'verify']);
       expect(exitCode, `${stdout}\n${stderr}`).toBe(0);
       expect(stdout).toContain('Lifecycle: create → install → check → destroy');
-      expect(stdout).toContain('Template lifecycle verified with Bun 1.3.14');
+      expect(stdout).toContain('Template lifecycle verified with Bun 1.4.0');
       expect(stdout).toContain('Template lifecycle destroyed:');
 
       const workspace = stdout.match(/Template lifecycle workspace: (\/[^\n]+)/)?.[1]?.trim();

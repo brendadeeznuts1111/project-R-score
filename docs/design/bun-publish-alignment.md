@@ -2,9 +2,9 @@
 
 **Upstream source:**
 [Bun `bun publish` documentation](https://bun.com/docs/pm/cli/publish).  
-**Runtime reviewed:** Bun 1.3.14.  
-This is a semantic map, not a replacement for the upstream reference. Re-check
-the active CLI with `bun publish --help` when updating Bun.
+**Runtime reviewed:** Bun 1.4.0. This is a semantic map, not a replacement for
+the upstream reference. Re-check the active CLI with `bun publish --help` when
+updating Bun.
 
 ## Ownership boundaries
 
@@ -20,7 +20,7 @@ the active CLI with `bun publish --help` when updating Bun.
 | Intent                         | Command                                | Lifecycle                                                                         | Result                                                    |
 | ------------------------------ | -------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | Inspect release package        | `bun run release:dry-run`              | Release requirements pass, then `bun pm pack --dry-run` runs the local lifecycle  | No upload and no registry credential requirement          |
-| Simulate native publication    | `bun publish --dry-run`                | Bun packs the current directory and runs the local lifecycle                      | No upload, but Bun 1.3.14 still requires registry auth    |
+| Simulate native publication    | `bun publish --dry-run`                | Bun packs the current directory and runs the local lifecycle                      | No upload, but registry auth may still be required        |
 | Native registry release        | `bun publish`                          | Bun packs the current directory, runs `prepack`, then `postpublish` after success | Package is sent to the configured npm-compatible registry |
 | Create a Factory artifact      | `bun pm pack`                          | `prepack` runs before the archive is created                                      | Local `.tgz` with the template's allowlisted files        |
 | Upload Factory artifact        | `bun run factory:publish -- <archive>` | No Bun lifecycle: the archive already exists                                      | Explicit R2 artifact/index update                         |
@@ -57,8 +57,8 @@ type checks source/tests/scripts, runs tests, and builds the source entry point.
 The separate release gate requires a deliberate description, repository,
 license, `private: false`, and a non-empty `bun.lock`. The publication gate adds
 only the non-empty token requirement. A new scaffold therefore remains runnable
-and packable but cannot be published accidentally; Bun 1.3.14 independently
-rejects its native publish path while `private` is true.
+and packable but cannot be published accidentally; Bun independently rejects its
+native publish path while `private` is true.
 
 `postpublish` has no external side effects; it reports package/version/tag for
 operator verification. `files` remains the package boundary, so local proof
@@ -80,7 +80,7 @@ release.
 | `--registry <url>`       | release command             | Overrides configured registry for a release       | Prefer for an intentional one-off registry target                                  |
 | `--otp` / `--auth-type`  | release command             | Registry two-factor authentication                | Use only at publish time; never persist an OTP                                     |
 
-## Flag map (Bun 1.3.14)
+## Flag map (Bun 1.4.0)
 
 | Category               | Flags                                                                                                          | Template/operator guidance                                                                              |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -114,6 +114,34 @@ source change
 For a retry after the exact version was already accepted, use
 `bun publish --tolerate-republish` only when the registry's idempotent success
 semantics are desired. It is not a substitute for version management.
+
+## Homebase artifact gate
+
+`config/release-targets.json` is the machine source of truth for publishable
+homebase packages. It owns the package directory, build and focused JUnit
+commands, exact packed files, expected binaries, channels, and publication
+routes. The current target is `@factorywager/registry-client`; its expected
+binary list is empty because the repository does not own a 16-binary build.
+
+The release-grade order is:
+
+```text
+bun run release:artifact:build
+bun run release:artifact:test
+bun run release:artifact:pack
+bun run release:artifact:gate
+```
+
+The gate requires a clean tracked tree, current-commit JUnit provenance, exact
+archive contents, export closure, and matching SHA-256 hashes. It writes an
+ignored local receipt bound to the commit, manifest, JUnit report, tarball, and
+built artifacts. Both native npm and Factory artifact publication routes are
+disabled; `bun run release:artifact:publish` fails before any external write.
+
+`https://registry.factory-wager.com/api/npm` is metadata/read delivery, not a
+native publish endpoint. Enabling either production write route requires a
+reviewed gate implementation, a reviewed manifest change, receipt revalidation
+immediately before upload, and separate operator authority.
 
 ## Verified template baseline
 

@@ -201,6 +201,15 @@ All commands run via `bun run <name>` from the project root:
 | `bun run deploy:staging` | bash scripts/shell/deploy-staging.sh |
 | `bun run deployment:readiness` | scripts/deployment/readiness-matrix.ts |
 
+### Release
+| Command | Description |
+|---------|-------------|
+| `bun run release:artifact:build` | scripts/release-artifact.ts build --target=registry-client |
+| `bun run release:artifact:gate` | scripts/release-artifact.ts gate --target=registry-client --channel=latest |
+| `bun run release:artifact:pack` | scripts/release-artifact.ts pack --target=registry-client |
+| `bun run release:artifact:publish` | scripts/release-artifact.ts publish --target=registry-client --route=factory-artifact |
+| `bun run release:artifact:test` | scripts/release-artifact.ts test --target=registry-client |
+
 ### Search
 | Command | Description |
 |---------|-------------|

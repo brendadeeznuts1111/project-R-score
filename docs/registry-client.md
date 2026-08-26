@@ -1,7 +1,7 @@
 # Registry client SDK
 
 Runtime-neutral HTTP SDK for the FactoryWager artifact registry read plane and
-authenticated publish endpoint. Package:
+the local development publish gateway. Package:
 [`packages/registry-client`](../packages/registry-client).
 
 **Related:**
@@ -50,20 +50,20 @@ Checksum mismatch or size drift throws before returning bytes.
 ## publish
 
 `RegistryClient.publish(name, version, artifact, options?)` posts multipart
-FormData to the **authenticated** publish origin (`publishUrl`, default
-`baseUrl`). Requires `apiKey`; the read plane rejects writes.
+FormData to an explicitly configured local development gateway. It requires an
+`apiKey`; the production read plane rejects writes and must never be supplied as
+`publishUrl`.
 
-> **Placeholder host:** `registry-write.internal.factory-wager.com` below is the
-> _intended_ private publish plane — it is not provisioned (no DNS, no server).
-> Today the only authenticated write origins are the local gateway
-> (`http://localhost:3000`, `POST /api/registry/:scope/:name/versions`) and
-> direct-to-R2 SigV4 via `bun run factory:publish -- <archive>`. See ADR-0002.
+There is no provisioned production SDK or native npm write endpoint. The
+production write route is direct-to-R2 SigV4 via
+`bun run factory:publish -- <archive>` and requires separate operator authority.
+See ADR-0002.
 
 ```ts
 const client = new RegistryClient({
-  baseUrl: 'https://registry.factory-wager.com',
-  publishUrl: 'https://registry-write.internal.factory-wager.com',
-  apiKey: Bun.env.FACTORY_WAGER_TOKEN,
+  baseUrl: 'http://localhost:3000',
+  publishUrl: 'http://localhost:3000',
+  apiKey: localDevelopmentToken,
 });
 
 await client.publish('@scope/pkg', '1.0.0', tarballBlob, {
@@ -99,7 +99,7 @@ Three planes share "registry" vocabulary — do not cross them. Canonical names
 
 | Plane        | Canonical                                                                             | Scope                                                          |
 | ------------ | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com`    | artifact resolve/publish (this doc)                            |
+| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com`    | production metadata and artifact reads                         |
 | Pages public | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com` | Pages portal + routing probes — never `bun publish --registry` |
 | R2 bucket    | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry`    | object store bucket — see `config/r2-env.ts`                   |
 

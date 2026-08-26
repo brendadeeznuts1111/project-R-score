@@ -2,21 +2,28 @@
   "name": "@factorywager/registry-client",
   "version": "1.0.0",
   "description": "Runtime-neutral HTTP SDK for the FactoryWager artifact registry",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brendadeeznuts1111/project-R-score.git",
+    "directory": "packages/registry-client"
+  },
   "type": "module",
   "main": "./dist/index.js",
-  "module": "./src/index.ts",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "bun": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "default": "./src/index.ts"
+      "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
   },
   "files": [
     "dist",
+    "LICENSE",
     "README.md"
   ],
   "sideEffects": false,
@@ -34,7 +41,10 @@
   },
   "scripts": {
     "build": "bun build ./src/index.ts --outdir ./dist --target browser --format esm && bunx tsc --project ./tsconfig.json",
-    "test": "bun test ../../tests/registry-sdk.test.ts",
-    "prepublishOnly": "bun run build"
+    "test": "bun run build && bun run test:unit",
+    "test:unit": "bun test ../../tests/registry-sdk.test.ts",
+    "test:package": "bun ../../scripts/verify-registry-client-package.ts",
+    "prepack": "bun run build && bun run test:unit && bun run test:package",
+    "prepublishOnly": "bun ../../scripts/release-artifact.ts publish --target=registry-client --route=native-npm"
   }
 }
