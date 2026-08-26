@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T12:40:53.089Z",
+  "generatedAt": "2026-08-26T13:47:47.838Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -18,8 +18,8 @@
     "keys": 4,
     "codes": 19,
     "digests": 1,
-    "covered": 81,
-    "referencedUnconstructed": 7,
+    "covered": 82,
+    "referencedUnconstructed": 6,
     "unused": 14,
     "cataloguedProjects": 35,
     "trackedProjects": 31,
@@ -664,11 +664,12 @@
         "constructors": {
           "as": 5,
           "try": 0,
-          "parse": 3
+          "parse": 4
         },
         "guards": 0,
         "files": [
           "lib/agents/capability-manifest.ts",
+          "lib/content-store/channel-alias-store.ts",
           "lib/content-store/content-contract.ts",
           "lib/docs/bun-brand-usages.ts",
           "lib/identity/identity.ts",
@@ -679,10 +680,11 @@
           "spine": {
             "status": "covered",
             "references": 21,
-            "constructionCalls": 8,
+            "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
               "lib/agents/capability-manifest.ts",
+              "lib/content-store/channel-alias-store.ts",
               "lib/content-store/content-contract.ts",
               "lib/docs/bun-brand-usages.ts",
               "lib/identity/identity.ts",
@@ -1781,7 +1783,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 22,
+        "references": 24,
         "constructors": {
           "as": 3,
           "try": 0,
@@ -1790,6 +1792,7 @@
         "guards": 0,
         "files": [
           "lib/content-store/content-contract.ts",
+          "lib/content-store/content-rights-store.ts",
           "lib/docs/bun-brand-usages.ts",
           "lib/dod/evidence.ts",
           "lib/screenshot-remediation.ts",
@@ -1801,11 +1804,12 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 22,
+            "references": 24,
             "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
               "lib/content-store/content-contract.ts",
+              "lib/content-store/content-rights-store.ts",
               "lib/docs/bun-brand-usages.ts",
               "lib/dod/evidence.ts",
               "lib/screenshot-remediation.ts",
@@ -3367,32 +3371,40 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 31,
+        "references": 63,
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 3
+          "parse": 7
         },
         "guards": 0,
         "files": [
           "lib/content-store/channel-alias-store.ts",
           "lib/content-store/content-contract.ts",
+          "lib/content-store/content-rights-store.ts",
           "lib/content-store/local-content-store.ts",
           "lib/content-store/memory-content-store.ts",
-          "lib/content-store/offline-content.ts"
+          "lib/content-store/offline-content.ts",
+          "lib/content-store/r2-content-rights-store.ts",
+          "lib/content-store/r2-content-store.ts",
+          "lib/rss/feed-snapshot-manifest.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 31,
-            "constructionCalls": 4,
+            "references": 63,
+            "constructionCalls": 8,
             "guardCalls": 0,
             "files": [
               "lib/content-store/channel-alias-store.ts",
               "lib/content-store/content-contract.ts",
+              "lib/content-store/content-rights-store.ts",
               "lib/content-store/local-content-store.ts",
               "lib/content-store/memory-content-store.ts",
-              "lib/content-store/offline-content.ts"
+              "lib/content-store/offline-content.ts",
+              "lib/content-store/r2-content-rights-store.ts",
+              "lib/content-store/r2-content-store.ts",
+              "lib/rss/feed-snapshot-manifest.ts"
             ]
           },
           "projects": {
@@ -3511,20 +3523,22 @@
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 1
+          "parse": 2
         },
         "guards": 0,
         "files": [
-          "lib/content-store/content-contract.ts"
+          "lib/content-store/content-contract.ts",
+          "lib/rss/feed-snapshot-manifest.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
             "references": 3,
-            "constructionCalls": 2,
+            "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
-              "lib/content-store/content-contract.ts"
+              "lib/content-store/content-contract.ts",
+              "lib/rss/feed-snapshot-manifest.ts"
             ]
           },
           "projects": {
@@ -3571,26 +3585,28 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 13,
+        "references": 20,
         "constructors": {
           "as": 0,
           "try": 0,
-          "parse": 1
+          "parse": 2
         },
         "guards": 0,
         "files": [
           "lib/agents/capability-manifest.ts",
-          "lib/content-store/channel-alias-store.ts"
+          "lib/content-store/channel-alias-store.ts",
+          "lib/content-store/r2-channel-alias-store.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 13,
-            "constructionCalls": 1,
+            "references": 20,
+            "constructionCalls": 2,
             "guardCalls": 0,
             "files": [
               "lib/agents/capability-manifest.ts",
-              "lib/content-store/channel-alias-store.ts"
+              "lib/content-store/channel-alias-store.ts",
+              "lib/content-store/r2-channel-alias-store.ts"
             ]
           },
           "projects": {
@@ -3636,25 +3652,27 @@
       "tone": "info",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "referenced-unconstructed",
-        "references": 3,
+        "status": "covered",
+        "references": 6,
         "constructors": {
           "as": 0,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
-          "lib/content-store/channel-alias-store.ts"
+          "lib/content-store/channel-alias-store.ts",
+          "lib/rss/feed-snapshot-manifest.ts"
         ],
         "scopes": {
           "spine": {
-            "status": "referenced-unconstructed",
-            "references": 3,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 6,
+            "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
-              "lib/content-store/channel-alias-store.ts"
+              "lib/content-store/channel-alias-store.ts",
+              "lib/rss/feed-snapshot-manifest.ts"
             ]
           },
           "projects": {
@@ -5212,10 +5230,11 @@
         "constructors": {
           "as": 2,
           "try": 0,
-          "parse": 17
+          "parse": 18
         },
         "guards": 0,
         "files": [
+          "lib/content-store/channel-alias-store.ts",
           "lib/content-store/content-contract.ts",
           "packages/partners/src/adapters/accounting-ledger.ts",
           "packages/partners/src/adapters/lifecycle.ts",
@@ -5226,16 +5245,16 @@
           "packages/partners/src/adapters/telegram-handshake.ts",
           "packages/partners/src/adapters/tennis-capacity.ts",
           "packages/partners/src/boundary/build-partner-records.ts",
-          "packages/partners/src/boundary/dashboard-artifact.ts",
-          "packages/partners/src/boundary/out-capability-snapshot.ts"
+          "packages/partners/src/boundary/dashboard-artifact.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
             "references": 18,
-            "constructionCalls": 19,
+            "constructionCalls": 20,
             "guardCalls": 0,
             "files": [
+              "lib/content-store/channel-alias-store.ts",
               "lib/content-store/content-contract.ts",
               "packages/partners/src/adapters/accounting-ledger.ts",
               "packages/partners/src/adapters/lifecycle.ts",
@@ -5246,8 +5265,7 @@
               "packages/partners/src/adapters/telegram-handshake.ts",
               "packages/partners/src/adapters/tennis-capacity.ts",
               "packages/partners/src/boundary/build-partner-records.ts",
-              "packages/partners/src/boundary/dashboard-artifact.ts",
-              "packages/partners/src/boundary/out-capability-snapshot.ts"
+              "packages/partners/src/boundary/dashboard-artifact.ts"
             ]
           },
           "projects": {
@@ -7202,7 +7220,7 @@
     },
     {
       "project": "projects/active/enterprise/fantasy42-fire22-registry",
-      "sourceFiles": 1118,
+      "sourceFiles": 1119,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7324,7 +7342,7 @@
     },
     {
       "project": "projects/active/development/kal-poly-bot",
-      "sourceFiles": 266,
+      "sourceFiles": 268,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7334,7 +7352,7 @@
     },
     {
       "project": "projects/active/analysis/matrix-analysis",
-      "sourceFiles": 682,
+      "sourceFiles": 683,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
