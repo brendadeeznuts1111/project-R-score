@@ -380,16 +380,18 @@ enableFeature = no
     ];
 
     for (const { pkg, source } of testCases) {
-      const isValid = SecurityHardeningLayer.validateTrustedDependency(
+      const validation = SecurityHardeningLayer.validateTrustedDependency(
         pkg,
         source
       );
-      console.info(`   ${pkg} from ${source}: ${isValid ? "✅" : "❌"}`);
+      console.info(
+        `   ${pkg} from ${source}: ${validation.valid ? "✅" : "❌"}`
+      );
     }
 
     const context = SecurityHardeningLayer.createIsolatedContext();
     console.info(
-      `   Isolated context created: ${Object.keys(context).length} safe globals`
+      `   Isolated context created: ${context.sandboxGlobals?.length ?? 0} safe globals`
     );
   }
 

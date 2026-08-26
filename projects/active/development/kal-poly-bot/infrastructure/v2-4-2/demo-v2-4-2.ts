@@ -125,23 +125,25 @@ experimental = "on"
 
   console.info("🛡️  Trusted Dependency Validation:");
   for (const { pkg, source } of securityTests) {
-    const isValid = SecurityHardeningLayer.validateTrustedDependency(
+    const validation = SecurityHardeningLayer.validateTrustedDependency(
       pkg,
       source
     );
-    console.info(`   ${pkg} from ${source}: ${isValid ? "✅" : "❌"}`);
+    console.info(
+      `   ${pkg} from ${source}: ${validation.valid ? "✅" : "❌"}`
+    );
   }
 
   console.info("\n🔒 Isolated Context Creation:");
   const isolatedContext = SecurityHardeningLayer.createIsolatedContext();
   console.info(
-    `   Safe globals available: ${Object.keys(isolatedContext).length}`
+    `   Safe globals available: ${isolatedContext.sandboxGlobals?.length ?? 0}`
   );
   console.info(
-    `   Bun access blocked: ${(isolatedContext as any).Bun === undefined ? "✅" : "❌"}`
+    `   Bun access blocked: ${(isolatedContext.context as any).Bun === undefined ? "✅" : "❌"}`
   );
   console.info(
-    `   Internal APIs blocked: ${(isolatedContext as any).__bun_jsc_loader__ === undefined ? "✅" : "❌"}`
+    `   Internal APIs blocked: ${(isolatedContext.context as any).__bun_jsc_loader__ === undefined ? "✅" : "❌"}`
   );
 
   console.info("\n🔧 Golden Matrix v2.4.2 Integration");

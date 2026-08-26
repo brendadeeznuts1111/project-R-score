@@ -92,10 +92,6 @@ export class SecurityHardeningLayer {
     source: string,
     _version?: string
   ): TrustedDependencyResult {
-    if (!feature("SECURITY_HARDENING")) {
-      return { valid: true, reason: "Security hardening disabled" }; // Legacy vulnerable mode
-    }
-
     // Only trusted registries are trusted by default
     if (this.TRUSTED_REGISTRIES.has(source)) {
       this.securityMetrics.packagesAllowed++;
@@ -147,9 +143,10 @@ export class SecurityHardeningLayer {
     const suspiciousPatterns = [
       /\.\./, // Directory traversal
       /[<>]/, // HTML injection
-      /[|&;$]/, // Command injection
+      /[|&;$`]/, // Command injection
       /^(test|dev|debug)/i, // Test packages in production
       /password|secret|token|key/i, // Sensitive terms
+      /backdoor|trojan|keylogger|spyware/i, // Known malicious naming signals
       /\.(exe|bat|sh|ps1|cmd)$/i, // Executable extensions
     ];
 
@@ -162,14 +159,6 @@ export class SecurityHardeningLayer {
   static createIsolatedContext(
     sandboxGlobals?: Record<string, unknown>
   ): IsolatedContext {
-    if (!feature("SECURITY_HARDENING")) {
-      return {
-        context:
-          (globalThis as any).vm?.createContext?.(sandboxGlobals || {}) || {},
-        isolated: false,
-      }; // Vulnerable to loader leaks
-    }
-
     // True isolation: no Bun internals visible
     const sanitizedGlobals: Record<string, unknown> = {
       console: {
@@ -339,10 +328,6 @@ export class SecurityHardeningLayer {
 
   // Scan package.json for security issues
   static scanPackageJson(packageJson: unknown): PackageScanResult {
-    if (!feature("SECURITY_HARDENING")) {
-      return { valid: true, issues: [], securityScore: 100 };
-    }
-
     const issues: SecurityIssue[] = [];
 
     if (!packageJson || typeof packageJson !== "object") {
@@ -625,7 +610,22 @@ export const {
   createIsolatedContext,
   validateConfig,
 } = feature("SECURITY_HARDENING")
-  ? SecurityHardeningLayer
+  ? {
+      validateTrustedDependency: (
+        packageName: string,
+        source: string,
+        version?: string
+      ) =>
+        SecurityHardeningLayer.validateTrustedDependency(
+          packageName,
+          source,
+          version
+        ),
+      createIsolatedContext: (globals?: Record<string, unknown>) =>
+        SecurityHardeningLayer.createIsolatedContext(globals),
+      validateConfig: (config: unknown) =>
+        SecurityHardeningLayer.validateConfig(config),
+    }
   : {
       validateTrustedDependency: () => ({ valid: true, reason: "Disabled" }),
       createIsolatedContext: (globals?: Record<string, unknown>) => ({
@@ -647,7 +647,17 @@ export const {
   resetSecurityMetrics,
   validateEnvironment,
 } = feature("SECURITY_HARDENING")
-  ? SecurityHardeningLayer
+  ? {
+      scanPackageJson: (packageJson: unknown) =>
+        SecurityHardeningLayer.scanPackageJson(packageJson),
+      createSecureClient: (options?: Record<string, unknown>) =>
+        SecurityHardeningLayer.createSecureClient(options),
+      getSecurityMetrics: () => SecurityHardeningLayer.getSecurityMetrics(),
+      resetSecurityMetrics: () =>
+        SecurityHardeningLayer.resetSecurityMetrics(),
+      validateEnvironment: () =>
+        SecurityHardeningLayer.validateEnvironment(),
+    }
   : {
       scanPackageJson: () => ({ valid: true, issues: [], securityScore: 100 }),
       createSecureClient: () => fetch,

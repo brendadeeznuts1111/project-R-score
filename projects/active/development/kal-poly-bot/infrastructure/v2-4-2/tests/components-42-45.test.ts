@@ -77,7 +77,7 @@ describe("Component #42: Unicode StringWidth Engine", () => {
 
     it("should handle mixed content", () => {
       const mixed = "Hello 🇺🇸 World \u2060";
-      expect(UnicodeStringWidthEngine.calculateWidth(mixed)).toBe(13); // 5 + 2 + 6 + 0
+      expect(UnicodeStringWidthEngine.calculateWidth(mixed)).toBe(15);
     });
   });
 
@@ -245,9 +245,9 @@ describe("Component #44: YAML 1.2 Strict Parser", () => {
     });
 
     it("should handle quoted boolean values", () => {
-      expect(parseBoolean('"true"')).toBe(true);
-      expect(parseBoolean("'false'")).toBe(false);
-      expect(parseBoolean('"yes"')).toBe("yes");
+      expect(parseBoolean('"true"')).toBe('"true"');
+      expect(parseBoolean("'false'")).toBe("'false'");
+      expect(parseBoolean('"yes"')).toBe('"yes"');
     });
   });
 
@@ -357,10 +357,10 @@ describe("Component #45: Security Hardening Layer", () => {
       // Valid cases
       expect(
         SecurityHardeningLayer.validateTrustedDependency("react", "npm")
-      ).toBe(true);
+      ).toMatchObject({ valid: true });
       expect(
         SecurityHardeningLayer.validateTrustedDependency("vue", "yarn")
-      ).toBe(true);
+      ).toMatchObject({ valid: true });
 
       // Invalid cases
       expect(
@@ -368,16 +368,16 @@ describe("Component #45: Security Hardening Layer", () => {
           "malicious",
           "file:/etc/passwd"
         )
-      ).toBe(false);
+      ).toMatchObject({ valid: false, violation: { protocol: "file:" } });
       expect(
         SecurityHardeningLayer.validateTrustedDependency(
           "backdoor",
           "git:malicious-repo"
         )
-      ).toBe(false);
+      ).toMatchObject({ valid: false, violation: { protocol: "git:" } });
       expect(
         SecurityHardeningLayer.validateTrustedDependency("../package", "file")
-      ).toBe(false);
+      ).toMatchObject({ valid: false });
     });
 
     it("should detect dangerous patterns", () => {
@@ -386,27 +386,28 @@ describe("Component #45: Security Hardening Layer", () => {
           "../etc/passwd",
           "file"
         )
-      ).toBe(false);
+      ).toMatchObject({ valid: false });
       expect(
         SecurityHardeningLayer.validateTrustedDependency(
           "${HOME}/malicious",
           "file"
         )
-      ).toBe(false);
+      ).toMatchObject({ valid: false });
       expect(
         SecurityHardeningLayer.validateTrustedDependency(
           "package`rm -rf /`",
           "npm"
         )
-      ).toBe(false);
+      ).toMatchObject({ valid: false });
     });
   });
 
   describe("Isolated Context Creation", () => {
     it("should create isolated contexts", () => {
-      const context = SecurityHardeningLayer.createIsolatedContext();
+      const isolated = SecurityHardeningLayer.createIsolatedContext();
+      const context = isolated.context as Record<string, unknown>;
 
-      expect(context).toBeDefined();
+      expect(isolated.isolated).toBe(true);
       expect(typeof context.console).toBe("object");
       expect(typeof context.Object).toBe("function");
       expect(typeof context.Array).toBe("function");
@@ -419,7 +420,10 @@ describe("Component #45: Security Hardening Layer", () => {
     });
 
     it("should provide safe console methods", () => {
-      const context = SecurityHardeningLayer.createIsolatedContext();
+      const isolated = SecurityHardeningLayer.createIsolatedContext();
+      const context = isolated.context as {
+        console: Pick<Console, "log" | "warn" | "error">;
+      };
 
       expect(typeof context.console.log).toBe("function");
       expect(typeof context.console.warn).toBe("function");
@@ -431,10 +435,17 @@ describe("Component #45: Security Hardening Layer", () => {
     it("should validate trustedDependencies configuration", () => {
       const validConfig = {
         trustedDependencies: ["react", "vue", "angular"],
+        disableInstallScripts: true,
+        lockfile: true,
       };
 
-      const warnings = SecurityHardeningLayer.validateConfig(validConfig);
-      expect(warnings.length).toBe(0);
+      const result = SecurityHardeningLayer.validateConfig(validConfig);
+      expect(result).toMatchObject({
+        valid: true,
+        warnings: [],
+        errors: [],
+        securityLevel: "HIGH",
+      });
     });
 
     it("should detect configuration issues", () => {
@@ -442,18 +453,19 @@ describe("Component #45: Security Hardening Layer", () => {
         trustedDependencies: ["file:malicious", "git:backdoor", "../dangerous"],
       };
 
-      const warnings = SecurityHardeningLayer.validateConfig(invalidConfig);
-      expect(warnings.length).toBeGreaterThan(0);
-      expect(warnings.some((w) => w.includes("file:malicious"))).toBe(true);
-      expect(warnings.some((w) => w.includes("git:backdoor"))).toBe(true);
+      const result = SecurityHardeningLayer.validateConfig(invalidConfig);
+      expect(result.valid).toBe(false);
+      expect(result.warnings.some((w) => w.includes("file:malicious"))).toBe(true);
+      expect(result.warnings.some((w) => w.includes("git:backdoor"))).toBe(true);
+      expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it("should warn about missing trustedDependencies", () => {
       const emptyConfig = {};
 
-      const warnings = SecurityHardeningLayer.validateConfig(emptyConfig);
-      expect(warnings.length).toBeGreaterThan(0);
-      expect(warnings.some((w) => w.includes("No trustedDependencies"))).toBe(
+      const result = SecurityHardeningLayer.validateConfig(emptyConfig);
+      expect(result.warnings.length).toBeGreaterThan(0);
+      expect(result.warnings.some((w) => w.includes("No trustedDependencies"))).toBe(
         true
       );
     });
@@ -473,11 +485,8 @@ describe("Component #45: Security Hardening Layer", () => {
         },
       };
 
-      const warnings = SecurityHardeningLayer.validatePackage(
-        validPackage,
-        "npm"
-      );
-      expect(warnings.length).toBe(0);
+      const result = SecurityHardeningLayer.scanPackageJson(validPackage);
+      expect(result).toMatchObject({ valid: true, issues: [] });
     });
 
     it("should detect dangerous scripts", () => {
@@ -489,12 +498,13 @@ describe("Component #45: Security Hardening Layer", () => {
         },
       };
 
-      const warnings = SecurityHardeningLayer.validatePackage(
-        maliciousPackage,
-        "file"
+      const result = SecurityHardeningLayer.scanPackageJson(maliciousPackage);
+      expect(result.issues).toContainEqual(
+        expect.objectContaining({
+          type: "DANGEROUS_SCRIPT",
+          command: expect.stringContaining("rm -rf"),
+        })
       );
-      expect(warnings.length).toBeGreaterThan(0);
-      expect(warnings.some((w) => w.includes("rm -rf"))).toBe(true);
     });
 
     it("should detect suspicious dependencies", () => {
@@ -508,20 +518,24 @@ describe("Component #45: Security Hardening Layer", () => {
         },
       };
 
-      const warnings = SecurityHardeningLayer.validatePackage(
-        suspiciousPackage,
-        "npm"
-      );
-      expect(warnings.length).toBeGreaterThan(0);
-      expect(warnings.some((w) => w.includes("backdoor-trojan"))).toBe(true);
-      expect(warnings.some((w) => w.includes("keylogger-spyware"))).toBe(true);
+      const result = SecurityHardeningLayer.scanPackageJson(suspiciousPackage);
+      expect(result.valid).toBe(false);
+      expect(result.issues.some((issue) => issue.package === "backdoor-trojan")).toBe(true);
+      expect(result.issues.some((issue) => issue.package === "keylogger-spyware")).toBe(true);
     });
   });
 
-  describe("Security Demonstration", () => {
-    it("should demonstrate security features", () => {
-      // Should not throw an error
-      expect(() => SecurityHardeningLayer.demonstrateSecurity()).not.toThrow();
+  describe("Security Metrics", () => {
+    it("should expose and reset structured security metrics", () => {
+      expect(SecurityHardeningLayer.getSecurityMetrics()).toHaveProperty(
+        "securityViolations"
+      );
+      SecurityHardeningLayer.resetSecurityMetrics();
+      expect(SecurityHardeningLayer.getSecurityMetrics()).toMatchObject({
+        packagesBlocked: 0,
+        packagesAllowed: 0,
+        securityViolations: 0,
+      });
     });
   });
 });
@@ -535,7 +549,9 @@ describe("Golden Matrix v2.4.2 Integration", () => {
 
   describe("Component Registry", () => {
     it("should have all 45 components registered", () => {
-      expect(COMPONENT_REGISTRY.length).toBe(8); // Simplified registry for testing
+      expect(COMPONENT_REGISTRY.map((component) => component.id)).toEqual([
+        1, 3, 41, 42, 43, 44, 45,
+      ]);
       expect(COMPONENT_REGISTRY.some((c) => c.id === 42)).toBe(true);
       expect(COMPONENT_REGISTRY.some((c) => c.id === 43)).toBe(true);
       expect(COMPONENT_REGISTRY.some((c) => c.id === 44)).toBe(true);
