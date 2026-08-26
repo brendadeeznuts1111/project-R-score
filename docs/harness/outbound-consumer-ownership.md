@@ -20,8 +20,8 @@ Every row has one classification and a non-empty owner and reason:
 - `unowned` — a visible migration gap. These rows are not silently allowlisted;
   the exact debt remains queryable and cannot drift without review.
 
-The current repository-wide baseline records 667 exact rows: 45 guarded-boundary
-calls, 61 native verification calls, and 561 explicit unowned calls. That volume
+The current repository-wide baseline records 645 exact rows: 47 guarded-boundary
+calls, 61 native verification calls, and 537 explicit unowned calls. That volume
 is evidence that the repository-wide ownership goal is not yet complete. The
 reviewed migrations now include high-risk configurable root consumers plus the
 Matrix, Kal Poly Bot, and a bounded Fantasy42 tranche. Their typed boundaries
@@ -31,7 +31,6 @@ replay safety, bound deadlines and response bytes, and reject offline requests
 before DNS resolution or transport effects.
 
 The largest remaining domain is the still-unmigrated portion of Fantasy42,
-followed by other nested products, root operational/Telegram consumers, and
-registry storage/webhook implementations. Their rows deliberately remain
-`unowned` until each owning domain supplies a typed policy and hermetic negative
-proof.
+followed by Bun TOML Secrets Editor, Geelark, other nested products, and root
+operational/Telegram consumers. Their rows deliberately remain `unowned` until
+each owning domain supplies a typed policy and hermetic negative proof.

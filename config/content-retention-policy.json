@@ -1,0 +1,16 @@
+{
+  "schema": "factorywager.content-retention-policy",
+  "version": 1,
+  "owner": "lib/content-store/README.md",
+  "defaultDecision": "deny",
+  "byteDeletion": {
+    "enabled": false,
+    "grant": null,
+    "minimumRetentionDays": 365,
+    "eligibleRightsStates": ["denied", "expired-or-revoked"],
+    "requireNoActiveAliases": true,
+    "requireNoInboundRelations": true,
+    "requireNoLegalHold": true
+  },
+  "immutableRecords": ["content-identity", "rights-history", "source-provenance"]
+}

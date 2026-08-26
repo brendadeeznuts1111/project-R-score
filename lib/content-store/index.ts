@@ -7,3 +7,4 @@ export * from './r2-content-rights-store.ts';
 export * from './offline-content.ts';
 export * from './channel-alias-store.ts';
 export * from './r2-channel-alias-store.ts';
+export * from './content-retention-policy.ts';

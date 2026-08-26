@@ -43,19 +43,23 @@ Core invariants:
   ETag-conditional current pointer. Alias promote/resolve consults that current
   decision, so reviewer expiry or revocation disables an otherwise-active alias
   without rewriting its content digest or locator snapshot.
-- Rights history has no deletion API. Retention/erasure policy must be decided
-  before any lifecycle rule or administrative delete surface is introduced.
+- `content-retention-policy.ts` strictly parses the reviewed lifecycle policy
+  and default-denies byte deletion. An enabled policy still requires an exact
+  named grant, storage-steward authority, terminal rights, elapsed retention, no
+  aliases or inbound relations, and no legal hold. Content identity, rights
+  history, and source provenance are immutable and are never deletion targets.
 
 The R2 alias adapter uses the binding's ETag conditional-write contract for
 exact revision/digest CAS and performs post-write verification before success.
 
 ## Area map
 
-| Area                                             | Owner                     |
-| ------------------------------------------------ | ------------------------- |
-| Identity, rights, dependencies, and wire parsing | `content-contract.ts`     |
-| Bounded process-local adapter                    | `memory-content-store.ts` |
-| Atomic persistent local adapter                  | `local-content-store.ts`  |
-| Guarded immutable channel aliases                | `channel-alias-store.ts`  |
-| Durable R2 bytes, rights, and aliases            | `r2-*.ts`                 |
-| Stable module exports                            | `index.ts`                |
+| Area                                             | Owner                         |
+| ------------------------------------------------ | ----------------------------- |
+| Identity, rights, dependencies, and wire parsing | `content-contract.ts`         |
+| Bounded process-local adapter                    | `memory-content-store.ts`     |
+| Atomic persistent local adapter                  | `local-content-store.ts`      |
+| Guarded immutable channel aliases                | `channel-alias-store.ts`      |
+| Retention and byte-deletion authority            | `content-retention-policy.ts` |
+| Durable R2 bytes, rights, and aliases            | `r2-*.ts`                     |
+| Stable module exports                            | `index.ts`                    |
