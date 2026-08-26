@@ -227,9 +227,52 @@ const AUTHORITY_ONLY = has('authority-only');
 const TIMEOUT_MS = positiveIntegerFlag('timeout-ms', 10_000);
 const BOX_INNER = 62;
 
+const PROXY_ENV_KEYS = ['HTTP_PROXY', 'http_proxy', 'HTTPS_PROXY', 'https_proxy'] as const;
+
+/** True only for HTTP(S) origins whose normalized URL host is guaranteed loopback. */
+export function isLoopbackNetworkingBase(input: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    return false;
+  }
+  if ((url.protocol !== 'http:' && url.protocol !== 'https:') || url.username || url.password) {
+    return false;
+  }
+  const bracketless = url.hostname.replace(/^\[|\]$/g, '').toLowerCase();
+  const host = bracketless.endsWith('.') ? bracketless.slice(0, -1) : bracketless;
+  if (host === 'localhost' || host.endsWith('.localhost')) return true;
+  if (host === '::1') return true;
+  return host.split('.')[0] === '127' && /^127(?:\.\d{1,3}){3}$/.test(host);
+}
+
+export function assertNetworkingBaseAllowed(base: string, external: boolean): void {
+  if (external || isLoopbackNetworkingBase(base)) return;
+  throw new Error(
+    'External networking is disabled: --base must use loopback; pass --external or --remote to allow a non-loopback base'
+  );
+}
+
+/**
+ * A direct authority proof cannot silently traverse a proxy. Values stay
+ * redacted; NO_PROXY=* is the only unambiguous environment-wide bypass.
+ */
+export function assertDirectAuthorityProxyEnvironment(
+  env: Record<string, string | undefined> = process.env
+): void {
+  const active = PROXY_ENV_KEYS.filter(key => Boolean(env[key]?.trim()));
+  const noProxy = env.no_proxy?.trim() || env.NO_PROXY?.trim();
+  if (active.length === 0 || noProxy === '*') return;
+  throw new Error(
+    `Direct IP-authority proof is blocked by active proxy environment keys (${active.join(', ')}); unset them or set NO_PROXY=* for this diagnostic process`
+  );
+}
+
 const HELP = `Usage: bun tools/verify-networking.ts [options]
 
 Safe default: local targets only. External DNS and HTTP require --external.
+This tool flag selects diagnostic targets; it is not a Bun process network sandbox.
 
   --external, --remote             Include remote targets (remote is a compatibility alias)
   --local-only                     Local targets and routes; conflicts with external mode
@@ -238,7 +281,7 @@ Safe default: local targets only. External DNS and HTTP require --external.
   --authority-family=4|6|any       Restrict address family (default: any with address fallback)
   --dns-backend=<backend>          c-ares | system | getaddrinfo | libc
   --dns-server=<ip[:port]>         Dedicated node:dns Resolver; BUN_DNS_SERVER is unsupported
-  --authority-protocol=<protocol>  auto | http1.1 | http2
+  --authority-protocol=<protocol>  auto | http1.1 | http2 (HTTP/3 cannot use this IP-pinned path)
   --authority-port=<port>          HTTPS port (default: 443)
   --authority-path=</path>         Request path (default: /)
   --deep                           Print every DNS → URI → TLS → HTTP layer and address attempt
@@ -379,9 +422,14 @@ function parseDnsBackend(value: string | undefined): BunDnsBackend | undefined {
   throw new TypeError('--dns-backend must be c-ares, system, getaddrinfo, or libc');
 }
 
-function parseFetchProtocol(value: string | undefined): FetchProtocol {
+export function parseFetchProtocol(value: string | undefined): FetchProtocol {
   if (value == null || value === 'auto') return 'auto';
   if (value === 'http1.1' || value === 'http2') return value;
+  if (value === 'http3') {
+    throw new TypeError(
+      'HTTP/3 is experimental and unsupported for this literal-IP authority probe; use a hostname-based HTTP/3 probe or choose http1.1/http2'
+    );
+  }
   throw new TypeError('--authority-protocol must be auto, http1.1, or http2');
 }
 
@@ -399,6 +447,7 @@ export async function runAuthorityProbe(options: {
   attempts: PinnedHttpsProbe[];
   probe: PinnedHttpsProbe;
 }> {
+  assertDirectAuthorityProxyEnvironment();
   const addresses = await resolveAuthorityAddresses(options.hostname, {
     family: options.family,
     backend: options.backend,
@@ -742,6 +791,7 @@ async function main(): Promise<void> {
   if (ROUTES_ONLY) {
     LOCAL_BASE = await resolveRouteProbeBase();
   }
+  if (!AUTHORITY_ONLY) assertNetworkingBaseAllowed(LOCAL_BASE, EXTERNAL);
 
   const t0 = Bun.nanoseconds();
 

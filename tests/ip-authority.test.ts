@@ -58,4 +58,13 @@ describe('IP authority boundaries', () => {
       resolveAuthorityAddresses('example.com', { backend: 'system', dnsServer: '1.1.1.1' })
     ).rejects.toThrow('separate resolver modes');
   });
+
+  test('IPv4-only hostname resolution does not require an IPv6 fallback', async () => {
+    const rows = await resolveAuthorityAddresses('localhost', {
+      family: 4,
+      backend: 'system',
+    });
+    expect(rows.length).toBeGreaterThan(0);
+    expect(rows.every(row => row.family === 4)).toBe(true);
+  });
 });
