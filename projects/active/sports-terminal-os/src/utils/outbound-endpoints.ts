@@ -21,6 +21,7 @@ export const PREDICTION_PROVIDER_OUTBOUND_POLICIES = {
     route: { mode: 'direct' },
     networkMode: 'online',
     ipAuthority: { mode: 'public-only', enforcement: 'resolve-before-connect' },
+    protocol: { allowed: ['auto'], default: 'auto' },
     replayClass: 'safe',
   },
   polymarket: {
@@ -35,6 +36,7 @@ export const PREDICTION_PROVIDER_OUTBOUND_POLICIES = {
     route: { mode: 'direct' },
     networkMode: 'online',
     ipAuthority: { mode: 'public-only', enforcement: 'resolve-before-connect' },
+    protocol: { allowed: ['auto'], default: 'auto' },
     replayClass: 'safe',
   },
   predictit: {
@@ -49,6 +51,7 @@ export const PREDICTION_PROVIDER_OUTBOUND_POLICIES = {
     route: { mode: 'direct' },
     networkMode: 'online',
     ipAuthority: { mode: 'public-only', enforcement: 'resolve-before-connect' },
+    protocol: { allowed: ['auto'], default: 'auto' },
     replayClass: 'safe',
   },
   betfair: {
@@ -64,6 +67,7 @@ export const PREDICTION_PROVIDER_OUTBOUND_POLICIES = {
     route: { mode: 'direct' },
     networkMode: 'online',
     ipAuthority: { mode: 'public-only', enforcement: 'resolve-before-connect' },
+    protocol: { allowed: ['auto'], default: 'auto' },
     replayClass: 'unsafe',
   },
 } as const satisfies Record<PredictionProvider, OutboundEndpointPolicy>;

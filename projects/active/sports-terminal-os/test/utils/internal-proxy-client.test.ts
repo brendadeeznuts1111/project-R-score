@@ -20,7 +20,15 @@ describe('internal proxy client', () => {
     await fetchInternalProxy(
       INTERNAL_PROXY_ROUTES.accountInfo,
       { headers: { Authorization: 'Bearer hidden' } },
-      { baseUrl: 'https://proxy.example.com', query, fetcher }
+      {
+        baseUrl: 'https://proxy.example.com',
+        query,
+        fetcher,
+        environment: {},
+        resolver: async () => [
+          { address: '1.1.1.1', family: 4, ttl: 30, source: 'bun' },
+        ],
+      }
     );
 
     expect(observedUrl).toBe(

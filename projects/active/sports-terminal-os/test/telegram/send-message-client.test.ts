@@ -9,15 +9,14 @@ function telegramResponse(body: unknown, status = 200): Response {
 }
 
 describe("SendMessageClient delivery contract", () => {
-  test("retries network failures and deduplicates only after confirmed delivery", async () => {
+  test("does not replay an unsafe POST after an ambiguous network failure", async () => {
     let calls = 0;
     const sleeps: number[] = [];
     const client = new SendMessageClient("test-token", {
       maxRetries: 2,
       fetch: async () => {
         calls += 1;
-        if (calls === 1) throw new Error("temporary network failure");
-        return telegramResponse({ ok: true, result: { message_id: 41 } });
+        throw new Error("ambiguous network failure");
       },
       sleep: async milliseconds => {
         sleeps.push(milliseconds);
@@ -25,13 +24,36 @@ describe("SendMessageClient delivery contract", () => {
     });
 
     expect(await client.sendMessage(-100123, "hello")).toEqual({
+      success: false,
+      error: "Network error without replay: ambiguous network failure",
+    });
+    expect(calls).toBe(1);
+    expect(sleeps).toEqual([]);
+  });
+
+  test("retries only an explicit Telegram rate-limit rejection and then deduplicates", async () => {
+    let calls = 0;
+    const sleeps: number[] = [];
+    const client = new SendMessageClient("test-token", {
+      maxRetries: 2,
+      fetch: async () => {
+        calls += 1;
+        return calls === 1
+          ? telegramResponse({ ok: false, error_code: 429, parameters: { retry_after: 1 } }, 429)
+          : telegramResponse({ ok: true, result: { message_id: 41 } });
+      },
+      sleep: async milliseconds => {
+        sleeps.push(milliseconds);
+      },
+    });
+
+    expect(await client.sendMessage(-100123, "confirmed message")).toEqual({
       success: true,
       messageId: 41,
     });
     expect(calls).toBe(2);
-    expect(sleeps).toEqual([500]);
-
-    expect(await client.sendMessage(-100123, "hello")).toEqual({ success: true });
+    expect(sleeps).toEqual([1000]);
+    expect(await client.sendMessage(-100123, "confirmed message")).toEqual({ success: true });
     expect(calls).toBe(2);
   });
 

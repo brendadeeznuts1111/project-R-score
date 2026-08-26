@@ -17,6 +17,7 @@ import { createLogger } from "@utils/logger";
 import { logHealth, logMarketDepth } from "@utils/tableLogger";
 import { env } from "@utils/env";
 import { findBestMatch, normalizeTeam } from "@utils/fuzzy-matcher";
+import { fetchPinnacleOddsEndpoint } from "@utils/integration-outbound";
 
 // ---------------------------------------------------------------------------
 // Logger
@@ -109,7 +110,7 @@ async function fetchPinnacleOdds(sportIds: number[]): Promise<PinnacleOddsEntry[
 
   logger.debug(`Fetching Pinnacle odds: ${url}`);
 
-  const resp = await fetch(url, {
+  const resp = await fetchPinnacleOddsEndpoint(url, {
     headers: {
       "Authorization": `Bearer ${apiKey}`,
       "Accept": "application/json",
