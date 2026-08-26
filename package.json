@@ -2049,6 +2049,8 @@
     "check:brands": "bun tools/branded-id-check.ts --smart --strict",
     "check:brands:staged": "bun tools/branded-id-check.ts --staged --strict",
     "guard:content-store:check": "bun test tests/content-store-contract.test.ts tests/branded-catalog.test.ts && bun x tsc -p tests/tsconfig.content-store.json && bun run check:brands:all && bun tools/brand-keymap.ts --check",
+    "guard:network:check": "bun test tests/ip-authority.test.ts tests/outbound-policy.test.ts && bun run --filter sports-terminal-os typecheck",
+    "guard:protocol-matrix:check": "bun test projects/active/sports-terminal-os/test/utils/h2-fetch.test.ts projects/active/sports-terminal-os/test/utils/outbound-endpoints.test.ts && bun run --filter sports-terminal-os typecheck",
     "brand:baseline": "bun tools/branded-id-check.ts --write-baseline",
     "harness:violations": "bun tools/harness-violations.ts",
     "check:docs": "bun scripts/check-docs.ts && bun tools/doc-map-check.ts && bun tools/bun-doc-refs.ts provenance-check",

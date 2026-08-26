@@ -109,7 +109,7 @@ and production auto-install fail closed. Runtime, dev, optional, peer, and
 
 ### `NET-001` Network authority
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `networking`
 
@@ -124,6 +124,13 @@ metadata destinations fail closed unless a narrower owner grants them.
 **Target ratchet** `bun run guard:network:check`
 
 **Fresh rerun** `bun run guard:network:check`
+
+The route/network/protocol/replay/deadline/response contracts, exact request
+capability composition, public-address classifier, mixed-answer rejection, and
+offline rejection-before-resolution are implemented with focused tests. DNS
+preflight cannot by itself pin Bun's eventual socket, named proxies delegate
+final-address enforcement, and the server-side fetch discovery ratchet remains
+open; therefore this row is not yet `Implemented`.
 
 ### `INT-001` Outbound integration consumers
 
@@ -254,7 +261,7 @@ object-store, and external probe activity, including child processes.
 
 ### `PROTO-001` HTTP protocol and proxy matrix
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `networking`
 
@@ -270,6 +277,12 @@ produce identical content digests across protocols.
 **Target ratchet** `bun run guard:protocol-matrix:check`
 
 **Fresh rerun** `bun run guard:protocol-matrix:check`
+
+The injectable protocol client uses exact Bun `HTTP2Unsupported` errors,
+replay-safe or explicitly recreatable fallback, expiring singleflight capability
+state, and route/proxy/TLS/protocol/network cache dimensions. Hermetic H1/H2
+servers, CONNECT-proxy proof, and the explicit H3 capability row remain open, so
+this row has not reached `Tested`.
 
 ### `BASE-001` Integration type boundary
 
