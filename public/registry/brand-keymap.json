@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T09:04:00.798Z",
+  "generatedAt": "2026-08-26T09:23:54.711Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -1132,6 +1132,7 @@
         },
         "guards": 0,
         "files": [
+          "packages/bun-release-contracts/src/knowledge-ast-wire.ts",
           "packages/bun-release-contracts/src/knowledge-ast.ts",
           "packages/bun-release-contracts/src/knowledge-normalize.ts",
           "packages/bun-release-contracts/src/knowledge-schema.ts",
@@ -1144,6 +1145,7 @@
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
+              "packages/bun-release-contracts/src/knowledge-ast-wire.ts",
               "packages/bun-release-contracts/src/knowledge-ast.ts",
               "packages/bun-release-contracts/src/knowledge-normalize.ts",
               "packages/bun-release-contracts/src/knowledge-schema.ts",
@@ -1202,8 +1204,8 @@
         "guards": 0,
         "files": [
           "packages/bun-release-contracts/src/knowledge-ast-id.ts",
+          "packages/bun-release-contracts/src/knowledge-ast-wire.ts",
           "packages/bun-release-contracts/src/knowledge-ast.ts",
-          "packages/bun-release-contracts/src/knowledge-schema.ts",
           "packages/bun-release-contracts/src/knowledge-types.ts"
         ],
         "scopes": {
@@ -1214,8 +1216,8 @@
             "guardCalls": 0,
             "files": [
               "packages/bun-release-contracts/src/knowledge-ast-id.ts",
+              "packages/bun-release-contracts/src/knowledge-ast-wire.ts",
               "packages/bun-release-contracts/src/knowledge-ast.ts",
-              "packages/bun-release-contracts/src/knowledge-schema.ts",
               "packages/bun-release-contracts/src/knowledge-types.ts"
             ]
           },
