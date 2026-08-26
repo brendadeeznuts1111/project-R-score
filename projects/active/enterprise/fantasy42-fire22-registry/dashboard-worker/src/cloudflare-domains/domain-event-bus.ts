@@ -6,6 +6,8 @@
  * Provides reliable, ordered event delivery between domain workers
  */
 
+import { fetchConfiguredWebhook } from '../security/runtime-outbound.ts';
+
 interface Env {
   DOMAIN_EVENT_BUS: DurableObjectNamespace;
   MONITORING_ENDPOINT?: string;
@@ -343,7 +345,7 @@ export class DomainEventBus implements DurableObject {
 
       if (subscription.webhookUrl) {
         // Deliver via HTTP webhook
-        const response = await fetch(subscription.webhookUrl, {
+        const response = await fetchConfiguredWebhook(subscription.webhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -2763,133 +2763,12 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/clients/fantasy402/agent/agent-manager.ts#fetch#6dbe1b526b1b12c8#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/clients/fantasy402/agent/agent-manager.ts",
-      "line": 386,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "6dbe1b526b1b12c8",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/clients/fantasy402/financial/financial-operations.ts#fetch#6dbe1b526b1b12c8#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/clients/fantasy402/financial/financial-operations.ts",
-      "line": 509,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "6dbe1b526b1b12c8",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/enhanced-api-service.ts#fetch#3bfa192c1b099286#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/enhanced-api-service.ts",
-      "line": 273,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "3bfa192c1b099286",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/enhanced-api-service.ts#fetch#e62b31e3cee9c229#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/enhanced-api-service.ts",
-      "line": 414,
-      "column": 15,
-      "callee": "fetch",
-      "fingerprint": "e62b31e3cee9c229",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/fantasy402-auth.ts#fetch#5dd674d1d3b875e1#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/fantasy402-auth.ts",
-      "line": 54,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "5dd674d1d3b875e1",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/fantasy402-auth.ts#fetch#d5dff05b688b626e#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/fantasy402-auth.ts",
-      "line": 194,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "d5dff05b688b626e",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/unified-endpoints.ts#fetch#50bc572e9bc5731b#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/api/unified-endpoints.ts",
-      "line": 442,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "50bc572e9bc5731b",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/collections-worker.ts#fetch#c5ca15a88587e9d9#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/collections-worker.ts",
-      "line": 476,
-      "column": 15,
-      "callee": "fetch",
-      "fingerprint": "c5ca15a88587e9d9",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/deploy-domains.ts#fetch#be95a1a272d4fe25#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/deploy-domains.ts",
-      "line": 241,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "be95a1a272d4fe25",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/domain-event-bus.ts#fetch#701daa7724010fb9#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/domain-event-bus.ts",
-      "line": 346,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "701daa7724010fb9",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/monitoring-bridge.ts#fetch#be3c6d88e61eac11#1",
       "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/monitoring-bridge.ts",
-      "line": 138,
+      "line": 140,
       "column": 30,
       "callee": "fetch",
       "fingerprint": "be3c6d88e61eac11",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/monitoring-bridge.ts#fetch#1789af66daa3f1fc#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/cloudflare-domains/monitoring-bridge.ts",
-      "line": 409,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "1789af66daa3f1fc",
       "classification": "unowned",
       "owner": "projects/active/enterprise/fantasy42-fire22-registry",
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
@@ -3016,28 +2895,6 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/errors/monitoring.ts#fetch#c6a7c96cff571eaf#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/errors/monitoring.ts",
-      "line": 140,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "c6a7c96cff571eaf",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/errors/monitoring.ts#fetch#ab08c1889de4f1c7#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/errors/monitoring.ts",
-      "line": 193,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "ab08c1889de4f1c7",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/i18n/language-manager.ts#fetch#3bf9b74b9404a121#1",
       "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/i18n/language-manager.ts",
       "line": 515,
@@ -3093,17 +2950,6 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/integration/secure-fire22-client.ts#fetch#1597a809bee16e93#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/integration/secure-fire22-client.ts",
-      "line": 107,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "1597a809bee16e93",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/jwt-auth-test-client-enhanced.ts#fetch#c66e5963c11cfd85#1",
       "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/jwt-auth-test-client-enhanced.ts",
       "line": 76,
@@ -3121,39 +2967,6 @@
       "column": 28,
       "callee": "fetch",
       "fingerprint": "c66e5963c11cfd85",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/monitoring/response-time-monitor-standalone.ts#fetch#22111697057371a5#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/monitoring/response-time-monitor-standalone.ts",
-      "line": 549,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "22111697057371a5",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/monitoring/response-time-server.ts#fetch#f97a754c99b1b3d5#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/monitoring/response-time-server.ts",
-      "line": 222,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "f97a754c99b1b3d5",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/monitoring/response-time-server.ts#fetch#fe5fffd407d1fdb6#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/monitoring/response-time-server.ts",
-      "line": 228,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "fe5fffd407d1fdb6",
       "classification": "unowned",
       "owner": "projects/active/enterprise/fantasy42-fire22-registry",
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
@@ -3179,6 +2992,17 @@
       "classification": "owned-policy-boundary",
       "owner": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/security/outbound-client.ts",
       "reason": "Fantasy42 Cloudflare REST, R2 S3, GitHub API, exact-service, and public-read scopes parse and authorize origin, credentials, method/replay class, redirects, deadlines, response bounds, proxy state, DNS authority, and offline mode before this sole transport effect."
+    },
+    {
+      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/security/runtime-outbound.ts#fetchWithPolicy#548547a080a87a3e#1",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/security/runtime-outbound.ts",
+      "line": 68,
+      "column": 10,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "548547a080a87a3e",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/security/runtime-outbound.ts",
+      "reason": "Fantasy42 fixed API and configured credential-free webhook effects terminate here after exact HTTPS authority and path validation, scoped or forbidden credentials, method and replay classification, redirect denial, direct-route and ambient-proxy denial, protocol restriction, public DNS resolution, offline mode enforcement, total deadlines, and bounded responses."
     },
     {
       "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/services/cashier-service.ts#fetch#d39752f5a9dd7dc5#1",
@@ -3308,72 +3132,6 @@
       "column": 28,
       "callee": "fetch",
       "fingerprint": "80f4d43300d91c8c",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts#fetch#7b9a4dcbb60107d5#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts",
-      "line": 206,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "7b9a4dcbb60107d5",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts#fetch#2191abd17f4c1b1a#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts",
-      "line": 210,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "2191abd17f4c1b1a",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts#fetch#0653fcc71378cf7e#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts",
-      "line": 218,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "0653fcc71378cf7e",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts#fetch#a9aef1eab592125f#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/staging-reviews/etag-static-server.ts",
-      "line": 222,
-      "column": 36,
-      "callee": "fetch",
-      "fingerprint": "a9aef1eab592125f",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/utils/header-validator.ts#fetch#4b555a9556b88ad9#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/utils/header-validator.ts",
-      "line": 69,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "4b555a9556b88ad9",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/water-dashboard-standalone.ts#fetch#1b1d7d2f14c4a989#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/src/water-dashboard-standalone.ts",
-      "line": 314,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "1b1d7d2f14c4a989",
       "classification": "unowned",
       "owner": "projects/active/enterprise/fantasy42-fire22-registry",
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
@@ -5966,7 +5724,7 @@
     {
       "id": "tools/baseline-caesars-probe.ts#fetch#6ccdeeb344b37ae7#1",
       "path": "tools/baseline-caesars-probe.ts",
-      "line": 89,
+      "line": 81,
       "column": 23,
       "callee": "fetch",
       "fingerprint": "6ccdeeb344b37ae7",

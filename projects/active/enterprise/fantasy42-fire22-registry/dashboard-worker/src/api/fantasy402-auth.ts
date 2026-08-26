@@ -3,6 +3,8 @@
  * Handles login and session management for the Fantasy402 API
  */
 
+import { fetchFixedFantasyApi } from '../security/runtime-outbound.ts';
+
 export interface AuthResponse {
   success: boolean;
   sessionId?: string;
@@ -51,7 +53,7 @@ export class Fantasy402Auth {
       });
 
       // Make the authentication request
-      const response = await fetch(`${this.apiUrl}/System/authenticateCustomer`, {
+      const response = await fetchFixedFantasyApi(`${this.apiUrl}/System/authenticateCustomer`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -191,7 +193,7 @@ export class Fantasy402Auth {
       }
     }
 
-    const response = await fetch(url, options);
+    const response = await fetchFixedFantasyApi(url, options);
     const responseText = await response.text();
 
     try {

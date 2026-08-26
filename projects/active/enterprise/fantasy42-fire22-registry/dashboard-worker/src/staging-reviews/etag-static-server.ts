@@ -1,5 +1,6 @@
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { fetchServiceOrigin } from '../security/outbound-client.ts';
 
 // Fire22 Dashboard Worker - ETag-Enabled Static Server
 // Leverages Bun's automatic ETag generation for efficient caching
@@ -203,11 +204,11 @@ const server = Bun.serve({
 async function testETagSupport() {
   // Test static route
   const staticUrl = new URL('/', server.url);
-  const staticResponse = await fetch(staticUrl);
+    const staticResponse = await fetchServiceOrigin(server.url, staticUrl, {});
   const staticETag = staticResponse.headers.get('etag');
 
   // Test with If-None-Match (should return 304)
-  const cachedResponse = await fetch(staticUrl, {
+    const cachedResponse = await fetchServiceOrigin(server.url, staticUrl, {
     headers: {
       'If-None-Match': staticETag,
     },
@@ -215,11 +216,11 @@ async function testETagSupport() {
 
   // Test JSON endpoint
   const jsonUrl = new URL('/api/reviews/pending', server.url);
-  const jsonResponse = await fetch(jsonUrl);
+    const jsonResponse = await fetchServiceOrigin(server.url, jsonUrl, {});
   const jsonETag = jsonResponse.headers.get('etag');
 
   // Test JSON with If-None-Match
-  const cachedJsonResponse = await fetch(jsonUrl, {
+    const cachedJsonResponse = await fetchServiceOrigin(server.url, jsonUrl, {
     headers: {
       'If-None-Match': jsonETag,
     },

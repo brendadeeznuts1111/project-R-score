@@ -6,6 +6,7 @@
 
 import { serve } from "bun";
 import { logger } from "../scripts/enhanced-logging-system";
+import { fetchFixedFantasyApi } from './security/runtime-outbound.ts';
 
 // Runtime configuration display
 const RUNTIME_INFO = {
@@ -311,7 +312,7 @@ const DASHBOARD_HTML = `<!DOCTYPE html>
 // API for fetching Fire22 data with custom user agent
 async function fetchFire22Data(endpoint: string): Promise<any> {
   try {
-    const response = await fetch(`https://fire22.ag/cloud/api${endpoint}`, {
+    const response = await fetchFixedFantasyApi(`https://fire22.ag/cloud/api${endpoint}`, {
       headers: {
         "User-Agent": RUNTIME_INFO.userAgent,
         "Accept": "application/json",

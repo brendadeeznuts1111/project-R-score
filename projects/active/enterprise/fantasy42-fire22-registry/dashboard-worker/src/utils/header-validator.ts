@@ -6,6 +6,7 @@
  */
 
 import { HeaderValidator as BaseValidator } from './header-manager';
+import { fetchPublicRead } from '../security/outbound-client.ts';
 
 export interface HeaderValidationResult {
   url: string;
@@ -66,7 +67,7 @@ export class EnhancedHeaderValidator extends BaseValidator {
     console.info(`🔍 Validating headers for: ${url}`);
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchPublicRead(url, {
         method: 'GET',
         headers: {
           'User-Agent': 'Fire22-Header-Validator/3.0.9',

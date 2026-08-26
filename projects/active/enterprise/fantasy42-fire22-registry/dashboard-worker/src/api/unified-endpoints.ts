@@ -5,6 +5,7 @@
 
 import { Env } from '../env';
 import { Fire22SystemController } from '../integration/system-controller';
+import { fetchFixedFantasyApi } from '../security/runtime-outbound.ts';
 
 export interface UnifiedAPIRequest {
   method: string;
@@ -439,7 +440,7 @@ export class UnifiedAPIHandler {
       // Import Fire22Config for proper headers
       const { Fire22Config } = await import('../config/fire22-config');
 
-      const response = await fetch(`${fire22BaseUrl}${endpoint}`, {
+      const response = await fetchFixedFantasyApi(`${fire22BaseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           ...Fire22Config.getDefaultHeaders(),

@@ -6,6 +6,8 @@
  * using Cloudflare Workers with domain-driven design principles
  */
 
+import { fetchConfiguredWebhook } from '../security/runtime-outbound.ts';
+
 interface Env {
   COLLECTIONS_DB: D1Database;
   CACHE: KVNamespace;
@@ -473,7 +475,7 @@ export default {
 
       // Send to monitoring system if configured
       if (env.MONITORING_ENDPOINT) {
-        await fetch(env.MONITORING_ENDPOINT, {
+      await fetchConfiguredWebhook(env.MONITORING_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

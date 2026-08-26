@@ -6,6 +6,8 @@
  * Provides unified monitoring dashboard and alerting system
  */
 
+import { fetchConfiguredWebhook } from '../security/runtime-outbound.ts';
+
 import type {
   WorkerMetrics,
   WorkerMetrics as DashboardMetrics,
@@ -406,7 +408,7 @@ export class MonitoringBridge {
     }
 
     try {
-      await fetch(this.env.ALERT_WEBHOOK_URL, {
+      await fetchConfiguredWebhook(this.env.ALERT_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
