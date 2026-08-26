@@ -228,7 +228,7 @@ describe('Bun 1.4 normalized capability graph', () => {
     const registry = await readCapabilityRegistry(manifest);
     const byId = new Map(registry.capabilities.map(item => [item.id, item]));
 
-    expect(registry.capabilities).toHaveLength(60);
+    expect(registry.capabilities).toHaveLength(61);
     for (const id of ATTACHMENT_CAPABILITY_IDS) expect(byId.has(id)).toBe(true);
     for (const id of [
       'bun-serve-http3-experimental',

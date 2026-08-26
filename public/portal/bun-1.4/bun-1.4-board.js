@@ -10,9 +10,13 @@ import {
   renderCapabilityGrid,
 } from './bun-1.4-capabilities.js';
 import { observeVideos, renderCard } from './bun-1.4-media.js';
+import { mountAdvancedColorDemo, normalizeColorSamples } from './bun-1.4-color-demo.js';
+import { normalizeProjectMedia, renderProjectMedia } from './bun-1.4-project-media.js';
 
 const MANIFEST_URL = '/registry/bun-1.4-assets.json';
 const CAPABILITIES_URL = '/registry/bun-1.4-capabilities.json';
+const PROJECT_MEDIA_URL = '/registry/bun-1.4-project-media.json';
+const COLOR_FORMATS_URL = '/registry/bun-1.4-color-formats.json';
 let assets = [];
 let capabilities = [];
 let chapters = [];
@@ -193,10 +197,22 @@ function bindFilters() {
 
 async function mount() {
   bindFilters();
-  const [manifestResult, capabilityResult] = await Promise.all([
-    fetchJsonResult(MANIFEST_URL, { cache: 'no-store', timeoutMs: 8000 }),
-    fetchJsonResult(CAPABILITIES_URL, { cache: 'no-store', timeoutMs: 8000 }),
-  ]);
+  const [manifestResult, capabilityResult, projectMediaResult, colorFormatsResult] =
+    await Promise.all([
+      fetchJsonResult(MANIFEST_URL, { cache: 'no-store', timeoutMs: 8000 }),
+      fetchJsonResult(CAPABILITIES_URL, { cache: 'no-store', timeoutMs: 8000 }),
+      fetchJsonResult(PROJECT_MEDIA_URL, { cache: 'no-store', timeoutMs: 8000 }),
+      fetchJsonResult(COLOR_FORMATS_URL, { cache: 'no-store', timeoutMs: 8000 }),
+    ]);
+  if (colorFormatsResult.ok) {
+    try {
+      mountAdvancedColorDemo(normalizeColorSamples(colorFormatsResult.data));
+    } catch (error) {
+      showError(
+        error instanceof Error ? error.message : 'Color format registry failed validation.'
+      );
+    }
+  }
   if (!manifestResult.ok) {
     showError(
       `Asset manifest unavailable (${manifestResult.error || manifestResult.kind || 'unknown error'}).`
@@ -235,6 +251,17 @@ async function mount() {
   updateSummary(manifest);
   renderCapabilities();
   renderGallery();
+  if (projectMediaResult.ok) {
+    try {
+      const root = document.getElementById('bun-project-media');
+      if (root) {
+        renderProjectMedia(root, normalizeProjectMedia(projectMediaResult.data));
+        observeVideos(root);
+      }
+    } catch (error) {
+      showError(error instanceof Error ? error.message : 'Project media failed validation.');
+    }
+  }
 }
 
 if (typeof document !== 'undefined') void mount();

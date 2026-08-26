@@ -11,7 +11,7 @@ function capabilityRegistry(raw) {
     !Array.isArray(raw.chapters) ||
     raw.chapters.length !== 5 ||
     !Array.isArray(raw.capabilities) ||
-    raw.capabilities.length !== 60
+    raw.capabilities.length !== 61
   ) {
     throw new TypeError('Bun 1.4 capability registry contract is unsupported');
   }

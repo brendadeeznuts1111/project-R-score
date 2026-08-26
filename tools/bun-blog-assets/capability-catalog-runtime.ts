@@ -3,6 +3,7 @@
 // Official Bun 1.4 facts only. Repository paths below are adoption evidence, not fact sources.
 import type { Bun14Capability } from './types.ts';
 import { asReleaseCapabilityId } from '../../lib/types/branded.ts';
+import { BUN_14_COLOR_CAPABILITIES } from './capability-catalog-color.ts';
 
 const BLOG = 'https://bun.com/blog/bun-v1.4';
 
@@ -106,6 +107,7 @@ export const BUN_14_RUNTIME_CAPABILITIES: Bun14Capability[] = [
     assetIds: [],
     contractFiles: [],
   },
+  ...BUN_14_COLOR_CAPABILITIES,
   {
     id: asReleaseCapabilityId('bun-terminal-local-tools'),
     domain: 'platform',

@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "release": "Bun 1.4",
+  "version": "1.4.0",
+  "sourceApi": "Bun.color",
+  "sourceDocs": "https://bun.com/docs/runtime/color",
+  "runtime": {
+    "bunVersion": "1.4.0",
+    "bunRevision": "34cbb9a40b4bd1bd767d134a7065e66c2432a676"
+  },
+  "samples": [
+    {
+      "label": "LAB",
+      "input": "lab(50% 50 50)",
+      "status": "supported",
+      "css": "lab(50% 50 50)",
+      "hex": "#ca4b22",
+      "rgb": [
+        202,
+        75,
+        34
+      ],
+      "hsl": "hsl(14.696457, 71.03542%, 46.42404%)"
+    },
+    {
+      "label": "LCH",
+      "input": "lch(50% 50 100)",
+      "status": "supported",
+      "css": "lch(50% 50 100)",
+      "hex": "#7a7a17",
+      "rgb": [
+        122,
+        122,
+        23
+      ],
+      "hsl": "hsl(59.957027, 68.5695%, 28.455963%)"
+    },
+    {
+      "label": "OKLab",
+      "input": "oklab(50% 0.1 0.1)",
+      "status": "supported",
+      "css": "oklab(50% .1 .1)",
+      "hex": "#a14203",
+      "rgb": [
+        161,
+        66,
+        3
+      ],
+      "hsl": "hsl(23.690857, 96.35458%, 32.249023%)"
+    },
+    {
+      "label": "OKLCH",
+      "input": "oklch(50% 0.2 120)",
+      "status": "supported",
+      "css": "oklch(50% .2 120)",
+      "hex": "#5b6d00",
+      "rgb": [
+        91,
+        109,
+        0
+      ],
+      "hsl": "hsl(69.87774, 100%, 21.290554%)"
+    },
+    {
+      "label": "HSV",
+      "input": "hsv(200 80% 70%)",
+      "status": "unsupported",
+      "css": null,
+      "hex": null,
+      "rgb": null,
+      "hsl": null
+    }
+  ]
+}

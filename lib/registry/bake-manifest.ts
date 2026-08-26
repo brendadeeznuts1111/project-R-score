@@ -90,6 +90,8 @@ export const BAKE_MANIFEST_PRIORITY_PATHS = [
   'projects-registry.json',
   'bun-1.4-assets.json',
   'bun-1.4-capabilities.json',
+  'bun-1.4-project-media.json',
+  'bun-1.4-color-formats.json',
   'bun-1.4-channel-release.json',
   'project-rss-channels.json',
   'tennis/partner-contracts.json',

@@ -282,6 +282,15 @@ describe('Bun 1.4.0 Bug fixes — color round-trip / file slice / env / build / 
     expect(Bun.color('lab(100% 0 0)', '{rgba}')).toEqual({ r: 255, g: 255, b: 255, a: 1 });
   });
 
+  releaseTest('Bun.color advanced inputs require the documented component shapes', () => {
+    expect(Bun.color('lab(50% 50 50)', 'hex')).toBe('#ca4b22');
+    expect(Bun.color('lch(50% 50 100)', 'hex')).toBe('#7a7a17');
+    expect(Bun.color('oklab(50% 0.1 0.1)', 'hex')).toBe('#a14203');
+    expect(Bun.color('oklch(50% 0.2 120)', 'hex')).toBe('#5b6d00');
+    expect(Bun.color('oklab(0.5 0.1 0.1)', 'hex')).toBeNull();
+    expect(Bun.color('hsv(200 80% 70%)', 'hex')).toBeNull();
+  });
+
   releaseTest('Sliced Bun.file() reads respect slice bounds', async () => {
     const dir = mkdtempSync(join(tmpdir(), 'bun-1.4-slice-'));
     try {

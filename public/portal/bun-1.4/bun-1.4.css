@@ -149,6 +149,50 @@
   margin-bottom: 18px;
 }
 
+.bun-color-lab,
+.bun-color-result {
+  display: grid;
+  gap: 12px;
+}
+
+.bun-color-choices,
+.bun-color-control,
+.bun-color-output {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.bun-color-choice {
+  cursor: pointer;
+}
+
+.bun-color-control input {
+  min-width: min(100%, 280px);
+}
+
+.bun-color-output {
+  align-items: stretch;
+}
+
+.bun-color-swatch {
+  width: 72px;
+  min-height: 72px;
+  border: 1px solid var(--fw-bun-14-color-border);
+  border-radius: 12px;
+}
+
+.bun-color-result {
+  min-width: 0;
+  align-content: center;
+}
+
+.bun-color-result code {
+  overflow-wrap: anywhere;
+  color: var(--fw-bun-14-color-text-muted);
+}
+
 @media (max-width: 680px) {
   .bun-section-heading {
     align-items: flex-start;
