@@ -16,6 +16,7 @@ import { logWebhook } from "@utils/tableLogger";
 import { createHmac, randomUUID } from "crypto";
 import type { WebhookConfig, WebhookDelivery, DeliveryStatus, CircuitBreakerState } from "./webhook-service";
 import { getWebhook } from "./webhook-service";
+import { fetchWebhookEndpoint } from "@utils/webhook-endpoints";
 
 export type { WebhookDelivery, DeliveryStatus, CircuitBreakerState };
 
@@ -273,17 +274,15 @@ export async function dispatchWebhook(options: DispatchOptions): Promise<Dispatc
     const attemptStartTime = performance.now();
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), config.timeoutMs || DEFAULT_TIMEOUT_MS);
-
-      const response = await fetch(config.url, {
-        method: config.method,
-        headers,
-        body: payload,
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
+      const response = await fetchWebhookEndpoint(
+        {
+          url: config.url,
+          method: config.method,
+          headers,
+          timeoutMs: config.timeoutMs || DEFAULT_TIMEOUT_MS,
+        },
+        { body: payload }
+      );
 
       const attemptDuration = Math.round(performance.now() - attemptStartTime);
       lastStatus = response.status;
@@ -486,5 +485,4 @@ export function getAllCircuitStates(): Array<{
 // ---------------------------------------------------------------------------
 // Utility
 // ---------------------------------------------------------------------------
-
 
