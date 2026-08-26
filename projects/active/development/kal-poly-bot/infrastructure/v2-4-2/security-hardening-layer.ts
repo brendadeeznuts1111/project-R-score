@@ -1,4 +1,5 @@
 import { fetchBunCatalog } from "../outbound-client.ts";
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../../runtime-outbound.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/security-hardening-layer.ts
 // Component #49: Security Hardening Layer (CVE-2024 Prevention)
@@ -430,10 +431,6 @@ export class SecurityHardeningLayer {
   static createSecureClient(
     baseOptions?: Record<string, unknown>
   ): (url: string, options?: RequestInit) => Promise<Response> {
-    if (!feature("SECURITY_HARDENING")) {
-      return fetch; // Use default fetch
-    }
-
     const secureFetch = async (url: string, options: RequestInit = {}) => {
       const secureOptions: RequestInit = {
         ...baseOptions,
@@ -450,7 +447,7 @@ export class SecurityHardeningLayer {
         // Security timeouts
         signal: AbortSignal.timeout(30000),
         // Redirect policy
-        redirect: "manual",
+        redirect: "error",
       };
 
       // Validate URL
@@ -459,9 +456,17 @@ export class SecurityHardeningLayer {
         throw new Error("HTTPS required for non-localhost requests");
       }
 
-      return fetch(url, secureOptions);
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-security-hardened-client",
+        baseUrl: urlObj.origin,
+        pathPrefix: "/",
+        methods: ["GET", "HEAD", "POST", "PUT", "DELETE"],
+        addressClass: urlObj.hostname === "localhost" ? "loopback" : "public",
+      });
+      return fetchKalPolyOutbound(authority, urlObj, secureOptions);
     };
 
+    if (!feature("SECURITY_HARDENING")) return secureFetch;
     return secureFetch;
   }
 

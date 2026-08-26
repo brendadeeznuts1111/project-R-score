@@ -27,6 +27,8 @@ export interface AuditLogEntry {
   userAgent?: string;
 }
 
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from '../../runtime-outbound.ts';
+
 /**
  * Automated Governance Engine for Secrets Management
  */
@@ -476,8 +478,17 @@ export class BunSecretsManager {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        const response = await fetch(
-          `${vaultAddr}/v1/secret/data/surgical-precision/${team}/${secretName}`,
+        const vault = new URL(vaultAddr);
+        const authority = createKalPolyOutboundAuthority({
+          name: 'kal-poly-vault-secrets',
+          baseUrl: vault.origin,
+          pathPrefix: '/v1/secret/data/surgical-precision/',
+          credentialHeaders: ['x-vault-token'],
+          addressClass: 'internal',
+        });
+        const response = await fetchKalPolyOutbound(
+          authority,
+          `${vault.origin}/v1/secret/data/surgical-precision/${encodeURIComponent(team)}/${encodeURIComponent(secretName)}`,
           {
             headers: {
               'X-Vault-Token': vaultToken,

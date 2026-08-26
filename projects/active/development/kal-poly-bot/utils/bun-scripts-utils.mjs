@@ -18,6 +18,7 @@ import { connect } from "node:net";
 import { hostname, homedir as nodeHomedir, tmpdir as nodeTmpdir, release, userInfo } from "node:os";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { normalize as normalizeWindows } from "node:path/win32";
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../runtime-outbound.ts";
 
 export const isWindows = process.platform === "win32";
 export const isMacOS = process.platform === "darwin";
@@ -862,7 +863,15 @@ export async function curl(url, options = {}) {
 
     let response;
     try {
-      response = await fetch(href, { method, headers, body: input });
+      const target = new URL(href);
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-script-curl",
+        baseUrl: target.origin,
+        pathPrefix: target.pathname,
+        methods: ["GET", "HEAD", "POST", "PUT", "DELETE"],
+        credentialHeaders: ["authorization"],
+      });
+      response = await fetchKalPolyOutbound(authority, target, { method, headers, body: input });
     } catch (cause) {
       debugLog("$", "curl", href, "-> error");
       error = new Error(`Fetch failed: ${method} ${url}`, { cause });

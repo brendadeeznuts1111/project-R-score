@@ -1,0 +1,9 @@
+{
+  "extends": "../../../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["runtime-outbound.ts", "tests/runtime-outbound.test.ts"]
+}

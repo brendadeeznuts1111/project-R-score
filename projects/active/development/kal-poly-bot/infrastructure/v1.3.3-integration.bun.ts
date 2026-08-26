@@ -11,6 +11,7 @@
 // @see https://bun.com/docs/pm/lockfile — Bun text lockfile format
 
 // Import v2.4.2 components for combined infrastructure
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../runtime-outbound.ts";
 import { SecurityHardeningLayer } from "./v2-4-2/security-hardening-layer";
 import { UnicodeStringWidthEngine } from "./v2-4-2/stringwidth-engine";
 import { V8TypeCheckingBridge } from "./v2-4-2/v8-type-bridge";
@@ -264,7 +265,16 @@ class GitDependencySecurityLayer {
   }
 
   static async fetchGitHubTarball(url: string): Promise<ReadableStream> {
-    const response = await fetch(url, {
+    const target = new URL(url);
+    if (!['github.com', 'api.github.com', 'codeload.github.com'].includes(target.hostname)) {
+      throw new TypeError('Git dependency tarball must use a reviewed GitHub authority');
+    }
+    const authority = createKalPolyOutboundAuthority({
+      name: "kal-poly-integration-github-tarball",
+      baseUrl: target.origin,
+      pathPrefix: "/",
+    });
+    const response = await fetchKalPolyOutbound(authority, target, {
       headers: {
         "Accept": "application/vnd.github.v3+json",
         "User-Agent": "Kalman-System/1.3.3"

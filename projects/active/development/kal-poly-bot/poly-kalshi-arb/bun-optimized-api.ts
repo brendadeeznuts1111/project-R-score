@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from '../runtime-outbound.ts';
 /**
  * Bun Optimized API Client
  * Enhanced API client with DNS caching, streaming, and performance optimizations
@@ -51,6 +52,7 @@ class BunOptimizedApiClient {
   private static performanceMetrics: Map<string, number[]> = new Map();
   
   private config: ApiConfig;
+  private authority;
   private healthStatus: HealthStatus = {
     status: 'healthy',
     message: 'Client initialized',
@@ -59,6 +61,14 @@ class BunOptimizedApiClient {
 
   constructor(config: ApiConfig) {
     this.config = config;
+    const target = new URL(config.baseUrl);
+    this.authority = createKalPolyOutboundAuthority({
+      name: 'kal-poly-optimized-api',
+      baseUrl: target.origin,
+      pathPrefix: target.pathname,
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      credentialHeaders: ['authorization'],
+    });
     this.startHealthMonitoring();
   }
 
@@ -115,11 +125,7 @@ class BunOptimizedApiClient {
       const hostname = url.hostname;
 
       if (this.config.enableDnsCache) {
-        const ip = await BunOptimizedApiClient.resolveDns(hostname);
-        url.hostname = ip;
-
-        // Add Host header for IP-based requests
-        headers['Host'] = hostname;
+        await BunOptimizedApiClient.resolveDns(hostname);
       }
 
       console.info(`📡 ${method} ${url.toString()}`);
@@ -177,9 +183,11 @@ class BunOptimizedApiClient {
   private async fetchWithRetry<T>(url: string, options: RequestInit): Promise<Response> {
     let lastError: Error | null = null;
     
-    for (let attempt = 0; attempt < this.config.retryAttempts; attempt++) {
+    const method = (options.method ?? 'GET').toUpperCase();
+    const maxAttempts = method === 'GET' || method === 'HEAD' ? this.config.retryAttempts : 1;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
-        const response = await fetch(url, options);
+        const response = await fetchKalPolyOutbound(this.authority, url, options);
         
         // Success case
         if (response.ok) {
@@ -197,7 +205,7 @@ class BunOptimizedApiClient {
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
         
-        if (attempt < this.config.retryAttempts - 1) {
+        if (attempt < maxAttempts - 1) {
           const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
           console.info(`🔄 Retry attempt ${attempt + 1} after ${delay}ms`);
           await new Promise(resolve => setTimeout(resolve, delay));
@@ -216,7 +224,7 @@ class BunOptimizedApiClient {
     
     console.info(`🌊 Streaming large response from ${url}`);
     
-    const response = await fetch(url, {
+    const response = await fetchKalPolyOutbound(this.authority, url, {
       headers: {
         'Authorization': `Bearer ${this.config.apiKey}`,
         'Accept': 'application/octet-stream'
