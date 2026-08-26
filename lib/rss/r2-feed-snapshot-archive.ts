@@ -8,12 +8,7 @@
 // @verified Bun.CryptoHasher · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/hashing#bun-cryptohasher
 // @see https://developers.cloudflare.com/r2/api/workers/workers-api-reference/#conditional-operations
 
-import type {
-  ContentStore,
-  R2Conditional,
-  R2ObjectBody,
-  R2ObjectMetadata,
-} from '../content-store/index.ts';
+import type { ContentStore } from '../content-store/index.ts';
 import type { ContentSourceLocator } from '../content-store/content-contract.ts';
 import {
   FeedSnapshotArchiveConflictError,
@@ -28,19 +23,8 @@ import {
   parseFeedSnapshotManifest,
   type FeedSnapshotManifest,
 } from './feed-snapshot-manifest.ts';
-
-export interface R2FeedSnapshotAliasBucket {
-  get(key: string): Promise<R2ObjectBody | null>;
-  put(
-    key: string,
-    value: ArrayBuffer,
-    options: {
-      readonly onlyIf: R2Conditional;
-      readonly sha256: string;
-      readonly customMetadata: Readonly<Record<string, string>>;
-    }
-  ): Promise<R2ObjectMetadata | null>;
-}
+import type { R2FeedSnapshotAliasBucket } from './r2-feed-snapshot-bucket.ts';
+export type { R2FeedSnapshotAliasBucket } from './r2-feed-snapshot-bucket.ts';
 
 type AliasWire = {
   readonly schema: 'factorywager.feed-snapshot-alias';
