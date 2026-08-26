@@ -242,8 +242,13 @@ source-bound manifest, verified CAS bytes, freshness policy, and a second pass
 through the terminable XML worker. Package manifests are parsed once into
 deterministically ordered runtime, development, optional, and peer dependency
 records; optional-peer metadata and dependency kind are retained in package-feed
-categories and stable GUIDs. A durable archive writer and complete production
-binding migration remain open, so this row is not `Implemented`.
+categories and stable GUIDs. The archive writer authorizes current storage and
+derivation rights before effects, writes and re-verifies immutable XML/image
+bytes, and publishes the exact source alias last through either an atomic memory
+adapter or strict R2 ETag CAS. Corruption, source substitution, stale policy,
+partial writes, races, and offline no-network behavior have hermetic negative
+proof. Complete production binding migration and live R2 proof remain open, so
+this row is not `Implemented`.
 
 ### `CHAN-001` Channel publication and aliases
 

@@ -57,6 +57,13 @@ fallback. An optional `FeedSnapshotArchive` must return an exact source-bound,
 versioned manifest plus a `ContentStore`; every referenced byte is rehashed and
 the XML is reparsed in the terminable worker before use. Publishing uses the
 separate typed `RSSPublishStorage` surface and cannot read storage credentials.
+[`FeedSnapshotWriter`](./feed-snapshot-writer.ts) separately authorizes current
+store/derive rights, writes and re-verifies immutable XML/image bytes, then
+publishes an exact-revision source alias through the supplied
+[memory](./memory-feed-snapshot-archive.ts) or
+[R2](./r2-feed-snapshot-archive.ts) binding adapter. Failed, partial, or raced
+writes cannot expose an alias. No adapter reads ambient credentials, uses Bun's
+package global store, or supplies a network fallback.
 
 `Bun.Image.metadata()` supplies width, height, and format only. Byte size,
 SHA-256, dominant color, branding, channel assignment, and payload versioning

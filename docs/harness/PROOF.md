@@ -373,7 +373,8 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   snapshots _Ratchet_ → `bun run guard:feeds:check`
 - **`guard-r2-content-v1`** — hermetic R2 adapters conditionally create
   digest-keyed content, rehash bounded reads, verify alias JSON around ETag CAS,
-  and load feed snapshots without online fallback _Ratchet_ →
+  publish source-bound feed aliases only after rights-authorized verified byte
+  writes, and load feed snapshots without online fallback _Ratchet_ →
   `bun run guard:r2-content-store:check`
 - **`sports-integration-type-v1`** — integration-health projects the trusted
   PartnerProfileService camelCase interior shape _Ratchet_ →

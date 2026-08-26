@@ -6,6 +6,7 @@ import {
 import {
   loadFeedSnapshotOffline,
   parseFeedSnapshotManifest,
+  type FeedSnapshotManifest,
   type LoadedFeedSnapshot,
 } from './feed-snapshot-manifest.ts';
 
@@ -18,6 +19,31 @@ export type FeedSnapshotArchiveEntry = {
 
 export interface FeedSnapshotArchive {
   load(source: ContentSourceLocator): Promise<FeedSnapshotArchiveEntry | undefined>;
+}
+
+export type PublishFeedSnapshotAliasInput = {
+  readonly source: ContentSourceLocator;
+  readonly manifest: FeedSnapshotManifest;
+  /** Zero creates an alias; later writes require the exact current revision. */
+  readonly expectedRevision: number;
+};
+
+export type PublishedFeedSnapshotAlias = {
+  readonly source: ContentSourceLocator;
+  readonly revision: number;
+  readonly manifest: FeedSnapshotManifest;
+};
+
+/** Mutable alias publication is deliberately separate from immutable byte storage. */
+export interface FeedSnapshotArchivePublisher {
+  publishAlias(input: PublishFeedSnapshotAliasInput): Promise<PublishedFeedSnapshotAlias>;
+}
+
+export class FeedSnapshotArchiveConflictError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'FeedSnapshotArchiveConflictError';
+  }
 }
 
 /**
