@@ -68,6 +68,7 @@ import {
   FACTORY_WAGER_NPM_REGISTRY_URL,
   FACTORY_WAGER_REGISTRY_ORIGIN,
 } from '../config/r2-env.ts';
+import { checkProjectRegistryConfigs } from './lib/project-registry-config-check.ts';
 
 export type RegistryConfigDocuments = {
   npmrc: string;
@@ -241,10 +242,15 @@ export async function checkRegistryConfig(
 }
 
 if (isModuleEntrypoint(import.meta)) {
-  const result = await checkRegistryConfig();
-  if (result.ok) console.log('registry config aligned: 7 owned root contracts');
-  else {
-    for (const error of result.errors) console.error(`- ${error}`);
+  const rootResult = await checkRegistryConfig();
+  const projectResult = await checkProjectRegistryConfigs();
+  const errors = [...rootResult.errors, ...projectResult.errors];
+  if (errors.length === 0) {
+    console.log(
+      `registry config aligned: 7 root contracts, ${projectResult.leaves} product leaves`
+    );
+  } else {
+    for (const error of errors) console.error(`- ${error}`);
     process.exitCode = 1;
   }
 }

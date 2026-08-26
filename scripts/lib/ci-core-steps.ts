@@ -26,6 +26,7 @@ export const CORE_STEPS: CoreStep[] = [
   },
   { name: 'brand-catalog', cmd: ['bun', 'test', 'tests/branded-catalog.test.ts'] },
   { name: 'policy-audit', cmd: ['bun', 'tools/policy-audit.ts'] },
+  { name: 'registry-config', cmd: ['bun', 'run', 'registry:config:check'] },
   { name: 'jurisdictions-docs', cmd: ['bun', 'tools/jurisdictions-docs.ts', '--check'] },
   {
     name: 'monorepo-health',
