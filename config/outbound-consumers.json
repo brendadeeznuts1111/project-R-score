@@ -8131,15 +8131,15 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "scripts/agent-registry-live-smoke.ts#fetch#889df18a28b9a2df#1",
+      "id": "scripts/agent-registry-live-smoke.ts#fetch#a1ad4f6cee9e3f7f#1",
       "path": "scripts/agent-registry-live-smoke.ts",
-      "line": 23,
-      "column": 22,
+      "line": 56,
+      "column": 28,
       "callee": "fetch",
-      "fingerprint": "889df18a28b9a2df",
-      "classification": "unowned",
-      "owner": "scripts/agent-registry-live-smoke.ts",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "fingerprint": "a1ad4f6cee9e3f7f",
+      "classification": "owned-policy-boundary",
+      "owner": "agent-capability",
+      "reason": "Static loopback registry fetch executes only after exact agent identity, route, registry-plane, origin, and profile authorization."
     },
     {
       "id": "scripts/bake-surfaces.ts#fetch#630261f9053972b3#1",
