@@ -198,6 +198,8 @@ describe('in-tool flagDocRef re-exports', () => {
       'correlation-id',
     ]);
     expect(ALLOWED_LONG_REGISTRY['concept:deprecate']).toEqual(['replace-by', 'reason']);
+    expect(ALLOWED_LONG_REGISTRY['check:networking']).toContain('external');
+    expect(ALLOWED_LONG_REGISTRY['check:networking']).toContain('authority-host');
     // bun:pr:verify must include --diff (behavior-diff vs installed Bun)
     expect([...ALLOWED_LONG_REGISTRY['bun:pr:verify']]).toContain('diff');
   });

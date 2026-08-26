@@ -5,12 +5,12 @@ allowlists** already enforced in code.
 
 Code SSOT (do **not** invent a parallel allowlist module):
 
-| Piece                             | Path                                                                                                                                                                    |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Allowlists + guard                | [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts) · `ALLOWED_LONG_REGISTRY` · `applyUnknownLongOptionGuardFor`                                     |
-| Env toggles only                  | `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` (`BUN_UNKNOWN_FLAG_ENV`) — **harness**, not bun-types                                                                           |
-| REF:ID prove                      | `bun run docs:refid:check` · `bun test tests/docs-ref-id-tool-exports.test.ts`                                                                                          |
-| Agent one-shot                    | `bun run cli:flags:check`                                                                                                                                               |
+| Piece                             | Path                                                                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Allowlists + guard                | [`lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts) · `ALLOWED_LONG_REGISTRY` · `applyUnknownLongOptionGuardFor`                          |
+| Env toggles only                  | `BUN_STRIP_UNKNOWN` · `BUN_LOG_UNKNOWN` (`BUN_UNKNOWN_FLAG_ENV`) — **harness**, not bun-types                                                                |
+| REF:ID prove                      | `bun run docs:refid:check` · `bun test tests/docs-ref-id-tool-exports.test.ts`                                                                               |
+| Agent one-shot                    | `bun run cli:flags:check`                                                                                                                                    |
 | Bun create / init / runtime knobs | [`AUTHORITY.md`](AUTHORITY.md) · [`lib/env-check.ts`](../../lib/env-check.ts) · [`../../lib/docs/ref-id-tool-flags.ts`](../../lib/docs/ref-id-tool-flags.ts) |
 
 > **Accuracy note:** Leaves in the registry are **unprefixed** (`chat`, not
@@ -173,6 +173,25 @@ bun run docs:refid:check
 | `bake:doctor`                                             | `check` · `full` · `no-portable` · `report`                                                                                                                                                                                                               | [`tools/bake-doctor.ts`](../../tools/bake-doctor.ts)                                                                                                             |
 | `machine:bunfig:ensure`                                   | `check` · `overwrite` · `overwrite-link`                                                                                                                                                                                                                  | [`scripts/ensure-machine-bunfig.ts`](../../scripts/ensure-machine-bunfig.ts)                                                                                     |
 | `ops:seed:partners` / `:tenants` / `:dod` / `:prediction` | `force` each                                                                                                                                                                                                                                              | split from shared `ops:seed:all`                                                                                                                                 |
+
+### 2.7.1 `check:networking` (`CHECK_NETWORKING_ALLOWED_LONG`)
+
+Remote access is opt-in. The unflagged command builds only the local target set;
+`--remote` remains a compatibility alias for `--external`.
+
+| Layer          | Flags                                                                                                                                | Behavior                                                                                                                                                                                                 |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gate           | `--external` · `--remote` · `--local-only`                                                                                           | External targets require an explicit gate; local and external modes cannot be combined.                                                                                                                  |
+| DNS            | `--authority-host` · `--authority-family=4\|6\|any` · `--dns-backend=c-ares\|system\|getaddrinfo\|libc` · `--dns-server=<ip[:port]>` | Bun 1.4 backend selection is explicit. A custom server uses a dedicated `node:dns/promises` `Resolver`; unsupported `BUN_DNS_SERVER` is never read.                                                      |
+| URI/TLS/HTTP   | `--authority-only` · `--authority-path` · `--authority-port` · `--authority-protocol=auto\|http1.1\|http2`                           | Connects to the resolved IP while keeping the registered hostname in TLS SNI and HTTP `Host`; redirects stay manual. IPv6 URI literals are bracketed. `--authority-only` skips the regular target suite. |
+| Evidence       | `--deep` · `--json` · `--timeout-ms`                                                                                                 | `--deep` prints DNS → IP URI → TLS/ALPN → HTTP authority layers; JSON always preserves the structured plan.                                                                                              |
+| Existing suite | `--base` · `--routes` · `--routes-only` · `--strict-routes` · `--skip-write` · `--save`                                              | Local route and proof controls.                                                                                                                                                                          |
+
+Ready-made proof:
+
+```bash
+bun run check:networking:authority
+```
 
 ### 2.8 Coverage goal (agent team)
 

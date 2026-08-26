@@ -9,6 +9,11 @@ import {
 import { netCheckRow } from '../lib/http/networking-report.ts';
 import { serveBindSnapshot } from '../lib/http/bun-server.ts';
 import {
+  assertDirectAuthorityProxyEnvironment,
+  assertNetworkingBaseAllowed,
+  buildNetworkingTargets,
+  isLoopbackNetworkingBase,
+  parseFetchProtocol,
   resolveRouteProbeBase,
   verifyTarget,
   type NetTarget,
@@ -17,6 +22,80 @@ import { createTestWorkspace } from './harness.ts';
 import { writeServePublicBindManifest } from '../lib/http/serve-public-bind.ts';
 
 describe('tools/verify-networking', () => {
+  test('external target inventory is opt-in', () => {
+    expect(buildNetworkingTargets(false).map(target => target.name)).toEqual([
+      'Health',
+      'Prediction report',
+    ]);
+    expect(buildNetworkingTargets(true).some(target => target.name === 'Bun docs')).toBe(true);
+  });
+
+  test('local mode accepts only normalized loopback HTTP origins', () => {
+    for (const base of [
+      'http://localhost:3000',
+      'https://api.localhost:3443',
+      'http://127.1:3000',
+      'http://127.255.255.254:3000',
+      'http://[::1]:3000',
+      'http://[0:0:0:0:0:0:0:1]:3000',
+    ]) {
+      expect(isLoopbackNetworkingBase(base)).toBe(true);
+      expect(() => assertNetworkingBaseAllowed(base, false)).not.toThrow();
+    }
+    for (const base of [
+      'https://api.github.com',
+      'http://printer.local',
+      'http://192.168.1.2:3000',
+      'file:///tmp/health',
+      'http://user:secret@localhost:3000',
+    ]) {
+      expect(isLoopbackNetworkingBase(base)).toBe(false);
+      expect(() => assertNetworkingBaseAllowed(base, false)).toThrow(
+        'pass --external or --remote'
+      );
+      expect(() => assertNetworkingBaseAllowed(base, true)).not.toThrow();
+    }
+    try {
+      assertNetworkingBaseAllowed('http://user:secret@remote.example/private?token=hidden', false);
+    } catch (error) {
+      expect(String(error)).not.toContain('user:secret');
+      expect(String(error)).not.toContain('token=hidden');
+    }
+  });
+
+  test('direct authority proof fails closed on proxy state without exposing values', () => {
+    expect(() =>
+      assertDirectAuthorityProxyEnvironment({ HTTPS_PROXY: 'http://user:secret@proxy.invalid' })
+    ).toThrow('HTTPS_PROXY');
+    try {
+      assertDirectAuthorityProxyEnvironment({ HTTPS_PROXY: 'http://user:secret@proxy.invalid' });
+    } catch (error) {
+      expect(String(error)).not.toContain('user:secret');
+    }
+    expect(() =>
+      assertDirectAuthorityProxyEnvironment({ HTTPS_PROXY: 'http://proxy.invalid', NO_PROXY: '*' })
+    ).not.toThrow();
+    expect(() => assertDirectAuthorityProxyEnvironment({})).not.toThrow();
+  });
+
+  test('HTTP/3 is rejected explicitly for the literal-IP authority path', () => {
+    expect(() => parseFetchProtocol('http3')).toThrow('hostname-based HTTP/3 probe');
+    expect(() => parseFetchProtocol('quic')).toThrow('http2');
+  });
+
+  test('authority CLI rejects live DNS without the external opt-in', async () => {
+    const child = Bun.spawn(
+      [process.execPath, 'tools/verify-networking.ts', '--authority-host=bun.com'],
+      { cwd: process.cwd(), stdout: 'pipe', stderr: 'pipe' }
+    );
+    const [exitCode, stderr] = await Promise.all([
+      child.exited,
+      new Response(child.stderr).text(),
+    ]);
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toContain('requires --external');
+  });
+
   test('buildNetworkingProofArtifact produces parseable proof JSON', () => {
     const rows = [
       netCheckRow({
