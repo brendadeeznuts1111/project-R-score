@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["bun"]
+  },
+  "files": [
+    "src/registry/Fire22Registry.ts",
+    "src/registry/registry-config.ts",
+    "src/registry/registry-outbound.ts",
+    "../../../../../../../lib/http/outbound-policy.ts",
+    "../../../../../../../lib/http/ip-authority.ts",
+    "../../../../../../../lib/security/control-policy.ts"
+  ]
+}

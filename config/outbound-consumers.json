@@ -422,7 +422,7 @@
     {
       "id": "lib/package/package-manager.ts#fetchPublicResource#6fc91203ae4cad14#1",
       "path": "lib/package/package-manager.ts",
-      "line": 234,
+      "line": 266,
       "column": 9,
       "callee": "fetchPublicResource",
       "fingerprint": "6fc91203ae4cad14",
@@ -895,7 +895,7 @@
     {
       "id": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts#fetchPublicResource#adf689cbc6bb07fa#1",
       "path": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts",
-      "line": 103,
+      "line": 107,
       "column": 9,
       "callee": "fetchPublicResource",
       "fingerprint": "adf689cbc6bb07fa",
@@ -906,7 +906,7 @@
     {
       "id": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts#fetchWithPolicy#cac927f0a4ff37f6#1",
       "path": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts",
-      "line": 145,
+      "line": 148,
       "column": 9,
       "callee": "fetchWithPolicy",
       "fingerprint": "cac927f0a4ff37f6",
@@ -3577,59 +3577,15 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts#fetch#57306b36ce004fb9#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts",
-      "line": 117,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "57306b36ce004fb9",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts#fetch#423665f279a24eb3#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts",
-      "line": 134,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "423665f279a24eb3",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts#fetch#e650ec332fb661b8#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts",
-      "line": 227,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "e650ec332fb661b8",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts#fetch#da8bf47e10c8f200#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts",
-      "line": 254,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "da8bf47e10c8f200",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts#fetch#526c1f9821b507bc#1",
-      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/Fire22Registry.ts",
-      "line": 306,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "526c1f9821b507bc",
-      "classification": "unowned",
-      "owner": "projects/active/enterprise/fantasy42-fire22-registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/registry-outbound.ts#fetchWithPolicy#1c712ff97a40ff0c#1",
+      "path": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry/src/registry/registry-outbound.ts",
+      "line": 86,
+      "column": 10,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "1c712ff97a40ff0c",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/enterprise/fantasy42-fire22-registry/dashboard-worker/workspaces/@fire22-security-registry",
+      "reason": "The fixed Fire22 registry authority is enforced through fetchWithPolicy with exact HTTPS origin and path, scoped authorization, direct-route and proxy/TLS/protocol denial, offline fail-closed behavior, public DNS authority, bounded deadlines and responses, and no retry of unsafe writes."
     },
     {
       "id": "projects/active/enterprise/fantasy42-fire22-registry/docs-worker/src/docs-worker.ts#fetch#19ed647704116028#1",
