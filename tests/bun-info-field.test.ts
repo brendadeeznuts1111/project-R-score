@@ -50,6 +50,17 @@ describe('lib/registry/bun-info-field', () => {
     expect(cli.property).toBe('repository.url');
   });
 
+  test('parseBunInfoCli rejects duplicate registry controls', () => {
+    expect(() =>
+      parseBunInfoCli([
+        '--registry=https://one.example',
+        '--registry',
+        'https://two.example',
+        'react',
+      ])
+    ).toThrow('exactly once');
+  });
+
   test('formatBunInfoFieldValue returns {} for null dependencies', () => {
     expect(formatBunInfoFieldValue('dependencies', null)).toBe('{}');
     expect(formatBunInfoFieldValue('peerDependencies', undefined)).toBe('{}');
@@ -99,17 +110,20 @@ describe('lib/registry/bun-info-field', () => {
     }
   });
 
-  test.skipIf(!npmOnline)('bunInfoField react readme resolves (native or empty fallback)', async () => {
-    try {
-      const out = await bunInfoField('react', 'readme');
-      expect(out.ok).toBe(true);
-      if (!out.ok) return;
-      expect(out.value).toBe('');
-    } catch (e) {
-      if (isNetworkFailure(e)) return;
-      throw e;
+  test.skipIf(!npmOnline)(
+    'bunInfoField react readme resolves (native or empty fallback)',
+    async () => {
+      try {
+        const out = await bunInfoField('react', 'readme');
+        expect(out.ok).toBe(true);
+        if (!out.ok) return;
+        expect(out.value).toBe('');
+      } catch (e) {
+        if (isNetworkFailure(e)) return;
+        throw e;
+      }
     }
-  });
+  );
 
   test('registry-client from default registry', async () => {
     try {
@@ -119,7 +133,11 @@ describe('lib/registry/bun-info-field', () => {
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
       // Local registry (localhost:3000) may be down — not a monorepo logic failure
-      if (/ConnectionRefused|ECONNREFUSED|fetch failed|view request failed|ENOTFOUND|ETIMEDOUT|Unable to connect/i.test(msg)) {
+      if (
+        /ConnectionRefused|ECONNREFUSED|fetch failed|view request failed|ENOTFOUND|ETIMEDOUT|Unable to connect/i.test(
+          msg
+        )
+      ) {
         return;
       }
       throw e;

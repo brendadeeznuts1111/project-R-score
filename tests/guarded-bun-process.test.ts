@@ -123,4 +123,26 @@ describe('guarded Bun child authority', () => {
       })
     ).toThrow('--registry: missing-grant');
   });
+
+  test('denies production runtime auto-install controls', () => {
+    for (const autoInstall of ['--install=fallback', '--install=force', '-i']) {
+      const productionAuthority: BunChildAuthority = {
+        executable,
+        argv: [autoInstall, 'server.ts'],
+        cwd,
+        environment: {},
+        profile: 'production',
+        command: 'runtime',
+        reason: 'production runtime fixture',
+      };
+      expect(() =>
+        prepareGuardedBunChild({
+          authority: productionAuthority,
+          executable,
+          argv: productionAuthority.argv,
+          cwd,
+        })
+      ).toThrow(`${autoInstall.split('=')[0]}: unknown-control`);
+    }
+  });
 });

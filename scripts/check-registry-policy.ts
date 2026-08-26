@@ -47,6 +47,7 @@
 // @updated Bun.file · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @verified Bun.file · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/file-io
 import { parsePackageDependencyRecords } from '../lib/registry/package-dependencies.ts';
+import { planBunPublish, resolveRegistryConfiguration } from '../lib/registry/command-policy.ts';
 import { parseRegistryIndex, RegistryClient } from '../packages/registry-client/src/index.ts';
 
 const publicIndex = await Bun.file(
@@ -68,6 +69,29 @@ try {
 try {
   new RegistryClient({ baseUrl: 'https://user:secret@registry.example' });
   throw new Error('registry client accepted credential-bearing origin');
+} catch (cause) {
+  if (!(cause instanceof TypeError)) throw cause;
+}
+
+if (
+  resolveRegistryConfiguration('install', {
+    cli: 'https://cli.example',
+    environment: { BUN_CONFIG_REGISTRY: 'https://environment.example' },
+    bunfig: 'https://bunfig.example',
+  }).source !== 'cli'
+) {
+  throw new Error('registry precedence contract is not wired');
+}
+try {
+  planBunPublish({
+    executable: process.execPath,
+    cwd: process.cwd(),
+    profile: 'release',
+    registry: { default: 'https://registry.npmjs.org' },
+    grants: [],
+    dryRun: true,
+  });
+  throw new Error('publish planner accepted implicit fallback');
 } catch (cause) {
   if (!(cause instanceof TypeError)) throw cause;
 }

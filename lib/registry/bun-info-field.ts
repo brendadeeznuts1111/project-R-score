@@ -1,9 +1,17 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 // @see https://bun.com/docs/pm/cli/info — bun info
 /**
  * Resolve `bun info <pkg> <property>` with JSON fallback when Bun reports
  * "Property … not found" (e.g. react.dependencies is null in the manifest).
  */
+
+import { planBunInfo } from './command-policy.ts';
 
 /** Manifest object fields that are `{}` when absent, not errors. */
 export const NULLABLE_OBJECT_FIELDS = new Set([
@@ -40,10 +48,12 @@ export function parseBunInfoCli(argv: string[]): BunInfoCliArgs {
       continue;
     }
     if (a === '--registry' && argv[i + 1]) {
+      if (registry !== undefined) throw new TypeError('--registry must be defined exactly once');
       registry = argv[++i];
       continue;
     }
     if (a.startsWith('--registry=')) {
+      if (registry !== undefined) throw new TypeError('--registry must be defined exactly once');
       registry = a.slice('--registry='.length);
       continue;
     }
@@ -71,14 +81,49 @@ export function parseBunInfoCli(argv: string[]): BunInfoCliArgs {
   };
 }
 
-export function bunInfoSpawnArgs(
+function bunInfoPlan(
+  pkg: string,
   cli: Pick<BunInfoCliArgs, 'registry' | 'forwardFlags'>,
-  ...rest: string[]
-): string[] {
-  const args = ['bun', 'info'];
-  if (cli.registry) args.push(`--registry=${cli.registry}`);
-  args.push(...(cli.forwardFlags ?? []), ...rest);
-  return args;
+  options: { property?: string; json?: boolean } = {}
+) {
+  const registry = cli.registry ?? 'https://registry.npmjs.org';
+  const forwardFlags = cli.forwardFlags ?? [];
+  const unexpected = forwardFlags.filter(flag => flag !== '--no-cache');
+  if (unexpected.length > 0 || forwardFlags.filter(flag => flag === '--no-cache').length > 1) {
+    throw new TypeError(
+      `bun info flags are not allowed: ${unexpected.join(', ') || 'duplicate --no-cache'}`
+    );
+  }
+  return planBunInfo({
+    executable: process.execPath,
+    cwd: process.cwd(),
+    profile: 'development',
+    registry: cli.registry ? { cli: registry } : { default: registry },
+    grants: [
+      {
+        operation: 'metadata-read',
+        origins: [new URL(registry).origin],
+        access: 'read',
+        reason: 'interactive bun-info metadata read',
+      },
+    ],
+    packageName: pkg,
+    field: options.property,
+    json: options.json,
+    noCache: forwardFlags.includes('--no-cache'),
+    environment: { PATH: Bun.env.PATH, CI: Bun.env.CI },
+  });
+}
+
+function spawnBunInfoPlan(plan: ReturnType<typeof bunInfoPlan>, inherit = false) {
+  return Bun.spawn([plan.executable, ...plan.argv], {
+    // registry-command-plan-reviewed — exact metadata plane planner
+    cwd: plan.cwd,
+    env: { ...plan.env },
+    stdout: inherit ? 'inherit' : 'pipe',
+    stderr: inherit ? 'inherit' : 'pipe',
+    stdin: 'ignore',
+  });
 }
 
 export function normalizeNullableManifestFields(meta: Packument): Packument {
@@ -121,10 +166,7 @@ export async function fetchPackumentJson(
   pkg: string,
   cli: Pick<BunInfoCliArgs, 'registry' | 'forwardFlags'> = {}
 ): Promise<Packument> {
-  const proc = Bun.spawn(bunInfoSpawnArgs(cli, pkg, '--json'), {
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
+  const proc = spawnBunInfoPlan(bunInfoPlan(pkg, cli, { json: true }));
   const [exitCode, stdout, stderr] = await Promise.all([
     proc.exited,
     proc.stdout.text(),
@@ -137,8 +179,7 @@ export async function fetchPackumentJson(
 }
 
 export type BunInfoFieldResult =
-  | { ok: true; value: string; source: 'native' | 'json-fallback' }
-  | { ok: false; error: string };
+  { ok: true; value: string; source: 'native' | 'json-fallback' } | { ok: false; error: string };
 
 /** Like `bun info pkg property`, but null deps → `{}`. */
 export async function bunInfoField(
@@ -146,10 +187,7 @@ export async function bunInfoField(
   property: string,
   cli: Pick<BunInfoCliArgs, 'registry' | 'forwardFlags'> = {}
 ): Promise<BunInfoFieldResult> {
-  const proc = Bun.spawn(bunInfoSpawnArgs(cli, pkg, property), {
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
+  const proc = spawnBunInfoPlan(bunInfoPlan(pkg, cli, { property }));
   const [exitCode, stdout, stderr] = await Promise.all([
     proc.exited,
     proc.stdout.text(),
@@ -184,9 +222,6 @@ export async function bunInfoField(
 export async function runBunInfoPretty(
   cli: Pick<BunInfoCliArgs, 'pkg' | 'registry' | 'forwardFlags'>
 ): Promise<number> {
-  const proc = Bun.spawn(bunInfoSpawnArgs(cli, cli.pkg), {
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
+  const proc = spawnBunInfoPlan(bunInfoPlan(cli.pkg, cli), true);
   return proc.exited;
 }

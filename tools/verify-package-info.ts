@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
 // @updated Bun.CryptoHasher · changed v0.5.0 · 2023-01-18 · https://bun.com/blog/bun-v0.5.0
 // @updated Bun.CryptoHasher · fixed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
@@ -36,6 +42,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 import { CryptoHasher, inspect } from 'bun';
+import { planBunInfo } from '../lib/registry/command-policy.ts';
 import { resolveVerificationBunBinary } from '../lib/verification/resolve-bun-binary.ts';
 import { factoryWagerNpmRegistryUrlFromEnv } from '../config/r2-env.ts';
 
@@ -52,7 +59,31 @@ async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
   const url = registry === 'npm' ? 'https://registry.npmjs.org' : FACTORY_NPM_READ_URL;
   const bunPath = resolveVerificationBunBinary().path;
   try {
-    const proc = Bun.spawnSync([bunPath, 'info', name, `--registry=${url}`, '--json']);
+    const plan = planBunInfo({
+      executable: bunPath,
+      cwd: process.cwd(),
+      profile: 'ci',
+      registry: { cli: url },
+      grants: [
+        {
+          operation: 'metadata-read',
+          origins: [new URL(url).origin],
+          access: 'read',
+          reason: 'package-info verification read plane',
+        },
+      ],
+      packageName: name,
+      json: true,
+      environment: { PATH: Bun.env.PATH, CI: Bun.env.CI },
+    });
+    const proc = Bun.spawnSync([plan.executable, ...plan.argv], {
+      // registry-command-plan-reviewed — exact metadata plane planner
+      cwd: plan.cwd,
+      env: { ...plan.env },
+      stdout: 'pipe',
+      stderr: 'pipe',
+      stdin: 'ignore',
+    });
     if (proc.exitCode !== 0) throw new Error(proc.stderr.toString().trim().split('\n').pop() || '');
     const data = JSON.parse(proc.stdout.toString());
     const version = data['dist-tags']?.latest || data.version || '?';
@@ -60,7 +91,31 @@ async function checkPackage(name: string, registry: string): Promise<PkgCheck> {
     // README check via `bun info <pkg> readme`
     let readmeStatus = '—';
     if (registry === 'custom') {
-      const rProc = Bun.spawnSync([bunPath, 'info', name, 'readme', `--registry=${url}`]);
+      const readmePlan = planBunInfo({
+        executable: bunPath,
+        cwd: process.cwd(),
+        profile: 'ci',
+        registry: { cli: url },
+        grants: [
+          {
+            operation: 'metadata-read',
+            origins: [new URL(url).origin],
+            access: 'read',
+            reason: 'package README verification read plane',
+          },
+        ],
+        packageName: name,
+        field: 'readme',
+        environment: { PATH: Bun.env.PATH, CI: Bun.env.CI },
+      });
+      const rProc = Bun.spawnSync([readmePlan.executable, ...readmePlan.argv], {
+        // registry-command-plan-reviewed — exact metadata plane planner
+        cwd: readmePlan.cwd,
+        env: { ...readmePlan.env },
+        stdout: 'pipe',
+        stderr: 'pipe',
+        stdin: 'ignore',
+      });
       const readme = rProc.stdout.toString().trim();
       if (readme && readme.length > 20)
         readmeStatus = '✅ ' + readme.slice(0, 40).replace(/\n/g, ' ') + '…';
