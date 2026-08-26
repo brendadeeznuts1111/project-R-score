@@ -23,12 +23,14 @@ mock.module('bun:jsc', () => ({
 
 describe('Responsible Gambling Engine', () => {
   let originalFetch: typeof fetch;
+  let originalDnsLookup: typeof Bun.dns.lookup;
   let originalGetUserLocation: (typeof ResponsibleGamblingEngine)['getUserLocation'];
 
   beforeEach(() => {
     // Reset any global state
     mock.restore();
     originalFetch = globalThis.fetch;
+    originalDnsLookup = Bun.dns.lookup;
     originalGetUserLocation = ResponsibleGamblingEngine['getUserLocation'];
     // Set environment variables for licensed jurisdictions
     process.env.LICENSED_JURISDICTIONS = 'US,CA,UK';
@@ -37,6 +39,7 @@ describe('Responsible Gambling Engine', () => {
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
+    Bun.dns.lookup = originalDnsLookup;
     ResponsibleGamblingEngine['getUserLocation'] = originalGetUserLocation;
     // Clean up env vars
     delete process.env.LICENSED_JURISDICTIONS;
@@ -53,6 +56,9 @@ describe('Responsible Gambling Engine', () => {
 
   test('blocks self-excluded users', async () => {
     // Mock self-exclusion API response
+    Bun.dns.lookup = mock(async () => [
+      { address: '93.184.216.34', family: 4, ttl: 60 },
+    ]) as typeof Bun.dns.lookup;
     globalThis.fetch = mock(() =>
       Promise.resolve(
         new Response(
