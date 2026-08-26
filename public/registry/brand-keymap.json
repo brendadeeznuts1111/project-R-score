@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T09:23:54.711Z",
+  "generatedAt": "2026-08-26T09:51:44.571Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -3359,7 +3359,7 @@
         "status": "covered",
         "references": 15,
         "constructors": {
-          "as": 5,
+          "as": 6,
           "try": 0,
           "parse": 0
         },
@@ -3370,6 +3370,7 @@
           "packages/bun-release-contracts/src/knowledge-ast.ts",
           "packages/bun-release-contracts/src/knowledge-types.ts",
           "tools/bun-blog-assets/html.ts",
+          "tools/bun-blog-assets/palette-clip-artifacts.ts",
           "tools/bun-blog-assets/release-snapshot-contract.ts",
           "tools/bun-blog-assets/types.ts"
         ],
@@ -3377,7 +3378,7 @@
           "spine": {
             "status": "covered",
             "references": 15,
-            "constructionCalls": 5,
+            "constructionCalls": 6,
             "guardCalls": 0,
             "files": [
               "lib/docs/bun-brand-usages.ts",
@@ -3385,6 +3386,7 @@
               "packages/bun-release-contracts/src/knowledge-ast.ts",
               "packages/bun-release-contracts/src/knowledge-types.ts",
               "tools/bun-blog-assets/html.ts",
+              "tools/bun-blog-assets/palette-clip-artifacts.ts",
               "tools/bun-blog-assets/release-snapshot-contract.ts",
               "tools/bun-blog-assets/types.ts"
             ]
@@ -3434,7 +3436,7 @@
         "status": "covered",
         "references": 2,
         "constructors": {
-          "as": 60,
+          "as": 61,
           "try": 0,
           "parse": 0
         },
@@ -3443,6 +3445,7 @@
           "tools/bun-blog-assets/capability-catalog-builtins-web.ts",
           "tools/bun-blog-assets/capability-catalog-builtins.ts",
           "tools/bun-blog-assets/capability-catalog-claims.ts",
+          "tools/bun-blog-assets/capability-catalog-color.ts",
           "tools/bun-blog-assets/capability-catalog-dev-network.ts",
           "tools/bun-blog-assets/capability-catalog-network.ts",
           "tools/bun-blog-assets/capability-catalog-runtime.ts",
@@ -3453,12 +3456,13 @@
           "spine": {
             "status": "covered",
             "references": 2,
-            "constructionCalls": 60,
+            "constructionCalls": 61,
             "guardCalls": 0,
             "files": [
               "tools/bun-blog-assets/capability-catalog-builtins-web.ts",
               "tools/bun-blog-assets/capability-catalog-builtins.ts",
               "tools/bun-blog-assets/capability-catalog-claims.ts",
+              "tools/bun-blog-assets/capability-catalog-color.ts",
               "tools/bun-blog-assets/capability-catalog-dev-network.ts",
               "tools/bun-blog-assets/capability-catalog-network.ts",
               "tools/bun-blog-assets/capability-catalog-runtime.ts",
