@@ -1,4 +1,16 @@
 #!/usr/bin/env bun
+import {
+  createFullStackBunOutboundAuthority,
+  fetchFullStackBunOutbound,
+} from '../src/security/outbound';
+
+const LOCAL_HEALTH_AUTHORITY = createFullStackBunOutboundAuthority({
+  kind: 'health',
+  name: 'local-health',
+  baseUrl: 'http://localhost:3997/api/health',
+  exact: true,
+  addressClass: 'loopback',
+});
 import { structuredLog } from "../src/shared/utils";
 
 async function healthCheck() {
@@ -81,7 +93,7 @@ async function healthCheck() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     try {
-      const healthResponse = await fetch("http://localhost:3997/api/health");
+      const healthResponse = await fetchFullStackBunOutbound(LOCAL_HEALTH_AUTHORITY, "http://localhost:3997/api/health");
       checks.security = healthResponse.status === 200;
       if (checks.security) {
         structuredLog("✅ Security and startup check passed");

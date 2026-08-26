@@ -1,4 +1,8 @@
 #!/usr/bin/env bun
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+} from './security/outbound';
 /**
  * Timeout Scraper Protection
  * 
@@ -36,6 +40,12 @@ class SafeScraper {
 		const timeoutMs = options.timeoutMs ?? this.defaultTimeout;
 		const retries = options.retries ?? this.defaultRetries;
 		const retryDelayMs = options.retryDelayMs ?? this.defaultRetryDelay;
+		const authority = createFullStackBunOutboundAuthority({
+			kind: 'scrape',
+			name: 'safe-scraper-target',
+			baseUrl: url,
+			exact: true,
+		});
 		
 		let lastError: Error | null = null;
 		
@@ -47,7 +57,7 @@ class SafeScraper {
 				const timeoutSignal = AbortSignal.timeout(timeoutMs);
 				
 				// Fetch with timeout
-				const response = await fetch(url, {
+				const response = await fetchFullStackBunOutbound(authority, url, {
 					signal: timeoutSignal,
 					headers: {
 						'User-Agent': 'Mozilla/5.0 (compatible; SafeScraper/1.0)',
@@ -180,4 +190,3 @@ async function main() {
 if (import.meta.main) {
 	main().catch(console.error);
 }
-

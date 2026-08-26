@@ -117,7 +117,8 @@ export type OutboundConsumerCallee =
   | 'fetchPartnerSourceHealth'
   | 'fetchPredictionProvider'
   | 'fetchInternalProxy'
-  | 'fetchWebhookEndpoint';
+  | 'fetchWebhookEndpoint'
+  | 'fetchFullStackBunOutbound';
 
 const OWNED_BOUNDARY_CALLEES = new Set<OutboundConsumerCallee>([
   'fetchWithPolicy',
@@ -131,6 +132,7 @@ const OWNED_BOUNDARY_CALLEES = new Set<OutboundConsumerCallee>([
   'fetchPredictionProvider',
   'fetchInternalProxy',
   'fetchWebhookEndpoint',
+  'fetchFullStackBunOutbound',
 ]);
 
 export interface OutboundConsumerManifestRow extends OutboundConsumerDiscovery {

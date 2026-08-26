@@ -7,6 +7,19 @@
 import { HyperCoreArbRouter } from './hyper-core-arb-router';
 import { HyperCoreURLPatternSpyFactory } from './hyper-core-urlpattern-spy';
 import type { RouteResult } from './quantum-arb-router';
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+} from '../../../src/security/outbound';
+
+const CRITICAL_ALERT_AUTHORITY = createFullStackBunOutboundAuthority({
+	kind: 'alert',
+	name: 'critical-alert',
+	baseUrl: 'https://alert.internal.company.com/critical',
+	exact: true,
+	methods: ['POST'],
+	addressClass: 'internal',
+});
 
 export class ErrorHandlingStrategy {
 	private static readonly fallbackMetrics = new Map<string, number>();
@@ -86,7 +99,7 @@ export class ErrorHandlingStrategy {
 	private static async sendCriticalAlert(url: string, router: HyperCoreArbRouter): Promise<void> {
 		try {
 			// Use Bun-native fetch for alerting
-			await fetch('https://alert.internal.company.com/critical', {
+			await fetchFullStackBunOutbound(CRITICAL_ALERT_AUTHORITY, 'https://alert.internal.company.com/critical', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
