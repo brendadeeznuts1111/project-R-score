@@ -24,7 +24,8 @@ describe('control-policy schema', () => {
       'request-tls',
       'request-protocol',
     ]);
-    expect(CONTROL_POLICY.every(spec => spec.securityDenial)).toBe(true);
+    expect(CONTROL_POLICY.find(spec => spec.id === 'request-tls')?.grantMode).toBe('never');
+    expect(CONTROL_POLICY.find(spec => spec.id === 'registry')?.grantMode).toBe('exact-origin');
   });
 
   test('matches representative aliases in the pinned Bun help surface', () => {
@@ -57,6 +58,13 @@ describe('control-policy CLI boundary', () => {
         './third.ts',
         '--import=./fourth.ts',
         'app.ts',
+      ],
+      grants: [
+        {
+          control: 'preload',
+          values: ['./first.ts', './second.ts', './third.ts', './fourth.ts'],
+          reason: 'test preload manifest',
+        },
       ],
     });
 
@@ -92,6 +100,13 @@ describe('control-policy CLI boundary', () => {
         '--experimental-http2-fetch=true',
         '--fetch-preconnect',
         '--experimental-http2-fetch',
+      ],
+      grants: [
+        {
+          control: 'experimental-http2-fetch',
+          values: ['enabled'],
+          reason: 'test protocol capability',
+        },
       ],
     });
 
@@ -141,6 +156,15 @@ describe('control-policy CLI boundary', () => {
         '--registry=https://registry.example.test',
         'pkg',
       ],
+      grants: [
+        { control: 'config', values: ['./bunfig.release.toml'], reason: 'release config' },
+        { control: 'cwd', values: ['/workspace'], reason: 'release workspace' },
+        {
+          control: 'registry',
+          values: ['https://registry.example.test'],
+          reason: 'release registry',
+        },
+      ],
     });
     expect(install.ok).toBe(true);
     expect(install.effective.map(item => item.control)).toEqual(['registry', 'config', 'cwd']);
@@ -150,6 +174,13 @@ describe('control-policy CLI boundary', () => {
       profile: 'release',
       command: 'publish',
       argv: ['pkg', '--registry', 'https://publish.example.test'],
+      grants: [
+        {
+          control: 'registry',
+          values: ['https://publish.example.test'],
+          reason: 'publisher registry',
+        },
+      ],
     });
     expect(registryAfterPackage.ok).toBe(true);
     expect(registryAfterPackage.effective).toContainEqual(
@@ -160,13 +191,20 @@ describe('control-policy CLI boundary', () => {
 });
 
 describe('control-policy composition', () => {
-  test('applies bunfig < environment < CLI precedence and redacts registry credentials', () => {
+  test('applies bunfig < environment < CLI precedence for a granted registry origin', () => {
     const evaluated = evaluateControlPolicy({
       profile: 'development',
       command: 'install',
-      argv: ['--registry=https://cli-user:cli-pass@cli.example.test', 'pkg'],
+      argv: ['--registry=https://cli.example.test', 'pkg'],
       environment: { BUN_CONFIG_REGISTRY: 'https://env.example.test' },
       bunfig: { 'install.registry': 'https://config.example.test' },
+      grants: [
+        {
+          control: 'registry',
+          values: ['https://cli.example.test'],
+          reason: 'development registry',
+        },
+      ],
     });
 
     expect(evaluated.ok).toBe(true);
@@ -174,8 +212,8 @@ describe('control-policy composition', () => {
       expect.objectContaining({
         control: 'registry',
         source: 'cli',
-        value: 'https://cli-user:cli-pass@cli.example.test',
-        redactedValue: 'https://%3Credacted%3E:%3Credacted%3E@cli.example.test/',
+        value: 'https://cli.example.test',
+        redactedValue: 'https://cli.example.test/',
       })
     );
     expect(evaluated.shadowed.map(item => item.source)).toEqual(['bunfig', 'environment']);
@@ -186,6 +224,13 @@ describe('control-policy composition', () => {
       profile: 'ci',
       command: 'runtime',
       environment: { BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP2_CLIENT: '1' },
+      grants: [
+        {
+          control: 'experimental-http2-fetch',
+          values: ['enabled'],
+          reason: 'CI H2 capability',
+        },
+      ],
     });
     expect(h2.ok).toBe(true);
     expect(h2.effective).toContainEqual(
@@ -209,6 +254,115 @@ describe('control-policy composition', () => {
     expect(explicitlyDisabled.ok).toBe(true);
     expect(explicitlyDisabled.effective).toContainEqual(
       expect.objectContaining({ control: 'experimental-http2-fetch', value: false })
+    );
+  });
+
+  test('rejects nonempty BUN_OPTIONS as an unparsed composite authority source', () => {
+    const evaluated = evaluateControlPolicy({
+      profile: 'development',
+      command: 'runtime',
+      environment: { BUN_OPTIONS: '--preload ./hidden.ts' },
+    });
+    expect(evaluated.rejected).toContainEqual(
+      expect.objectContaining({
+        code: 'composite-source-denied',
+        source: 'bun-options',
+        spelling: 'BUN_OPTIONS',
+      })
+    );
+  });
+
+  test('requires exact capabilities even when a profile is eligible', () => {
+    const registry = evaluateControlPolicy({
+      profile: 'release',
+      command: 'publish',
+      argv: ['--registry=https://registry.example.test', 'pkg'],
+    });
+    expect(registry.rejected).toContainEqual(
+      expect.objectContaining({ code: 'missing-grant', control: 'registry' })
+    );
+
+    const preload = evaluateControlPolicy({
+      profile: 'test',
+      command: 'runtime',
+      argv: ['--preload=./unlisted.ts', 'app.ts'],
+      grants: [{ control: 'preload', values: ['./approved.ts'], reason: 'test manifest' }],
+    });
+    expect(preload.rejected).toContainEqual(
+      expect.objectContaining({ code: 'missing-grant', control: 'preload' })
+    );
+
+    const proxy = evaluateControlPolicy({
+      profile: 'production',
+      command: 'runtime',
+      request: { proxy: 'https://proxy.example.test' },
+    });
+    expect(proxy.rejected).toContainEqual(
+      expect.objectContaining({ code: 'missing-grant', control: 'request-proxy' })
+    );
+
+    const productionPublish = evaluateControlPolicy({
+      profile: 'production',
+      command: 'publish',
+      argv: ['--registry=https://registry.example.test', 'pkg'],
+      grants: [
+        {
+          control: 'registry',
+          values: ['https://registry.example.test'],
+          reason: 'cannot loosen the profile cap',
+        },
+      ],
+    });
+    expect(productionPublish.rejected).toContainEqual(
+      expect.objectContaining({ code: 'profile-denied', control: 'registry' })
+    );
+  });
+
+  test('rejects credentials in every URL-valued control', () => {
+    const registry = evaluateControlPolicy({
+      profile: 'release',
+      command: 'publish',
+      argv: ['--registry=https://user:secret@registry.example.test', 'pkg'],
+      grants: [
+        {
+          control: 'registry',
+          values: ['https://registry.example.test'],
+          reason: 'publisher registry',
+        },
+      ],
+    });
+    expect(registry.rejected).toContainEqual(
+      expect.objectContaining({ code: 'invalid-value', control: 'registry' })
+    );
+    expect(JSON.stringify(registry.rejected)).not.toContain('secret');
+
+    const preconnect = evaluateControlPolicy({
+      profile: 'development',
+      command: 'runtime',
+      argv: ['--fetch-preconnect=https://user:secret@origin.example.test', 'app.ts'],
+      grants: [
+        {
+          control: 'fetch-preconnect',
+          values: ['https://origin.example.test'],
+          reason: 'startup origin',
+        },
+      ],
+    });
+    expect(preconnect.rejected).toContainEqual(
+      expect.objectContaining({ code: 'invalid-value', control: 'fetch-preconnect' })
+    );
+    expect(JSON.stringify(preconnect.rejected)).not.toContain('secret');
+
+    const proxy = evaluateControlPolicy({
+      profile: 'production',
+      command: 'runtime',
+      request: { proxy: 'https://user:secret@proxy.example.test' },
+      grants: [
+        { control: 'request-proxy', values: ['https://proxy.example.test'], reason: 'proxy' },
+      ],
+    });
+    expect(proxy.rejected).toContainEqual(
+      expect.objectContaining({ code: 'invalid-value', control: 'request-proxy' })
     );
   });
 
@@ -254,14 +408,53 @@ describe('control-policy composition', () => {
 });
 
 describe('request override controls', () => {
+  test('canonicalizes every Bun protocol wire alias to an owned value', () => {
+    const aliases = [
+      ['http1.1', 'h1'],
+      ['http2', 'h2'],
+      ['http3', 'h3'],
+      ['h1', 'h1'],
+      ['h2', 'h2'],
+      ['h3', 'h3'],
+    ] as const;
+    for (const [wire, canonical] of aliases) {
+      const evaluated = evaluateControlPolicy({
+        profile: 'canary',
+        command: 'runtime',
+        request: { protocol: wire },
+        grants: [
+          { control: 'request-protocol', values: [canonical], reason: 'protocol test matrix' },
+        ],
+      });
+      expect(evaluated.ok).toBe(true);
+      expect(evaluated.effective).toContainEqual(
+        expect.objectContaining({ control: 'request-protocol', value: canonical })
+      );
+    }
+
+    const unsupported = evaluateControlPolicy({
+      profile: 'canary',
+      command: 'runtime',
+      request: { protocol: 'http/1.1' },
+      grants: [{ control: 'request-protocol', values: ['h1'], reason: 'H1' }],
+    });
+    expect(unsupported.rejected).toContainEqual(
+      expect.objectContaining({ code: 'invalid-value', control: 'request-protocol' })
+    );
+  });
+
   test('accepts declared proxy and H2 controls while exposing forwarding policy', () => {
     const evaluated = evaluateControlPolicy({
       profile: 'production',
       command: 'runtime',
       request: {
-        proxy: 'https://proxy-user:proxy-pass@proxy.example.test',
+        proxy: 'https://proxy.example.test',
         protocol: 'h2',
       },
+      grants: [
+        { control: 'request-proxy', values: ['https://proxy.example.test'], reason: 'egress proxy' },
+        { control: 'request-protocol', values: ['h2'], reason: 'production H2' },
+      ],
     });
 
     expect(evaluated.ok).toBe(true);
@@ -283,12 +476,15 @@ describe('request override controls', () => {
         protocol: 'h3',
         surprise: true,
       },
+      grants: [
+        { control: 'request-tls', values: ['rejectUnauthorized=false'], reason: 'must not work' },
+      ],
     });
 
     expect(evaluated.ok).toBe(false);
     expect(evaluated.rejected).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ code: 'profile-denied', control: 'request-tls' }),
+        expect.objectContaining({ code: 'baseline-denied', control: 'request-tls' }),
         expect.objectContaining({ code: 'profile-denied', control: 'request-unix' }),
         expect.objectContaining({ code: 'value-denied', control: 'request-protocol' }),
         expect.objectContaining({ code: 'unknown-control', spelling: 'surprise' }),
@@ -303,14 +499,15 @@ describe('request override controls', () => {
     const canary = evaluateControlPolicy({
       profile: 'canary',
       command: 'runtime',
-      request: { protocol: 'h3' },
+      request: { protocol: 'http3' },
+      grants: [{ control: 'request-protocol', values: ['h3'], reason: 'H3 canary' }],
     });
     expect(canary.ok).toBe(true);
 
     const offline = evaluateControlPolicy({
       profile: 'offline',
       command: 'runtime',
-      request: { proxy: 'https://proxy.example.test', protocol: 'http/1.1' },
+      request: { proxy: 'https://proxy.example.test', protocol: 'http1.1' },
     });
     expect(offline.rejected.map(item => item.code)).toEqual(['profile-denied', 'profile-denied']);
   });

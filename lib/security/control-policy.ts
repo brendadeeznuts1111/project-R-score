@@ -26,7 +26,7 @@ export const CONTROL_PROFILES = [
 
 export type ControlProfile = (typeof CONTROL_PROFILES)[number];
 export type ControlDecision = 'allow' | 'deny';
-export type ControlSource = 'bunfig' | 'environment' | 'cli' | 'request';
+export type ControlSource = 'bunfig' | 'environment' | 'bun-options' | 'cli' | 'request';
 export type ControlCommand = 'runtime' | 'install' | 'info' | 'publish';
 export type ControlStability = 'stable' | 'experimental';
 export type ControlForwarding = 'never' | 'sanitized';
@@ -35,6 +35,7 @@ export type ControlRedaction = 'none' | 'credentials' | 'value';
 export const CONTROL_SOURCE_PRECEDENCE = [
   'bunfig',
   'environment',
+  'bun-options',
   'cli',
   'request',
 ] as const satisfies readonly ControlSource[];
@@ -93,8 +94,8 @@ export interface ControlSpec {
   readonly allowedValuesByProfile?: Partial<Readonly<Record<ControlProfile, readonly string[]>>>;
   readonly forwarding: ControlForwarding;
   readonly redaction: ControlRedaction;
-  /** A denied profile/value decision cannot be loosened by an override. */
-  readonly securityDenial: boolean;
+  /** Profiles cap eligibility; this separately governs value capabilities. */
+  readonly grantMode: 'none' | 'exact-origin' | 'exact-value' | 'never';
 }
 
 function decisions(allowed: readonly ControlProfile[]): ProfileDecisions {
@@ -124,7 +125,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(CONTROLLED_BUILD),
     forwarding: 'never',
     redaction: 'credentials',
-    securityDenial: true,
+    grantMode: 'exact-origin',
   },
   {
     id: 'fetch-preconnect',
@@ -137,7 +138,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(ONLINE_NON_RELEASE),
     forwarding: 'never',
     redaction: 'credentials',
-    securityDenial: true,
+    grantMode: 'exact-origin',
   },
   {
     id: 'preload',
@@ -156,7 +157,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(['development', 'test', 'ci', 'canary']),
     forwarding: 'never',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'experimental-http2-fetch',
@@ -172,7 +173,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(['development', 'test', 'ci', 'canary']),
     forwarding: 'never',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'experimental-http3-fetch',
@@ -188,7 +189,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(['canary']),
     forwarding: 'never',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'config',
@@ -208,7 +209,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(CONTROLLED_BUILD),
     forwarding: 'never',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'env-file',
@@ -221,7 +222,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(['development', 'test', 'ci', 'canary']),
     forwarding: 'never',
     redaction: 'value',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'cwd',
@@ -240,7 +241,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(CONTROLLED_BUILD),
     forwarding: 'never',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'request-proxy',
@@ -253,7 +254,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(ONLINE_NON_RELEASE),
     forwarding: 'sanitized',
     redaction: 'credentials',
-    securityDenial: true,
+    grantMode: 'exact-origin',
   },
   {
     id: 'request-unix',
@@ -266,7 +267,7 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     profiles: decisions(['development', 'test']),
     forwarding: 'sanitized',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
   {
     id: 'request-tls',
@@ -276,10 +277,10 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     aliases: [{ source: 'request', name: 'tls' }],
     value: { kind: 'object' },
     repeatable: false,
-    profiles: decisions([]),
+    profiles: decisions(ONLINE_NON_RELEASE),
     forwarding: 'never',
     redaction: 'value',
-    securityDenial: true,
+    grantMode: 'never',
   },
   {
     id: 'request-protocol',
@@ -287,25 +288,33 @@ export const CONTROL_POLICY: readonly ControlSpec[] = [
     effect: 'request-fetch-protocol',
     stability: 'experimental',
     aliases: [{ source: 'request', name: 'protocol' }],
-    value: { kind: 'enum', values: ['http/1.1', 'h2', 'h3'] },
+    value: { kind: 'enum', values: ['http1.1', 'http2', 'http3', 'h1', 'h2', 'h3'] },
     repeatable: false,
     profiles: decisions(ONLINE_NON_RELEASE),
     allowedValuesByProfile: {
-      development: ['http/1.1', 'h2'],
-      test: ['http/1.1', 'h2'],
-      ci: ['http/1.1', 'h2'],
-      canary: ['http/1.1', 'h2', 'h3'],
-      production: ['http/1.1', 'h2'],
+      development: ['h1', 'h2'],
+      test: ['h1', 'h2'],
+      ci: ['h1', 'h2'],
+      canary: ['h1', 'h2', 'h3'],
+      production: ['h1', 'h2'],
     },
     forwarding: 'sanitized',
     redaction: 'none',
-    securityDenial: true,
+    grantMode: 'exact-value',
   },
 ] as const;
 
 export interface ControlOverride {
   readonly control: ControlId;
   readonly decision: ControlDecision;
+  readonly reason: string;
+}
+
+/** Exact capability supplied by a manifest/policy owner, never by raw argv. */
+export interface ControlGrant {
+  readonly control: ControlId;
+  /** Origins for `exact-origin`; canonical values/paths for `exact-value`. */
+  readonly values: readonly string[];
   readonly reason: string;
 }
 
@@ -336,6 +345,9 @@ export type ControlRejectionCode =
   | 'invalid-value'
   | 'profile-denied'
   | 'value-denied'
+  | 'missing-grant'
+  | 'baseline-denied'
+  | 'composite-source-denied'
   | 'security-denial-non-overridable';
 
 export interface ControlRejection {
@@ -367,11 +379,8 @@ export interface EvaluateControlPolicyInput {
   /** Bun fetch routing overrides, not an entire RequestInit. */
   readonly request?: Readonly<Record<string, unknown>>;
   readonly overrides?: readonly ControlOverride[];
+  readonly grants?: readonly ControlGrant[];
 }
-
-const SPEC_BY_ID = new Map<ControlId, ControlSpec>(
-  CONTROL_POLICY.map(spec => [spec.id, spec] as const)
-);
 
 function aliasesFor(
   source: ControlSource
@@ -532,13 +541,25 @@ function parseControlValue(
       if (typeof value !== 'string' || value.length === 0) return undefined;
       try {
         const parsed = new URL(value);
+        if (parsed.username || parsed.password) return undefined;
         return parsed.protocol === 'http:' || parsed.protocol === 'https:' ? value : undefined;
       } catch {
         return undefined;
       }
     }
     case 'enum':
-      return typeof value === 'string' && spec.value.values.includes(value) ? value : undefined;
+      if (typeof value !== 'string' || !spec.value.values.includes(value)) return undefined;
+      if (spec.id !== 'request-protocol') return value;
+      return (
+        {
+          'http1.1': 'h1',
+          http2: 'h2',
+          http3: 'h3',
+          h1: 'h1',
+          h2: 'h2',
+          h3: 'h3',
+        } as const
+      )[value as 'http1.1' | 'http2' | 'http3' | 'h1' | 'h2' | 'h3'];
   }
 }
 
@@ -635,6 +656,33 @@ function sourceRank(source: ControlSource): number {
   return CONTROL_SOURCE_PRECEDENCE.indexOf(source);
 }
 
+function grantMatches(
+  spec: ControlSpec,
+  value: ParsedControlValue,
+  grants: readonly ControlGrant[]
+): boolean {
+  if (spec.grantMode === 'none') return true;
+  if (spec.grantMode === 'never') return false;
+  const declared = grants.filter(grant => grant.control === spec.id).flatMap(grant => grant.values);
+  if (typeof value === 'boolean') return value && declared.includes('enabled');
+  if (typeof value !== 'string') return false;
+  if (spec.grantMode === 'exact-value') return declared.includes(value);
+  try {
+    const requested = new URL(value);
+    if (requested.username || requested.password) return false;
+    return declared.some(candidate => {
+      try {
+        const granted = new URL(candidate);
+        return !granted.username && !granted.password && granted.origin === requested.origin;
+      } catch {
+        return false;
+      }
+    });
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Purely evaluate all declared controls. It does not read process state, exit,
  * mutate argv, connect to the network, or forward a denied value.
@@ -650,6 +698,16 @@ export function evaluateControlPolicy(input: EvaluateControlPolicyInput): Contro
     ...request.occurrences,
   ];
   const rejected: ControlRejection[] = [...cli.rejected, ...bunfig.rejected, ...request.rejected];
+  if (input.environment?.BUN_OPTIONS?.trim()) {
+    rejected.push(
+      rejection(
+        'composite-source-denied',
+        'bun-options',
+        'BUN_OPTIONS',
+        'Nonempty BUN_OPTIONS is denied; use declared controls and capabilities instead'
+      )
+    );
+  }
   const effective: EffectiveControl[] = [];
   const shadowed: EffectiveControl[] = [];
   const overrides = new Map(input.overrides?.map(item => [item.control, item] as const) ?? []);
@@ -695,22 +753,19 @@ export function evaluateControlPolicy(input: EvaluateControlPolicyInput): Contro
     let decision = baseDecision;
     if (override?.decision === 'deny') decision = 'deny';
     if (override?.decision === 'allow' && baseDecision === 'deny') {
-      if (spec.securityDenial) {
-        for (const { occurrence } of activated) {
-          rejected.push(
-            rejection(
-              'security-denial-non-overridable',
-              occurrence.source,
-              occurrence.spelling,
-              `${spec.id} is security-denied in ${input.profile}; an override cannot grant it`,
-              spec,
-              occurrence.value
-            )
-          );
-        }
-        continue;
+      for (const { occurrence } of activated) {
+        rejected.push(
+          rejection(
+            'security-denial-non-overridable',
+            occurrence.source,
+            occurrence.spelling,
+            `${spec.id} is profile-denied in ${input.profile}; an override cannot grant it`,
+            spec,
+            occurrence.value
+          )
+        );
       }
-      decision = 'allow';
+      continue;
     }
     if (decision === 'deny') {
       for (const { occurrence } of activated) {
@@ -741,6 +796,32 @@ export function evaluateControlPolicy(input: EvaluateControlPolicyInput): Contro
             occurrence.source,
             occurrence.spelling,
             `${String(value)} is denied for ${spec.id} in ${input.profile}`,
+            spec,
+            value
+          )
+        );
+        continue;
+      }
+      if (spec.grantMode === 'never') {
+        rejected.push(
+          rejection(
+            'baseline-denied',
+            occurrence.source,
+            occurrence.spelling,
+            `${spec.id} is denied by a non-grantable security baseline`,
+            spec,
+            value
+          )
+        );
+        continue;
+      }
+      if (!grantMatches(spec, value, input.grants ?? [])) {
+        rejected.push(
+          rejection(
+            'missing-grant',
+            occurrence.source,
+            occurrence.spelling,
+            `${spec.id} has no matching ${spec.grantMode} capability`,
             spec,
             value
           )
