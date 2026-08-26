@@ -13,8 +13,9 @@
 // @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
 // @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
 import { bunHelpControlDrift, controlPolicySchemaIssues } from '../lib/security/control-policy.ts';
+import { controlOverrideOwnershipIssues } from '../lib/security/control-override-ownership.ts';
 
-function main(): void {
+async function main(): Promise<void> {
   const argv = Bun.argv.slice(2);
   if (argv.length > 0) {
     process.stderr.write(`guard:controls:check accepts no arguments: ${argv.join(' ')}\n`);
@@ -23,6 +24,7 @@ function main(): void {
   }
 
   const schemaIssues = controlPolicySchemaIssues();
+  const ownershipIssues = await controlOverrideOwnershipIssues();
   const runtimeHelp = Bun.spawnSync({
     cmd: [process.execPath, '--help'],
     stdout: 'pipe',
@@ -42,9 +44,14 @@ function main(): void {
       ? bunHelpControlDrift(runtimeHelp.stdout.toString(), installHelp.stdout.toString())
       : [];
 
-  if (schemaIssues.length > 0 || processIssues.length > 0 || helpDrift.length > 0) {
+  if (
+    schemaIssues.length > 0 ||
+    ownershipIssues.length > 0 ||
+    processIssues.length > 0 ||
+    helpDrift.length > 0
+  ) {
     process.stderr.write(
-      `${JSON.stringify({ schemaIssues, processIssues, helpDrift }, null, 2)}\n`
+      `${JSON.stringify({ schemaIssues, ownershipIssues, processIssues, helpDrift }, null, 2)}\n`
     );
     process.exitCode = 1;
     return;
@@ -53,4 +60,4 @@ function main(): void {
   process.stdout.write('guard:controls:check ok\n');
 }
 
-if (import.meta.main) main();
+if (import.meta.main) await main();

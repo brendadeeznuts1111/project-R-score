@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "policyOwner": "lib/security/control-policy.ts",
+  "defaultDecision": "deny",
+  "sourcePrecedence": [
+    "bunfig",
+    "environment",
+    "bun-options",
+    "cli",
+    "request"
+  ],
+  "registryPrecedence": {
+    "readInstall": ["cli", "environment", "bunfig", "npmrc", "default"],
+    "publish": ["cli", "environment", "publishConfig", "bunfig", "npmrc"]
+  },
+  "conflictRule": "Higher-precedence sources shadow lower-precedence sources; only selected occurrences can become effective and therefore require profile eligibility and exact grants. Parseable superseded values remain audit-visible as shadowed; repeatable controls retain all selected granted values.",
+  "controls": [
+    {
+      "controlId": "registry",
+      "owner": "lib/registry/command-policy.ts",
+      "meaning": "Select the package registry origin for install, info, or publish.",
+      "defaultDecision": "deny",
+      "allowRule": "Eligible profile plus an exact-origin grant; publish additionally requires write-plane authority.",
+      "disallowRule": "Deny ambient, credential-bearing, ambiguous, changed, or production registry overrides before process creation.",
+      "aliases": [
+        {
+          "source": "cli",
+          "spelling": "--registry",
+          "commands": ["install", "info", "publish"]
+        },
+        { "source": "environment", "spelling": "BUN_CONFIG_REGISTRY" },
+        { "source": "bunfig", "spelling": "install.registry" }
+      ]
+    },
+    {
+      "controlId": "fetch-preconnect",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Open a startup connection to an exact HTTP(S) origin before the runtime entrypoint.",
+      "defaultDecision": "deny",
+      "allowRule": "Eligible online non-release profile plus an exact-origin grant.",
+      "disallowRule": "Deny offline, release, credentials, and ungranted origins before runtime launch.",
+      "aliases": [
+        {
+          "source": "cli",
+          "spelling": "--fetch-preconnect",
+          "commands": ["runtime"]
+        }
+      ]
+    },
+    {
+      "controlId": "preload",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Load an exact reviewed module before the runtime entrypoint.",
+      "defaultDecision": "deny",
+      "allowRule": "Development, test, CI, or canary plus an exact-value module grant.",
+      "disallowRule": "Deny production, offline, release, BUN_OPTIONS composition, and every ungranted module.",
+      "aliases": [
+        { "source": "cli", "spelling": "-r", "commands": ["runtime"] },
+        { "source": "cli", "spelling": "--preload", "commands": ["runtime"] },
+        { "source": "cli", "spelling": "--require", "commands": ["runtime"] },
+        { "source": "cli", "spelling": "--import", "commands": ["runtime"] },
+        { "source": "bunfig", "spelling": "preload" }
+      ]
+    },
+    {
+      "controlId": "experimental-http2-fetch",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Enable Bun's experimental HTTP/2 fetch client negotiation.",
+      "defaultDecision": "deny",
+      "allowRule": "Development, test, CI, or canary plus an exact enabled grant.",
+      "disallowRule": "Deny production, offline, release, malformed environment values, and missing grants.",
+      "aliases": [
+        {
+          "source": "cli",
+          "spelling": "--experimental-http2-fetch",
+          "commands": ["runtime"]
+        },
+        {
+          "source": "environment",
+          "spelling": "BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP2_CLIENT"
+        }
+      ]
+    },
+    {
+      "controlId": "experimental-http3-fetch",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Enable Bun's experimental HTTP/3 fetch upgrade behavior.",
+      "defaultDecision": "deny",
+      "allowRule": "Canary only plus an exact enabled grant.",
+      "disallowRule": "Deny every non-canary profile, malformed environment value, and missing grant.",
+      "aliases": [
+        {
+          "source": "cli",
+          "spelling": "--experimental-http3-fetch",
+          "commands": ["runtime"]
+        },
+        {
+          "source": "environment",
+          "spelling": "BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP3_CLIENT"
+        }
+      ]
+    },
+    {
+      "controlId": "config",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Select an exact bunfig configuration source.",
+      "defaultDecision": "deny",
+      "allowRule": "Controlled build profile plus an exact-value path grant.",
+      "disallowRule": "Deny production, offline, unknown paths, repeats, and missing grants.",
+      "aliases": [
+        {
+          "source": "cli",
+          "spelling": "--config",
+          "commands": ["runtime", "install", "info", "publish"]
+        },
+        {
+          "source": "cli",
+          "spelling": "-c",
+          "commands": ["runtime", "install", "info", "publish"]
+        }
+      ]
+    },
+    {
+      "controlId": "env-file",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Load environment variables from an exact reviewed file before the entrypoint.",
+      "defaultDecision": "deny",
+      "allowRule": "Development, test, CI, or canary plus an exact-value path grant.",
+      "disallowRule": "Deny production, offline, release, and ungranted environment sources.",
+      "aliases": [
+        { "source": "cli", "spelling": "--env-file", "commands": ["runtime"] }
+      ]
+    },
+    {
+      "controlId": "cwd",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Change the runtime or package-manager working directory.",
+      "defaultDecision": "deny",
+      "allowRule": "Controlled build profile plus an exact-value directory grant.",
+      "disallowRule": "Deny production, offline, unknown directories, repeats, and missing grants.",
+      "aliases": [
+        {
+          "source": "cli",
+          "spelling": "--cwd",
+          "commands": ["runtime", "install", "info", "publish"]
+        }
+      ]
+    },
+    {
+      "controlId": "request-proxy",
+      "owner": "lib/http/outbound-policy.ts",
+      "meaning": "Route an individual outbound request through an exact proxy origin.",
+      "defaultDecision": "deny",
+      "allowRule": "Eligible online profile plus an exact-origin grant; only the sanitized value may be forwarded.",
+      "disallowRule": "Deny offline, release, credentials, ambient proxy injection, and missing grants.",
+      "aliases": [{ "source": "request", "spelling": "proxy" }]
+    },
+    {
+      "controlId": "request-unix",
+      "owner": "lib/http/outbound-policy.ts",
+      "meaning": "Route a request through an exact Unix-domain socket path.",
+      "defaultDecision": "deny",
+      "allowRule": "Development or test plus an exact-value socket grant.",
+      "disallowRule": "Deny CI, canary, production, offline, release, and missing grants.",
+      "aliases": [{ "source": "request", "spelling": "unix" }]
+    },
+    {
+      "controlId": "request-tls",
+      "owner": "lib/http/outbound-policy.ts",
+      "meaning": "Replace request TLS policy with a caller-provided object.",
+      "defaultDecision": "deny",
+      "allowRule": "No grant can enable this control.",
+      "disallowRule": "Always deny custom TLS policy at the shared request boundary.",
+      "aliases": [{ "source": "request", "spelling": "tls" }]
+    },
+    {
+      "controlId": "request-protocol",
+      "owner": "lib/http/outbound-policy.ts",
+      "meaning": "Select a canonical h1, h2, or h3 request protocol override.",
+      "defaultDecision": "deny",
+      "allowRule": "Eligible online profile plus an exact-value grant; h3 is canary-only.",
+      "disallowRule": "Deny offline, release, unrecognized aliases, h3 outside canary, and missing grants.",
+      "aliases": [{ "source": "request", "spelling": "protocol" }]
+    }
+  ],
+  "compositeDenials": [
+    {
+      "spelling": "BUN_OPTIONS",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "Composite Bun runtime options that can hide multiple authority-bearing controls.",
+      "defaultDecision": "deny",
+      "allowRule": "No non-empty value is accepted; callers must declare individual controls.",
+      "disallowRule": "Reject before launch without parsing or forwarding the composite string."
+    }
+  ],
+  "reservedAuthoritySpellings": [
+    {
+      "spelling": "--connect",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "No Bun 1.4 runtime or package-manager meaning; application-specific occurrences remain after the entrypoint.",
+      "evidence": "Pinned `bun --help` and `bun install --help` do not advertise this spelling.",
+      "defaultDecision": "deny",
+      "allowRule": "Only an application CLI may own it after Bun's entrypoint or `--` boundary.",
+      "disallowRule": "Reject whenever it appears in the Bun authority segment."
+    },
+    {
+      "spelling": "-O",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "No Bun 1.4 runtime or package-manager meaning; repository matches belong to curl/wget output behavior.",
+      "evidence": "Pinned Bun help has no -O row; repository code has no Factory Bun-authority parser for it.",
+      "defaultDecision": "deny",
+      "allowRule": "Only a non-Bun child tool may own it inside that tool's exact argv contract.",
+      "disallowRule": "Reject whenever it appears in the Bun authority segment."
+    },
+    {
+      "spelling": "-R",
+      "owner": "lib/security/control-policy.ts",
+      "meaning": "No Bun 1.4 runtime or package-manager meaning; search:smart owns -R as its runtime-list filter after the entrypoint.",
+      "evidence": "scripts/search-smart.ts parses -R and pinned Bun help has no -R row.",
+      "defaultDecision": "deny",
+      "allowRule": "search:smart may parse it only as an application argument after the runtime entrypoint.",
+      "disallowRule": "Reject whenever it appears in the Bun authority segment."
+    }
+  ],
+  "applicationModes": [
+    {
+      "key": "search:smart:-R",
+      "owner": "scripts/search-smart.ts",
+      "meaning": "Filter results to a comma-separated runtime list; this is not a Bun runtime override.",
+      "defaultDecision": "allow",
+      "conflictRule": "Application parsing begins after scripts/search-smart.ts; Bun authority parsing must not consume it."
+    },
+    {
+      "key": "check:etag:--online",
+      "owner": "tools/verify-etag.ts",
+      "meaning": "Require the ETag verifier's live network suite instead of accepting offline-only proof.",
+      "defaultDecision": "deny",
+      "conflictRule": "Explicit --online/--probe wins over auto-detection and fails if the base is unreachable."
+    },
+    {
+      "key": "portal:cli:--offline",
+      "owner": "tools/portal-cli.ts",
+      "meaning": "Force policy-only portal doctor behavior and suppress live Access probes.",
+      "defaultDecision": "allow",
+      "conflictRule": "Offline wins over live-access behavior."
+    },
+    {
+      "key": "verify:pages-edge:--offline",
+      "owner": "tools/verify-pages-edge.ts",
+      "meaning": "Use the local tournament bake path and perform no remote tournament probe.",
+      "defaultDecision": "allow",
+      "conflictRule": "Offline wins for the tournament verification branch."
+    },
+    {
+      "key": "tennis:partner-contracts:bake:--offline",
+      "owner": "tools/bake-tennis-partner-contracts.ts",
+      "meaning": "Require the offline partner-contract join rather than live partner data.",
+      "defaultDecision": "deny",
+      "conflictRule": "Explicit offline selects only the offline join; no live fallback is permitted."
+    },
+    {
+      "key": "docs:blog-codeblocks:--offline",
+      "owner": "tools/bun-blog-codeblocks.ts",
+      "meaning": "Forbid fetching and require a saved HTML input.",
+      "defaultDecision": "deny",
+      "conflictRule": "Offline forbids RSS or HTML network fallback."
+    },
+    {
+      "key": "ops:experiments:--protocol",
+      "owner": "tools/ops-experiments.ts",
+      "meaning": "Select switchback or between-subject experimental design; this is not an HTTP protocol override.",
+      "defaultDecision": "deny",
+      "conflictRule": "The phase command owns this enum after its application entrypoint."
+    }
+  ],
+  "residualScopes": [
+    "Complete reverse inventory of every application-local --offline/--online spelling outside package.json guarded entrypoints.",
+    "Direct guarded composition of request protocol/proxy controls into every outbound consumer.",
+    "Migration of all raw and dynamically assembled subprocess consumers to guarded Bun child authority."
+  ]
+}

@@ -295,6 +295,8 @@ config/*
 !config/subdomains.json
 !config/images.toml
 !config/runtime-flags.json
+!config/control-override-ownership.json
+!config/control-override-ownership.schema.json
 !config/project-r-agent-contract.json
 !config/outbound-consumers.json
 !config/scraper-targets.ts

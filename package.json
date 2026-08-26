@@ -2170,7 +2170,7 @@
     "fix:default-exports-bulk": "bun run scripts/fix-default-exports-bulk.ts",
     "cli:docs": "bun run scripts/generate-cli-docs.ts",
     "cli:flags:check": "bun scripts/check-cli-flag-allowlists.ts",
-    "guard:controls:check": "bun scripts/check-control-policy.ts && bun test tests/control-policy.test.ts",
+    "guard:controls:check": "bun scripts/check-control-policy.ts && bun test tests/control-policy.test.ts tests/control-override-ownership.test.ts tests/guarded-bun-process.test.ts",
     "guard:agents:check": "bun scripts/check-agent-capabilities.ts && bun test tests/agent-capability-manifest.test.ts tests/agent-capability-inventory.test.ts tests/agent-authorized-execution.test.ts tests/agent-consumer-inventory.test.ts && bun x tsc -p tests/tsconfig.agent-capabilities.json",
     "registry:projects": "bun run scripts/generate-project-registry.ts",
     "registry:config:check": "bun scripts/check-registry-config.ts",

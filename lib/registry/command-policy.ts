@@ -35,6 +35,22 @@ export type RegistryResolutionIntent = RegistryOperation | 'install';
 export type RegistrySource =
   'cli' | 'environment' | 'publishConfig' | 'bunfig' | 'npmrc' | 'default';
 
+export const REGISTRY_READ_SOURCE_PRECEDENCE = [
+  'cli',
+  'environment',
+  'bunfig',
+  'npmrc',
+  'default',
+] as const satisfies readonly RegistrySource[];
+
+export const REGISTRY_PUBLISH_SOURCE_PRECEDENCE = [
+  'cli',
+  'environment',
+  'publishConfig',
+  'bunfig',
+  'npmrc',
+] as const satisfies readonly RegistrySource[];
+
 export interface RegistryConfiguration {
   readonly cli?: string | readonly string[];
   readonly environment?: Readonly<Record<string, string | undefined>>;
@@ -200,8 +216,8 @@ function environmentRegistry(
 }
 
 function sourceOrder(operation: RegistryResolutionIntent): readonly RegistrySource[] {
-  if (operation === 'publish') return ['cli', 'environment', 'publishConfig', 'bunfig', 'npmrc'];
-  return ['cli', 'environment', 'bunfig', 'npmrc', 'default'];
+  if (operation === 'publish') return REGISTRY_PUBLISH_SOURCE_PRECEDENCE;
+  return REGISTRY_READ_SOURCE_PRECEDENCE;
 }
 
 export function resolveRegistryConfiguration(

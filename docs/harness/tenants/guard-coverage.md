@@ -74,11 +74,17 @@ identity and profile decision. Unknown and experimental controls default deny.
 
 **Scoped proof** `guard-controls-v1`
 
-The typed kernel and exact-capability evaluator are present, with executable
-schema/help drift and focused contract tests. The proof covers declared
-controls, including registry, connect, `-O`, `-R`, preload, and experimental
-decisions. Consumer launch/subprocess enforcement and a complete reverse Bun
-flag inventory remain open, so this row is not yet `Implemented`.
+The typed kernel and exact-capability evaluator are present, with a reviewed
+ownership manifest, JSON schema, bidirectional manifest-to-kernel drift guard,
+live Bun-help drift, and focused contract tests. The proof covers registry,
+preconnect, preload/config/environment sources, experimental HTTP/2 and HTTP/3,
+request proxy/TLS/socket/protocol overrides, and the offline profile. It also
+records that `--connect`, `-O`, and `-R` have no Bun 1.4 authority meaning:
+`search:smart` owns `-R` only after the application entrypoint, while observed
+`-O` uses belong to non-Bun download tools. Application-local online/offline
+inventory, request-policy adoption by every outbound consumer, and the raw or
+dynamically assembled subprocess backlog remain open, so this row is not yet
+`Implemented`.
 
 ### `CTRL-002` Subprocess authority
 
