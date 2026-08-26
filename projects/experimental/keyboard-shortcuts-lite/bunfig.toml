@@ -20,17 +20,12 @@ minimumReleaseAgeExcludes = [
   "bun-types"
 ]
 
-# Default registry configuration
-registry = "https://registry.factory-wager.com"
-
 # Enable telemetry for optimization (can be disabled for privacy)
 telemetry = false
 
 # Advanced scoped registry configuration for enterprise environments
 [install.scopes]
 
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
 # Public organization scopes
 "@brendadeeznuts1111" = "https://registry.npmjs.org"
 "@keyboard-shortcuts" = "https://registry.npmjs.org"
@@ -81,6 +76,3 @@ networkConcurrency = 48
 
 # Enable deduplication to reduce package size
 dedupe = true
-
-[publish]
-registry = "https://registry.factory-wager.com"
