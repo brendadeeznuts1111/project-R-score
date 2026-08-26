@@ -53,9 +53,7 @@ export type ParseLimitChangesOptions = {
 };
 
 /**
- * Derive TreeNodeId → PartnerCode from the limit-raises nested
  * `accountProfiles.profiles[]` rows (callSign ASH / ASH-001 → ASH).
- * Pure wire parse; skips demo/incomplete rows that lack a CODE-shaped callSign.
  */
 export function parseTreeNodePartnerCodesFromLimitRaises(value: unknown): Record<string, string> {
   const root = wireRecord(value, 'limits');
@@ -87,7 +85,6 @@ export function parseTreeNodePartnerCodesFromLimitRaises(value: unknown): Record
   return map;
 }
 
-/** Ops-facing sportsbook labels seen on limit-raises → canonical SportsbookId. */
 export const LIMIT_RAISE_SPORTSBOOK_ALIASES: Readonly<Record<string, string>> = {
   hardrock: 'hard-rock-florida',
   'hard-rock': 'hard-rock-florida',

@@ -1,8 +1,6 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
- * SQLite history for monorepo-health scores (trend / delta).
- * Default path: reports/monorepo-health-history.sqlite
  */
 import { Database } from 'bun:sqlite';
 import { joinPath } from '../path-bun.ts';
@@ -33,9 +31,7 @@ export type HealthTrend = {
   samples: number;
   latest: HealthHistoryRow | null;
   previous: HealthHistoryRow | null;
-  /** latest.score − previous.score (null if &lt; 2 samples). */
   delta: number | null;
-  /** Mean score over last N samples. */
   avgScore: number | null;
   /** Min/max over last N. */
   minScore: number | null;

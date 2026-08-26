@@ -1,14 +1,9 @@
 // lib/core/index.ts — Unified exports for error handling and core utilities
 
-// ============================================================================
 // Error Types and Classes
-// ============================================================================
 
 export {
-  // Error codes
   EnterpriseErrorCode,
-
-  // Error classes
   BaseEnterpriseError,
   SystemError,
   ValidationError,
@@ -16,14 +11,8 @@ export {
   SecurityError,
   ResourceError,
   BusinessError,
-
-  // Error factory
   EnterpriseErrorFactory,
-
-  // Error handler
   EnterpriseErrorHandler,
-
-  // Convenience functions
   handleErrorFromUnknown,
   createSystemError,
   createValidationError,
@@ -33,7 +22,6 @@ export {
   createBusinessError,
 } from './core-errors';
 
-// ============================================================================
 // Error Handling Utilities
 // ============================================================================
 

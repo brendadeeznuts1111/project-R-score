@@ -2,11 +2,8 @@
 // @see https://bun.com/docs/runtime/webview#new-bun-webview-options — WebView
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 /**
- * Signal monitoring registry for spine tenants.
- *
  * A TenantRunbook documents the failure signal. A SignalMonitor declares
  * how that signal is actually probed and where a failure surfaces.
- *
  * @see ./maintenance.ts
  * @see ../../docs/harness/spine-tenants.md
  * @see ../../spine/tenants.ts
@@ -16,20 +13,15 @@ import { MAINTENANCE_RUNBOOKS } from './maintenance';
 export type SignalMonitorKind = 'spine-tick' | 'artifact' | 'external';
 
 export type SignalMonitor = {
-  /** Spine tenant id — must match spine/tenants.ts */
   tenant: string; // brand-ok — opaque spine tenant catalog key
-  /** How the probe is driven */
   kind: SignalMonitorKind;
-  /** Exact probe command (usually spine:schedule:once --tenant=…) */
   checkCommand: string;
-  /** Where a failed probe is observed (daemon log, CI, pager, …) */
   alertChannel: string;
   /**
    * Optional last-observation artifact (repo-relative).
    * When present and the file exists, freshness is enforced.
    */
   lastCheckPath?: string;
-  /** Max age of last observation when lastCheckPath is set (minutes). */
   maxAgeMinutes?: number;
   /**
    * When true, lastCheckPath is JSONL and the last line with
@@ -103,7 +95,6 @@ export function assertSignalMonitorTenantLinks(activeTenantIds: readonly string[
   return missing;
 }
 
-/** Fail closed: monitor fields non-empty; spine-tick probes name the tenant. */
 export function assertSignalMonitorFields(): string[] {
   const missing: string[] = [];
   for (const m of SIGNAL_MONITORS) {

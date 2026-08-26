@@ -16,9 +16,7 @@ export interface NotificationPreferences {
 }
 
 export class CustomerNotifier {
-  /**
-   * Send notification when business changes
-   */
+  /** Send notification when business changes. */
   static async notifyPaymentToOldBusiness(
     stealthId: string,
     oldAlias: string,
@@ -56,9 +54,7 @@ export class CustomerNotifier {
     }
   }
 
-  /**
-   * Set customer notification preferences
-   */
+  /** Set customer notification preferences. */
   static async setNotificationPreferences(
     stealthId: string,
     preferences: NotificationPreferences
@@ -77,9 +73,7 @@ export class CustomerNotifier {
     ]);
   }
 
-  /**
-   * Get customer notification preferences
-   */
+  /** Get customer notification preferences. */
   static async getNotificationPreferences(
     stealthId: string
   ): Promise<NotificationPreferences | null> {
@@ -113,7 +107,6 @@ export class CustomerNotifier {
 
     const preferences = await this.getNotificationPreferences(stealthId);
 
-    // Get all businesses this customer has paid
     const paymentKeys = await redis.keys(`payment:*`);
     const businesses = new Set<string>();
 

@@ -78,7 +78,6 @@ export async function changePassword(
 
 // ── Session management ───────────────────────────────────────────────────
 
-/** The node's active sessions (created_at/expires_at/ip/UA + impersonated flag). */
 export function listSessions(identity: IdentitySystem, nodeId: TreeNodeId): ActiveSessionInfo[] {
   return identity.activeSessionsFor(nodeId);
 }
@@ -114,7 +113,6 @@ export function revokeOtherSessions(
 
 // ── Device trust ─────────────────────────────────────────────────────────
 
-/** The node's device fingerprints with the hash truncated to 12 chars. */
 export function listDevices(identity: IdentitySystem, nodeId: TreeNodeId): DeviceSummary[] {
   return identity.fingerprintsFor(nodeId).map(fp => ({
     fingerprintHash: fp.fingerprintHash.slice(0, 12),

@@ -4,15 +4,9 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
- * Build agent-team partitions + registry plan for 100% CLI allowlist coverage.
- *
  *   bun scripts/cli-allowlist-team-plan.ts
  *   bun scripts/cli-allowlist-team-plan.ts --write
- *
- * Writes:
  *   artifacts/cli-allowlist-team/plan.json
- *   artifacts/cli-allowlist-team/batch-{1..4}.json
- *   artifacts/cli-allowlist-team/registry-fragment.ts  (append into ref-id-tool-flags)
  */
 import {
   ALLOWED_LONG_REGISTRY,
@@ -114,7 +108,7 @@ async function main(): Promise<void> {
     const alreadyGuarded = text.includes('applyUnknownLongOptionGuard');
     if (leaves.length === 0 && !alreadyGuarded) continue;
     if (alreadyGuarded && leaves.length === 0) continue;
-    if (alreadyGuarded) continue; // already wired
+    if (alreadyGuarded) continue;
 
     let key = keyFrom([...names].sort());
     if (seenKeys.has(key) || already.has(key)) {
@@ -147,7 +141,7 @@ async function main(): Promise<void> {
     );
   }
   fragmentLines.push('');
-  fragmentLines.push('// registry merges (add to ALLOWED_LONG_REGISTRY):');
+  fragmentLines.push('// registry merges:');
   for (const e of plan) {
     fragmentLines.push(`  // '${e.key}': ${e.constName},`);
   }

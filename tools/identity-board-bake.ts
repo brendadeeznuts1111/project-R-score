@@ -1,16 +1,10 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 /**
- * Identity board bake — readonly aggregation of data/accounts-operations.db into:
  *   public/registry/identity-board.json   (machine report)
  *   public/portal/identity/index.html     (baked ops board)
- *
  * NEVER selects password_hash / token_hash (see lib/identity/board.ts) — the
  * baked artifacts are safe for the public plane.
- *
- * UI: lib/portal/ui-html.ts builders (portal-table / portal-stat / tone-chip).
- *
- *   bun run identity:board
  */
 import { escapeHtml } from '../lib/escape-html.ts';
 import { collectBoardData, type IdentityBoardData } from '../lib/identity/board.ts';

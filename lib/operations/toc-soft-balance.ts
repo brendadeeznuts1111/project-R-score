@@ -1,9 +1,7 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 /**
- * Append-only TOC Soft Balance journal (operate-plane lite).
  * Never UPDATE/DELETE rows. Seed mirrors fixture Soft entries for linked call signs.
- *
  * @see toc-ops-repo/docs/system/ACCOUNTING.md
  * @see lib/toc-ops/enforcement.ts
  */
@@ -125,7 +123,6 @@ export function postTocSoftBalance(
   return row;
 }
 
-/** Seed Soft journal from fixture recentEntries when empty (or force). */
 export function seedTocSoftFromFixture(
   db: Database,
   fixture: TocOpsSnapshot,

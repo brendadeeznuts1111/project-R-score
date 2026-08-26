@@ -1,9 +1,6 @@
 /**
- * Accounting-facing liquidity helpers for the Bun Agent desk.
- *
  * Thin facade over `lib/research/liquidity-store.ts` so dashboard / partners
  * can POST `{ amount }` while the research agent uses `maxStakeUsd`.
- *
  * @see lib/research/liquidity-store.ts
  * @see lib/operator-research/dashboard.ts — /api/partners/liquidity*
  */
