@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'bun:test';
 import type { OutboundFetch } from '../../../../../lib/http/outbound-policy';
-import { fetchPredictionProvider } from '../../src/utils/outbound-endpoints';
+import {
+  fetchFixedExternalProvider,
+  fetchPredictionProvider,
+} from '../../src/utils/outbound-endpoints';
 
 describe('prediction provider outbound endpoints', () => {
   test('rejects provider-origin drift before invoking fetch', async () => {
@@ -71,5 +74,51 @@ describe('prediction provider outbound endpoints', () => {
         method: 'POST',
       })
     ).toThrow('POST');
+  });
+});
+
+describe('fixed external provider endpoints', () => {
+  test('binds bearer credentials to each exact provider origin', async () => {
+    let observedInit: RequestInit | undefined;
+    const fetcher = ((_input: string | URL, init?: RequestInit) => {
+      observedInit = init;
+      return Promise.resolve(new Response(null, { status: 200 }));
+    }) as OutboundFetch;
+
+    await fetchFixedExternalProvider(
+      'kimi-risk',
+      'https://api.moonshot.cn/v1/chat/completions',
+      { method: 'POST', headers: { Authorization: 'Bearer hidden' } },
+      fetcher
+    );
+    expect(observedInit?.redirect).toBe('error');
+    expect(observedInit?.credentials).toBe('omit');
+    expect(observedInit?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  test('rejects lookalike origins and provider method crossover before fetch', () => {
+    let calls = 0;
+    const fetcher = (() => {
+      calls++;
+      return Promise.resolve(new Response());
+    }) as OutboundFetch;
+
+    expect(() =>
+      fetchFixedExternalProvider(
+        'pinnacle',
+        'https://api.pinnacle.com.attacker.test/v1/odds',
+        { headers: { Authorization: 'Bearer hidden' } },
+        fetcher
+      )
+    ).toThrow('origin');
+    expect(() =>
+      fetchFixedExternalProvider(
+        'pinnacle',
+        'https://api.pinnacle.com/v1/odds',
+        { method: 'POST' },
+        fetcher
+      )
+    ).toThrow('POST');
+    expect(calls).toBe(0);
   });
 });
