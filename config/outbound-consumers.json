@@ -5546,61 +5546,6 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts#fetch#b64e74a73d68131c#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts",
-      "line": 90,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "b64e74a73d68131c",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts#fetch#8288639449ec1e63#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts",
-      "line": 137,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "8288639449ec1e63",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts#fetch#98a78cbb3db927d0#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts",
-      "line": 183,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "98a78cbb3db927d0",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts#fetch#98a78cbb3db927d0#2",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts",
-      "line": 223,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "98a78cbb3db927d0",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts#fetch#b898fbfcc89b991b#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/storage/r2-storage.ts",
-      "line": 247,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "b898fbfcc89b991b",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/utilities/bun-toml-secrets-editor/runtime-flags-dashboard.tsx#fetch#dc47f16500743b89#1",
       "path": "projects/active/utilities/bun-toml-secrets-editor/runtime-flags-dashboard.tsx",
       "line": 53,
@@ -5612,103 +5557,15 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager-typed.ts#fetch#eb73fddbc7f66dfb#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager-typed.ts",
-      "line": 76,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "eb73fddbc7f66dfb",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager-typed.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager-typed.ts",
-      "line": 100,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager-typed.ts#fetch#391465d4940bb3ff#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager-typed.ts",
-      "line": 116,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "391465d4940bb3ff",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager.ts#fetch#eb73fddbc7f66dfb#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager.ts",
-      "line": 122,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "eb73fddbc7f66dfb",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager.ts",
-      "line": 142,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager.ts#fetch#391465d4940bb3ff#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-binary-manager.ts",
-      "line": 158,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "391465d4940bb3ff",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-manager-v8.ts#fetch#eb73fddbc7f66dfb#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-manager-v8.ts",
-      "line": 104,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "eb73fddbc7f66dfb",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-manager-v8.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-manager-v8.ts",
-      "line": 128,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-manager-v8.ts#fetch#391465d4940bb3ff#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/scripts/registry-manager-v8.ts",
-      "line": 144,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "391465d4940bb3ff",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/utilities/bun-toml-secrets-editor/src/http/storage-outbound.ts#fetchWithPolicy#010f5baf3a72c28f#1",
+      "path": "projects/active/utilities/bun-toml-secrets-editor/src/http/storage-outbound.ts",
+      "line": 81,
+      "column": 11,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "010f5baf3a72c28f",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/utilities/bun-toml-secrets-editor/src/http/storage-outbound.ts",
+      "reason": "Typed storage boundary pins one configured HTTPS origin and exact method, scopes Authorization, denies redirects/proxy/TLS/protocol overrides, resolves public authority before connect, fails closed offline, bounds deadlines/responses, and marks PUT replay unsafe."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts#fetch#40ac2064988b46b7#1",

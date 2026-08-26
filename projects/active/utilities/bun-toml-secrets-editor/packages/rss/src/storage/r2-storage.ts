@@ -7,6 +7,7 @@
  */
 
 import { cloudflareAccountIdFromEnv } from '../../../../../../../../config/r2-env.ts';
+import { createStorageOutboundClient } from "../../../../src/http/storage-outbound.ts";
 
 export interface R2Config {
 	accountId: string;
@@ -55,10 +56,12 @@ export interface ProfilingReport {
 export class R2Storage {
 	private config: R2Config;
 	private baseUrl: string;
+	private outbound: ReturnType<typeof createStorageOutboundClient>;
 
 	constructor(config: R2Config) {
 		this.config = config;
 		this.baseUrl = `https://${config.accountId}.r2.cloudflarestorage.com`;
+		this.outbound = createStorageOutboundClient(this.baseUrl);
 	}
 
 	/**
@@ -87,7 +90,7 @@ export class R2Storage {
 		};
 
 		try {
-			const response = await fetch(url, {
+			const response = await this.outbound.request(url, {
 				method: "PUT",
 				headers,
 				body: JSON.stringify(feedData, null, 2),
@@ -134,7 +137,7 @@ export class R2Storage {
 		};
 
 		try {
-			const response = await fetch(url, {
+			const response = await this.outbound.request(url, {
 				method: "PUT",
 				headers,
 				body: JSON.stringify(report, null, 2),
@@ -180,9 +183,10 @@ export class R2Storage {
 			),
 		};
 
-		const response = await fetch(
+		const response = await this.outbound.request(
 			`${this.baseUrl}/${this.config.bucketName}/${key}`,
 			{
+				method: "GET",
 				headers,
 			},
 		);
@@ -220,9 +224,10 @@ export class R2Storage {
 			),
 		};
 
-		const response = await fetch(
+		const response = await this.outbound.request(
 			`${this.baseUrl}/${this.config.bucketName}/${key}`,
 			{
+				method: "GET",
 				headers,
 			},
 		);
@@ -244,7 +249,7 @@ export class R2Storage {
 		const listUrl = `${this.baseUrl}/${this.config.bucketName}?list-type=2${prefix ? `&prefix=${prefix}` : ""}`;
 
 		try {
-			const response = await fetch(listUrl);
+			const response = await this.outbound.request(listUrl, { method: "GET" });
 			if (!response.ok) {
 				throw new Error(
 					`R2 list failed: ${response.status} ${response.statusText}`,

@@ -14,6 +14,7 @@
 
 import { bold, color } from "bun:color";
 import { $ } from "bun";
+import { createStorageOutboundClient } from "../src/http/storage-outbound.ts";
 
 /**
  * 🟢 TYPE SYSTEM (Tested with expectTypeOf)
@@ -85,10 +86,18 @@ interface S3Config {
 class S3Client {
 	private config: S3Config;
 	private region: string;
+	private outbound: ReturnType<typeof createStorageOutboundClient>;
 
 	constructor(config: S3Config) {
 		this.config = config;
 		this.region = config.region || "us-east-1";
+		this.outbound = createStorageOutboundClient(this.endpointOrigin());
+	}
+
+	private endpointOrigin(): string {
+		return this.config.endpoint
+			? new URL(this.config.endpoint).origin
+			: `https://${this.config.bucket}.s3.${this.region}.amazonaws.com`;
 	}
 
 	async putObject(
@@ -101,7 +110,7 @@ class S3Client {
 			: `https://${this.config.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 
 		try {
-			const response = await fetch(url, {
+			const response = await this.outbound.request(url, {
 				method: "PUT",
 				body: body,
 				headers: {
@@ -125,7 +134,7 @@ class S3Client {
 			: `https://${this.config.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 
 		try {
-			const response = await fetch(url);
+			const response = await this.outbound.request(url, { method: "GET" });
 			if (response.ok) {
 				return await response.arrayBuffer();
 			}
@@ -141,7 +150,7 @@ class S3Client {
 			: `https://${this.config.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 
 		try {
-			const response = await fetch(url, { method: "HEAD" });
+			const response = await this.outbound.request(url, { method: "HEAD" });
 			return {
 				exists: response.ok,
 				size: response.headers.get("content-length")
