@@ -1,6 +1,7 @@
 {
   "name": "foxy-proxy",
   "version": "1.0.0",
+  "private": true,
   "description": "Unified proxy and DuoPlus management system with feature flags and enhanced templates",
   "type": "module",
   "homepage": "https://github.com/brendadeeznuts1111/foxy-duo-proxy#readme",
@@ -80,6 +81,7 @@
     "docs:serve": "cd docs && python -m http.server 8080",
     "security:audit": "bun audit --prod --audit-level=high",
     "security:audit:all": "bun audit --audit-level=high",
+    "check:registry-config": "bun scripts/check-registry-config.ts",
     "start": "bun run dev",
     "preview": "cd packages/dashboard && bun run preview"
   },
@@ -111,8 +113,5 @@
     "postcss": "8.5.26",
     "rollup": "4.62.4",
     "vite": "7.3.6"
-  },
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
   }
 }
