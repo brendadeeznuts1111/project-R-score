@@ -20,8 +20,8 @@ Every row has one classification and a non-empty owner and reason:
 - `unowned` — a visible migration gap. These rows are not silently allowlisted;
   the exact debt remains queryable and cannot drift without review.
 
-The first repository-wide baseline records 824 exact rows: 37 guarded-boundary
-calls, 45 native verification calls, and 742 explicit unowned calls. That volume
+The current repository-wide baseline records 824 exact rows: 38 guarded-boundary
+calls, 45 native verification calls, and 741 explicit unowned calls. That volume
 is evidence that the repository-wide ownership goal is not yet complete. This
 change closes three high-risk configurable consumers: Bun documentation HEAD
 validation, npm package metadata reads, and operator-research URL retries. They
