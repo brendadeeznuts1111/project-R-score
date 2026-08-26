@@ -71,6 +71,17 @@ export type {
   RSSMediaThumbnail,
 } from './rss-types.ts';
 export { generateRSS } from './rss-xml-serialize.ts';
+export {
+  parseRSSFeedUntrusted,
+  parseRssChannelItemsUntrusted,
+  requireRSSXmlBoundaryValue,
+  RSSXmlBoundaryFailure,
+  type RSSXmlBoundaryError,
+  type RSSXmlBoundaryErrorCode,
+  type RSSXmlBoundaryOptions,
+  type RSSXmlBoundaryResult,
+  type UntrustedRSSXmlInput,
+} from './rss-xml-untrusted.ts';
 
 function optionalDate(record: XmlRecord, field: string, context: string): string {
   const value = parseXmlText(record[field]);

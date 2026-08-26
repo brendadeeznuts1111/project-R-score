@@ -31,7 +31,11 @@ import {
   requireCanonicalBunBlogUrl,
   versionFromBunBlogUrl,
 } from '../lib/docs/bun-blog-url.ts';
-import { parseRssChannelItems } from '../lib/docs/bun-rss.ts';
+import { parseRssChannelItems, type RssChannelItem } from '../lib/docs/bun-rss.ts';
+import {
+  parseRssChannelItemsUntrusted,
+  requireRSSXmlBoundaryValue,
+} from '../lib/rss/rss-xml-untrusted.ts';
 import {
   LEGACY_RELEASE_OVERLAY_ABS,
   RELEASE_OVERLAY_CACHE_ABS,
@@ -188,10 +192,10 @@ function releaseEntryFromFields(fields: {
 }
 
 /** Parse the strict Bun.XML RSS 2.0 object shape. */
-export function parseReleaseEntries(xml: string): ReleaseEntry[] {
+function releaseEntriesFromItems(items: readonly RssChannelItem[]): ReleaseEntry[] {
   const out: ReleaseEntry[] = [];
   const seen = new Set<string>();
-  for (const item of parseRssChannelItems(xml)) {
+  for (const item of items) {
     const entry = releaseEntryFromFields({
       title: item.title,
       url: item.link,
@@ -204,6 +208,16 @@ export function parseReleaseEntries(xml: string): ReleaseEntry[] {
   }
   out.sort((a, b) => (a.pubDate < b.pubDate ? -1 : a.pubDate > b.pubDate ? 1 : 0));
   return out;
+}
+
+export function parseReleaseEntries(xml: string): ReleaseEntry[] {
+  return releaseEntriesFromItems(parseRssChannelItems(xml));
+}
+
+async function parseReleaseEntriesUntrusted(xml: string): Promise<ReleaseEntry[]> {
+  return releaseEntriesFromItems(
+    requireRSSXmlBoundaryValue(await parseRssChannelItemsUntrusted(xml, { deadlineMs: 2_000 }))
+  );
 }
 
 /**
@@ -368,7 +382,7 @@ export async function refreshReleaseIndex(opts?: {
   writeFeeds?: boolean;
 }): Promise<{ file: ReleaseIndexFile; map: Map<string, ReleaseEntry>; fetch: FetchRssResult }> {
   const fetchResult = await fetchRssXml(opts);
-  const entries = parseReleaseEntries(fetchResult.xml);
+  const entries = await parseReleaseEntriesUntrusted(fetchResult.xml);
   if (entries.length === 0) {
     throw new Error('RSS parse produced 0 release entries — feed malformed or filter too strict');
   }

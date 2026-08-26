@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": ["bun"],
+    "lib": ["ESNext", "DOM"],
+    "verbatimModuleSyntax": false
+  },
+  "files": [
+    "../lib/rss/rss-xml-untrusted.ts",
+    "../lib/rss/rss-xml-worker-protocol.ts",
+    "../lib/rss/rss-xml-worker.ts",
+    "rss-xml-untrusted.test.ts",
+    "fixtures/rss-xml-worker-crash.ts",
+    "fixtures/rss-xml-worker-hang.ts"
+  ]
+}

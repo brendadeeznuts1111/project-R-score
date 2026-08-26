@@ -10,6 +10,7 @@ import { AtomicFileOperations } from '../core/atomic-file-operations';
 import { FeedImageEnricher, type FeedImageSource } from './feed-image.ts';
 import { fetchFeedXml } from './fetch-feed-xml.ts';
 import { generateRSS, parseRSSFeed, type RSSFeed, type RSSFeedItem } from './rss-xml.ts';
+import { parseRSSFeedUntrusted, requireRSSXmlBoundaryValue } from './rss-xml-untrusted.ts';
 
 export { generateRSS, parseRSSFeed } from './rss-xml.ts';
 export type { RSSFeed, RSSFeedItem } from './rss-xml.ts';
@@ -30,6 +31,7 @@ export type RSSManagerOptions = {
   imageConcurrency?: number;
   maxFeedBytes?: number;
   feedTimeoutMs?: number;
+  feedParseDeadlineMs?: number;
   allowedFeedOrigins?: string[];
 };
 
@@ -45,6 +47,7 @@ export class RSSManager {
   private readonly imageConcurrency: number;
   private readonly maxFeedBytes: number;
   private readonly feedTimeoutMs: number;
+  private readonly feedParseDeadlineMs: number;
   private readonly allowedFeedOrigins?: ReadonlySet<string>;
 
   constructor(r2Storage?: any, options: RSSManagerOptions = {}) {
@@ -59,6 +62,7 @@ export class RSSManager {
     this.imageConcurrency = Math.max(1, options.imageConcurrency ?? 3);
     this.maxFeedBytes = options.maxFeedBytes ?? 8 * 1024 * 1024;
     this.feedTimeoutMs = options.feedTimeoutMs ?? 15_000;
+    this.feedParseDeadlineMs = options.feedParseDeadlineMs ?? 1_000;
     this.allowedFeedOrigins = options.allowedFeedOrigins
       ? new Set(options.allowedFeedOrigins.map(origin => new URL(origin).origin))
       : undefined;
@@ -96,7 +100,12 @@ export class RSSManager {
           allowedOrigins: this.allowedFeedOrigins,
         })
       );
-      const feed = parseRSSFeed(xml);
+      const feed = requireRSSXmlBoundaryValue(
+        await parseRSSFeedUntrusted(xml, {
+          deadlineMs: this.feedParseDeadlineMs,
+          quotas: { maxInputBytes: this.maxFeedBytes },
+        })
+      );
       if (this.enrichImages) await this.enrichFeedImages(feed, feedUrl);
 
       // Cache with CacheManager (TTL handled by manager)
