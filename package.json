@@ -2060,7 +2060,7 @@
     "guard:offline:check": "bun test tests/offline-socket-sentinel.test.ts tests/offline-content-guard.test.ts tests/local-content-store.test.ts tests/rss-image-enrichment.test.ts tests/guarded-bun-process.test.ts projects/active/sports-terminal-os/test/utils/h2-fetch.test.ts && bun x tsc -p tests/tsconfig.offline-socket-sentinel.json",
     "guard:registry:check": "bun scripts/check-registry-policy.ts && bun test tests/registry-sdk.test.ts tests/package-dependencies.test.ts tests/registry-command-policy.test.ts tests/bun-info-field.test.ts tests/operator-research-registry-desk.test.ts && bun run --filter @factorywager/registry-client build",
     "test:registry:external": "BUN_EXTERNAL_TESTS=1 bun test tests/bun-info-field.external.test.ts",
-    "guard:subprocess:check": "bun scripts/check-subprocess-policy.ts && bun test tests/guarded-bun-process.test.ts tests/subprocess-consumer-inventory.test.ts tests/registry-command-policy.test.ts",
+    "guard:subprocess:check": "bun scripts/check-subprocess-policy.ts && bun test tests/guarded-bun-process.test.ts tests/guarded-bun-pm.test.ts tests/subprocess-consumer-inventory.test.ts tests/registry-command-policy.test.ts",
     "brand:baseline": "bun tools/branded-id-check.ts --write-baseline",
     "harness:violations": "bun tools/harness-violations.ts",
     "check:docs": "bun scripts/check-docs.ts && bun tools/doc-map-check.ts && bun tools/bun-doc-refs.ts provenance-check",

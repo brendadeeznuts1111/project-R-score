@@ -1,8 +1,8 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
-import { bunSpawnArgs } from '../../lib/bun-executable.ts';
 import { collectBunCacheMetrics, type BunCacheMetrics } from './bun-cache-metrics.ts';
 import { joinPath } from './fs-bun';
+import { runGuardedLocalBunPm, type GuardedLocalPmArgv } from './guarded-bun-pm.ts';
 
 export type PmCommandResult = {
   command: string;
@@ -56,11 +56,8 @@ export type BunPmHealthReport = {
 const ROOT = joinPath(import.meta.dir, '../..');
 
 function runPm(args: string[], cwd = ROOT): PmCommandResult {
-  const proc = Bun.spawnSync(bunSpawnArgs(['pm', ...args]), {
-    cwd,
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
+  const argv = ['pm', ...args] as GuardedLocalPmArgv;
+  const proc = runGuardedLocalBunPm(argv, {}, cwd);
   const stdout = proc.stdout ? new TextDecoder().decode(proc.stdout).trim() : '';
   const stderr = proc.stderr ? new TextDecoder().decode(proc.stderr).trim() : '';
   return {

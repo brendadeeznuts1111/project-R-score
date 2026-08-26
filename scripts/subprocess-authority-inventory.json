@@ -1285,14 +1285,6 @@
       "controlSpellings": []
     },
     {
-      "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#14ba10b1ce512ffe#1",
-      "file": "scripts/lib/bun-cache-metrics.ts",
-      "callee": "Bun.spawnSync",
-      "authority": "raw-bun-runtime-tooling",
-      "expressionHash": "14ba10b1ce512ffeb91bc4c776a0af6a50bb63b67de1a79354c7424cfa2384dc",
-      "controlSpellings": []
-    },
-    {
       "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#1bee2af70933570a#1",
       "file": "scripts/lib/bun-cache-metrics.ts",
       "callee": "Bun.spawnSync",
@@ -1325,27 +1317,11 @@
       "controlSpellings": []
     },
     {
-      "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#d3c7b49964e2c74e#1",
-      "file": "scripts/lib/bun-cache-metrics.ts",
-      "callee": "Bun.spawnSync",
-      "authority": "raw-bun-runtime-tooling",
-      "expressionHash": "d3c7b49964e2c74ecf6daa231f80806e9ef574798d94524d5a0e36760921ecfe",
-      "controlSpellings": []
-    },
-    {
       "id": "scripts/lib/bun-install-env.ts#Bun.spawnSync#7f531b87b252eed7#1",
       "file": "scripts/lib/bun-install-env.ts",
       "callee": "Bun.spawnSync",
       "authority": "non-bun-utility",
       "expressionHash": "7f531b87b252eed71e1969c99ade203a3ff40f5ff365c3f7d5cd979863e65650",
-      "controlSpellings": []
-    },
-    {
-      "id": "scripts/lib/bun-pm-health.ts#Bun.spawnSync#6c948dba29050106#1",
-      "file": "scripts/lib/bun-pm-health.ts",
-      "callee": "Bun.spawnSync",
-      "authority": "raw-bun-runtime-tooling",
-      "expressionHash": "6c948dba29050106f2cfecc7f4532f6287db3e1796344b786e6d3a53a2598f5d",
       "controlSpellings": []
     },
     {
@@ -1373,6 +1349,27 @@
       "controlSpellings": []
     },
     {
+      "id": "scripts/lib/guarded-bun-pm.ts#spawnGuardedBunChildSync#f4f2ac26b3c9e38c#1",
+      "file": "scripts/lib/guarded-bun-pm.ts",
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "f4f2ac26b3c9e38c2dee09c5baa94facf39bbe42535a56916d06aed026696c73",
+      "controlSpellings": [],
+      "review": {
+        "owner": "bun-pm-health",
+        "executable": "verified-bun",
+        "args": "fixed-local-pm-allowlist",
+        "cwd": "repository-root",
+        "environment": "three-name-allowlist",
+        "stdio": "pipe",
+        "network": "denied",
+        "offline": "required",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Local cache and health probes permit nine exact bun pm argv vectors and cannot inherit registry, proxy, preload, or experimental controls."
+      }
+    },
+    {
       "id": "scripts/lib/harness-group-runner.ts#Bun.spawn#b85bdcc2c3d3607c#1",
       "file": "scripts/lib/harness-group-runner.ts",
       "callee": "Bun.spawn",
@@ -1381,27 +1378,27 @@
       "controlSpellings": []
     },
     {
-      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#2cff574ed77060f7#1",
+      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#2d08edb811e97bc4#1",
       "file": "scripts/lib/index-tree.ts",
       "callee": "Bun.spawnSync",
-      "authority": "dynamic-process-boundary",
-      "expressionHash": "2cff574ed77060f7f84809198cbd1e1b99cedbd597acb60a8fca3c7217090277",
+      "authority": "non-bun-utility",
+      "expressionHash": "2d08edb811e97bc4b9975c64b872792f8b728899bf26232beda5baa861386f8c",
       "controlSpellings": []
     },
     {
-      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#a1681d0ca3070fa1#1",
+      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#5ac86b9fc8f8213b#1",
       "file": "scripts/lib/index-tree.ts",
       "callee": "Bun.spawnSync",
-      "authority": "dynamic-process-boundary",
-      "expressionHash": "a1681d0ca3070fa18b3e45a2c09adae116b5bc6d6a9e88067944e26951cc5e64",
+      "authority": "non-bun-utility",
+      "expressionHash": "5ac86b9fc8f8213b7b3feaa68798e7280c7e09cf8dcc29f781e1c1b5e004143a",
       "controlSpellings": []
     },
     {
-      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#f830df4727405dd4#1",
+      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#f956b50bf1286bff#1",
       "file": "scripts/lib/index-tree.ts",
       "callee": "Bun.spawnSync",
-      "authority": "dynamic-process-boundary",
-      "expressionHash": "f830df4727405dd46dbd93bb60979e49abd12cb89fc0ff05b157909722671432",
+      "authority": "non-bun-utility",
+      "expressionHash": "f956b50bf1286bffee10a51bbf33fe239739da4ed9c1d4053f73f53f08146777",
       "controlSpellings": []
     },
     {

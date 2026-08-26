@@ -130,8 +130,11 @@ tests reject changed registry, reserved `--connect`, proxy, `-O` / `-R`,
 experimental HTTP, and runtime preload controls before spawn. The bidirectional
 hashed inventory now records guarded consumers with executable, argv, cwd,
 environment, stdio, network, offline, flag-passthrough, owner, and default-deny
-review metadata; 179 raw or dynamic consumers remain explicit unowned gaps, so
-this row is not yet `Implemented`.
+review metadata. The first `scripts/lib` tranche additionally guards nine exact
+local-only `bun pm` command vectors behind one repository-root authority and
+correctly identifies three Git/rm calls as non-Bun utilities. The exact
+inventory is 327 calls with 173 raw or dynamic consumers still explicit
+unowned gaps, so this row is not yet `Implemented`.
 
 ### `REG-001` Registry read, write, and resolution planes
 
