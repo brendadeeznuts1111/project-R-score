@@ -10,6 +10,7 @@
  */
 
 import { parseArgs } from "util";
+import { fetchEnterpriseDashboardOutbound } from "../src/server/security/outbound.ts";
 
 // ANSI colors
 const c = {
@@ -233,7 +234,7 @@ ${c.bold}Examples:${c.reset}
   console.info(`${c.cyan}Fetching Bun RSS feed...${c.reset}\n`);
 
   try {
-    const response = await fetch("https://bun.com/rss.xml");
+    const response = await fetchEnterpriseDashboardOutbound("bun-news", "https://bun.com/rss.xml");
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }

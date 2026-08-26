@@ -3,7 +3,7 @@
 
 import { readdirSync, statSync, readFileSync } from 'fs';
 import { join, extname, basename } from 'path';
-import { fetch } from 'bun';
+import { fetchEnterpriseDashboardOutbound } from "../src/server/security/outbound.ts";
 
 interface LinkResult {
   url: string;
@@ -53,7 +53,7 @@ async function checkUrl(url: string, options: LinkCheckOptions = {}): Promise<Li
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-    const response = await fetch(url, {
+    const response = await fetchEnterpriseDashboardOutbound("link-check", url, {
       method: 'HEAD', // Use HEAD to check existence without downloading content
       headers: {
         'User-Agent': userAgent

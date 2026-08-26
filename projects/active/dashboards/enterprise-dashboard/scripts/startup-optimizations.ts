@@ -18,6 +18,10 @@
 
 import matrix from "../config/network-matrix.toml" with { type: "toml" };
 import preconnect from "../config/fetch-preconnect.toml" with { type: "toml" };
+import {
+  fetchEnterpriseDashboardOutbound,
+  preconnectEnterpriseDashboardOutbound,
+} from "../src/server/security/outbound.ts";
 
 // Parse CLI flags
 const args = new Set(Bun.argv.slice(2));
@@ -143,10 +147,10 @@ async function main() {
       if (!DRY_RUN) {
         // Use fetch.preconnect if available (Bun 1.3+)
         if (typeof fetch.preconnect === "function") {
-          await fetch.preconnect(url);
+          await preconnectEnterpriseDashboardOutbound("configured-head", url);
         } else {
           // Fallback to HEAD request
-          await fetch(url, {
+          await fetchEnterpriseDashboardOutbound("configured-head", url, {
             method: "HEAD",
             signal: AbortSignal.timeout(3000),
           });

@@ -4,6 +4,7 @@
 // With preconnect: BUN_CONFIG_MAX_HTTP_REQUESTS=2048 bun --fetch-preconnect https://api.github.com scripts/bench/parallel-bench.ts
 
 import { dns } from "bun";
+import { fetchEnterpriseDashboardOutbound } from "../../src/server/security/outbound.ts";
 
 const CONCURRENCY = parseInt(process.env.BENCH_CONCURRENCY || "50");
 const ITERATIONS = parseInt(process.env.BENCH_ITERATIONS || "5");
@@ -30,7 +31,7 @@ async function runIteration(iteration: number): Promise<BenchResult> {
     requests.map(async (url) => {
       const reqStart = Bun.nanoseconds();
       try {
-        const res = await fetch(url, { method: "HEAD" });
+        const res = await fetchEnterpriseDashboardOutbound("benchmark-public", url, { method: "HEAD" });
         if (!res.ok) errors++;
         latencies.push((Bun.nanoseconds() - reqStart) / 1_000_000);
       } catch {

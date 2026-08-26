@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/server/security/outbound.ts",
+    "src/server/security/outbound.test.ts"
+  ]
+}

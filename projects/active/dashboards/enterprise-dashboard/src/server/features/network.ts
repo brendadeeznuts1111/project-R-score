@@ -12,6 +12,10 @@
 // ⚡ NATIVE TOML LOADER (0.2ms)
 import matrix from "../../../config/network-matrix.toml" with { type: "toml" };
 import preconnectConfig from "../../../config/fetch-preconnect.toml" with { type: "toml" };
+import {
+  fetchEnterpriseDashboardOutbound,
+  preconnectEnterpriseDashboardOutbound,
+} from "../security/outbound.ts";
 
 // Type definitions for TOML imports
 interface Host {
@@ -94,13 +98,13 @@ export async function initializeNetwork(): Promise<{
     try {
       // Use fetch.preconnect for TCP+TLS warmup (Bun 1.3+)
       if (typeof fetch.preconnect === "function") {
-        await fetch.preconnect(url);
+        await preconnectEnterpriseDashboardOutbound("configured-head", url);
         connectionStatus.set(host.id, "connected");
         preconnected++;
         console.info(`🔗 Preconnected: ${host.label} → ${url}`);
       } else {
         // Fallback: HEAD request to establish connection
-        await fetch(url, {
+        await fetchEnterpriseDashboardOutbound("configured-head", url, {
           method: "HEAD",
           signal: AbortSignal.timeout(2000),
         });
@@ -169,7 +173,7 @@ export async function probeHost(hostId: string): Promise<{
 
   const start = performance.now();
   try {
-    await fetch(url, {
+    await fetchEnterpriseDashboardOutbound("configured-head", url, {
       method: "HEAD",
       signal: AbortSignal.timeout(5000),
     });

@@ -7,6 +7,7 @@
 
 import { bench, group, run } from "./utils";
 import { ROUTES } from "../../src/server/topology";
+import { fetchEnterpriseDashboardOutbound } from "../../src/server/security/outbound.ts";
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:8080";
 
@@ -33,7 +34,7 @@ for (const [groupName, routes] of Object.entries(routesByGroup)) {
 
       bench(`${method} ${route.path}`, async () => {
         try {
-          await fetch(url, { method });
+          await fetchEnterpriseDashboardOutbound("route-benchmark", url, { method });
         } catch (error) {
           // Ignore errors in benchmark
         }

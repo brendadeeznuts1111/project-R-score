@@ -9,6 +9,7 @@ import { spawn } from "bun";
 import { kycConfig } from "./config";
 import { encryptDocument } from "./encryption";
 import type { DocumentVerification } from "./types";
+import { fetchEnterpriseDashboardOutbound } from "../security/outbound.ts";
 
 export class DocumentService {
   private readonly ADB_PATH = kycConfig.adbPath;
@@ -111,7 +112,8 @@ export class DocumentService {
     try {
       // Use AWS Textract for OCR
       // Note: This is a simplified implementation - production should use AWS SDK
-      const response = await fetch(
+      const response = await fetchEnterpriseDashboardOutbound(
+        "textract",
         `https://textract.${kycConfig.awsRegion}.amazonaws.com/`,
         {
           method: "POST",

@@ -9,6 +9,7 @@ import { Android13KYCFailsafe } from "./android13Failsafe";
 import { DocumentService } from "./documentService";
 import { BiometricService } from "./biometricService";
 import { kycConfig } from "./config";
+import { fetchEnterpriseDashboardOutbound } from "../security/outbound.ts";
 import {
   insertKYCReviewQueue,
   insertKYCAuditLog,
@@ -352,7 +353,7 @@ export class KYCFailsafeEngine {
     }
 
     try {
-      await fetch(kycConfig.adminWebhookUrl, {
+      await fetchEnterpriseDashboardOutbound("admin-webhook", kycConfig.adminWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
