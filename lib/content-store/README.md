@@ -14,10 +14,13 @@ Core invariants:
 - `SourceLocatorId` hashes the exact canonical locator string on a separate
   identity path. A locator hash is never accepted as a content digest.
 - Wire/persisted `ContentRef` data enters through `parseContentRef` once.
-- Runtime, development, optional, and peer dependency edges remain distinct;
+- Digest relations describe derivation/provenance only. Package dependency
+  records separately preserve runtime, development, optional, and peer edges;
   `peer.optional` represents `peerDependenciesMeta` only.
 - Publisher, storage steward, rights reviewer, and alias publisher are separate
-  grants. Rights states include denied, expired, and revoked.
+  grants. Rights use the canonical media lifecycle and operation-specific
+  storage, derivation, external-link, alias-publication, and retention
+  decisions.
 - `MemoryContentStore` copies exact bytes, deduplicates by digest, bounds reads
   and writes, and detects backing-store corruption. Persistent local and R2
   adapters remain separate follow-up work.

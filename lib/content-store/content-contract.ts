@@ -39,24 +39,53 @@ export type ContentAuthorities = {
 };
 
 export type ContentRightsLifecycleState =
-  'unreviewed' | 'approved' | 'denied' | 'expired' | 'revoked';
+  | 'unknown'
+  | 'pending-review'
+  | 'external-only'
+  | 'approved-vendor'
+  | 'denied'
+  | 'expired-or-revoked';
 
 export type ContentRights =
-  | { readonly state: 'unreviewed' }
+  | { readonly state: 'unknown' | 'pending-review' }
   | {
-      readonly state: Exclude<ContentRightsLifecycleState, 'unreviewed'>;
+      readonly state: Exclude<ContentRightsLifecycleState, 'unknown' | 'pending-review'>;
       readonly reviewEvidenceId: EvidenceId;
       readonly reviewedAt: string;
       readonly validUntil?: string;
       readonly reason?: string;
     };
 
-export type ContentDependencyKind = 'runtime' | 'development' | 'optional' | 'peer';
+export type ContentRightsOperation =
+  'retain-provenance' | 'store-bytes' | 'derive-bytes' | 'publish-active-alias' | 'link-external';
 
-export type ContentDependencyEdge = {
+export type ContentRightsDecision = {
+  readonly operation: ContentRightsOperation;
+  readonly allowed: boolean;
+  readonly reason:
+    | 'historical-provenance'
+    | 'approved-vendor'
+    | 'external-delivery-only'
+    | 'rights-not-approved'
+    | 'rights-denied'
+    | 'rights-expired-or-revoked';
+};
+
+export type ContentRelationKind = 'derived-from' | 'rendition-of' | 'embeds';
+
+/** Digest graph for byte derivation/provenance, never a package dependency substitute. */
+export type ContentRelationEdge = {
   readonly from: ContentDigest;
   readonly to: ContentDigest;
-  readonly kind: ContentDependencyKind;
+  readonly kind: ContentRelationKind;
+};
+
+export type PackageDependencyKind = 'runtime' | 'development' | 'optional' | 'peer';
+
+export type PackageDependencyRecord = {
+  readonly packageName: string;
+  readonly range: string;
+  readonly kind: PackageDependencyKind;
   /** Mirrors package peerDependenciesMeta without treating optional peers as optional deps. */
   readonly peer?: { readonly optional: boolean };
 };
@@ -73,7 +102,8 @@ export type ContentRef = {
   readonly byteLength: number;
   readonly mediaType: string;
   readonly sources: readonly ContentSourceLocator[];
-  readonly dependencies: readonly ContentDependencyEdge[];
+  readonly contentRelations: readonly ContentRelationEdge[];
+  readonly packageDependencies: readonly PackageDependencyRecord[];
   readonly rights: ContentRights;
   readonly authorities: ContentAuthorities;
 };
@@ -100,9 +130,28 @@ export function createContentSourceLocator(locator: string): ContentSourceLocato
   return { locator, locatorId: sourceLocatorIdFor(locator) };
 }
 
-export function isContentRightsUsable(rights: ContentRights, now = new Date()): boolean {
-  if (rights.state !== 'approved') return false;
-  return rights.validUntil === undefined || Date.parse(rights.validUntil) > now.getTime();
+export function decideContentRights(
+  rights: ContentRights,
+  operation: ContentRightsOperation,
+  now = new Date()
+): ContentRightsDecision {
+  if (operation === 'retain-provenance') {
+    return { operation, allowed: true, reason: 'historical-provenance' };
+  }
+  if (rights.state === 'approved-vendor') {
+    if (rights.validUntil !== undefined && Date.parse(rights.validUntil) <= now.getTime()) {
+      return { operation, allowed: false, reason: 'rights-expired-or-revoked' };
+    }
+    return { operation, allowed: true, reason: 'approved-vendor' };
+  }
+  if (rights.state === 'external-only' && operation === 'link-external') {
+    return { operation, allowed: true, reason: 'external-delivery-only' };
+  }
+  if (rights.state === 'denied') return { operation, allowed: false, reason: 'rights-denied' };
+  if (rights.state === 'expired-or-revoked') {
+    return { operation, allowed: false, reason: 'rights-expired-or-revoked' };
+  }
+  return { operation, allowed: false, reason: 'rights-not-approved' };
 }
 
 function fail(field: string, detail: string): never {
@@ -114,6 +163,18 @@ function parseRecord(value: unknown, field: string): Record<string, unknown> {
     return fail(field, 'expected object');
   }
   return value as Record<string, unknown>;
+}
+
+function assertOnlyKeys(
+  record: Record<string, unknown>,
+  allowed: readonly string[],
+  field: string
+): void {
+  const allowedSet = new Set(allowed);
+  const unexpected = Object.keys(record)
+    .filter(key => !allowedSet.has(key))
+    .sort()[0];
+  if (unexpected !== undefined) fail(field, `unexpected key ${unexpected}`);
 }
 
 function parseExactString(value: unknown, field: string, maxLength = 512): string {
@@ -152,9 +213,11 @@ function assertCanonicalLocator(locator: string): void {
 function parseAuthority(value: unknown, field: string): ContentAuthorityRef {
   const record = parseRecord(value, field);
   if (record.kind === 'identity') {
+    assertOnlyKeys(record, ['kind', 'identityId'], field);
     return { kind: 'identity', identityId: parseIdentityId(record.identityId) };
   }
   if (record.kind === 'source-system') {
+    assertOnlyKeys(record, ['kind', 'sourceSystemId'], field);
     return { kind: 'source-system', sourceSystemId: parseSourceSystemId(record.sourceSystemId) };
   }
   return fail(`${field}.kind`, 'expected identity or source-system');
@@ -162,6 +225,11 @@ function parseAuthority(value: unknown, field: string): ContentAuthorityRef {
 
 function parseAuthorities(value: unknown): ContentAuthorities {
   const record = parseRecord(value, 'authorities');
+  assertOnlyKeys(
+    record,
+    ['publisher', 'storageSteward', 'rightsReviewAuthority', 'aliasPublisher'],
+    'authorities'
+  );
   return {
     publisher: parseAuthority(record.publisher, 'authorities.publisher'),
     storageSteward: parseAuthority(record.storageSteward, 'authorities.storageSteward'),
@@ -175,10 +243,22 @@ function parseAuthorities(value: unknown): ContentAuthorities {
 
 function parseRights(value: unknown): ContentRights {
   const record = parseRecord(value, 'rights');
-  if (record.state === 'unreviewed') return { state: 'unreviewed' };
-  if (!['approved', 'denied', 'expired', 'revoked'].includes(String(record.state))) {
+  if (record.state === 'unknown' || record.state === 'pending-review') {
+    assertOnlyKeys(record, ['state'], 'rights');
+    return { state: record.state };
+  }
+  if (
+    !['external-only', 'approved-vendor', 'denied', 'expired-or-revoked'].includes(
+      String(record.state)
+    )
+  ) {
     return fail('rights.state', 'unknown lifecycle state');
   }
+  assertOnlyKeys(
+    record,
+    ['state', 'reviewEvidenceId', 'reviewedAt', 'validUntil', 'reason'],
+    'rights'
+  );
   const validUntil =
     record.validUntil === undefined
       ? undefined
@@ -186,7 +266,7 @@ function parseRights(value: unknown): ContentRights {
   const reason =
     record.reason === undefined ? undefined : parseExactString(record.reason, 'rights.reason', 512);
   return {
-    state: record.state as Exclude<ContentRightsLifecycleState, 'unreviewed'>,
+    state: record.state as Exclude<ContentRightsLifecycleState, 'unknown' | 'pending-review'>,
     reviewEvidenceId: parseEvidenceId(record.reviewEvidenceId),
     reviewedAt: parseIsoTimestamp(record.reviewedAt, 'rights.reviewedAt'),
     ...(validUntil === undefined ? {} : { validUntil }),
@@ -196,6 +276,7 @@ function parseRights(value: unknown): ContentRights {
 
 function parseSource(value: unknown, index: number): ContentSourceLocator {
   const record = parseRecord(value, `sources[${index}]`);
+  assertOnlyKeys(record, ['locator', 'locatorId'], `sources[${index}]`);
   const locator = parseExactString(
     record.locator,
     `sources[${index}].locator`,
@@ -208,38 +289,76 @@ function parseSource(value: unknown, index: number): ContentSourceLocator {
   return { locator, locatorId };
 }
 
-function parseDependency(value: unknown, index: number): ContentDependencyEdge {
-  const record = parseRecord(value, `dependencies[${index}]`);
-  const kind = record.kind;
-  if (!['runtime', 'development', 'optional', 'peer'].includes(String(kind))) {
-    return fail(`dependencies[${index}].kind`, 'unknown dependency kind');
-  }
-  const peerRecord = record.peer;
-  if (kind === 'peer') {
-    const peer = parseRecord(peerRecord, `dependencies[${index}].peer`);
-    if (typeof peer.optional !== 'boolean') {
-      return fail(`dependencies[${index}].peer.optional`, 'expected boolean');
-    }
-    return {
-      from: parseContentDigest(record.from),
-      to: parseContentDigest(record.to),
-      kind,
-      peer: { optional: peer.optional },
-    };
-  }
-  if (peerRecord !== undefined) {
-    return fail(`dependencies[${index}].peer`, 'peer metadata belongs only to peer edges');
+function parseContentRelation(value: unknown, index: number): ContentRelationEdge {
+  const record = parseRecord(value, `contentRelations[${index}]`);
+  assertOnlyKeys(record, ['from', 'to', 'kind'], `contentRelations[${index}]`);
+  if (!['derived-from', 'rendition-of', 'embeds'].includes(String(record.kind))) {
+    return fail(`contentRelations[${index}].kind`, 'unknown content relation kind');
   }
   return {
     from: parseContentDigest(record.from),
     to: parseContentDigest(record.to),
-    kind: kind as Exclude<ContentDependencyKind, 'peer'>,
+    kind: record.kind as ContentRelationKind,
+  };
+}
+
+function parsePackageDependency(value: unknown, index: number): PackageDependencyRecord {
+  const record = parseRecord(value, `packageDependencies[${index}]`);
+  assertOnlyKeys(record, ['packageName', 'range', 'kind', 'peer'], `packageDependencies[${index}]`);
+  const kind = record.kind;
+  if (!['runtime', 'development', 'optional', 'peer'].includes(String(kind))) {
+    return fail(`packageDependencies[${index}].kind`, 'unknown dependency kind');
+  }
+  const packageName = parseExactString(
+    record.packageName,
+    `packageDependencies[${index}].packageName`,
+    214
+  );
+  if (!/^(?:@[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._-]*|[a-z0-9][a-z0-9._-]*)$/.test(packageName)) {
+    return fail(`packageDependencies[${index}].packageName`, 'expected canonical package name');
+  }
+  const range = parseExactString(record.range, `packageDependencies[${index}].range`, 512);
+  const peerRecord = record.peer;
+  if (kind === 'peer') {
+    const peer = parseRecord(peerRecord, `packageDependencies[${index}].peer`);
+    assertOnlyKeys(peer, ['optional'], `packageDependencies[${index}].peer`);
+    if (typeof peer.optional !== 'boolean') {
+      return fail(`packageDependencies[${index}].peer.optional`, 'expected boolean');
+    }
+    return { packageName, range, kind, peer: { optional: peer.optional } };
+  }
+  if (peerRecord !== undefined) {
+    return fail(
+      `packageDependencies[${index}].peer`,
+      'peer metadata belongs only to peer dependencies'
+    );
+  }
+  return {
+    packageName,
+    range,
+    kind: kind as Exclude<PackageDependencyKind, 'peer'>,
   };
 }
 
 /** Parse untrusted persisted/API data once into the trusted content contract. */
 export function parseContentRef(value: unknown): ContentRef {
   const record = parseRecord(value, 'root');
+  assertOnlyKeys(
+    record,
+    [
+      'version',
+      'digest',
+      'key',
+      'byteLength',
+      'mediaType',
+      'sources',
+      'contentRelations',
+      'packageDependencies',
+      'rights',
+      'authorities',
+    ],
+    'root'
+  );
   if (record.version !== CONTENT_REF_VERSION) return fail('version', 'unsupported version');
 
   const digest = parseContentDigest(record.digest);
@@ -260,18 +379,25 @@ export function parseContentRef(value: unknown): ContentRef {
     return fail('mediaType', 'expected canonical MIME type without parameters');
   }
   if (!Array.isArray(record.sources)) return fail('sources', 'expected array');
-  if (!Array.isArray(record.dependencies)) return fail('dependencies', 'expected array');
+  if (!Array.isArray(record.contentRelations)) return fail('contentRelations', 'expected array');
+  if (!Array.isArray(record.packageDependencies)) {
+    return fail('packageDependencies', 'expected array');
+  }
   if (record.sources.length > MAX_CONTENT_SOURCES) {
     return fail('sources', `cannot exceed ${MAX_CONTENT_SOURCES} entries`);
   }
-  if (record.dependencies.length > MAX_CONTENT_DEPENDENCIES) {
-    return fail('dependencies', `cannot exceed ${MAX_CONTENT_DEPENDENCIES} entries`);
+  if (
+    record.contentRelations.length + record.packageDependencies.length >
+    MAX_CONTENT_DEPENDENCIES
+  ) {
+    return fail('dependency collections', `cannot exceed ${MAX_CONTENT_DEPENDENCIES} entries`);
   }
   const sources = record.sources.map(parseSource);
-  const dependencies = record.dependencies.map(parseDependency);
-  for (const [index, dependency] of dependencies.entries()) {
-    if (dependency.from !== digest) {
-      return fail(`dependencies[${index}].from`, 'must equal the owning content digest');
+  const contentRelations = record.contentRelations.map(parseContentRelation);
+  const packageDependencies = record.packageDependencies.map(parsePackageDependency);
+  for (const [index, relation] of contentRelations.entries()) {
+    if (relation.from !== digest) {
+      return fail(`contentRelations[${index}].from`, 'must equal the owning content digest');
     }
   }
 
@@ -282,7 +408,8 @@ export function parseContentRef(value: unknown): ContentRef {
     byteLength: record.byteLength,
     mediaType,
     sources,
-    dependencies,
+    contentRelations,
+    packageDependencies,
     rights: parseRights(record.rights),
     authorities: parseAuthorities(record.authorities),
   };

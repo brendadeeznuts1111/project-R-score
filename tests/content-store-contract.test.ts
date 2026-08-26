@@ -6,7 +6,7 @@ import {
   contentDigestForBytes,
   contentKeyForDigest,
   createContentSourceLocator,
-  isContentRightsUsable,
+  decideContentRights,
   parseContentRef,
 } from '../lib/content-store/index.ts';
 import {
@@ -32,16 +32,23 @@ function validWireRef() {
     byteLength: bytes.byteLength,
     mediaType: 'application/xml',
     sources: [source],
-    dependencies: [
+    contentRelations: [
       {
         from: digest,
-        to: contentDigestForBytes(new TextEncoder().encode('peer bytes')),
+        to: contentDigestForBytes(new TextEncoder().encode('source bytes')),
+        kind: 'derived-from',
+      },
+    ],
+    packageDependencies: [
+      {
+        packageName: 'bun-types',
+        range: '>=1.4.0',
         kind: 'peer',
         peer: { optional: true },
       },
     ],
     rights: {
-      state: 'approved',
+      state: 'approved-vendor',
       reviewEvidenceId: 'evidence-1',
       reviewedAt: '2026-08-26T12:00:00.000Z',
       validUntil: '2027-08-26T12:00:00.000Z',
@@ -73,11 +80,18 @@ describe('content identity and wire contract', () => {
   test('parses a complete ContentRef once and retains optional peer metadata', () => {
     const parsed = parseContentRef(validWireRef());
     expect(parsed.version).toBe(1);
-    expect(parsed.dependencies[0]?.kind).toBe('peer');
-    expect(parsed.dependencies[0]?.peer?.optional).toBeTrue();
+    expect(parsed.contentRelations[0]?.kind).toBe('derived-from');
+    expect(parsed.packageDependencies[0]?.kind).toBe('peer');
+    expect(parsed.packageDependencies[0]?.peer?.optional).toBeTrue();
     expect(parsed.authorities.publisher).not.toEqual(parsed.authorities.storageSteward);
-    expect(isContentRightsUsable(parsed.rights, new Date('2026-08-27T00:00:00.000Z'))).toBeTrue();
-    expect(isContentRightsUsable(parsed.rights, new Date('2028-01-01T00:00:00.000Z'))).toBeFalse();
+    expect(
+      decideContentRights(parsed.rights, 'store-bytes', new Date('2026-08-27T00:00:00.000Z'))
+        .allowed
+    ).toBeTrue();
+    expect(
+      decideContentRights(parsed.rights, 'store-bytes', new Date('2028-01-01T00:00:00.000Z'))
+        .allowed
+    ).toBeFalse();
   });
 
   test('rejects a key or locator hash that does not match its owned value', () => {
@@ -95,8 +109,10 @@ describe('content identity and wire contract', () => {
 
   test('rejects peer metadata on non-peer dependency edges', () => {
     const wire = validWireRef();
-    wire.dependencies[0] = { ...wire.dependencies[0], kind: 'runtime' };
-    expect(() => parseContentRef(wire)).toThrow('peer metadata belongs only to peer edges');
+    wire.packageDependencies[0] = { ...wire.packageDependencies[0], kind: 'runtime' };
+    expect(() => parseContentRef(wire)).toThrow(
+      'peer metadata belongs only to peer dependencies'
+    );
   });
 
   test('bounds wire collections before materializing dependency contracts', () => {
@@ -107,23 +123,43 @@ describe('content identity and wire contract', () => {
     expect(() => parseContentRef(tooManySources)).toThrow('cannot exceed 64 entries');
 
     const tooManyDependencies = validWireRef();
-    tooManyDependencies.dependencies = Array.from({ length: 4_097 }, () => ({
-      ...tooManyDependencies.dependencies[0],
+    tooManyDependencies.packageDependencies = Array.from({ length: 4_097 }, () => ({
+      ...tooManyDependencies.packageDependencies[0],
     }));
     expect(() => parseContentRef(tooManyDependencies)).toThrow('cannot exceed 4096 entries');
   });
 
-  test('denied, expired, revoked, and unreviewed rights are unusable', () => {
-    expect(isContentRightsUsable({ state: 'unreviewed' })).toBeFalse();
-    for (const state of ['denied', 'expired', 'revoked'] as const) {
-      expect(
-        isContentRightsUsable({
-          state,
-          reviewEvidenceId: asEvidenceId('evidence-1'),
-          reviewedAt: '2026-08-26T12:00:00.000Z',
-        })
-      ).toBeFalse();
-    }
+  test('makes rights decisions per operation using the canonical lifecycle', () => {
+    expect(decideContentRights({ state: 'unknown' }, 'retain-provenance').allowed).toBeTrue();
+    expect(decideContentRights({ state: 'pending-review' }, 'store-bytes').allowed).toBeFalse();
+    const external = {
+      state: 'external-only',
+      reviewEvidenceId: asEvidenceId('evidence-1'),
+      reviewedAt: '2026-08-26T12:00:00.000Z',
+    } as const;
+    expect(decideContentRights(external, 'link-external').allowed).toBeTrue();
+    expect(decideContentRights(external, 'derive-bytes').allowed).toBeFalse();
+    expect(decideContentRights(external, 'publish-active-alias').allowed).toBeFalse();
+    const revoked = { ...external, state: 'expired-or-revoked' } as const;
+    expect(decideContentRights(revoked, 'link-external').allowed).toBeFalse();
+    expect(decideContentRights(revoked, 'retain-provenance').allowed).toBeTrue();
+  });
+
+  test('fails closed on unexpected persisted keys at nested boundaries', () => {
+    const rootExtra = { ...validWireRef(), transport: 'h3' };
+    expect(() => parseContentRef(rootExtra)).toThrow('unexpected key transport');
+
+    const nestedBase = validWireRef();
+    const nestedExtra = {
+      ...nestedBase,
+      packageDependencies: [
+        {
+          ...nestedBase.packageDependencies[0],
+          resolvedUrl: 'https://registry.example.test/package.tgz',
+        },
+      ],
+    };
+    expect(() => parseContentRef(nestedExtra)).toThrow('unexpected key resolvedUrl');
   });
 });
 

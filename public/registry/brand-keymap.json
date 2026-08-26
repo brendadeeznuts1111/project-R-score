@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T12:06:29.165Z",
+  "generatedAt": "2026-08-26T12:09:45.398Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -3367,7 +3367,7 @@
         "constructors": {
           "as": 1,
           "try": 0,
-          "parse": 5
+          "parse": 3
         },
         "guards": 0,
         "files": [
@@ -3378,7 +3378,7 @@
           "spine": {
             "status": "covered",
             "references": 21,
-            "constructionCalls": 6,
+            "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
               "lib/content-store/content-contract.ts",
