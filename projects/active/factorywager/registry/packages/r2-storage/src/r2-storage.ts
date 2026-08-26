@@ -18,6 +18,12 @@ import {
   cloudflareAccountIdFromEnv,
   r2EndpointFromAccount,
 } from '../../../../../../../config/r2-env.ts';
+import {
+  createFactoryR2Authority,
+  fetchFactoryR2,
+  type FactoryR2Authority,
+  type FactoryR2ExecutionOptions,
+} from './r2-outbound.ts';
 
 export interface R2StorageConfig {
   accountId: string;
@@ -41,8 +47,13 @@ export class R2StorageAdapter {
   private config: R2StorageConfig;
   private baseUrl: string;
   private publicUrl: string;
+  private authority: FactoryR2Authority;
+  private outbound: FactoryR2ExecutionOptions;
 
-  constructor(config: Partial<R2StorageConfig> = {}) {
+  constructor(
+    config: Partial<R2StorageConfig> = {},
+    outbound: FactoryR2ExecutionOptions = {}
+  ) {
     const accountId = config.accountId || cloudflareAccountIdFromEnv();
     this.config = {
       accountId,
@@ -57,8 +68,10 @@ export class R2StorageAdapter {
       compression: config.compression || null,
     };
 
-    this.baseUrl = this.config.endpoint || r2EndpointFromAccount(this.config.accountId);
+    this.authority = createFactoryR2Authority(this.config.accountId, this.config.endpoint);
+    this.baseUrl = this.authority.origin;
     this.publicUrl = `https://pub-${this.config.accountId}.r2.dev`;
+    this.outbound = outbound;
   }
 
   /**
@@ -103,7 +116,7 @@ export class R2StorageAdapter {
         headers['Content-Encoding'] = this.config.compression;
       }
 
-      const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+      const response = await this.request(key, {
         method: 'PUT',
         headers,
         body,
@@ -122,7 +135,7 @@ export class R2StorageAdapter {
 
   /** Store arbitrary JSON at a raw object key (version history, metadata, etc.). */
   async putJson(key: string, data: unknown): Promise<void> {
-    const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+    const response = await this.request(key, {
       method: 'PUT',
       headers: {
         Authorization: this.getAuthHeader(),
@@ -137,7 +150,7 @@ export class R2StorageAdapter {
 
   /** Read arbitrary JSON from a raw object key. */
   async getJson<T>(key: string): Promise<T | null> {
-    const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+    const response = await this.request(key, {
       headers: { Authorization: this.getAuthHeader() },
     });
     if (response.status === 404) return null;
@@ -155,7 +168,7 @@ export class R2StorageAdapter {
     
     try {
       // Bun v1.3.7: Headers are preserved with original casing
-      const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+      const response = await this.request(key, {
         headers: {
           'Authorization': this.getAuthHeader(),
           'Accept': 'application/json',
@@ -217,7 +230,7 @@ export class R2StorageAdapter {
         }
       }
 
-      const response = await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+      const response = await this.request(key, {
         method: 'PUT',
         headers,
         body,
@@ -304,7 +317,7 @@ export class R2StorageAdapter {
     
     try {
       // Delete tarball
-      await fetch(`${this.baseUrl}/${this.config.bucketName}/${tarballKey}`, {
+      await this.request(tarballKey, {
         method: 'DELETE',
         headers: {
           'Authorization': this.getAuthHeader(),
@@ -342,13 +355,10 @@ export class R2StorageAdapter {
     
     try {
       // List and delete all objects with this prefix
-      const listResponse = await fetch(
-        `${this.baseUrl}/${this.config.bucketName}?list-type=2&prefix=${encodeURIComponent(prefix)}`,
-        {
-          headers: {
-            'Authorization': this.getAuthHeader(),
-          },
-        }
+      const listResponse = await this.request(
+        undefined,
+        { headers: { 'Authorization': this.getAuthHeader() } },
+        { 'list-type': '2', prefix }
       );
 
       if (!listResponse.ok) {
@@ -360,7 +370,7 @@ export class R2StorageAdapter {
       const keys = this.parseObjectKeys(xml);
 
       for (const key of keys) {
-        await fetch(`${this.baseUrl}/${this.config.bucketName}/${key}`, {
+        await this.request(key, {
           method: 'DELETE',
           headers: {
             'Authorization': this.getAuthHeader(),
@@ -380,13 +390,10 @@ export class R2StorageAdapter {
    */
   async listPackages(): Promise<string[]> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/${this.config.bucketName}?list-type=2&prefix=${this.config.prefix}&delimiter=/`,
-        {
-          headers: {
-            'Authorization': this.getAuthHeader(),
-          },
-        }
+      const response = await this.request(
+        undefined,
+        { headers: { 'Authorization': this.getAuthHeader() } },
+        { 'list-type': '2', prefix: this.config.prefix || '', delimiter: '/' }
       );
 
       if (!response.ok) {
@@ -472,6 +479,18 @@ export class R2StorageAdapter {
     return `Basic ${credentials}`;
   }
 
+  private request(
+    key: string | undefined,
+    init: BunFetchRequestInit,
+    query?: Readonly<Record<string, string>>
+  ): Promise<Response> {
+    return fetchFactoryR2(
+      this.authority,
+      { bucket: this.config.bucketName, key, query, init },
+      this.outbound
+    );
+  }
+
   /**
    * Parse object keys from S3 ListObjects response
    */
@@ -509,11 +528,11 @@ export class R2StorageAdapter {
    */
   async testConnection(): Promise<boolean> {
     try {
-      const response = await fetch(`${this.baseUrl}/${this.config.bucketName}?list-type=2&max-keys=1`, {
-        headers: {
-          'Authorization': this.getAuthHeader(),
-        },
-      });
+      const response = await this.request(
+        undefined,
+        { headers: { 'Authorization': this.getAuthHeader() } },
+        { 'list-type': '2', 'max-keys': '1' }
+      );
 
       return response.ok;
     } catch (error) {

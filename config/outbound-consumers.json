@@ -4600,114 +4600,15 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#92aff6869a842e02#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 106,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "92aff6869a842e02",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#959b17c3be8fc04d#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
+      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-outbound.ts#fetchWithPolicy#5cd84cd6a1341552#1",
+      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-outbound.ts",
       "line": 125,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "959b17c3be8fc04d",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#9faf500af6606368#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 140,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "9faf500af6606368",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#6b4de897a4bef484#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 158,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "6b4de897a4bef484",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#92aff6869a842e02#2",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 220,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "92aff6869a842e02",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#93d219fee881140a#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 307,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "93d219fee881140a",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#8e456cb8faa322d4#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 345,
-      "column": 34,
-      "callee": "fetch",
-      "fingerprint": "8e456cb8faa322d4",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#67ea2c5c61f54956#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 363,
-      "column": 15,
-      "callee": "fetch",
-      "fingerprint": "67ea2c5c61f54956",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#7fc271dfe8d524b9#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 383,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "7fc271dfe8d524b9",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts#fetch#bb091d5ed9d9711a#1",
-      "path": "projects/active/factorywager/registry/packages/r2-storage/src/r2-storage.ts",
-      "line": 512,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "bb091d5ed9d9711a",
-      "classification": "unowned",
-      "owner": "projects/active/factorywager/registry",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "column": 16,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "5cd84cd6a1341552",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/factorywager/registry/packages/r2-storage",
+      "reason": "Account-bound R2 boundary owns exact HTTPS authority, bucket/key/query validation, scoped Authorization, direct routing, protocol policy, deadlines, response bounds, offline denial, and unsafe write replay classification."
     },
     {
       "id": "projects/active/factorywager/registry/packages/user-profile/src/core.ts#fetch#c124a040ae28e1ee#1",
