@@ -233,9 +233,6 @@
       "bun run lint"
     ]
   },
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
-  },
   "trustedDependencies": [
     "snyk"
   ]
