@@ -273,6 +273,8 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
+!projects/active/dashboards/enterprise-dashboard/src/server/auth/
+!projects/active/dashboards/enterprise-dashboard/src/server/auth/**
 !functions/api/auth/
 !functions/api/auth/**
 !functions-bun-only/api/auth/

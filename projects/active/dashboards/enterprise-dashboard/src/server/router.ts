@@ -17,8 +17,9 @@
  */
 
 import { peek } from "bun";
-import type { AuthContext } from "../types";
-import { getRoutePermission, hasPermission } from "./auth/permissions";
+import type { RouteGroup } from "./auth/permissions";
+export { checkRouteGuard } from "./auth/route-guard";
+export type { RouteGuardContext, RouteGuardResult } from "./auth/route-guard";
 
 const BASE_URL = "http://localhost"; // URLPattern needs base for relative paths
 
@@ -393,14 +394,14 @@ export const routeGroups = {
 
   // Test runner routes (require system:read permission)
   tests: new URLPattern("/api/tests/*", BASE_URL),
-} as const;
+} as const satisfies Record<RouteGroup, URLPattern>;
 
 // =============================================================================
 // Type Definitions
 // =============================================================================
 
 export type RoutePattern = keyof typeof patterns;
-export type RouteGroup = keyof typeof routeGroups;
+export type { RouteGroup } from "./auth/permissions";
 
 export interface RouteMatch<T extends RoutePattern> {
   pattern: T;
@@ -671,82 +672,6 @@ export function listRouteGroups() {
     name,
     pathname: pattern.pathname,
   }));
-}
-
-// =============================================================================
-// Middleware-style Route Guards
-// =============================================================================
-
-export interface RouteGuardContext {
-  url: URL;
-  method: string;
-  group: RouteGroup | null;
-  isDevelopment: boolean;
-  auth?: AuthContext;
-}
-
-export type RouteGuardResult =
-  | { allowed: true }
-  | { allowed: false; status: number; message: string };
-
-/**
- * Check if a route should be allowed based on environment/permissions
- */
-export function checkRouteGuard(ctx: RouteGuardContext): RouteGuardResult {
-  const { group, method, isDevelopment, auth } = ctx;
-
-  // Debug routes only in development
-  if (group === "debug" && !isDevelopment) {
-    return {
-      allowed: false,
-      status: 404,
-      message: "Debug routes disabled in production",
-    };
-  }
-
-  // Get required permission for this route group and method
-  const requiredPermission = group ? getRoutePermission(group, method) : null;
-
-  // If permission is required, check authentication and authorization
-  if (requiredPermission) {
-    // Must be authenticated
-    if (!auth?.isAuthenticated) {
-      return {
-        allowed: false,
-        status: 401,
-        message: "Authentication required",
-      };
-    }
-
-    // Must have required permission (admin bypasses all checks)
-    if (!hasPermission(auth.permissions, requiredPermission)) {
-      return {
-        allowed: false,
-        status: 403,
-        message: `Permission '${requiredPermission}' required`,
-      };
-    }
-  }
-
-  // Admin routes require admin permission (even in development for security)
-  if (group === "admin") {
-    if (!auth?.isAuthenticated) {
-      return {
-        allowed: false,
-        status: 401,
-        message: "Authentication required",
-      };
-    }
-    if (!auth.isAdmin) {
-      return {
-        allowed: false,
-        status: 403,
-        message: "Admin access required",
-      };
-    }
-  }
-
-  return { allowed: true };
 }
 
 // =============================================================================
