@@ -10,10 +10,18 @@ credentials or remote access. Runtime flag semantics remain owned by
 
 ## Area map
 
-| Area                                                   | Owner                                                |
-| ------------------------------------------------------ | ---------------------------------------------------- |
-| Strict wire parsing and exact invocation authorization | [`capability-manifest.ts`](./capability-manifest.ts) |
-| MCP, skill, tool, and preload inventory ratchets       | [`agent-inventory.ts`](./agent-inventory.ts)         |
+| Area                                                   | Owner                                                          |
+| ------------------------------------------------------ | -------------------------------------------------------------- |
+| Strict wire parsing and exact invocation authorization | [`capability-manifest.ts`](./capability-manifest.ts)           |
+| MCP, skill, tool, and preload inventory ratchets       | [`agent-inventory.ts`](./agent-inventory.ts)                   |
+| Parse-authorize-before-effect execution                | [`authorized-execution.ts`](./authorized-execution.ts)         |
+| Executable consumer ownership and effect ratchet       | [`agent-consumer-inventory.ts`](./agent-consumer-inventory.ts) |
 
-Consumer migration is explicit: a caller parses one manifest and invocation,
-then refuses execution unless `authorizeAgentInvocation` returns `ok: true`.
+Consumer migration is explicit: `executeAuthorizedAgentInvocation` parses an
+unknown manifest and invocation, refuses unknown controls or undeclared
+capabilities, and only then enters an injected effect callback. The consumer
+inventory covers executable shebang files plus configured MCP launches; helper
+modules and declarative skill definition documents are not misreported as
+entrypoints. Source rows classify direct effect calls. Imported helper effects
+remain debt owned by the executable row until that row adopts the guarded
+boundary.

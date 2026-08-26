@@ -8,6 +8,11 @@ import {
   calculateAgentInventoryRatchets,
   readAgentEntrypointInventory,
 } from '../lib/agents/agent-inventory.ts';
+import {
+  agentConsumerInventoryIssues,
+  readAgentExecutableEntrypoints,
+  summarizeAgentConsumers,
+} from '../lib/agents/agent-consumer-inventory.ts';
 import { resolvePath } from '../lib/path-bun.ts';
 
 async function main(): Promise<void> {
@@ -19,7 +24,10 @@ async function main(): Promise<void> {
     return;
   }
   const root = resolvePath(import.meta.dir, '..');
-  const issues = await agentInventoryIssues(root);
+  const issues = [
+    ...(await agentInventoryIssues(root)),
+    ...(await agentConsumerInventoryIssues(root)),
+  ];
   if (issues.length > 0) {
     process.stderr.write(
       `${JSON.stringify({ issues, actual: calculateAgentInventoryRatchets(await readAgentEntrypointInventory(root)) }, null, 2)}\n`
@@ -27,7 +35,8 @@ async function main(): Promise<void> {
     process.exitCode = 1;
     return;
   }
-  process.stdout.write('guard:agents:check ok\n');
+  const summary = summarizeAgentConsumers(await readAgentExecutableEntrypoints(root));
+  process.stdout.write(`guard:agents:check ok ${JSON.stringify(summary)}\n`);
 }
 
 if (import.meta.main) await main();

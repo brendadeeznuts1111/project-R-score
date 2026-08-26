@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": ["bun"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "files": [
+    "agent-authorized-execution.test.ts",
+    "agent-consumer-inventory.test.ts",
+    "../lib/agents/capability-manifest.ts",
+    "../lib/agents/agent-inventory.ts",
+    "../lib/agents/authorized-execution.ts",
+    "../lib/agents/agent-consumer-inventory.ts",
+    "../scripts/agent-registry-live-smoke.ts"
+  ]
+}

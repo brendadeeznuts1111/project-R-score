@@ -27,4 +27,9 @@ module, and raw samples. Timing variance alone cannot change
 
 `bun run guard:agents:check` ratchets workspace MCP servers, Project R skills,
 skill agent descriptors, agent/MCP entrypoint files, browser preload consumers,
-the four preload concepts, and the focused authorization tests.
+the four preload concepts, and the focused authorization tests. It separately
+ratchets 59 executable consumer surfaces (configured MCP launches, first-party
+agent/MCP shebang files, and local-skill shebang files). New surfaces or changed
+direct-effect classifications fail the exact digest until an owner reviews the
+row. `executeAuthorizedAgentInvocation` is the reusable before-effect boundary;
+the local registry smoke is the first migrated consumer.

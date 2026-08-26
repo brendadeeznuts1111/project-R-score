@@ -15,59 +15,97 @@ import {
   REGISTRY_PRESETS,
   resolveRegistryPackage,
 } from '../lib/operator-research/registry-desk.ts';
+import { executeAuthorizedAgentInvocation } from '../lib/agents/authorized-execution.ts';
 
 const pkg = Bun.argv[2] || 'event-store';
 const base = REGISTRY_PRESETS.local.url;
 
-try {
-  const ping = await fetch(new URL('/-/ping', base), { signal: AbortSignal.timeout(1500) });
-  if (!ping.ok) {
-    console.error(`live-smoke: ${base}-/ping → HTTP ${ping.status}`);
-    process.exit(1);
-  }
-} catch (err) {
-  console.error(
-    `live-smoke: ${base} unreachable — start with: bun run serve:public\n`,
-    err instanceof Error ? err.message : err
-  );
-  process.exit(1);
-}
+const manifest = {
+  version: 1,
+  identityId: 'tool.agent-registry-live-smoke',
+  kind: 'tool',
+  profile: 'development',
+  expiresAt: '2100-01-01T00:00:00.000Z',
+  controls: [],
+  networkRouteIds: ['route.registry-local-loopback'],
+  registries: [{ plane: 'metadata-read', origin: new URL(base).origin }],
+  channelAliases: [],
+  contentRefs: [],
+} as const;
 
-const detail = await resolveRegistryPackage(pkg, {
-  live: true,
-  preset: 'local',
-  timeoutMs: 4000,
-});
+const invocation = {
+  identityId: 'tool.agent-registry-live-smoke',
+  profile: 'development',
+  command: 'runtime',
+  argv: [],
+  environment: {},
+  bunfig: {},
+  request: {},
+  networkRouteIds: ['route.registry-local-loopback'],
+  registries: [{ plane: 'metadata-read', origin: new URL(base).origin }],
+  channelAliases: [],
+  contentRefs: [],
+} as const;
 
-if (!detail) {
-  console.error(`live-smoke: no detail for ${pkg}`);
-  process.exit(1);
-}
+await executeAuthorizedAgentInvocation({
+  manifest,
+  invocation,
+  effects: {
+    async execute() {
+      try {
+        const ping = await fetch(new URL('/-/ping', base), {
+          signal: AbortSignal.timeout(1500),
+        });
+        if (!ping.ok) {
+          console.error(`live-smoke: ${base}-/ping → HTTP ${ping.status}`);
+          process.exit(1);
+        }
+      } catch (err) {
+        console.error(
+          `live-smoke: ${base} unreachable — start with: bun run serve:public\n`,
+          err instanceof Error ? err.message : err
+        );
+        process.exit(1);
+      }
 
-console.log(
-  JSON.stringify(
-    {
-      name: detail.name,
-      source: detail.source,
-      selectedVersion: detail.selectedVersion,
-      latest: detail.latest,
-      liveError: detail.liveError ?? null,
-      hasReadme: !!detail.readme,
-      preset: detail.preset,
+      const detail = await resolveRegistryPackage(pkg, {
+        live: true,
+        preset: 'local',
+        timeoutMs: 4000,
+      });
+
+      if (!detail) {
+        console.error(`live-smoke: no detail for ${pkg}`);
+        process.exit(1);
+      }
+
+      console.log(
+        JSON.stringify(
+          {
+            name: detail.name,
+            source: detail.source,
+            selectedVersion: detail.selectedVersion,
+            latest: detail.latest,
+            liveError: detail.liveError ?? null,
+            hasReadme: !!detail.readme,
+            preset: detail.preset,
+          },
+          null,
+          2
+        )
+      );
+
+      if (detail.liveError) {
+        console.error('live-smoke: live path failed (snapshot returned); see liveError above');
+        process.exit(2);
+      }
+
+      if (detail.source !== 'live' && detail.source !== 'live+snapshot') {
+        console.error(`live-smoke: unexpected source=${detail.source}`);
+        process.exit(1);
+      }
+
+      console.error('live-smoke: OK');
     },
-    null,
-    2
-  )
-);
-
-if (detail.liveError) {
-  console.error('live-smoke: live path failed (snapshot returned); see liveError above');
-  process.exit(2);
-}
-
-if (detail.source !== 'live' && detail.source !== 'live+snapshot') {
-  console.error(`live-smoke: unexpected source=${detail.source}`);
-  process.exit(1);
-}
-
-console.error('live-smoke: OK');
+  },
+});
