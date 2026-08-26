@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T13:56:27.804Z",
+  "generatedAt": "2026-08-26T14:12:38.152Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -2917,26 +2917,30 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 9,
+        "references": 19,
         "constructors": {
-          "as": 0,
+          "as": 9,
           "try": 0,
-          "parse": 1
+          "parse": 2
         },
         "guards": 0,
         "files": [
           "lib/agents/capability-manifest.ts",
-          "lib/core/core-errors.ts"
+          "lib/core/core-errors.ts",
+          "lib/security/preload-startup-discovery.ts",
+          "lib/security/preload-startup-ownership.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 9,
-            "constructionCalls": 1,
+            "references": 19,
+            "constructionCalls": 11,
             "guardCalls": 0,
             "files": [
               "lib/agents/capability-manifest.ts",
-              "lib/core/core-errors.ts"
+              "lib/core/core-errors.ts",
+              "lib/security/preload-startup-discovery.ts",
+              "lib/security/preload-startup-ownership.ts"
             ]
           },
           "projects": {
@@ -3371,7 +3375,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 63,
+        "references": 65,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3381,6 +3385,7 @@
         "files": [
           "lib/content-store/channel-alias-store.ts",
           "lib/content-store/content-contract.ts",
+          "lib/content-store/content-retention-policy.ts",
           "lib/content-store/content-rights-store.ts",
           "lib/content-store/local-content-store.ts",
           "lib/content-store/memory-content-store.ts",
@@ -3392,12 +3397,13 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 63,
+            "references": 65,
             "constructionCalls": 8,
             "guardCalls": 0,
             "files": [
               "lib/content-store/channel-alias-store.ts",
               "lib/content-store/content-contract.ts",
+              "lib/content-store/content-retention-policy.ts",
               "lib/content-store/content-rights-store.ts",
               "lib/content-store/local-content-store.ts",
               "lib/content-store/memory-content-store.ts",
@@ -7224,7 +7230,7 @@
     },
     {
       "project": "projects/active/enterprise/fantasy42-fire22-registry",
-      "sourceFiles": 1119,
+      "sourceFiles": 1121,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7234,7 +7240,7 @@
     },
     {
       "project": "projects/active/utilities/bun-toml-secrets-editor",
-      "sourceFiles": 224,
+      "sourceFiles": 225,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7553,7 +7559,7 @@
     },
     {
       "project": "projects/active/factorywager",
-      "sourceFiles": 76,
+      "sourceFiles": 77,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
