@@ -9,6 +9,7 @@ import {
 import { netCheckRow } from '../lib/http/networking-report.ts';
 import { serveBindSnapshot } from '../lib/http/bun-server.ts';
 import {
+  buildNetworkingTargets,
   resolveRouteProbeBase,
   verifyTarget,
   type NetTarget,
@@ -17,6 +18,14 @@ import { createTestWorkspace } from './harness.ts';
 import { writeServePublicBindManifest } from '../lib/http/serve-public-bind.ts';
 
 describe('tools/verify-networking', () => {
+  test('external target inventory is opt-in', () => {
+    expect(buildNetworkingTargets(false).map(target => target.name)).toEqual([
+      'Health',
+      'Prediction report',
+    ]);
+    expect(buildNetworkingTargets(true).some(target => target.name === 'Bun docs')).toBe(true);
+  });
+
   test('buildNetworkingProofArtifact produces parseable proof JSON', () => {
     const rows = [
       netCheckRow({

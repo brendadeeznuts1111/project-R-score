@@ -2297,6 +2297,7 @@
     "check:networking": "bun tools/verify-networking.ts",
     "check:networking:save": "bun tools/verify-networking.ts --save",
     "check:networking:remote": "bun tools/verify-networking.ts --remote --save",
+    "check:networking:authority": "bun tools/verify-networking.ts --external --deep --authority-only --authority-host=bun.com --authority-path=/docs --authority-protocol=http2 --skip-write",
     "check:networking:pipe": "curl -sf http://127.0.0.1:3000/api/networking/script | bun run - --local-only",
     "check:networking:pipe:verified": "curl -sf http://127.0.0.1:3000/api/networking/script.meta | bun -e \"const m=await Bun.stdin.json();const p=Bun.spawn(['bash','-lc',m.pipeVerified],{stdout:'inherit',stderr:'inherit'});process.exit(await p.exited)\"",
     "check:release:pipe": "curl -sf http://127.0.0.1:3000/api/release/script | bun run -",

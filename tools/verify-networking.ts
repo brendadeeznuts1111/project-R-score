@@ -1,4 +1,7 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/bundler/esbuild#cli-api — --external
+// @updated --external · fixed v1.1.11 · 2024-06-01 · https://bun.com/blog/bun-v1.1.11
+// @verified --external · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/bundler/esbuild#cli-api
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @updated Bun.file · fixed v0.2.2 · 2022-10-27 · https://bun.com/blog/bun-v0.2.2
 // @updated Bun.file · changed v0.6.0 · 2023-05-16 · https://bun.com/blog/bun-v0.6.0
@@ -69,6 +72,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/http/server#reference — Server (fetch/reload/stop/…)
 import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
+import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
  * Multi-target Bun networking optimization suite.
  *
@@ -95,6 +99,8 @@ import { loadTelegramEnv } from '../lib/telegram/telegram-config.ts';
  *   bun tools/verify-networking.ts --routes-only     # tables via Bun.inspect.table
  *   bun tools/verify-networking.ts --routes-only --json   # machine JSON + tables.* strings
  *   bun tools/verify-networking.ts --skip-write
+ *   bun tools/verify-networking.ts --external       # remote targets (alias: --remote)
+ *   bun tools/verify-networking.ts --external --authority-only --authority-host=bun.com --deep
  *   # Human tables: omit --json. JSON still embeds Bun.inspect.table under .tables
  *   bun --fetch-preconnect https://api.elections.kalshi.com:443 tools/verify-networking.ts
  */
@@ -137,6 +143,19 @@ import {
   type RouteProbeResult,
   type RouteProbeRow,
 } from '../lib/http/networking-report.ts';
+import {
+  BUN_1_4_DNS_DOCS,
+  BUN_1_4_FETCH_PROTOCOL_DOCS,
+  RFC_3986_HOST_DOCS,
+  RFC_5952_PORT_DOCS,
+  buildPinnedHttpsPlan,
+  probePinnedHttps,
+  resolveAuthorityAddresses,
+  type AuthorityAddressFamily,
+  type BunDnsBackend,
+  type FetchProtocol,
+  type PinnedHttpsProbe,
+} from '../lib/http/ip-authority.ts';
 
 export type {
   NetCheckRow,
@@ -168,27 +187,64 @@ const CANONICAL = {
   serverStop: 'https://bun.com/docs/runtime/http/server#server-stop',
   websockets: 'https://bun.com/docs/runtime/http/websockets#start-a-websocket-server',
   tls: 'https://bun.com/docs/runtime/http/tls',
+  bun14Dns: BUN_1_4_DNS_DOCS,
+  bun14FetchProtocol: BUN_1_4_FETCH_PROTOCOL_DOCS,
+  uriHost: RFC_3986_HOST_DOCS,
+  ipv6Port: RFC_5952_PORT_DOCS,
 } as const;
 
 // ── CLI ────────────────────────────────────────────────────────────────────
 
-const args = process.argv.slice(2);
+const args = import.meta.main
+  ? applyUnknownLongOptionGuardFor('check:networking', process.argv.slice(2))
+  : [];
 const has = (n: string) => args.includes(`--${n}`);
 const flag = (n: string): string | undefined => {
   const hit = args.find(a => a.startsWith(`--${n}=`));
   return hit?.slice(n.length + 3);
 };
+const positiveIntegerFlag = (name: string, fallback: number): number => {
+  const raw = flag(name);
+  if (raw == null) return fallback;
+  const value = Number(raw);
+  if (!Number.isSafeInteger(value) || value < 1) {
+    throw new TypeError(`--${name} must be a positive integer`);
+  }
+  return value;
+};
 
 const EXPLICIT_LOCAL_BASE = flag('base') || Bun.env.HEALTH_URL || Bun.env.BASE_URL;
 let LOCAL_BASE = EXPLICIT_LOCAL_BASE || 'http://127.0.0.1:3000';
 const LOCAL_ONLY = has('local-only');
+const EXTERNAL = has('external') || has('remote');
 const ROUTES = has('routes') || has('routes-only') || has('local-only');
 const ROUTES_ONLY = has('routes-only');
 const SKIP_WRITE = has('skip-write');
 const SHOULD_SAVE = has('save');
 const AS_JSON = has('json');
-const TIMEOUT_MS = Number(flag('timeout-ms') ?? 10_000);
+const DEEP = has('deep');
+const AUTHORITY_ONLY = has('authority-only');
+const TIMEOUT_MS = positiveIntegerFlag('timeout-ms', 10_000);
 const BOX_INNER = 62;
+
+const HELP = `Usage: bun tools/verify-networking.ts [options]
+
+Safe default: local targets only. External DNS and HTTP require --external.
+
+  --external, --remote             Include remote targets (remote is a compatibility alias)
+  --local-only                     Local targets and routes; conflicts with external mode
+  --authority-host=<name>          Resolve a registered name and connect through its literal IP
+  --authority-only                 Skip the regular target suite (requires --authority-host)
+  --authority-family=4|6|any       Restrict address family (default: any with address fallback)
+  --dns-backend=<backend>          c-ares | system | getaddrinfo | libc
+  --dns-server=<ip[:port]>         Dedicated node:dns Resolver; BUN_DNS_SERVER is unsupported
+  --authority-protocol=<protocol>  auto | http1.1 | http2
+  --authority-port=<port>          HTTPS port (default: 443)
+  --authority-path=</path>         Request path (default: /)
+  --deep                           Print every DNS → URI → TLS → HTTP layer and address attempt
+  --json                           Structured output (always includes deep authority evidence)
+  --timeout-ms=<ms>                Per-request timeout (default: 10000)
+  --help                           Show this help without running probes`;
 
 export async function resolveRouteProbeBase(
   explicitBase: string | undefined = EXPLICIT_LOCAL_BASE,
@@ -241,10 +297,10 @@ export function buildLocalNetworkingTargets(base: string = LOCAL_BASE): NetTarge
   ];
 }
 
-function buildTargets(): NetTarget[] {
+export function buildNetworkingTargets(includeExternal = EXTERNAL): NetTarget[] {
   const out: NetTarget[] = buildLocalNetworkingTargets();
 
-  if (LOCAL_ONLY) return out;
+  if (!includeExternal) return out;
 
   out.push(
     {
@@ -306,6 +362,63 @@ function buildTargets(): NetTarget[] {
   }
 
   return out;
+}
+
+function parseAuthorityFamily(value: string | undefined): AuthorityAddressFamily {
+  if (value == null || value === 'any' || value === '0') return 0;
+  if (value === '4') return 4;
+  if (value === '6') return 6;
+  throw new TypeError('--authority-family must be 4, 6, or any');
+}
+
+function parseDnsBackend(value: string | undefined): BunDnsBackend | undefined {
+  if (value == null) return undefined;
+  if (value === 'c-ares' || value === 'system' || value === 'getaddrinfo' || value === 'libc') {
+    return value;
+  }
+  throw new TypeError('--dns-backend must be c-ares, system, getaddrinfo, or libc');
+}
+
+function parseFetchProtocol(value: string | undefined): FetchProtocol {
+  if (value == null || value === 'auto') return 'auto';
+  if (value === 'http1.1' || value === 'http2') return value;
+  throw new TypeError('--authority-protocol must be auto, http1.1, or http2');
+}
+
+export async function runAuthorityProbe(options: {
+  hostname: string;
+  path?: string;
+  port?: number;
+  family?: AuthorityAddressFamily;
+  backend?: BunDnsBackend;
+  dnsServer?: string;
+  protocol?: FetchProtocol;
+  timeoutMs?: number;
+}): Promise<{
+  addresses: Awaited<ReturnType<typeof resolveAuthorityAddresses>>;
+  attempts: PinnedHttpsProbe[];
+  probe: PinnedHttpsProbe;
+}> {
+  const addresses = await resolveAuthorityAddresses(options.hostname, {
+    family: options.family,
+    backend: options.backend,
+    dnsServer: options.dnsServer,
+  });
+  if (!addresses.length) throw new Error(`no matching address resolved for ${options.hostname}`);
+  const attempts: PinnedHttpsProbe[] = [];
+  for (const address of addresses) {
+    const plan = buildPinnedHttpsPlan({
+      hostname: options.hostname,
+      address: address.address,
+      port: options.port,
+      path: options.path,
+      protocol: options.protocol,
+    });
+    const attempt = await probePinnedHttps(plan, { timeoutMs: options.timeoutMs });
+    attempts.push(attempt);
+    if (attempt.ok) return { addresses, attempts, probe: attempt };
+  }
+  return { addresses, attempts, probe: attempts.at(-1)! };
 }
 
 // ── Row model (types live in lib/http/networking-report.ts) ────────────────
@@ -515,7 +628,7 @@ export async function runNetworkingSuite(
     skipWrite?: boolean;
   } = {}
 ): Promise<{ rows: NetCheckRow[]; targets: NetTarget[] }> {
-  const targets = opts.targets ?? buildTargets();
+  const targets = opts.targets ?? buildNetworkingTargets();
   const rows: NetCheckRow[] = [];
   for (const t of targets) {
     rows.push(...(await verifyTarget(t, { skipWrite: opts.skipWrite })));
@@ -612,6 +725,20 @@ export async function probePublicRoutes(
 // ── Render (Bun.inspect.custom + inspect.table) ────────────────────────────
 
 async function main(): Promise<void> {
+  if (has('help') || has('hlp')) {
+    console.log(HELP);
+    return;
+  }
+  if (LOCAL_ONLY && EXTERNAL) {
+    throw new Error('--local-only cannot be combined with --external or --remote');
+  }
+  const authorityHost = flag('authority-host');
+  if (AUTHORITY_ONLY && !authorityHost) {
+    throw new Error('--authority-only requires --authority-host=<registered-name>');
+  }
+  if (authorityHost && !EXTERNAL) {
+    throw new Error('--authority-host performs live DNS/TLS work and requires --external');
+  }
   if (ROUTES_ONLY) {
     LOCAL_BASE = await resolveRouteProbeBase();
   }
@@ -620,7 +747,7 @@ async function main(): Promise<void> {
 
   let rows: NetCheckRow[] = [];
   let targets: NetTarget[] = [];
-  if (!ROUTES_ONLY) {
+  if (!ROUTES_ONLY && !AUTHORITY_ONLY) {
     const suite = await runNetworkingSuite({ skipWrite: SKIP_WRITE });
     rows = suite.rows;
     targets = suite.targets;
@@ -633,10 +760,24 @@ async function main(): Promise<void> {
     routeReport = new RouteProbeReport(routeProbe);
   }
 
+  const authority = authorityHost
+    ? await runAuthorityProbe({
+        hostname: authorityHost,
+        path: flag('authority-path'),
+        port: positiveIntegerFlag('authority-port', 443),
+        family: parseAuthorityFamily(flag('authority-family')),
+        backend: parseDnsBackend(flag('dns-backend')),
+        dnsServer: flag('dns-server'),
+        protocol: parseFetchProtocol(flag('authority-protocol')),
+        timeoutMs: TIMEOUT_MS,
+      })
+    : null;
+
   const netReport =
     rows.length > 0
       ? new NetworkingChecksReport(rows, {
           base: LOCAL_BASE,
+          external: EXTERNAL,
           bun: Bun.version,
           revision: Bun.revision || 'unknown',
         })
@@ -686,6 +827,7 @@ async function main(): Promise<void> {
             : null,
           routeReport: routeJson,
           routeCatalog: publicRouteCatalog(),
+          authority,
           canonical: CANONICAL,
         },
         null,
@@ -697,6 +839,7 @@ async function main(): Promise<void> {
     console.log('║  Bun Networking Optimization — Multi-Target + Routes                 ║');
     console.log(boxLine(`Bun:  ${Bun.version} / ${(Bun.revision || 'unknown').slice(0, 8)}`));
     console.log(boxLine(`Base: ${LOCAL_BASE.slice(0, BOX_INNER - 6)}`));
+    console.log(boxLine(`External: ${EXTERNAL ? 'enabled' : 'disabled (pass --external)'}`));
     console.log(boxLine(`Targets: ${targets.length}`));
     console.log(boxLine(`Routes:  ${routeProbe?.catalog.length ?? 0}`));
     console.log('╚══════════════════════════════════════════════════════════════════════╝');
@@ -713,6 +856,30 @@ async function main(): Promise<void> {
     if (routeReport) {
       console.log('');
       logDepth(routeReport);
+    }
+
+    if (authority) {
+      const { probe } = authority;
+      console.log(`\nIP-authority probe: ${probe.ok ? 'PASS' : 'FAIL'}`);
+      console.log(
+        `  DNS:       ${authority.addresses.map(row => `${row.address} (IPv${row.family}, ${row.source})`).join(', ')}`
+      );
+      console.log(`  connect:   ${probe.plan.connectUrl}`);
+      console.log(`  TLS SNI:   ${probe.plan.tlsServerName}`);
+      console.log(`  HTTP Host: ${probe.plan.httpAuthority}`);
+      console.log(`  redirect:  ${probe.plan.redirect}`);
+      console.log(`  protocol:  ${probe.plan.protocol}`);
+      console.log(
+        `  response:  ${probe.status ?? 'ERR'} in ${probe.elapsedMs.toFixed(1)}ms${probe.error ? ` — ${probe.error}` : ''}`
+      );
+      if (DEEP) {
+        console.log(`  layers:    DNS → IP URI → TLS SNI/ALPN → HTTP authority → manual redirect`);
+        console.log(
+          `  attempts:  ${authority.attempts.map(attempt => `${attempt.plan.address}=${attempt.status ?? 'ERR'}`).join(', ')}`
+        );
+        console.log(`  location:  ${probe.location ?? '—'}`);
+        console.log(`  media:     ${probe.contentType ?? '—'}`);
+      }
     }
 
     console.log(
@@ -762,7 +929,7 @@ async function main(): Promise<void> {
     if (!AS_JSON) console.log(`\n💾 Proof saved to ${NETWORKING_PROOF_PATH}`);
   }
 
-  if (failed > 0 || routeCritFailed > 0) process.exit(1);
+  if (failed > 0 || routeCritFailed > 0 || authority?.probe.ok === false) process.exit(1);
   if (routeFailed > 0 && has('strict-routes')) process.exit(1);
 }
 
@@ -788,7 +955,7 @@ export async function runNetworkingVerification(opts: {
   proofObj: { global: { checksPassed: number; checksTotal: number } };
 }> {
   const base = opts.base ?? LOCAL_BASE;
-  const targets = buildTargets();
+  const targets = buildNetworkingTargets(Boolean(opts.remote));
   const { rows } = await runNetworkingSuite({ skipWrite: !opts.saveProof, targets });
   const hard = rows.filter(r => r.status === 'PASS' || r.status === 'FAIL');
   const checksPassed = hard.filter(r => r.status === 'PASS').length;

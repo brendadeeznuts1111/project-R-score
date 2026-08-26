@@ -2481,6 +2481,30 @@ export const VERIFY_INSTALL_ENV_ALLOWED_LONG = ['json', 'save'] as const;
 /** § — verify:bun-runtime-nits (`tools/verify-bun-runtime-nits.ts`) — audit split */
 export const VERIFY_BUN_RUNTIME_NITS_ALLOWED_LONG = ['save'] as const;
 
+/** §2.7.1 — check:networking (`tools/verify-networking.ts`) */
+export const CHECK_NETWORKING_ALLOWED_LONG = [
+  'authority-family',
+  'authority-host',
+  'authority-only',
+  'authority-path',
+  'authority-port',
+  'authority-protocol',
+  'base',
+  'deep',
+  'dns-backend',
+  'dns-server',
+  'external',
+  'json',
+  'local-only',
+  'remote',
+  'routes',
+  'routes-only',
+  'save',
+  'skip-write',
+  'strict-routes',
+  'timeout-ms',
+] as const;
+
 /** § — machine:bunfig:ensure (`scripts/ensure-machine-bunfig.ts`) — audit split */
 export const MACHINE_BUNFIG_ENSURE_ALLOWED_LONG = ['check', 'overwrite', 'overwrite-link'] as const;
 
@@ -2827,7 +2851,8 @@ export type AllowedLongCliName =
   | 'ops:seed:partners'
   | 'ops:seed:tenants'
   | 'ops:seed:dod'
-  | 'ops:seed:prediction';
+  | 'ops:seed:prediction'
+  | 'check:networking';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -3161,6 +3186,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'ops:seed:tenants': OPS_SEED_TENANTS_ALLOWED_LONG,
   'ops:seed:dod': OPS_SEED_DOD_ALLOWED_LONG,
   'ops:seed:prediction': OPS_SEED_PREDICTION_ALLOWED_LONG,
+  'check:networking': CHECK_NETWORKING_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using ALLOWED_LONG_REGISTRY[cliName]. */
