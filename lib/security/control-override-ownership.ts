@@ -46,7 +46,6 @@
 // @verified Bun.file · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/file-io
 import manifest from '../../config/control-override-ownership.json' with { type: 'json' };
 import schema from '../../config/control-override-ownership.schema.json' with { type: 'json' };
-import { resolvePath } from '../path-bun.ts';
 import {
   REGISTRY_PUBLISH_SOURCE_PRECEDENCE,
   REGISTRY_READ_SOURCE_PRECEDENCE,
@@ -56,24 +55,12 @@ import {
   CONTROL_SOURCE_PRECEDENCE,
   RESERVED_UNOWNED_BUN_CONTROLS,
 } from './control-policy.ts';
+import { missingControlOverrideOwners } from './control-override-owner-files.ts';
+import type { ControlOverrideOwnershipIssue } from './control-override-ownership-types.ts';
+
+export type { ControlOverrideOwnershipIssue } from './control-override-ownership-types.ts';
 
 export const CONTROL_OVERRIDE_OWNERSHIP_MANIFEST = manifest;
-
-export interface ControlOverrideOwnershipIssue {
-  readonly code:
-    | 'schema-contract'
-    | 'source-precedence'
-    | 'registry-precedence'
-    | 'duplicate-control'
-    | 'control-drift'
-    | 'alias-drift'
-    | 'default-not-deny'
-    | 'reserved-drift'
-    | 'composite-denial-drift'
-    | 'duplicate-application-mode'
-    | 'missing-owner';
-  readonly detail: string;
-}
 
 function aliasKey(alias: {
   readonly source: string;
@@ -190,17 +177,15 @@ export async function controlOverrideOwnershipIssues(): Promise<
     applicationKeys.add(mode.key);
   }
 
-  const owners = new Set([
+  const owners = [
     manifest.policyOwner,
     ...manifest.controls.map(control => control.owner),
     ...manifest.compositeDenials.map(control => control.owner),
     ...manifest.reservedAuthoritySpellings.map(control => control.owner),
     ...manifest.applicationModes.map(control => control.owner),
-  ]);
-  for (const owner of owners) {
-    if (!(await Bun.file(resolvePath(import.meta.dir, '../..', owner)).exists())) {
-      issues.push({ code: 'missing-owner', detail: owner });
-    }
+  ];
+  for (const owner of await missingControlOverrideOwners(owners)) {
+    issues.push({ code: 'missing-owner', detail: owner });
   }
 
   return issues;
