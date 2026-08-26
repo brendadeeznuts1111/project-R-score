@@ -841,7 +841,10 @@ export async function runReleaseGate(
   const allowedGenerated = new Set(
     target.requiredPackageFiles.map(path => `${target.packageDirectory}/${path}`)
   );
-  const unexpectedPackageFiles = [...packageUntracked].filter(path => !allowedGenerated.has(path));
+  const unexpectedPackageFiles = [...packageUntracked].filter(
+    path =>
+      !allowedGenerated.has(path) && !path.startsWith(`${target.packageDirectory}/node_modules/`)
+  );
   if (unexpectedPackageFiles.length > 0) {
     throw new Error(
       `release package has untracked build inputs/files: ${unexpectedPackageFiles.join(', ')}`

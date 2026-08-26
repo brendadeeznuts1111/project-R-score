@@ -40,7 +40,10 @@ function target(overrides: Partial<ReleaseTarget> = {}): ReleaseTarget {
     junitPath: 'tmp/releases/registry-client/junit.xml',
     expectedJunitFiles: ['tests/registry-sdk.test.ts'],
     sourceInputs: [
+      '.bun-version',
+      'bun.lock',
       'config/release-targets.json',
+      'package.json',
       'packages/registry-client/LICENSE',
       'packages/registry-client/README.md',
       'packages/registry-client/package.json',
