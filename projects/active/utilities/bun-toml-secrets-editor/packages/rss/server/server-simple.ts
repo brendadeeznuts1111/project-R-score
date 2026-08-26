@@ -1,5 +1,6 @@
 // src/server-simple.ts - Working RSS Optimizer with v1.3.7 features
 import { XMLParser } from "fast-xml-parser";
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 const parser = new XMLParser({
 	ignoreAttributes: false,
@@ -22,7 +23,7 @@ Bun.serve({
 				// v1.3.7: Headers preserve casing + preconnect optimization
 				fetch.preconnect(new URL(feedUrl).origin, { dns: true, tcp: true });
 
-				const response = await fetch(feedUrl, {
+        const response = await fetchTomlConfigured(feedUrl, {
 					headers: {
 						"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7)",
 						Accept: "application/rss+xml, application/atom+xml, */*",
@@ -96,7 +97,7 @@ Bun Version: ${Bun.version}
 				url.searchParams.get("url") || "https://news.ycombinator.com/rss";
 
 			try {
-				const response = await fetch(feedUrl);
+        const response = await fetchTomlConfigured(feedUrl);
 				const xml = await response.text();
 				const feed = parser.parse(xml);
 

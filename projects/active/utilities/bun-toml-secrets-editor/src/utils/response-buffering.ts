@@ -1,4 +1,5 @@
-import { dns, fetch, write } from "bun";
+import { dns, write } from "bun";
+import { fetchTomlConfigured } from "../http/configured-outbound.ts";
 
 /**
  * Response Buffering Utilities for bun-toml-secrets-editor
@@ -49,7 +50,7 @@ export async function optimizedFetch<T = any>(
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-      const response = await fetch(url, {
+      const response = await fetchTomlConfigured(url, {
         ...fetchOptions,
         signal: controller.signal,
         verbose: process.env.DEBUG === 'true'
@@ -121,7 +122,7 @@ export async function streamingFetch(
   onChunk: (chunk: Uint8Array) => void,
   options: RequestInit = {}
 ): Promise<void> {
-  const response = await fetch(url, options);
+  const response = await fetchTomlConfigured(url, options);
   
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -241,7 +242,7 @@ export async function downloadWithProgress(
   filename: string,
   onProgress?: (loaded: number, total: number) => void
 ): Promise<void> {
-  const response = await fetch(url);
+  const response = await fetchTomlConfigured(url);
   
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);

@@ -3,6 +3,7 @@
 // - 50% faster Buffer.from() with arrays
 // - 35% faster async/await
 // - Header casing preservation
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 import { handleFetchError } from "./errors/rss-errors.js";
 import { RSSProfiler } from "./profiling/rss-profiler.js";
@@ -25,7 +26,7 @@ export class RSSFetcherOptimized {
 			async () => {
 				try {
 					// v1.3.7: Headers preserve casing (critical for legacy RSS)
-					const response = await fetch(url, {
+          const response = await fetchTomlConfigured(url, {
 						headers: {
 							"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7)",
 							Accept: "application/rss+xml, application/atom+xml, */*",

@@ -2,6 +2,7 @@
 
 import { handleFetchError } from "../errors/rss-errors.js";
 import { RSSProfiler } from "../profiling/rss-profiler.js";
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 export class RSSFetcher {
 	private profiler = new RSSProfiler();
@@ -21,7 +22,7 @@ export class RSSFetcher {
 			async () => {
 				try {
 					// v1.3.7: Headers preserve casing (critical for legacy RSS)
-					const response = await fetch(url, {
+          const response = await fetchTomlConfigured(url, {
 						headers: {
 							"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7)",
 							Accept: "application/rss+xml, application/atom+xml, */*",

@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 /**
  * Bun-Native Connection Utilities
  * High-performance connections using Bun's native APIs
@@ -210,7 +211,7 @@ export class BunHttpClient {
 
 		for (let attempt = 0; attempt <= (retry.maxRetries ?? 3); attempt++) {
 			try {
-				const response = await fetch(url, options);
+        const response = await fetchTomlConfigured(url, options);
 
 				// Check if we should retry this status code
 				if (

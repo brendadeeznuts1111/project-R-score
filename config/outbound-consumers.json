@@ -1852,7 +1852,7 @@
     {
       "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/security-hardening-layer.ts#fetch#4f0d017dc055ac45#1",
       "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/security-hardening-layer.ts",
-      "line": 477,
+      "line": 462,
       "column": 14,
       "callee": "fetch",
       "fingerprint": "4f0d017dc055ac45",
@@ -3379,334 +3379,37 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/bunmark-cli.ts#fetch#78710adfe185ec4d#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/bunmark-cli.ts",
-      "line": 124,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "78710adfe185ec4d",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/bunmark-cli.ts#fetch#3004c45bce578c0a#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/bunmark-cli.ts",
-      "line": 177,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "3004c45bce578c0a",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/bunmark-dashboard.tsx#fetch#dc47f16500743b89#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/bunmark-dashboard.tsx",
-      "line": 57,
-      "column": 23,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/enterprise-dashboard.tsx#fetch#b98351e6e30b9f12#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/enterprise-dashboard.tsx",
-      "line": 65,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "b98351e6e30b9f12",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/enterprise-dashboard.tsx#fetch#3f0d990742fca987#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/enterprise-dashboard.tsx",
-      "line": 110,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "3f0d990742fca987",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/src/utils/s3-fetcher.ts#fetch#272bb0e20a7ea6ff#1",
       "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/src/utils/s3-fetcher.ts",
       "line": 47,
       "column": 16,
       "callee": "fetch",
       "fingerprint": "272bb0e20a7ea6ff",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun-connections.ts#fetch#d5dff05b688b626e#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun-connections.ts",
-      "line": 213,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "d5dff05b688b626e",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/utilities/bun-toml-secrets-editor/src/http/configured-outbound.ts#fetchPublicResource#23408cac35571e6d#1",
+      "path": "projects/active/utilities/bun-toml-secrets-editor/src/http/configured-outbound.ts",
+      "line": 63,
+      "column": 9,
+      "callee": "fetchPublicResource",
+      "fingerprint": "23408cac35571e6d",
+      "classification": "owned-policy-boundary",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Exact TOML storage, configured public-read, or fixed loopback boundary owns origin, method, credentials, redirects, route, protocol, DNS, deadline, replay, offline mode, and response bounds."
     },
     {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun.ts#fetch#d5dff05b688b626e#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun.ts",
-      "line": 125,
-      "column": 16,
-      "callee": "fetch",
-      "fingerprint": "d5dff05b688b626e",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-annotated.ts#fetch#42448a9f4775854c#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-annotated.ts",
-      "line": 101,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "42448a9f4775854c",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-annotated.ts#fetch#e5fb5c70e05431b2#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-annotated.ts",
-      "line": 117,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "e5fb5c70e05431b2",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts#fetch#42448a9f4775854c#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts",
-      "line": 30,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "42448a9f4775854c",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts#fetch#eb0d66a8fff3a6cd#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts",
-      "line": 36,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "eb0d66a8fff3a6cd",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts#fetch#0fdbaa8a830d3af9#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts",
-      "line": 62,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "0fdbaa8a830d3af9",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts#fetch#5dd1c67da5f040fb#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts",
-      "line": 84,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "5dd1c67da5f040fb",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts#fetch#6fd5a767a36b4cdd#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/bun137-features.ts",
-      "line": 102,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "6fd5a767a36b4cdd",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/url-handler.ts#fetch#1afe4963eaf5962a#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/url-handler.ts",
-      "line": 56,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "1afe4963eaf5962a",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/url-handler.ts#fetch#661883630ebcd552#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/url-handler.ts",
-      "line": 84,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "661883630ebcd552",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/url-handler.ts#fetch#43b4b132265b6826#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/core/utils/url-handler.ts",
-      "line": 126,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "43b4b132265b6826",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/profiler/integration/profile-rss-bridge.ts#fetch#4741b03c7de7db93#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/profiler/integration/profile-rss-bridge.ts",
-      "line": 298,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "4741b03c7de7db93",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/fetcher-v137.ts#fetch#70217aef86f76164#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/fetcher-v137.ts",
-      "line": 23,
-      "column": 25,
-      "callee": "fetch",
-      "fingerprint": "70217aef86f76164",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/fetcher-v137.ts#fetch#c5f7d8eefd79a70a#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/fetcher-v137.ts",
-      "line": 56,
-      "column": 25,
-      "callee": "fetch",
-      "fingerprint": "c5f7d8eefd79a70a",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/fetcher-v137.ts#fetch#577f6c28e3976a98#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/fetcher-v137.ts",
-      "line": 79,
-      "column": 25,
-      "callee": "fetch",
-      "fingerprint": "577f6c28e3976a98",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/rss-fetcher-optimized.ts#fetch#46b57c0b65c9ff5b#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/rss-fetcher-optimized.ts",
-      "line": 28,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "46b57c0b65c9ff5b",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/rss-fetcher-v137.ts#fetch#5184a6e4e57c1196#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/rss-fetcher-v137.ts",
-      "line": 86,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "5184a6e4e57c1196",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/rss-fetcher.ts#fetch#46b57c0b65c9ff5b#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/rss/rss-fetcher.ts",
-      "line": 24,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "46b57c0b65c9ff5b",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/server/server-simple.ts#fetch#21eea7c861385c1d#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/server/server-simple.ts",
-      "line": 25,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "21eea7c861385c1d",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/server/server-simple.ts#fetch#f219afbe7d4762b8#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/server/server-simple.ts",
-      "line": 99,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "f219afbe7d4762b8",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/rss-fetcher.ts#fetch#a44af8aa0e4ca933#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/rss-fetcher.ts",
-      "line": 14,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "a44af8aa0e4ca933",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/security/scanner.ts#fetch#caa8a7ee93c8b36d#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/packages/rss/src/security/scanner.ts",
-      "line": 171,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "caa8a7ee93c8b36d",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/runtime-flags-dashboard.tsx#fetch#dc47f16500743b89#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/runtime-flags-dashboard.tsx",
-      "line": 53,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/utilities/bun-toml-secrets-editor/src/http/configured-outbound.ts#fetchWithPolicy#1eeaa114ecd53df1#1",
+      "path": "projects/active/utilities/bun-toml-secrets-editor/src/http/configured-outbound.ts",
+      "line": 94,
+      "column": 9,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "1eeaa114ecd53df1",
+      "classification": "owned-policy-boundary",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Exact TOML storage, configured public-read, or fixed loopback boundary owns origin, method, credentials, redirects, route, protocol, DNS, deadline, replay, offline mode, and response bounds."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/src/http/storage-outbound.ts#fetchWithPolicy#010f5baf3a72c28f#1",
@@ -3716,41 +3419,8 @@
       "callee": "fetchWithPolicy",
       "fingerprint": "010f5baf3a72c28f",
       "classification": "owned-policy-boundary",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor/src/http/storage-outbound.ts",
-      "reason": "Typed storage boundary pins one configured HTTPS origin and exact method, scopes Authorization, denies redirects/proxy/TLS/protocol overrides, resolves public authority before connect, fails closed offline, bounds deadlines/responses, and marks PUT replay unsafe."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts#fetch#40ac2064988b46b7#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts",
-      "line": 52,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "40ac2064988b46b7",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts#fetch#d5dff05b688b626e#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts",
-      "line": 124,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "d5dff05b688b626e",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/utilities/bun-toml-secrets-editor/src/utils/response-buffering.ts",
-      "line": 244,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Exact TOML storage, configured public-read, or fixed loopback boundary owns origin, method, credentials, redirects, route, protocol, DNS, deadline, replay, offline mode, and response bounds."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/debugging/validate-perf.ts#fetch#0f9417fea81f22f9#1",
@@ -3759,9 +3429,9 @@
       "column": 22,
       "callee": "fetch",
       "fingerprint": "0f9417fea81f22f9",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/debugging/validate-perf.ts#fetch#0f9417fea81f22f9#2",
@@ -3770,9 +3440,9 @@
       "column": 20,
       "callee": "fetch",
       "fingerprint": "0f9417fea81f22f9",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/debugging/validate-perf.ts#fetch#13904076296771c9#1",
@@ -3781,9 +3451,9 @@
       "column": 23,
       "callee": "fetch",
       "fingerprint": "13904076296771c9",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/bun-v137-optimized-widget.ts#fetch#22b6b73d7f491d5b#1",
@@ -3792,9 +3462,9 @@
       "column": 30,
       "callee": "fetch",
       "fingerprint": "22b6b73d7f491d5b",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/bun-v137-optimized-widget.ts#fetch#ba827190b9d7d051#1",
@@ -3803,9 +3473,9 @@
       "column": 33,
       "callee": "fetch",
       "fingerprint": "ba827190b9d7d051",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/enhanced-widget.ts#fetch#69243ad5058711a7#1",
@@ -3814,9 +3484,9 @@
       "column": 27,
       "callee": "fetch",
       "fingerprint": "69243ad5058711a7",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/enhanced-widget.ts#fetch#af6e384d0adf5d26#1",
@@ -3825,9 +3495,9 @@
       "column": 27,
       "callee": "fetch",
       "fingerprint": "af6e384d0adf5d26",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/fetch-enhanced-widget.ts#fetch#823d8c93c2cfaddb#1",
@@ -3836,9 +3506,9 @@
       "column": 27,
       "callee": "fetch",
       "fingerprint": "823d8c93c2cfaddb",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/fetch-enhanced-widget.ts#fetch#5184a6e4e57c1196#1",
@@ -3847,9 +3517,9 @@
       "column": 27,
       "callee": "fetch",
       "fingerprint": "5184a6e4e57c1196",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/simple-widget.ts#fetch#22b6b73d7f491d5b#1",
@@ -3858,9 +3528,9 @@
       "column": 30,
       "callee": "fetch",
       "fingerprint": "22b6b73d7f491d5b",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/simple-widget.ts#fetch#ba827190b9d7d051#1",
@@ -3869,9 +3539,9 @@
       "column": 33,
       "callee": "fetch",
       "fingerprint": "ba827190b9d7d051",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/status-bar-widget.ts#fetch#1266fcee0f11ac9f#1",
@@ -3880,9 +3550,9 @@
       "column": 30,
       "callee": "fetch",
       "fingerprint": "1266fcee0f11ac9f",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/status-bar-widget.ts#fetch#d9261831a1ffc462#1",
@@ -3891,9 +3561,9 @@
       "column": 33,
       "callee": "fetch",
       "fingerprint": "d9261831a1ffc462",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/status-bar-widget.ts#fetch#e4728039fefcf024#1",
@@ -3902,9 +3572,9 @@
       "column": 30,
       "callee": "fetch",
       "fingerprint": "e4728039fefcf024",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/status-bar-widget.ts#fetch#71c638fd47e620ad#1",
@@ -3913,9 +3583,9 @@
       "column": 33,
       "callee": "fetch",
       "fingerprint": "71c638fd47e620ad",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/widget-debugger.ts#fetch#19f7f2de59e88c5c#1",
@@ -3924,9 +3594,9 @@
       "column": 28,
       "callee": "fetch",
       "fingerprint": "19f7f2de59e88c5c",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/tools/macos-widget/widget-debugger.ts#fetch#ba45b3cb69350cd1#1",
@@ -3935,9 +3605,9 @@
       "column": 28,
       "callee": "fetch",
       "fingerprint": "ba45b3cb69350cd1",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/bun-toml-secrets-editor/v1.3.7-features.tsx#fetch#1a729f094f34cff3#1",
@@ -3946,9 +3616,9 @@
       "column": 27,
       "callee": "fetch",
       "fingerprint": "1a729f094f34cff3",
-      "classification": "unowned",
-      "owner": "projects/active/utilities/bun-toml-secrets-editor",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "bun-toml-secrets-editor outbound authority",
+      "reason": "Reviewed Bun-native protocol or fetch-extension demonstration isolated from production transports; it intentionally exercises native fetch behavior without granting reusable outbound authority."
     },
     {
       "id": "projects/active/utilities/shortcut-registry/src/macros/extractMetaTags.ts#fetch#02080ee9df202934#1",

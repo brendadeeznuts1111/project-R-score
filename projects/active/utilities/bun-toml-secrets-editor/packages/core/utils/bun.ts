@@ -1,4 +1,5 @@
 // Bun utilities for Matrix Insights
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 export function randomUUIDv7(): string {
 	// Generate a UUID v7 (time-based) using Bun's crypto
@@ -122,7 +123,7 @@ export const consoleUtils = {
 // Network utilities
 export const network = {
 	async fetch(url: string, options?: RequestInit): Promise<Response> {
-		return await fetch(url, options);
+    return await fetchTomlConfigured(url, options);
 	},
 
 	async isPortAvailable(port: number): Promise<boolean> {

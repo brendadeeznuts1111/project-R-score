@@ -1,14 +1,19 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
-    "strict": true,
     "noEmit": true,
+    "strict": true,
     "skipLibCheck": true,
     "types": ["bun"]
   },
-  "files": ["src/http/storage-outbound.ts", "tests/storage-outbound.test.ts"]
+  "include": [
+    "src/http/configured-outbound.ts",
+    "src/http/storage-outbound.ts",
+    "tests/configured-outbound.test.ts",
+    "tests/storage-outbound.test.ts"
+  ]
 }

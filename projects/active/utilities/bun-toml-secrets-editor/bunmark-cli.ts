@@ -2,6 +2,7 @@
 
 // bunmark-cli.ts - Complete CLI for Bunmark Dashboard System
 import { spawn } from "bun";
+import { fetchTomlLoopback } from "./src/http/configured-outbound.ts";
 
 const CLI_VERSION = "1.3.7";
 const AVAILABLE_DASHBOARDS: Record<string, { file: string; port: number; description: string }> = {
@@ -121,7 +122,7 @@ async function showStatus() {
   
   for (const port of ports) {
     try {
-      const response = await fetch(`http://localhost:${port}/`);
+      const response = await fetchTomlLoopback(`http://localhost:${port}/`);
       if (response.ok) {
         const title = await response.text();
         const titleMatch = title.match(/<title>(.*?)<\/title>/);
@@ -174,7 +175,7 @@ async function testDashboard(name: string) {
   
   for (const endpoint of endpoints) {
     try {
-      const response = await fetch(`${baseUrl}${endpoint.path}`);
+      const response = await fetchTomlLoopback(`${baseUrl}${endpoint.path}`);
       const status = response.ok ? "✅" : "❌";
       const time = response.headers.get("x-response-time") || "N/A";
       console.info(`  ${status} ${endpoint.path.padEnd(15)} │ ${endpoint.description.padEnd(20)} │ ${time}`);
