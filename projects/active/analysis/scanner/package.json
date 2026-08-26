@@ -14,9 +14,10 @@
   },
   "scripts": {
     "scan": "bun run scan.ts",
-    "test": "bun test scan.test.ts",
+    "registry:plan": "bun run src/registry-plane.ts",
+    "test": "bun test scan.test.ts src/registry-plane.test.ts",
     "audit": "bun run scan.ts --audit",
-    "test:ci": "bun test --no-env-file scan.test.ts",
+    "test:ci": "bun test --no-env-file scan.test.ts src/registry-plane.test.ts",
     "scan:ci": "bun run --no-env-file scan.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
