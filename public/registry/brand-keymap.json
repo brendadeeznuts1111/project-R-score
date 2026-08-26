@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T14:12:38.152Z",
+  "generatedAt": "2026-08-26T14:22:56.496Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -7230,7 +7230,7 @@
     },
     {
       "project": "projects/active/enterprise/fantasy42-fire22-registry",
-      "sourceFiles": 1121,
+      "sourceFiles": 1122,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7425,7 +7425,7 @@
     },
     {
       "project": "projects/active/development/geelark",
-      "sourceFiles": 200,
+      "sourceFiles": 201,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
@@ -7445,7 +7445,7 @@
     },
     {
       "project": "projects/active/utilities/toml-cli",
-      "sourceFiles": 50,
+      "sourceFiles": 52,
       "brandedFiles": 0,
       "brands": [],
       "localBrandTypes": [],
