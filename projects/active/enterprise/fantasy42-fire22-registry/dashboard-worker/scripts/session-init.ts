@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
 /**
  * Session Initialization Script
  *
@@ -105,7 +107,7 @@ async function setupTokenFromEnv(): Promise<boolean> {
 
 async function testRegistryConnection(token: string): Promise<boolean> {
   try {
-    const response = await fetch(`${REGISTRY_URL}health`, {
+    const response = await fetchKnownScriptOutbound(`${REGISTRY_URL}health`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

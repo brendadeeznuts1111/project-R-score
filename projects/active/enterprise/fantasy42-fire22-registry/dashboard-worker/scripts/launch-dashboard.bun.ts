@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * Fire22 Dashboard Launch Script
  *
@@ -21,7 +23,7 @@ async function launchDashboard() {
     console.info('🔍 Checking if DashboardBridge is already running...');
 
     try {
-      const response = await fetch('http://localhost:3001/api/status');
+      const response = await fetchKnownScriptOutbound('http://localhost:3001/api/status');
       if (response.ok) {
         console.info('✅ DashboardBridge is already running on port 3001');
         openDashboard();
@@ -50,7 +52,7 @@ async function launchDashboard() {
 
     while (retries < maxRetries) {
       try {
-        const response = await fetch('http://localhost:3001/api/status');
+        const response = await fetchKnownScriptOutbound('http://localhost:3001/api/status');
         if (response.ok) {
           console.info('✅ DashboardBridge started successfully!');
           break;
@@ -101,7 +103,7 @@ async function showStatus() {
   console.info('!==!==!==!==!===');
 
   try {
-    const response = await fetch('http://localhost:3001/api/status');
+    const response = await fetchKnownScriptOutbound('http://localhost:3001/api/status');
     if (response.ok) {
       const status = await response.json();
       console.info(`🔌 Bridge Status: ${status.integrationStatus}`);

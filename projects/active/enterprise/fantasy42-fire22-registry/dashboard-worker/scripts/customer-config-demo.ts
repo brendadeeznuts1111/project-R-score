@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🔥 Fire22 Customer Configuration Demo Script
  *
@@ -215,7 +217,7 @@ class CustomerConfigDemo {
 
     for (const customer of this.testCustomers) {
       try {
-        const response = await fetch(`${this.baseUrl}/api/customer-config`, {
+        const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(customer),
@@ -243,7 +245,7 @@ class CustomerConfigDemo {
 
     try {
       // Test listing all customers
-      const response = await fetch(`${this.baseUrl}/api/customer-config/list`);
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config/list`);
       const result = await response.json();
 
       if (result.success) {
@@ -254,7 +256,7 @@ class CustomerConfigDemo {
       }
 
       // Test listing by agent
-      const agentResponse = await fetch(
+      const agentResponse = await fetchKnownScriptOutbound(
         `${this.baseUrl}/api/customer-config/list?agentId=BLAKEPPH`
       );
       const agentResult = await agentResponse.json();
@@ -290,7 +292,7 @@ class CustomerConfigDemo {
         },
       };
 
-      const response = await fetch(`${this.baseUrl}/api/customer-config/update`, {
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config/update`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -319,7 +321,7 @@ class CustomerConfigDemo {
     console.info('🔍 Testing Customer Configuration Retrieval...');
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/customer-config?customerId=CUST001`);
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config?customerId=CUST001`);
       const result = await response.json();
 
       if (result.success) {
@@ -346,7 +348,7 @@ class CustomerConfigDemo {
 
     try {
       // Test missing customer ID
-      const response = await fetch(`${this.baseUrl}/api/customer-config`);
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config`);
       const result = await response.json();
 
       if (!result.success && result.error === 'Customer ID is required') {
@@ -356,7 +358,7 @@ class CustomerConfigDemo {
       }
 
       // Test non-existent customer
-      const notFoundResponse = await fetch(
+      const notFoundResponse = await fetchKnownScriptOutbound(
         `${this.baseUrl}/api/customer-config?customerId=NONEXISTENT`
       );
       const notFoundResult = await notFoundResponse.json();
@@ -429,7 +431,7 @@ class CustomerConfigDemo {
     };
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/customer-config`, {
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCustomer),
@@ -453,7 +455,7 @@ class CustomerConfigDemo {
     console.info('📋 Listing Customer Configurations...');
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/customer-config/list`);
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config/list`);
       const result = await response.json();
 
       if (result.success) {
@@ -505,7 +507,7 @@ class CustomerConfigDemo {
     };
 
     try {
-      const response = await fetch(`${this.baseUrl}/api/customer-config/update`, {
+      const response = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customer-config/update`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

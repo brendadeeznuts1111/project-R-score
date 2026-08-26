@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * Changelog and RSS Accessibility Verification Script
  * Ensures department heads can access changelog and RSS feed with proper notifications
@@ -132,7 +134,7 @@ class DepartmentAccessVerifier {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-      const response = await fetch(this.sseUrl, {
+      const response = await fetchKnownScriptOutbound(this.sseUrl, {
         signal: controller.signal,
         headers: {
           Accept: 'text/event-stream',

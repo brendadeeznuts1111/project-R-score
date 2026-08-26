@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🏢 Fire22 Department Status Monitor
  *
@@ -178,7 +180,7 @@ class Fire22DepartmentStatusMonitor {
 
     try {
       // Check if deployed via HTTP request
-      const response = await fetch(deptUrl, {
+      const response = await fetchKnownScriptOutbound(deptUrl, {
         method: 'HEAD',
         signal: AbortSignal.timeout(5000),
       });
@@ -243,7 +245,7 @@ class Fire22DepartmentStatusMonitor {
     try {
       const startTime = Bun.nanoseconds();
 
-      const response = await fetch(deptUrl, {
+      const response = await fetchKnownScriptOutbound(deptUrl, {
         signal: AbortSignal.timeout(10000),
       });
 

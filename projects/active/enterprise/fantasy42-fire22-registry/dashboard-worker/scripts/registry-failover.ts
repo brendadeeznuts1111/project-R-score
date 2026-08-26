@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * Registry Failover Configuration for Fire22 Dashboard
  * Ensures continuous package availability with automatic failover
@@ -75,7 +77,7 @@ class RegistryFailoverManager {
     let online = false;
 
     try {
-      const response = await fetch(registry.healthCheckUrl, {
+      const response = await fetchKnownScriptOutbound(registry.healthCheckUrl, {
         signal: AbortSignal.timeout(registry.timeout),
         headers: {
           'User-Agent': 'Fire22-Dashboard/1.0.0',

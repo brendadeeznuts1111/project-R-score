@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 📡 RSS Feed Deployment Script
  *
@@ -173,7 +175,7 @@ class FeedDeployer {
     for (const feed of feedsToCheck) {
       const url = `${workerUrl}${feed}`;
       try {
-        const response = await fetch(url);
+        const response = await fetchKnownScriptOutbound(url);
         if (response.ok) {
           console.info(`✅ ${feed} - Status: ${response.status}`);
         } else {

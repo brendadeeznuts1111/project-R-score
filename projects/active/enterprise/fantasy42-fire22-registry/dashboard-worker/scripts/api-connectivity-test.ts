@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
 /**
  * 🔗 Fire22 API Connectivity Test
  *
@@ -125,7 +127,7 @@ class APIConnectivityTester {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), endpoint.timeout);
 
-      const response = await fetch(fullUrl, {
+      const response = await fetchKnownScriptOutbound(fullUrl, {
         method: endpoint.method,
         signal: controller.signal,
         headers: {
@@ -269,14 +271,14 @@ class APIConnectivityTester {
 
     try {
       // Test agent count consistency
-      const agentResponse = await fetch(`${this.baseUrl}/api/agents`);
+      const agentResponse = await fetchKnownScriptOutbound(`${this.baseUrl}/api/agents`);
       if (agentResponse.ok) {
         const agentData = await agentResponse.json();
         console.info(`✅ Agent count: ${agentData.length || 'N/A'}`);
       }
 
       // Test customer count consistency
-      const customerResponse = await fetch(`${this.baseUrl}/api/customers`);
+      const customerResponse = await fetchKnownScriptOutbound(`${this.baseUrl}/api/customers`);
       if (customerResponse.ok) {
         const customerData = await customerResponse.json();
         const activeCount = customerData.filter((c: any) => c.active).length;

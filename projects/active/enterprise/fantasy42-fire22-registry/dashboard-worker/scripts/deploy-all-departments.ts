@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🌐 Fire22 Bulk Department Deployment System
  *
@@ -315,7 +317,7 @@ class Fire22BulkDeployment {
       if (!deployment.url || options.dryRun) continue;
 
       try {
-        const response = await fetch(deployment.url, {
+        const response = await fetchKnownScriptOutbound(deployment.url, {
           method: 'HEAD',
           signal: AbortSignal.timeout(10000),
         });

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
 /**
  * 📊 Fire22 Real-Time Performance Monitor
  *
@@ -251,7 +253,7 @@ class RealTimeMonitor {
     const startTime = performance.now();
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchKnownScriptOutbound(url, {
         signal: AbortSignal.timeout(10000), // 10 second timeout
       });
 

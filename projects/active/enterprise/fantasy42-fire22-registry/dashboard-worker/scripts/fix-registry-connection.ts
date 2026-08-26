@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🔧 Fix Registry Connection Issues
  *
@@ -79,7 +81,7 @@ class RegistryConnectionManager {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), registry.timeout);
 
-      const response = await fetch(`${registry.url}@changesets/cli/latest`, {
+      const response = await fetchKnownScriptOutbound(`${registry.url}@changesets/cli/latest`, {
         method: 'HEAD',
         signal: controller.signal,
         headers: {
