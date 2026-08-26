@@ -36,6 +36,12 @@ surface. **Scale:** ~8k lines · ~23 modules — prefer the **Area map** first.
   _Ratchet_ → [`docs/harness/PROOF.md`](../../docs/harness/PROOF.md) ·
   [`docs/harness/FRESH-RERUN.md`](../../docs/harness/FRESH-RERUN.md) ·
   `bun run harness:status`
+- **Guard proof cluster** — scoped control, subprocess, network, Sports
+  integration, protocol, offline, content-store, channel, rights, agent, and
+  integration-type claims; row closure remains conservative in
+  [`guard-coverage.md`](../../docs/harness/tenants/guard-coverage.md)
+  _Ratchet_ → `bun test tests/harness-fresh-rerun-contract.test.ts` · each
+  claim's exact `bun run guard:*:check` fresh rerun
 - **`gate-ref.ts`** — validate `ProofPath.gateRef` against gateClass wiring  
   _Ratchet_ → in-file with `proof.ts`
 - **`maintenance.ts`** — `TenantRunbook` + `retirementCheck` ·

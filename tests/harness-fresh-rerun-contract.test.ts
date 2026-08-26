@@ -32,12 +32,48 @@ import { joinPath } from '../lib/path-bun';
 
 const HARNESS_ROOT = joinPath(import.meta.dir, '..');
 
+const GUARD_PROOF_CONTRACTS = [
+  ['guard-controls-v1', 'bun run guard:controls:check', 'runtime-tooling'],
+  ['guard-subprocess-authority-v1', 'bun run guard:subprocess:check', 'runtime-tooling'],
+  ['guard-network-authority-v1', 'bun run guard:network:check', 'networking'],
+  ['guard-sports-integrations-v1', 'bun run guard:integrations:check', 'sports-terminal-os'],
+  ['guard-protocol-matrix-v1', 'bun run guard:protocol-matrix:check', 'networking'],
+  ['guard-offline-content-v1', 'bun run guard:offline:check', 'networking'],
+  ['guard-content-store-contract-v1', 'bun run guard:content-store:check', 'content-store'],
+  ['guard-channel-alias-contract-v1', 'bun run guard:channels:check', 'release-tracker'],
+  [
+    'guard-content-rights-contract-v1',
+    'bun run guard:content-rights:check',
+    'release-governance',
+  ],
+  ['guard-agent-capabilities-v1', 'bun run guard:agents:check', 'agent-tooling'],
+  [
+    'sports-integration-type-v1',
+    'bun run --filter sports-terminal-os typecheck',
+    'sports-terminal-os',
+  ],
+] as const;
+
 describe('fresh-rerun contract', () => {
   test('every CRITICAL_PROOF_PATHS entry has a non-empty freshRerun', () => {
     expect(CRITICAL_PROOF_PATHS.length).toBeGreaterThan(0);
     for (const p of CRITICAL_PROOF_PATHS) {
       expect(p.freshRerun.trim().length, p.id).toBeGreaterThan(0);
       expect(p.freshRerun.includes('bun') || p.freshRerun.startsWith('bun '), p.id).toBe(true);
+    }
+  });
+
+  test('guard claims have exact behavioral reruns and accountable owners', () => {
+    for (const [id, freshRerun, owner] of GUARD_PROOF_CONTRACTS) {
+      const proof = CRITICAL_PROOF_PATHS.find(path => path.id === id);
+      expect(proof, id).toBeDefined();
+      expect(proof?.freshRerun, id).toBe(freshRerun);
+      expect(proof?.freshRerunKind, id).toBe('claim');
+      expect(proof?.gateClass, id).toBe('human-only');
+      expect(proof?.gateRef, id).toBe('none');
+      expect(proof?.owner, id).toBe(owner);
+      expect(proof?.evidence, id).toContain(freshRerun);
+      expect(proof?.evidence, id).toContain('docs/harness/tenants/guard-coverage.md');
     }
   });
 

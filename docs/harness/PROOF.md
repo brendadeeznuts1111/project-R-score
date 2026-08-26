@@ -319,6 +319,42 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts`
   ·
   [`tenants/channel-meta-verification.md`](tenants/channel-meta-verification.md)
+- **`guard-controls-v1`** — declared runtime/install/registry/connect/
+  optimization/resolution/preload/experimental controls have canonical,
+  fail-closed decisions and Bun 1.4 help-drift coverage _Ratchet_ →
+  `bun run guard:controls:check`
+- **`guard-subprocess-authority-v1`** — guarded Bun children bind executable,
+  argv, cwd, environment, and grants; reviewed raw-spawn inventory cannot grow
+  _Ratchet_ → `bun run guard:subprocess:check`
+- **`guard-network-authority-v1`** — typed outbound policy rejects the
+  undeclared routes, address classes, redirects, protocols, proxies, replay,
+  deadlines, and response sizes covered by its hermetic suite _Ratchet_ →
+  `bun run guard:network:check`
+- **`guard-sports-integrations-v1`** — Sports Terminal server egress stays in
+  reviewed provider/webhook/internal-proxy/Telegram boundaries _Ratchet_ →
+  `bun run guard:integrations:check`
+- **`guard-protocol-matrix-v1`** — hermetic direct HTTP/1.1 + HTTP/2, HTTPS
+  CONNECT reuse, fallback, expiry/cache partitioning, and content-digest parity
+  _Ratchet_ → `bun run guard:protocol-matrix:check`
+- **`guard-offline-content-v1`** — verified local content composition rejects
+  configured outbound effects before invocation _Ratchet_ →
+  `bun run guard:offline:check`
+- **`guard-content-store-contract-v1`** — branded content identity, strict
+  refs, operation rights, package relations, and bounded memory-store behavior
+  _Ratchet_ → `bun run guard:content-store:check`
+- **`guard-channel-alias-contract-v1`** — memory aliases enforce branded
+  identity, exact revision/digest CAS, distinct roles, verified immutable
+  targets, expiry, and terminal revocation _Ratchet_ →
+  `bun run guard:channels:check`
+- **`guard-content-rights-contract-v1`** — ContentRef/alias rights fail closed
+  for denied, expired, revoked, mismatched, and operation-ineligible content
+  _Ratchet_ → `bun run guard:content-rights:check`
+- **`guard-agent-capabilities-v1`** — branded exact agent capabilities,
+  experimental approval, raw-locator rejection, and hashed entrypoint inventory
+  _Ratchet_ → `bun run guard:agents:check`
+- **`sports-integration-type-v1`** — integration-health
+  projects the trusted PartnerProfileService camelCase interior shape
+  _Ratchet_ → `bun run --filter sports-terminal-os typecheck`
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity +
   install-verify) (`journey` + `boundary`) _Ratchet_ →
   `bun run spine:schedule:once -- --tenant=install-verify` ·
@@ -417,6 +453,17 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `snapshot-data-plane-v1`           | human-only | `bun test tests/snapshot-data-plane.test.ts && bun run check:snapshot:types`                                                                                         |
 | `portal-snapshot-cron-v1`          | human-only | `bun test tests/portal-snapshot-cron.test.ts`                                                                                                                        |
 | `channel-meta-verification-v1`     | continuous | `ci:harness` channel-meta step · also `check:release-tracker`                                                                                                        |
+| `guard-controls-v1` | human-only | `bun run guard:controls:check` |
+| `guard-subprocess-authority-v1` | human-only | `bun run guard:subprocess:check` |
+| `guard-network-authority-v1` | human-only | `bun run guard:network:check` |
+| `guard-sports-integrations-v1` | human-only | `bun run guard:integrations:check` |
+| `guard-protocol-matrix-v1` | human-only | `bun run guard:protocol-matrix:check` |
+| `guard-offline-content-v1` | human-only | `bun run guard:offline:check` |
+| `guard-content-store-contract-v1` | human-only | `bun run guard:content-store:check` |
+| `guard-channel-alias-contract-v1` | human-only | `bun run guard:channels:check` |
+| `guard-content-rights-contract-v1` | human-only | `bun run guard:content-rights:check` |
+| `guard-agent-capabilities-v1` | human-only | `bun run guard:agents:check` |
+| `sports-integration-type-v1` | human-only | `bun run --filter sports-terminal-os typecheck` |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                                                                                                     |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                                                                                           |
 | `bun-api-release-provenance`       | continuous | `ci:core` · `bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check`                                                                                  |
@@ -452,7 +499,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 35 · workflow 9 · human-only 35.
+continuous 35 · workflow 9 · human-only 46.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.
