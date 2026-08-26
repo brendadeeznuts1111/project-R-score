@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchSurfaceOutbound } from '../core/security/surface-outbound.ts';
+
 /**
  * 🤖 Fire22 CI/CD Benchmarking
  *
@@ -261,7 +263,7 @@ export class CIBenchmarks {
     results['api.response_time'] = await this.measureOperation(
       'API Response Time',
       async () => {
-        await fetch(`${serverUrl}/api/test`);
+        await fetchSurfaceOutbound(`${serverUrl}/api/test`);
       },
       1000
     );
@@ -272,7 +274,7 @@ export class CIBenchmarks {
     const duration = 5000; // 5 seconds
 
     while (Date.now() - throughputStart < duration) {
-      await fetch(`${serverUrl}/api/test`);
+      await fetchSurfaceOutbound(`${serverUrl}/api/test`);
       requestCount++;
     }
 

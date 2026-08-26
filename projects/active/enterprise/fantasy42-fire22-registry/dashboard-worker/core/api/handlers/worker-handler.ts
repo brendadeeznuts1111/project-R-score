@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../security/surface-outbound.ts';
+
 /**
  * Enhanced Worker Handler with Comprehensive Monitoring
  * Cloudflare Worker entry point with performance monitoring, health checks, and metrics
@@ -351,7 +353,7 @@ class AlertManager {
     // Send to external monitoring if configured
     if (env.ALERT_WEBHOOK_URL) {
       try {
-        await fetch(env.ALERT_WEBHOOK_URL, {
+        await fetchSurfaceOutbound(env.ALERT_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -435,7 +437,7 @@ class WorkerMonitoringBridge {
     this.metricsBatch = [];
 
     try {
-      const response = await fetch(this.monitoringEndpoint, {
+      const response = await fetchSurfaceOutbound(this.monitoringEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

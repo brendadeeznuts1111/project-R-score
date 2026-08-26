@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../../core/security/surface-outbound.ts';
+
 /**
  * Enhanced Fire22 Logger with L-Key Integration
  */
@@ -360,7 +362,7 @@ export class Fire22Logger {
     if (!this.config.remoteEndpoint) return;
 
     try {
-      const response = await fetch(this.config.remoteEndpoint, {
+      const response = await fetchSurfaceOutbound(this.config.remoteEndpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

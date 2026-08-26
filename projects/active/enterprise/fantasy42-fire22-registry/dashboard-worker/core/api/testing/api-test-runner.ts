@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../security/surface-outbound.ts';
+
 /**
  * API Test Runner
  * Comprehensive testing framework for API endpoints
@@ -195,7 +197,7 @@ export class APITestRunner {
       const timeoutId = setTimeout(() => controller.abort(), timeout);
       requestInit.signal = controller.signal;
 
-      const response = await fetch(url, requestInit);
+      const response = await fetchSurfaceOutbound(url, requestInit);
       clearTimeout(timeoutId);
 
       const duration = Date.now() - startTime;

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchSurfaceOutbound } from './core/security/surface-outbound.ts';
+
 /**
  * 🏥 Automated Health Monitoring Script
  * Daily performance checks and alerting for dashboard worker
@@ -140,7 +142,7 @@ class HealthMonitor {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), check.timeout || 5000);
 
-      const response = await fetch(`${this.baseUrl}${check.endpoint}`, {
+      const response = await fetchSurfaceOutbound(`${this.baseUrl}${check.endpoint}`, {
         method: check.endpoint === '/api/auth/login' ? 'POST' : 'GET',
         headers: check.endpoint === '/api/auth/login' ? { 'Content-Type': 'application/json' } : {},
         body:

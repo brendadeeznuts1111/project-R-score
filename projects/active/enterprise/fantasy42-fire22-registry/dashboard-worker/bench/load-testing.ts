@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../core/security/surface-outbound.ts';
+
 /**
  * Load Testing Module
  * High-performance load testing for HTTP endpoints
@@ -56,7 +58,7 @@ export default class LoadTester {
       while (Date.now() < endTime) {
         const reqStart = Bun.nanoseconds();
         try {
-          const response = await fetch(url, {
+          const response = await fetchSurfaceOutbound(url, {
             method,
             headers,
           });

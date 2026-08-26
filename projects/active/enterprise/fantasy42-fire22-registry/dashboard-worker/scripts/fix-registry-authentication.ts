@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchSurfaceOutbound } from '../core/security/surface-outbound.ts';
 /**
  * 🔐 Fix Registry Authentication with Bun.secrets
  * Uses Bun's native credential storage for secure registry authentication
@@ -244,7 +246,7 @@ plugins = []
       try {
         console.info(`\n📡 Testing ${registry.name} (${registry.url})...`);
 
-        const response = await fetch(registry.url);
+        const response = await fetchSurfaceOutbound(registry.url);
         if (response.ok) {
           console.info(`  ✅ ${registry.name}: Connection successful (${response.status})`);
         } else {
