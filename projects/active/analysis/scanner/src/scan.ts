@@ -3,6 +3,7 @@
 import {parseArgs} from 'node:util';
 import {readdir, appendFile, mkdir} from 'node:fs/promises';
 import {availableParallelism} from 'node:os';
+import {resolve as resolvePath} from 'node:path';
 import {dns} from 'bun';
 import {z} from 'zod';
 import {BUN_SCANNER_COLUMNS} from './scan-columns';
@@ -62,6 +63,7 @@ const {values: flags, positionals} = parseArgs({
 		'sort': {type: 'string'},
 		'filter': {type: 'string'},
 		'json': {type: 'boolean', default: false},
+		'root': {type: 'string'},
 		'with-bunfig': {type: 'boolean', default: false},
 		'workspaces': {type: 'boolean', default: false},
 		'without-pkg': {type: 'boolean', default: false},
@@ -1421,8 +1423,8 @@ const BUN_DEFAULT_TRUSTED = new Set([
 	'zopflipng-bin',
 ]);
 
-/** Root directory to scan; uses parent directory or BUN_PLATFORM_HOME if set */
-const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? '..';
+/** Root directory to scan; an explicit CLI root wins over environment/default resolution. */
+const PROJECTS_ROOT = resolvePath(flags.root ?? Bun.env.BUN_PLATFORM_HOME ?? '..');
 const projectDir = (p: {folder: string}) => `${PROJECTS_ROOT}/${p.folder}`;
 
 const _secrets = Bun.secrets;
@@ -2826,7 +2828,7 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 		}
 
 		for (let i = 0; i < poolSize; i++) {
-			const worker = Bun.spawn(['bun', workerPath], {
+			const worker = Bun.spawn([process.execPath, workerPath], {
 				stdio: ['ignore', 'ignore', 'ignore'],
 				ipc(message) {
 					try {
@@ -2841,6 +2843,13 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 				},
 			});
 			workers.push(worker);
+			void worker.exited.then(exitCode => {
+				if (!settled && exitCode !== 0) {
+					settled = true;
+					cleanup();
+					reject(new Error(`IPC worker exited before completing scans (code ${exitCode})`));
+				}
+			});
 		}
 
 		const sigHandler = () => {
@@ -5729,7 +5738,9 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 
 // ── Main ───────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-	const retiredRegistryFlag = ['fix-registry', 'fix-scopes', 'fix-npmrc'].find(flag => flags[flag as keyof typeof flags]);
+	const retiredRegistryFlag = ['fix-registry', 'fix-scopes', 'fix-npmrc'].find(
+		flag => flags[flag as keyof typeof flags],
+	);
 	if (retiredRegistryFlag) {
 		console.error(
 			`${c.red('error:')} --${retiredRegistryFlag} is retired because it conflated registry read, write, and auth planes`,
@@ -5795,6 +5806,7 @@ ${c.bold('  Cookie Sessions:')}
     ${c.cyan('--cookie-remove')} <session-id> [project-id] <cookie-name>  Remove cookie from session
 
 ${c.bold('  Filters:')}
+    ${c.cyan('--root')} <directory>                 Explicit project-container root (overrides BUN_PLATFORM_HOME)
     ${c.cyan('--filter')} <glob|bool>               Filter by name, folder, or boolean field
     ${c.cyan('--with-bunfig')}                      Only projects with bunfig.toml
     ${c.cyan('--workspaces')}                       Only workspace roots
@@ -6483,7 +6495,9 @@ ${c.bold('  Other:')}
 			content += '\nBUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_PLATFORM_HOME}/.bun-cache\n';
 			changed = true;
 			if (dryRun) {
-				console.info(`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
+				console.info(
+					`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`,
+				);
 			} else {
 				console.info(`  ${c.green('FIX')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
 			}
