@@ -52,7 +52,7 @@ registered as a claim proof, and passes the close protocol, its row remains
 
 ### `CTRL-001` CLI, runtime flags, and preload controls
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `runtime-tooling`
 
@@ -66,6 +66,11 @@ identity and profile decision. Unknown and experimental controls default deny.
 **Target ratchet** `bun run guard:controls:check`
 
 **Fresh rerun** `bun run guard:controls:check`
+
+The typed kernel and exact-capability evaluator are present, with executable
+schema/help drift and focused contract tests. Consumer launch/subprocess
+enforcement and a complete reverse Bun flag inventory remain open, so this row
+is not yet `Implemented`.
 
 ### `CTRL-002` Subprocess authority
 
@@ -175,7 +180,7 @@ revocation are atomic; stale or rights-ineligible targets cannot remain active.
 
 ### `CAS-001` ContentStore and media addressability
 
-**State** `Open`
+**State** `Contracted`
 
 **Owner** `content-store`
 
@@ -191,6 +196,12 @@ application ContentStore.
 **Target ratchet** `bun run guard:content-store:check`
 
 **Fresh rerun** `bun run guard:content-store:check`
+
+Branded content and locator identities, strict `ContentRef` parsing,
+operation-specific rights decisions, content/package relation separation, and
+the bounded memory adapter are tested. Atomic local/R2 adapters, alias storage,
+reachability, and consumer migration remain open, so this row is not yet
+`Implemented`.
 
 ### `RIGHTS-001` Content rights and lifecycle
 
@@ -262,7 +273,7 @@ produce identical content digests across protocols.
 
 ### `BASE-001` Integration type boundary
 
-**State** `Implemented`
+**State** `Tested`
 
 **Owner** `sports-terminal-os`
 
