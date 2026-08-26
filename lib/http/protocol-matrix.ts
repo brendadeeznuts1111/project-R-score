@@ -32,6 +32,13 @@ export const HERMETIC_PROTOCOL_PROOF_MATRIX = [
     fixture: 'Bun.listen CONNECT proxy with a loopback TLS origin',
   },
   {
+    route: 'named-proxy-connect',
+    protocol: 'h2',
+    status: 'candidate-unavailable',
+    fixture: 'explicit named proxy request with a loopback node:http2 TLS origin',
+    limitation: 'Bun 1.4 returns the exact HTTP2Unsupported error before opening a CONNECT tunnel',
+  },
+  {
     route: 'direct',
     protocol: 'h3',
     status: 'candidate-unavailable',

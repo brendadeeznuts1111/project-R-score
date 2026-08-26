@@ -80,6 +80,12 @@ describe('hermetic Bun 1.4 protocol matrix', () => {
           status: 'exercised',
         }),
         expect.objectContaining({
+          route: 'named-proxy-connect',
+          protocol: 'h2',
+          status: 'candidate-unavailable',
+          limitation: expect.stringContaining('HTTP2Unsupported'),
+        }),
+        expect.objectContaining({
           protocol: 'h3',
           status: 'candidate-unavailable',
           limitation: expect.stringContaining('no deterministic loopback QUIC fixture'),
