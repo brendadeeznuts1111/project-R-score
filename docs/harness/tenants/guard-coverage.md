@@ -198,11 +198,11 @@ response-byte limit, timeout, and retry budget.
 
 Sports Terminal's inventoried server-side provider, webhook, internal-proxy, and
 Telegram consumers route through reviewed policy boundaries and their focused
-suite passes. The repository-wide AST ratchet exactly matches 671 structural
-rows: 44 owned policy boundaries, 61 intentional native probes, and 566 explicit
+suite passes. The repository-wide AST ratchet exactly matches 667 structural
+rows: 45 owned policy boundaries, 61 intentional native probes, and 561 explicit
 unowned gaps. It rejects additions and removals and requires each row to retain
 an owner, reason, and classification, but classification is not consumer
-migration. The 566 unowned consumers keep this row below `Implemented`.
+migration. The 561 unowned consumers keep this row below `Implemented`.
 
 ### `FEED-001` RSS, XML, and image ingestion
 

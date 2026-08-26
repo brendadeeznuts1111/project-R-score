@@ -20,8 +20,8 @@ Every row has one classification and a non-empty owner and reason:
 - `unowned` — a visible migration gap. These rows are not silently allowlisted;
   the exact debt remains queryable and cannot drift without review.
 
-The current repository-wide baseline records 671 exact rows: 44 guarded-boundary
-calls, 61 native verification calls, and 566 explicit unowned calls. That volume
+The current repository-wide baseline records 667 exact rows: 45 guarded-boundary
+calls, 61 native verification calls, and 561 explicit unowned calls. That volume
 is evidence that the repository-wide ownership goal is not yet complete. The
 reviewed migrations now include high-risk configurable root consumers plus the
 Matrix, Kal Poly Bot, and a bounded Fantasy42 tranche. Their typed boundaries
