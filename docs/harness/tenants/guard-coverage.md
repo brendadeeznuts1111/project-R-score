@@ -360,9 +360,17 @@ object-store, and external probe activity, including child processes.
 The offline loader resolves verified local objects and rejects configured DNS,
 proxy, registry, object-store, and external-probe effects before invoking them.
 The feed manifest also rejects missing or corrupt local snapshots without an
-online fallback. Those effects are injected sentinels rather than a process-wide
-syscall/socket sentinel, and child processes are not globally observed, so
-zero-socket mode is not yet `Implemented`.
+online fallback. A reversible process-wide sentinel denies external
+`fetch`/`fetch.preconnect`, `Bun.connect`, and Bun's `node:net`, `node:tls`,
+`node:http`, `node:https`, `node:http2`, and `node:dgram` compatibility
+entrypoints before their captured runtime functions run. It explicitly admits
+only `localhost`, IPv4 `127/8`, IPv6 `::1`/mapped loopback test fixtures,
+non-network fetch URLs, and local Unix-domain sockets; ambient proxies and
+custom lookup/connection transports are disabled. Bun 1.4's immutable
+`Bun.fetch`, detached named ESM exports of Node built-ins, child processes,
+native addons, and network APIs outside these patchable entrypoints are not
+globally observed, so zero-socket mode remains `Contracted` rather than
+`Implemented`.
 
 ### `PROTO-001` HTTP protocol and proxy matrix
 

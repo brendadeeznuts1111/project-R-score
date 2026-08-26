@@ -1657,15 +1657,18 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'guard-offline-content-v1',
     claim:
-      'Offline content composition resolves verified local content and rejects configured DNS, proxy, registry, object-store, and external-probe effects before invocation in its hermetic suite',
+      'Offline content composition resolves verified local content while a process-wide sentinel rejects external fetch, TCP, TLS, HTTP, HTTP2, and UDP entrypoints before invocation without breaking loopback fixtures',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',
     evidence: [
       'bun run guard:offline:check',
+      'lib/security/offline-socket-sentinel.ts',
       'lib/content-store/offline-content.ts',
+      'tests/offline-socket-sentinel.test.ts',
       'tests/offline-content-guard.test.ts',
       'tests/local-content-store.test.ts',
+      'tests/tsconfig.offline-socket-sentinel.json',
       'docs/harness/tenants/guard-coverage.md',
     ],
     freshRerun: 'bun run guard:offline:check',
