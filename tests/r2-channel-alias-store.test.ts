@@ -256,4 +256,25 @@ describe('R2ChannelAliasStore', () => {
     });
     await expect(store.get(aliasId)).rejects.toThrow();
   });
+
+  test('rehashes persisted alias bytes independently of R2 metadata', async () => {
+    const bucket = new FakeAliasBucket();
+    const contentStore = new MemoryContentStore();
+    const stored = await contentStore.put(new TextEncoder().encode('release'));
+    const store = new R2ChannelAliasStore(bucket, contentStore);
+    await store.promote({
+      aliasId,
+      sourceChannelId,
+      target: contentRef(stored),
+      actor: aliasPublisher,
+      expectedRevision: 0,
+    });
+    const key = `channel-alias/v1/${aliasId}.json`;
+    const persisted = bucket.objects.get(key)!;
+    const wire = JSON.parse(new TextDecoder().decode(persisted.bytes));
+    wire.issuedAt = '2026-08-26T12:00:01.000Z';
+    persisted.bytes = new TextEncoder().encode(`${JSON.stringify(wire)}\n`);
+
+    await expect(store.get(aliasId)).rejects.toThrow('custom metadata mismatch');
+  });
 });

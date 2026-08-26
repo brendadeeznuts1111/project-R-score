@@ -1,3 +1,11 @@
+// @see https://bun.com/docs/runtime/hashing#bun-cryptohasher — Bun.CryptoHasher
+// @updated Bun.CryptoHasher · changed v0.5.0 · 2023-01-18 · https://bun.com/blog/bun-v0.5.0
+// @updated Bun.CryptoHasher · fixed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.CryptoHasher · changed v1.0.21 · 2024-01-02 · https://bun.com/blog/bun-v1.0.21
+// @updated Bun.CryptoHasher · fixed v1.1.11 · 2024-06-01 · https://bun.com/blog/bun-v1.1.11
+// @updated Bun.CryptoHasher · fixed v1.1.32 · 2024-10-21 · https://bun.com/blog/bun-v1.1.32
+// @updated Bun.CryptoHasher · fixed v1.1.35 · 2024-11-19 · https://bun.com/blog/bun-v1.1.35
+// @verified Bun.CryptoHasher · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/hashing#bun-cryptohasher
 import type { ChannelAliasId } from '../types/branded.ts';
 import {
   ChannelAliasPolicyError,
@@ -108,16 +116,18 @@ export class R2ChannelAliasStore implements ChannelAliasStore {
   ): Promise<void> {
     const serialized = serializeChannelAliasRecord(record);
     const bytes = new TextEncoder().encode(serialized);
+    const contentSha256 = sha256Hex(bytes);
     const key = aliasKey(aliasId);
     const result = await this.bucket.put(key, exactArrayBuffer(bytes), {
       onlyIf: before ? { etagMatches: before.etag } : { etagDoesNotMatch: '*' },
-      sha256: sha256Hex(bytes),
+      sha256: contentSha256,
       customMetadata: {
         schema: ALIAS_OBJECT_SCHEMA,
         aliasId,
         revision: String(record.revision),
         digest: record.target.digest,
         lifecycle: record.lifecycle,
+        contentSha256,
       },
     });
     if (result === null) {
@@ -146,6 +156,7 @@ export class R2ChannelAliasStore implements ChannelAliasStore {
     if (bytes.byteLength !== object.size) {
       throw new TypeError('Invalid R2 channel alias object: body length mismatch');
     }
+    const contentSha256 = sha256Hex(bytes);
     const serialized = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
     const record = parseChannelAliasRecordJson(serialized);
     if (record.aliasId !== aliasId) {
@@ -156,7 +167,8 @@ export class R2ChannelAliasStore implements ChannelAliasStore {
       object.customMetadata.aliasId !== aliasId ||
       object.customMetadata.revision !== String(record.revision) ||
       object.customMetadata.digest !== record.target.digest ||
-      object.customMetadata.lifecycle !== record.lifecycle
+      object.customMetadata.lifecycle !== record.lifecycle ||
+      object.customMetadata.contentSha256 !== contentSha256
     ) {
       throw new TypeError('Invalid R2 channel alias object: custom metadata mismatch');
     }

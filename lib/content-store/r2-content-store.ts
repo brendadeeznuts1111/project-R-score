@@ -141,6 +141,9 @@ export class R2ContentStore implements ContentStore {
   async verify(digest: ContentDigest): Promise<ContentVerification> {
     const object = await this.bucket.get(contentKeyForDigest(digest));
     if (object === null) return { status: 'missing', expectedDigest: digest };
+    if (!Number.isSafeInteger(object.size) || object.size < 0) {
+      throw new R2ContentMetadataError('R2 content object size is invalid');
+    }
     if (object.size > this.maxBytes) {
       return {
         status: 'oversized',
