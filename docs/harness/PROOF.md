@@ -324,9 +324,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   fail-closed decisions and Bun 1.4 help-drift coverage _Ratchet_ →
   `bun run guard:controls:check`
 - **`guard-subprocess-authority-v1`** — guarded Bun children bind executable,
-  argv, cwd, environment, and grants; an exact hashed raw-spawn inventory rejects
-  added, removed, or changed expressions
-  _Ratchet_ → `bun run guard:subprocess:check`
+  argv, cwd, environment, and grants; an exact hashed raw-spawn inventory
+  rejects added, removed, or changed expressions _Ratchet_ →
+  `bun run guard:subprocess:check`
 - **`guard-network-authority-v1`** — typed outbound policy rejects the
   undeclared routes, address classes, redirects, protocols, proxies, replay,
   deadlines, and response sizes covered by its hermetic suite _Ratchet_ →
@@ -335,13 +335,14 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   reviewed provider/webhook/internal-proxy/Telegram boundaries _Ratchet_ →
   `bun run guard:integrations:check`
 - **`guard-protocol-matrix-v1`** — hermetic direct HTTP/1.1 + HTTP/2, HTTPS
-  CONNECT reuse, fallback, expiry/cache partitioning, and content-digest parity
-  _Ratchet_ → `bun run guard:protocol-matrix:check`
+  CONNECT reuse, exact pre-CONNECT HTTP2Unsupported handling, fallback,
+  expiry/cache partitioning, and content-digest parity _Ratchet_ →
+  `bun run guard:protocol-matrix:check`
 - **`guard-offline-content-v1`** — verified local content composition rejects
   configured outbound effects before invocation _Ratchet_ →
   `bun run guard:offline:check`
-- **`guard-content-store-contract-v1`** — branded content identity, strict
-  refs, operation rights, package relations, and bounded memory-store behavior
+- **`guard-content-store-contract-v1`** — branded content identity, strict refs,
+  operation rights, package relations, and bounded memory-store behavior
   _Ratchet_ → `bun run guard:content-store:check`
 - **`guard-channel-alias-contract-v1`** — memory aliases enforce branded
   identity, exact revision/digest CAS, distinct roles, verified immutable
@@ -353,9 +354,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
 - **`guard-agent-capabilities-v1`** — branded exact agent capabilities,
   experimental approval, raw-locator rejection, and hashed entrypoint inventory
   _Ratchet_ → `bun run guard:agents:check`
-- **`guard-registry-authority-v1`** — registry planes have separate exact grants;
-  guarded planners enforce source precedence, explicit writes, clean child
-  environments, and hermetic metadata parsing _Ratchet_ →
+- **`guard-registry-authority-v1`** — registry planes have separate exact
+  grants; guarded planners enforce source precedence, explicit writes, clean
+  child environments, and hermetic metadata parsing _Ratchet_ →
   `bun run guard:registry:check`
 - **`guard-feed-ingestion-v1`** — bounded hostile RSS/XML, rights-aware image
   enrichment, outbound image policy, and deterministic verified offline feed
@@ -364,9 +365,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   digest-keyed content, rehash bounded reads, verify alias JSON around ETag CAS,
   and load feed snapshots without online fallback _Ratchet_ →
   `bun run guard:r2-content-store:check`
-- **`sports-integration-type-v1`** — integration-health
-  projects the trusted PartnerProfileService camelCase interior shape
-  _Ratchet_ → `bun run --filter sports-terminal-os typecheck`
+- **`sports-integration-type-v1`** — integration-health projects the trusted
+  PartnerProfileService camelCase interior shape _Ratchet_ →
+  `bun run --filter sports-terminal-os typecheck`
 - **`spine-multi-tenant`** — spine runs ≥2 in-process tenants (docs-integrity +
   install-verify) (`journey` + `boundary`) _Ratchet_ →
   `bun run spine:schedule:once -- --tenant=install-verify` ·
@@ -465,24 +466,24 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `snapshot-data-plane-v1`           | human-only | `bun test tests/snapshot-data-plane.test.ts && bun run check:snapshot:types`                                                                                         |
 | `portal-snapshot-cron-v1`          | human-only | `bun test tests/portal-snapshot-cron.test.ts`                                                                                                                        |
 | `channel-meta-verification-v1`     | continuous | `ci:harness` channel-meta step · also `check:release-tracker`                                                                                                        |
-| `guard-controls-v1` | human-only | `bun run guard:controls:check` |
-| `guard-subprocess-authority-v1` | human-only | `bun run guard:subprocess:check` |
-| `guard-network-authority-v1` | human-only | `bun run guard:network:check` |
-| `guard-sports-integrations-v1` | human-only | `bun run guard:integrations:check` |
-| `guard-protocol-matrix-v1` | human-only | `bun run guard:protocol-matrix:check` |
-| `guard-offline-content-v1` | human-only | `bun run guard:offline:check` |
-| `guard-content-store-contract-v1` | human-only | `bun run guard:content-store:check` |
-| `guard-channel-alias-contract-v1` | human-only | `bun run guard:channels:check` |
-| `guard-content-rights-contract-v1` | human-only | `bun run guard:content-rights:check` |
-| `guard-agent-capabilities-v1` | human-only | `bun run guard:agents:check` |
-| `guard-registry-authority-v1` | human-only | `bun run guard:registry:check` |
-| `guard-feed-ingestion-v1` | human-only | `bun run guard:feeds:check` |
-| `guard-r2-content-v1` | human-only | `bun run guard:r2-content-store:check` |
-| `sports-integration-type-v1` | human-only | `bun run --filter sports-terminal-os typecheck` |
+| `guard-controls-v1`                | human-only | `bun run guard:controls:check`                                                                                                                                       |
+| `guard-subprocess-authority-v1`    | human-only | `bun run guard:subprocess:check`                                                                                                                                     |
+| `guard-network-authority-v1`       | human-only | `bun run guard:network:check`                                                                                                                                        |
+| `guard-sports-integrations-v1`     | human-only | `bun run guard:integrations:check`                                                                                                                                   |
+| `guard-protocol-matrix-v1`         | human-only | `bun run guard:protocol-matrix:check`                                                                                                                                |
+| `guard-offline-content-v1`         | human-only | `bun run guard:offline:check`                                                                                                                                        |
+| `guard-content-store-contract-v1`  | human-only | `bun run guard:content-store:check`                                                                                                                                  |
+| `guard-channel-alias-contract-v1`  | human-only | `bun run guard:channels:check`                                                                                                                                       |
+| `guard-content-rights-contract-v1` | human-only | `bun run guard:content-rights:check`                                                                                                                                 |
+| `guard-agent-capabilities-v1`      | human-only | `bun run guard:agents:check`                                                                                                                                         |
+| `guard-registry-authority-v1`      | human-only | `bun run guard:registry:check`                                                                                                                                       |
+| `guard-feed-ingestion-v1`          | human-only | `bun run guard:feeds:check`                                                                                                                                          |
+| `guard-r2-content-v1`              | human-only | `bun run guard:r2-content-store:check`                                                                                                                               |
+| `sports-integration-type-v1`       | human-only | `bun run --filter sports-terminal-os typecheck`                                                                                                                      |
 | `blog-extraction-journey`          | human-only | `bun test tests/journey/blog-extraction.test.ts`                                                                                                                     |
 | `bun-http-server-docs`             | continuous | `ci:harness` boundary-fixtures · `bun test tests/bun-docs-catalog.test.ts`                                                                                           |
 | `bun-api-release-provenance`       | continuous | `ci:core` · `bun tools/bun-docs-catalog.ts verify && bun run docs:provenance:check`                                                                                  |
-| `agent-skills-validation`          | continuous | `ci:core` · `bun run skills:validate`                                                                                                                              |
+| `agent-skills-validation`          | continuous | `ci:core` · `bun run skills:validate`                                                                                                                                |
 | `path-bun`                         | continuous | pre-commit (lib\|tools staged) · `ci:harness`                                                                                                                        |
 | `bun-env`                          | continuous | pre-commit (lib\|scripts staged) · `ci:harness` · eslint `prefer-bun-env`                                                                                            |
 | `invisible-chars`                  | continuous | pre-commit (spine/test .ts staged) · `ci:harness`                                                                                                                    |

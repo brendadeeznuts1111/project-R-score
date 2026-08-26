@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/color#output-formats — Bun.color
+// @see https://bun.com/docs/runtime/color — Bun.color
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
 import portalTheme from '../../public/portal/theme.jsonc';
 import { createTrustedAccentHeadingCallback } from '../markdown/accent-headings.ts';

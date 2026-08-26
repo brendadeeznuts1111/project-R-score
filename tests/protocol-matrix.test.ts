@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/networking/fetch#protocol — Bun fetch protocol selection
+// @see https://bun.com/docs/runtime/networking/fetch — Bun fetch protocol selection
 import { afterAll, beforeAll, describe, expect, test } from 'bun:test';
 import { createSecureServer, type Http2SecureServer } from 'node:http2';
 

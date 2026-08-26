@@ -1617,7 +1617,7 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
   {
     id: 'guard-protocol-matrix-v1',
     claim:
-      'The hermetic protocol suite proves direct HTTP/1.1 and HTTP/2 behavior, HTTPS CONNECT reuse, replay-safe fallback, capability expiry, cache partitioning, and cross-protocol content-digest parity',
+      'The hermetic protocol suite proves direct HTTP/1.1 and HTTP/2 behavior, HTTPS CONNECT reuse, exact pre-CONNECT HTTP2Unsupported handling, replay-safe fallback, capability expiry, cache partitioning, and cross-protocol content-digest parity',
     kinds: ['unit', 'boundary'],
     gateClass: 'human-only',
     gateRef: 'none',

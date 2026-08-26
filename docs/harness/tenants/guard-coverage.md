@@ -101,8 +101,8 @@ reintroduced after sanitization.
 
 The guarded child contract binds an absolute executable, complete runtime argv,
 working directory, and a non-inherited environment to exact control grants. A
-hashed inventory rejects added, removed, or changed raw process expressions,
-but its reviewed classifications still include direct sites that have not been
+hashed inventory rejects added, removed, or changed raw process expressions, but
+its reviewed classifications still include direct sites that have not been
 migrated through the wrapper; therefore this row is not yet `Implemented`.
 
 ### `REG-001` Registry read, write, and resolution planes
@@ -360,11 +360,13 @@ zero-socket mode is not yet `Implemented`.
 **Dependencies** `NET-001`; replay-safe request contract; hermetic direct and
 CONNECT-proxy fixtures; experimental approval policy.
 
-**Contract** HTTP/1.1 and HTTP/2 are proven direct and through the declared
-proxy path. HTTP/3 remains an explicit canary capability until stable and
-approved. Fallback never replays an unsafe write, and protocol/cache keys
-include route, proxy, TLS, capability expiry, and network state. Identical bytes
-produce identical content digests across protocols.
+**Contract** HTTP/1.1 and HTTP/2 are proven direct. Proxy topology is explicit:
+HTTPS/H1 CONNECT is exercised, while Bun 1.4 HTTP/2-over-CONNECT is accepted
+only if supported and otherwise must return the exact pre-tunnel
+`HTTP2Unsupported` failure. HTTP/3 remains an explicit canary capability until
+stable and approved. Fallback never replays an unsafe write, and protocol/cache
+keys include route, proxy, TLS, capability expiry, and network state. Identical
+bytes produce identical content digests across protocols.
 
 **Target ratchet** `bun run guard:protocol-matrix:check`
 
@@ -375,10 +377,11 @@ produce identical content digests across protocols.
 The injectable protocol client uses exact Bun `HTTP2Unsupported` errors,
 replay-safe or explicitly recreatable fallback, expiring singleflight capability
 state, and route/proxy/TLS/protocol/network cache dimensions. The hermetic suite
-now exercises direct H1 and H2, HTTPS CONNECT reuse, an explicit unavailable H3
-candidate, and content-digest parity. H2-through-proxy, QUIC/H3 transport,
-socket pinning, and unsafe-write fallback at a live transport boundary remain
-open, so the full row has not reached `Tested`.
+now exercises direct H1 and H2, HTTPS CONNECT reuse, the exact pre-CONNECT
+`HTTP2Unsupported` outcome for proxied H2, an explicit unavailable H3 candidate,
+and content-digest parity. QUIC/H3 transport, socket pinning, and unsafe-write
+fallback at a live transport boundary remain open, so the full row has not
+reached `Tested`.
 
 ### `BASE-001` Integration type boundary
 

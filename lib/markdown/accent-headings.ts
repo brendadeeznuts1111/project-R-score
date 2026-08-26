@@ -9,7 +9,7 @@
 // @see https://bun.com/reference/bun/markdown#bun.markdown.RenderCallbacks — Bun.markdown.RenderCallbacks
 // @released Bun.markdown.RenderCallbacks · released v1.3.8 · 2026-01-29 · https://bun.com/blog/bun-v1.3.8
 // @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
-// @see https://bun.com/docs/runtime/color#output-formats — Bun.color [rgb]
+// @see https://bun.com/docs/runtime/color — Bun.color [rgb]
 
 export type TrustedAccentHeadingCallback = NonNullable<Bun.markdown.RenderCallbacks['heading']>;
 
