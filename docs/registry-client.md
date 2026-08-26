@@ -30,7 +30,16 @@ The read plane index lives at `{baseUrl}/api/registry/registry.json`. Do not use
 ```ts
 import { RegistryClient } from '@factorywager/registry-client';
 
-const client = new RegistryClient({ baseUrl: 'http://localhost:3000' });
+const client = new RegistryClient({
+  baseUrl: 'http://localhost:3000',
+  grants: [
+    {
+      operation: 'metadata-read',
+      origins: ['http://localhost:3000'],
+      reason: 'local resolve',
+    },
+  ],
+});
 const resolved = await client.resolve('@factorywager/registry-client', '1.0.0');
 // resolved.assetUrl === packument dist.tarball on the same origin
 ```
@@ -46,6 +55,11 @@ const bytes = await client.download('@factorywager/registry-client', 'latest');
 ```
 
 Checksum mismatch or size drift throws before returning bytes.
+
+The client defaults to no authority. `metadata-read`, `artifact-read`,
+`publish`, and `mirror-write` are separate exact-origin grants.
+Credential-bearing origins are rejected, index JSON is parsed into a strict
+bounded shape, and `maxJsonBytes` / `maxArtifactBytes` bound response buffering.
 
 ## publish
 
@@ -64,6 +78,13 @@ const client = new RegistryClient({
   baseUrl: 'http://localhost:3000',
   publishUrl: 'http://localhost:3000',
   apiKey: localDevelopmentToken,
+  grants: [
+    {
+      operation: 'publish',
+      origins: ['http://localhost:3000'],
+      reason: 'local publish',
+    },
+  ],
 });
 
 await client.publish('@scope/pkg', '1.0.0', tarballBlob, {

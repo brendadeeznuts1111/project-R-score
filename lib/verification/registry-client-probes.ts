@@ -13,6 +13,13 @@ import { resolveCanonicalForProbe } from '../../tools/canonical-helpers.ts';
 import { SCOPED_REGISTRY_LANES } from './install-env-probes.ts';
 import type { VerificationLinks, VerificationResult } from './types.ts';
 
+function readGrants(baseUrl: string) {
+  return [
+    { operation: 'metadata-read' as const, origins: [baseUrl], reason: 'registry verification' },
+    { operation: 'artifact-read' as const, origins: [baseUrl], reason: 'registry verification' },
+  ];
+}
+
 export const REGISTRY_CLIENT_PROOF_REPORT_PATH = '/registry/registry-client-proof.json';
 export const REGISTRY_CLIENT_VERIFY_SOURCE = 'tools/verify-registry-client.ts';
 
@@ -141,7 +148,7 @@ export async function probeRegistryClientResolveParity(): Promise<RegistryClient
     }
 
     try {
-      const client = new RegistryClient({ baseUrl });
+      const client = new RegistryClient({ baseUrl, grants: readGrants(baseUrl) });
       const resolved = await client.resolve(
         REGISTRY_CLIENT_PROBE_PACKAGE,
         REGISTRY_CLIENT_PROBE_VERSION
@@ -191,7 +198,7 @@ export async function probeRegistryClientDownload(): Promise<RegistryClientProbe
     if (!baseUrl) continue;
 
     try {
-      const client = new RegistryClient({ baseUrl });
+      const client = new RegistryClient({ baseUrl, grants: readGrants(baseUrl) });
       const resolved = await client.resolve(
         REGISTRY_CLIENT_PROBE_PACKAGE,
         REGISTRY_CLIENT_PROBE_VERSION
