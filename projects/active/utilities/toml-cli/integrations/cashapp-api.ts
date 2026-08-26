@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchTomlIntegration } from './outbound-client';
+
 const inspectCustom = Symbol.for("Bun.inspect.custom");
 
 export interface CashAppConfig {
@@ -96,7 +98,7 @@ export class CashAppAPI {
    * Exchange authorization code for access token
    */
   async exchangeCode(code: string): Promise<CashAppToken> {
-    const response = await fetch(`${this.baseUrl}/oauth/token`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/oauth/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -144,7 +146,7 @@ export class CashAppAPI {
       throw new Error('No refresh token available');
     }
 
-    const response = await fetch(`${this.baseUrl}/oauth/token`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/oauth/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -196,8 +198,8 @@ export class CashAppAPI {
       await this.refreshToken();
     }
 
-    const url = endpoint.startsWith('http') ? endpoint : `${this.baseUrl}${endpoint}`;
-    const response = await fetch(url, {
+    const url = new URL(endpoint, this.baseUrl);
+    const response = await fetchTomlIntegration(url, {
       ...options,
       headers: {
         'Authorization': `Bearer ${this.token.access_token}`,
