@@ -37,6 +37,7 @@ const GUARD_PROOF_CONTRACTS = [
   ['guard-subprocess-authority-v1', 'bun run guard:subprocess:check', 'runtime-tooling'],
   ['guard-network-authority-v1', 'bun run guard:network:check', 'networking'],
   ['guard-sports-integrations-v1', 'bun run guard:integrations:check', 'sports-terminal-os'],
+  ['guard-outbound-consumers-v1', 'bun run guard:outbound-consumers:check', 'networking'],
   ['guard-protocol-matrix-v1', 'bun run guard:protocol-matrix:check', 'networking'],
   ['guard-offline-content-v1', 'bun run guard:offline:check', 'networking'],
   ['guard-content-store-contract-v1', 'bun run guard:content-store:check', 'content-store'],
@@ -44,6 +45,11 @@ const GUARD_PROOF_CONTRACTS = [
   [
     'guard-content-rights-contract-v1',
     'bun run guard:content-rights:check',
+    'release-governance',
+  ],
+  [
+    'guard-rights-revocation-ledger-v1',
+    'bun run guard:content-rights:check && bun run guard:channels:check',
     'release-governance',
   ],
   ['guard-agent-capabilities-v1', 'bun run guard:agents:check', 'agent-tooling'],

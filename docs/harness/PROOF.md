@@ -334,6 +334,10 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
 - **`guard-sports-integrations-v1`** — Sports Terminal server egress stays in
   reviewed provider/webhook/internal-proxy/Telegram boundaries _Ratchet_ →
   `bun run guard:integrations:check`
+- **`guard-outbound-consumers-v1`** — the repository-wide AST inventory exactly
+  matches its reviewed manifest and every current row has an owner, reason, and
+  classification; hermetic public-client/outbound-policy tests pass _Ratchet_ →
+  `bun run guard:outbound-consumers:check`
 - **`guard-protocol-matrix-v1`** — hermetic direct HTTP/1.1 + HTTP/2, HTTPS
   CONNECT reuse, exact pre-CONNECT HTTP2Unsupported handling, fallback,
   expiry/cache partitioning, and content-digest parity _Ratchet_ →
@@ -351,6 +355,11 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
 - **`guard-content-rights-contract-v1`** — ContentRef/alias rights fail closed
   for denied, expired, revoked, mismatched, and operation-ineligible content
   _Ratchet_ → `bun run guard:content-rights:check`
+- **`guard-rights-revocation-ledger-v1`** — independent memory and R2 rights
+  ledgers enforce distinct reviewer authority, exact CAS, strict bounded
+  hash-linked history, and terminal revocation; active memory and R2 aliases
+  consult the current decision _Ratchet_ →
+  `bun run guard:content-rights:check && bun run guard:channels:check`
 - **`guard-agent-capabilities-v1`** — branded exact agent capabilities,
   experimental approval, raw-locator rejection, and hashed entrypoint inventory
   _Ratchet_ → `bun run guard:agents:check`
@@ -470,11 +479,13 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 | `guard-subprocess-authority-v1`    | human-only | `bun run guard:subprocess:check`                                                                                                                                     |
 | `guard-network-authority-v1`       | human-only | `bun run guard:network:check`                                                                                                                                        |
 | `guard-sports-integrations-v1`     | human-only | `bun run guard:integrations:check`                                                                                                                                   |
+| `guard-outbound-consumers-v1`      | human-only | `bun run guard:outbound-consumers:check`                                                                                                                             |
 | `guard-protocol-matrix-v1`         | human-only | `bun run guard:protocol-matrix:check`                                                                                                                                |
 | `guard-offline-content-v1`         | human-only | `bun run guard:offline:check`                                                                                                                                        |
 | `guard-content-store-contract-v1`  | human-only | `bun run guard:content-store:check`                                                                                                                                  |
 | `guard-channel-alias-contract-v1`  | human-only | `bun run guard:channels:check`                                                                                                                                       |
 | `guard-content-rights-contract-v1` | human-only | `bun run guard:content-rights:check`                                                                                                                                 |
+| `guard-rights-revocation-ledger-v1` | human-only | `bun run guard:content-rights:check && bun run guard:channels:check`                                                                                                  |
 | `guard-agent-capabilities-v1`      | human-only | `bun run guard:agents:check`                                                                                                                                         |
 | `guard-registry-authority-v1`      | human-only | `bun run guard:registry:check`                                                                                                                                       |
 | `guard-feed-ingestion-v1`          | human-only | `bun run guard:feeds:check`                                                                                                                                          |
@@ -515,7 +526,7 @@ How each claim is enforced day-to-day. **SSOT:** `ProofPath.gateClass` +
 
 Counts (must match `gateClass` tallies):
 
-continuous 35 · workflow 9 · human-only 49.
+continuous 35 · workflow 9 · human-only 51.
 
 Discover (display only, not gates): `bun run harness:status` ·
 `bun run docs:fresh-rerun`.

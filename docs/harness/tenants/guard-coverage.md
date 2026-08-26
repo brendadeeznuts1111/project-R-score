@@ -182,12 +182,15 @@ response-byte limit, timeout, and retry budget.
 
 **Scoped proof** `guard-sports-integrations-v1`
 
+**Repository inventory proof** `guard-outbound-consumers-v1`
+
 Sports Terminal's inventoried server-side provider, webhook, internal-proxy, and
 Telegram consumers route through reviewed policy boundaries and their focused
-suite passes. The discovery ratchet only scans the Sports Terminal server tree;
-Betfair/F402 and other integration roots across the monorepo do not yet have one
-exact cross-repository inventory. This row therefore remains below
-`Implemented`.
+suite passes. The repository-wide AST ratchet exactly matches 824 structural
+rows: 37 owned policy boundaries, 45 intentional native probes, and 742 explicit
+unowned gaps. It rejects additions and removals and requires each row to retain
+an owner, reason, and classification, but classification is not consumer
+migration. The 742 unowned consumers keep this row below `Implemented`.
 
 ### `FEED-001` RSS, XML, and image ingestion
 
@@ -210,6 +213,8 @@ by content digest rather than URL.
 **Scoped proof** `guard-feed-ingestion-v1`
 
 **Durable adapter proof** `guard-r2-content-v1`
+
+**Independent rights proof** `guard-rights-revocation-ledger-v1`
 
 Both RSS parsers reject DTD/entity declarations and enforce input, depth, node,
 attribute, and text quotas. Feed images are MIME/dimension bounded and can store
@@ -243,9 +248,11 @@ revocation are atomic; stale or rights-ineligible targets cannot remain active.
 The branded in-memory alias store has exact revision/digest compare-and-swap,
 distinct authority roles, immutable verified targets, expiry, promotion, and
 terminal revocation tests. The hermetic R2 adapter persists strict alias JSON,
-rehashes it on read, and uses ETag compare-and-swap. Production R2 binding/live
-proof and propagation from an independent rights-revocation registry remain
-open, so this row is `Contracted`, not `Implemented`.
+rehashes it on read, and uses ETag compare-and-swap. Hermetic memory and R2
+aliases consult the independent current rights decision, and reviewer revocation
+disables resolution without rewriting alias identity. Production R2 binding/live
+proof and complete channel-consumer wiring remain open, so this row is
+`Contracted`, not `Implemented`.
 
 ### `CAS-001` ContentStore and media addressability
 
@@ -296,11 +303,15 @@ serving, derivation, retention, and deletion without changing content identity.
 
 **Scoped proof** `guard-content-rights-contract-v1`
 
-ContentRef and in-memory alias decisions cover allowed, denied, expired,
-revoked, authority-mismatched, and operation-ineligible cases. Rights remain
-embedded in each immutable ContentRef; an independently mutable reviewer-owned
-rights registry and revocation propagation into active durable aliases are not
-implemented.
+**Independent ledger proof** `guard-rights-revocation-ledger-v1`
+
+ContentRef decisions cover allowed, denied, expired, revoked,
+authority-mismatched, and operation-ineligible cases. The independent memory and
+R2 ledgers enforce a distinct reviewer, exact revision/digest and ETag CAS,
+strict bounded hash-linked history, terminal revocation, and propagation into
+active memory and R2 alias resolution in hermetic tests. Retention/deletion/GC
+policy enforcement, production ledger/channel wiring, and live R2 proof remain
+open, so this row is `Contracted`, not `Implemented`.
 
 ### `AGENT-001` Agent and tool consumers
 
