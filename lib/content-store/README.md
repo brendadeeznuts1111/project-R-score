@@ -14,6 +14,10 @@ Core invariants:
 - `SourceLocatorId` hashes the exact canonical locator string on a separate
   identity path. A locator hash is never accepted as a content digest.
 - Wire/persisted `ContentRef` data enters through `parseContentRef` once.
+- `R2ContentStore` uses digest-derived keys, bounded exact bytes, SHA-256 upload
+  checks, create-only conditional writes, and independently rehashed reads.
+- `R2ChannelAliasStore` persists the existing channel policy through exact R2
+  ETag compare-and-swap and verifies every written JSON record after storage.
 - Digest relations describe derivation/provenance only. Package dependency
   records separately preserve runtime, development, optional, and peer edges;
   `peer.optional` represents `peerDependenciesMeta` only.

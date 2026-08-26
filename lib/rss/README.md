@@ -14,21 +14,22 @@ RSS 2.0, Media RSS, multi-channel endpoint, enclosure, versioning, and branding
 semantics are owned by
 [`../../docs/RSS_XML_CONTRACT.md`](../../docs/RSS_XML_CONTRACT.md).
 
-| Entry                                                  | Responsibility                                                                                                       |
-| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
-| [`rss-xml.ts`](./rss-xml.ts)                           | Stable strict Bun.XML parse/normalize API and RSS type exports.                                                      |
-| [`rss-xml-validation.ts`](./rss-xml-validation.ts)     | Core compact-shape, URL, integer, singleton, and date validation.                                                    |
-| [`rss-media-validation.ts`](./rss-media-validation.ts) | Media RSS namespace, group, content, player, credit, thumbnail, and enclosure validation.                            |
-| [`rss-xml-serialize.ts`](./rss-xml-serialize.ts)       | Deterministic Bun.XML emission for core RSS, Atom self links, channel images, enclosures, and Media RSS.             |
-| [`rss-fanout.ts`](./rss-fanout.ts)                     | Versioned one-channel documents, stable GUID membership, deterministic dates, and exact-byte strong ETags.           |
-| [`rss-response.ts`](./rss-response.ts)                 | GET/HEAD plus conditional ETag and Last-Modified response semantics.                                                 |
-| [`rss-manager.ts`](./rss-manager.ts)                   | Cache, enrich, generate, and publish normalized RSS feeds.                                                           |
-| [`feed-image.ts`](./feed-image.ts)                     | Validate/enrich images, persist rights-gated original/thumbnail `ContentRef`s, and perform strict offline CAS reads. |
-| [`remote-fetch.ts`](./remote-fetch.ts)                 | Shared HTTPS, origin, redirect, deadline, identity-encoding, and streaming-byte policy.                              |
-| [`fetch-feed-xml.ts`](./fetch-feed-xml.ts)             | Bounded XML retrieval and MIME validation before parsing.                                                            |
-| [`fetch-image-bytes.ts`](./fetch-image-bytes.ts)       | Image-specific adapter over the shared remote-fetch boundary.                                                        |
-| [`image-color.ts`](./image-color.ts)                   | Downsample images and decode Bun's one-pixel PNG terminal for average colors.                                        |
-| `project-channel-registry*.ts`                         | Project/repository ownership, strict registry parsing, channel registration, and alias routes.                       |
+| Entry                                                      | Responsibility                                                                                                       |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| [`rss-xml.ts`](./rss-xml.ts)                               | Stable strict Bun.XML parse/normalize API and RSS type exports.                                                      |
+| [`rss-xml-validation.ts`](./rss-xml-validation.ts)         | Core compact-shape, URL, integer, singleton, and date validation.                                                    |
+| [`rss-media-validation.ts`](./rss-media-validation.ts)     | Media RSS namespace, group, content, player, credit, thumbnail, and enclosure validation.                            |
+| [`rss-xml-serialize.ts`](./rss-xml-serialize.ts)           | Deterministic Bun.XML emission for core RSS, Atom self links, channel images, enclosures, and Media RSS.             |
+| [`rss-fanout.ts`](./rss-fanout.ts)                         | Versioned one-channel documents, stable GUID membership, deterministic dates, and exact-byte strong ETags.           |
+| [`rss-response.ts`](./rss-response.ts)                     | GET/HEAD plus conditional ETag and Last-Modified response semantics.                                                 |
+| [`rss-manager.ts`](./rss-manager.ts)                       | Cache, enrich, generate, and publish normalized RSS feeds.                                                           |
+| [`feed-image.ts`](./feed-image.ts)                         | Validate/enrich images, persist rights-gated original/thumbnail `ContentRef`s, and perform strict offline CAS reads. |
+| [`feed-snapshot-manifest.ts`](./feed-snapshot-manifest.ts) | Strict versioned source-to-CAS feed manifests, channel membership, freshness policy, and cache-only verified loads.  |
+| [`remote-fetch.ts`](./remote-fetch.ts)                     | Shared HTTPS, origin, redirect, deadline, identity-encoding, and streaming-byte policy.                              |
+| [`fetch-feed-xml.ts`](./fetch-feed-xml.ts)                 | Bounded XML retrieval and MIME validation before parsing.                                                            |
+| [`fetch-image-bytes.ts`](./fetch-image-bytes.ts)           | Image-specific adapter over the shared remote-fetch boundary.                                                        |
+| [`image-color.ts`](./image-color.ts)                       | Downsample images and decode Bun's one-pixel PNG terminal for average colors.                                        |
+| `project-channel-registry*.ts`                             | Project/repository ownership, strict registry parsing, channel registration, and alias routes.                       |
 
 `RSSManager.fetchFeed()` recognizes image candidates in this order:
 `media:content`, image `enclosure`, then `media:thumbnail`. Enrichment is

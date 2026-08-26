@@ -1,5 +1,11 @@
 import type { ChannelAliasId, ContentChannelId, ContentDigest } from '../types/branded.ts';
 import {
+  parseChannelAliasId,
+  parseContentChannelId,
+  parseIdentityId,
+  parseSourceSystemId,
+} from '../types/branded.ts';
+import {
   contentKeyForDigest,
   decideContentRights,
   parseContentRef,
@@ -121,6 +127,163 @@ function cloneAuthority(authority: ContentAuthorityRef): ContentAuthorityRef {
   );
 }
 
+function parseAliasRecordObject(value: unknown, field: string): Record<string, unknown> {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    throw new TypeError(`Invalid ChannelAliasRecord ${field}: expected object`);
+  }
+  return value as Record<string, unknown>;
+}
+
+function assertAliasRecordKeys(
+  value: Record<string, unknown>,
+  allowed: readonly string[],
+  field: string
+): void {
+  const allowedSet = new Set(allowed);
+  const unexpected = Object.keys(value)
+    .filter(key => !allowedSet.has(key))
+    .sort()[0];
+  if (unexpected !== undefined) {
+    throw new TypeError(`Invalid ChannelAliasRecord ${field}: unexpected key ${unexpected}`);
+  }
+}
+
+function parseAliasAuthority(value: unknown, field: string): ContentAuthorityRef {
+  const authority = parseAliasRecordObject(value, field);
+  if (authority.kind === 'identity') {
+    assertAliasRecordKeys(authority, ['kind', 'identityId'], field);
+    return { kind: 'identity', identityId: parseIdentityId(authority.identityId) };
+  }
+  if (authority.kind === 'source-system') {
+    assertAliasRecordKeys(authority, ['kind', 'sourceSystemId'], field);
+    return { kind: 'source-system', sourceSystemId: parseSourceSystemId(authority.sourceSystemId) };
+  }
+  throw new TypeError(`Invalid ChannelAliasRecord ${field}.kind: unknown authority kind`);
+}
+
+function parseAliasTimestamp(value: unknown, field: string): string {
+  if (
+    typeof value !== 'string' ||
+    !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z$/.test(value) ||
+    !Number.isFinite(Date.parse(value))
+  ) {
+    throw new TypeError(`Invalid ChannelAliasRecord ${field}: expected UTC ISO timestamp`);
+  }
+  return new Date(Date.parse(value)).toISOString();
+}
+
+/** Strict persisted boundary shared by durable alias adapters. */
+export function parseChannelAliasRecord(value: unknown): ChannelAliasRecord {
+  const record = parseAliasRecordObject(value, 'root');
+  const commonKeys = [
+    'schema',
+    'version',
+    'aliasId',
+    'revision',
+    'target',
+    'sourceChannelId',
+    'authorities',
+    'issuedAt',
+    'expiresAt',
+    'lifecycle',
+  ];
+  if (record.lifecycle === 'active') {
+    assertAliasRecordKeys(record, commonKeys, 'root');
+  } else if (record.lifecycle === 'revoked') {
+    assertAliasRecordKeys(
+      record,
+      [...commonKeys, 'revokedAt', 'revokedBy', 'revocationReason'],
+      'root'
+    );
+  } else {
+    throw new TypeError('Invalid ChannelAliasRecord lifecycle: unknown lifecycle');
+  }
+  if (record.schema !== CHANNEL_ALIAS_SCHEMA || record.version !== CHANNEL_ALIAS_VERSION) {
+    throw new TypeError('Invalid ChannelAliasRecord schema: unsupported schema or version');
+  }
+  if (!Number.isSafeInteger(record.revision) || Number(record.revision) < 1) {
+    throw new TypeError('Invalid ChannelAliasRecord revision: expected positive safe integer');
+  }
+  const authoritiesWire = parseAliasRecordObject(record.authorities, 'authorities');
+  assertAliasRecordKeys(
+    authoritiesWire,
+    ['publisher', 'rightsReviewAuthority', 'aliasPublisher'],
+    'authorities'
+  );
+  const authorities: ChannelAliasAuthorities = {
+    publisher: parseAliasAuthority(authoritiesWire.publisher, 'authorities.publisher'),
+    rightsReviewAuthority: parseAliasAuthority(
+      authoritiesWire.rightsReviewAuthority,
+      'authorities.rightsReviewAuthority'
+    ),
+    aliasPublisher: parseAliasAuthority(
+      authoritiesWire.aliasPublisher,
+      'authorities.aliasPublisher'
+    ),
+  };
+  const target = cloneAndFreezeTarget(parseContentRef(record.target));
+  if (
+    !sameAuthority(authorities.publisher, target.authorities.publisher) ||
+    !sameAuthority(authorities.rightsReviewAuthority, target.authorities.rightsReviewAuthority) ||
+    !sameAuthority(authorities.aliasPublisher, target.authorities.aliasPublisher)
+  ) {
+    throw new TypeError(
+      'Invalid ChannelAliasRecord authorities: do not match immutable target authorities'
+    );
+  }
+  const common = {
+    schema: CHANNEL_ALIAS_SCHEMA,
+    version: CHANNEL_ALIAS_VERSION,
+    aliasId: parseChannelAliasId(record.aliasId),
+    revision: Number(record.revision),
+    target,
+    sourceChannelId: parseContentChannelId(record.sourceChannelId),
+    authorities: Object.freeze(authorities),
+    issuedAt: parseAliasTimestamp(record.issuedAt, 'issuedAt'),
+    ...(record.expiresAt === undefined
+      ? {}
+      : { expiresAt: parseAliasTimestamp(record.expiresAt, 'expiresAt') }),
+  } as const;
+  if (record.lifecycle === 'active') return Object.freeze({ ...common, lifecycle: 'active' });
+  if (
+    typeof record.revocationReason !== 'string' ||
+    record.revocationReason.length === 0 ||
+    record.revocationReason.length > 512 ||
+    record.revocationReason.trim() !== record.revocationReason ||
+    record.revocationReason.includes('\0')
+  ) {
+    throw new TypeError('Invalid ChannelAliasRecord revocationReason: expected canonical reason');
+  }
+  const revokedBy = cloneAuthority(parseAliasAuthority(record.revokedBy, 'revokedBy'));
+  if (!sameAuthority(revokedBy, authorities.aliasPublisher)) {
+    throw new TypeError('Invalid ChannelAliasRecord revokedBy: must be exact alias publisher');
+  }
+  return Object.freeze({
+    ...common,
+    lifecycle: 'revoked',
+    revokedAt: parseAliasTimestamp(record.revokedAt, 'revokedAt'),
+    revokedBy,
+    revocationReason: record.revocationReason,
+  });
+}
+
+export function parseChannelAliasRecordJson(json: string): ChannelAliasRecord {
+  if (new TextEncoder().encode(json).byteLength > 2 * 1024 * 1024) {
+    throw new TypeError('Invalid ChannelAliasRecord json: exceeds 2097152 bytes');
+  }
+  let wire: unknown;
+  try {
+    wire = JSON.parse(json);
+  } catch {
+    throw new TypeError('Invalid ChannelAliasRecord json: malformed JSON');
+  }
+  return parseChannelAliasRecord(wire);
+}
+
+export function serializeChannelAliasRecord(record: ChannelAliasRecord): string {
+  return `${JSON.stringify(parseChannelAliasRecord(record))}\n`;
+}
+
 function cloneAndFreezeTarget(target: ContentRef): ContentRef {
   const parsed = parseContentRef(target);
   return Object.freeze({
@@ -209,15 +372,49 @@ function assertAuthorities(
   });
 }
 
-/** Hermetic atomic alias adapter. R2 remains deferred until it can provide equivalent CAS. */
+/** Hermetic atomic alias adapter and shared policy engine for durable CAS adapters. */
 export class MemoryChannelAliasStore implements ChannelAliasStore {
-  readonly #records = new Map<ChannelAliasId, ChannelAliasRecord>();
+  readonly #records: Map<ChannelAliasId, ChannelAliasRecord>;
 
   constructor(
     readonly contentStore: ContentStore,
     readonly policy: ChannelAliasPolicy = DEFAULT_CHANNEL_ALIAS_POLICY,
-    readonly clock: () => Date = () => new Date()
-  ) {}
+    readonly clock: () => Date = () => new Date(),
+    initialRecords: Iterable<readonly [ChannelAliasId, ChannelAliasRecord]> = []
+  ) {
+    this.#records = new Map(
+      Array.from(initialRecords, ([aliasId, record]) => {
+        const parsed = parseChannelAliasRecord(record);
+        if (parsed.aliasId !== aliasId) {
+          throw new ChannelAliasPolicyError(
+            'AUTHORITY_MISMATCH',
+            'Hydrated alias key does not match its persisted record'
+          );
+        }
+        const expectedAuthorities = assertAuthorities(
+          parsed.target,
+          parsed.authorities.aliasPublisher,
+          policy
+        );
+        if (JSON.stringify(expectedAuthorities) !== JSON.stringify(parsed.authorities)) {
+          throw new ChannelAliasPolicyError(
+            'AUTHORITY_MISMATCH',
+            'Persisted alias authorities do not match the immutable target authorities'
+          );
+        }
+        if (
+          parsed.lifecycle === 'revoked' &&
+          !sameAuthority(parsed.revokedBy, parsed.authorities.aliasPublisher)
+        ) {
+          throw new ChannelAliasPolicyError(
+            'AUTHORITY_MISMATCH',
+            'Persisted alias revocation actor is not the exact alias publisher'
+          );
+        }
+        return [aliasId, parsed] as const;
+      })
+    );
+  }
 
   async get(aliasId: ChannelAliasId): Promise<ChannelAliasRecord | undefined> {
     return this.#records.get(aliasId);

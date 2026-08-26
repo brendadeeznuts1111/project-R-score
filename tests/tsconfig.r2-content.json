@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": ["bun"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "files": [
+    "r2-content-store.test.ts",
+    "r2-channel-alias-store.test.ts",
+    "feed-snapshot-manifest.test.ts",
+    "../lib/content-store/r2-content-store.ts",
+    "../lib/content-store/r2-channel-alias-store.ts",
+    "../lib/rss/feed-snapshot-manifest.ts"
+  ]
+}
