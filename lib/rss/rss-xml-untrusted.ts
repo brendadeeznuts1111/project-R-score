@@ -1,6 +1,6 @@
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — worker isolation
 // @see https://bun.com/docs/runtime/workers#worker-unref — do not retain the caller
-// @see https://bun.com/docs/runtime/workers#worker-terminate — deterministic disposal
+// @see https://bun.com/docs/runtime/workers#terminating-a-worker — deterministic disposal
 // @see https://bun.com/reference/bun/XML/parse — strict native XML parsing
 
 import type { RssChannelItem } from '../docs/bun-rss.ts';

@@ -1,5 +1,5 @@
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Worker messages
-// @see https://bun.com/docs/runtime/workers#worker-terminate — termination
+// @see https://bun.com/docs/runtime/workers#terminating-a-worker — termination
 // @see https://bun.com/reference/bun/XML/parse — Bun.XML.parse byte inputs
 
 import { describe, expect, test } from 'bun:test';
