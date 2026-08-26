@@ -716,7 +716,7 @@ export async function runDeps(opts: ReturnType<typeof parseArgs>): Promise<void>
 }
 
 /** Simple complexity approximation based on code patterns */
-function approxComplexity(text: string): number {
+export function approxComplexity(text: string): number {
 	// Count various complexity indicators
 	const conditions = (text.match(/\b(if|else|switch|case|for|while|try|catch)\b/g) || [])
 		.length;
@@ -725,7 +725,7 @@ function approxComplexity(text: string): number {
 	const returns = (text.match(/\b(return)\b/g) || []).length;
 
 	// Basic complexity score
-	return conditions + nested * 2 + functions + Math.floor(returns / 2);
+	return 1 + conditions + nested * 2 + functions + Math.floor(returns / 2);
 }
 
 export async function runComplexity(
