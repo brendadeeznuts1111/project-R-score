@@ -15,6 +15,7 @@ import { Database, type SQLQueryBindings } from "bun:sqlite";
 import { getDb } from "@db/index";
 import { createLogger } from "@utils/logger";
 import { logMarketDepth } from "@utils/tableLogger";
+import { fetchPredictionProvider } from "@utils/outbound-endpoints";
 import type {
   PredictionProvider,
   PredictionMarket,
@@ -248,9 +249,8 @@ async function fetchKalshiMarkets(): Promise<PredictionMarket[]> {
   }
 
   try {
-    const response = await fetch(`${config.apiEndpoint}/markets`, {
+    const response = await fetchPredictionProvider("kalshi", `${config.apiEndpoint}/markets`, {
       headers: { Authorization: `Bearer ${apiKey}` },
-      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {
@@ -294,9 +294,10 @@ async function fetchPolymarketMarkets(): Promise<PredictionMarket[]> {
   const config = PROVIDER_CONFIGS.polymarket;
 
   try {
-    const response = await fetch(`${config.apiEndpoint}/markets`, {
-      signal: AbortSignal.timeout(15000),
-    });
+    const response = await fetchPredictionProvider(
+      "polymarket",
+      `${config.apiEndpoint}/markets`,
+    );
 
     if (!response.ok) {
       throw new Error(`Polymarket API error: ${response.status}`);
@@ -339,9 +340,7 @@ async function fetchPredictItMarkets(): Promise<PredictionMarket[]> {
   const config = PROVIDER_CONFIGS.predictit;
 
   try {
-    const response = await fetch(config.apiEndpoint || "", {
-      signal: AbortSignal.timeout(15000),
-    });
+    const response = await fetchPredictionProvider("predictit", config.apiEndpoint || "");
 
     if (!response.ok) {
       throw new Error(`PredictIt API error: ${response.status}`);
@@ -392,7 +391,7 @@ async function fetchBetfairMarkets(): Promise<PredictionMarket[]> {
   }
 
   try {
-    const response = await fetch(config.apiEndpoint || "", {
+    const response = await fetchPredictionProvider("betfair", config.apiEndpoint || "", {
       method: "POST",
       headers: {
         "X-Application": apiKey,
@@ -409,7 +408,6 @@ async function fetchBetfairMarkets(): Promise<PredictionMarket[]> {
         },
         id: 1,
       }),
-      signal: AbortSignal.timeout(15000),
     });
 
     if (!response.ok) {

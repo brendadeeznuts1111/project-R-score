@@ -27,26 +27,27 @@ const h2SupportCache = new Map<string, boolean>();
  * `forceHttp1` override.
  */
 export async function h2Fetch(
-  url: string,
+  url: string | URL,
   init?: RequestInit & { forceHttp1?: boolean }
 ): Promise<Response> {
-  const origin = extractOrigin(url);
+  const target = url.toString();
+  const origin = extractOrigin(target);
 
   // If caller explicitly wants h1, or we already know this origin
   // doesn't support h2, skip the h2 attempt.
   if (init?.forceHttp1 || h2SupportCache.get(origin) === false) {
     const { forceHttp1: _, ...rest } = (init ?? {});
-    return fetch(url, rest);
+    return fetch(target, rest);
   }
 
   // Only attempt h2 for HTTPS URLs
-  if (!url.startsWith("https://")) {
-    return fetch(url, init ?? {});
+  if (!target.startsWith("https://")) {
+    return fetch(target, init ?? {});
   }
 
   try {
     const { forceHttp1: _, ...rest } = (init ?? {});
-    const response = await fetch(url, { ...rest, protocol: "http2" } as RequestInit);
+    const response = await fetch(target, { ...rest, protocol: "http2" } as RequestInit);
     // Success — cache that this origin supports h2
     h2SupportCache.set(origin, true);
     return response;
@@ -56,7 +57,7 @@ export async function h2Fetch(
       // Origin doesn't support h2 — cache and fall back
       h2SupportCache.set(origin, false);
       const { forceHttp1: _, ...rest } = (init ?? {});
-      return fetch(url, rest);
+      return fetch(target, rest);
     }
     // Not an HTTP/2 error — rethrow
     throw err;
