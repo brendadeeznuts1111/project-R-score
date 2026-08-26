@@ -115,7 +115,7 @@ export async function buildLiveIntegrationHealthDocument(
   const resolvedMap: Record<string, string> = { ...externalIdMap };
 
   for (const partner of partners) {
-    const externalPartnerId = partner.partner_id;
+    const externalPartnerId = partner.partnerId;
     const partnerCode = resolveExternalPartnerCode(externalPartnerId, resolvedMap);
     if (partnerCode) resolvedMap[externalPartnerId] = partnerCode;
 
@@ -146,12 +146,7 @@ export async function buildLiveIntegrationHealthDocument(
     }
 
     const overall = overallFromResults(healthyCount, sourceCount);
-    const callSign =
-      partnerCode !== null
-        ? `${partnerCode}-001`
-        : partner.display_name
-          ? null
-          : null;
+    const callSign = partnerCode === null ? null : `${partnerCode}-001`;
 
     rows.push({
       partnerCode,
