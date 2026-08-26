@@ -455,9 +455,9 @@ describe('fresh-rerun contract', () => {
     expect(p?.freshRerun).toBe('bun run test:ci-deploy');
   });
 
-  test('docs-integrity freshRerun is bun-doc-refs schedule --once', () => {
+  test('docs-integrity freshRerun is read-only bun-doc-refs integrity', () => {
     const p = CRITICAL_PROOF_PATHS.find(x => x.id === 'docs-integrity');
-    expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts schedule --once');
+    expect(p?.freshRerun).toBe('bun tools/bun-doc-refs.ts integrity');
   });
 
   test('audit-findings-catalog freshRerun is audit:verify (continuous)', () => {

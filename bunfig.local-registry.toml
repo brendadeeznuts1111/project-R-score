@@ -1,0 +1,4 @@
+# Explicit local npm-read override. Use only while `bun run serve:public` is running.
+# SDK writes require FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL plus runtime-injected local auth.
+[install.scopes]
+"@factorywager" = { url = "http://localhost:3000/" }

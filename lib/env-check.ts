@@ -145,14 +145,27 @@ export const ENV_CHECK_SPECS: Spec[] = [
     hasCodeDefault: true,
     note: CLOUDFLARE_DEFAULTS.registryBucket,
   },
-  // Registry / publish
+  // Registry read origin / local SDK write gateway
   {
-    key: 'REGISTRY_URL',
+    key: 'FACTORY_WAGER_NPM_REGISTRY_URL',
     group: 'registry',
-    severity: 'recommended',
-    anyOf: ['REGISTRY_URL', 'FACTORY_REGISTRY_URL'],
+    severity: 'optional',
     hasCodeDefault: true,
-    note: `npm publish/install plane (default https://${CLOUDFLARE_DEFAULTS.registryHost}); see bun publish --registry`,
+    note: `tokenless GET/HEAD npm reads (default https://${CLOUDFLARE_DEFAULTS.registryHost}/api/npm)`,
+  },
+  {
+    key: 'FACTORY_WAGER_REGISTRY_ORIGIN',
+    group: 'registry',
+    severity: 'optional',
+    hasCodeDefault: true,
+    note: `public artifact/index reads (default https://${CLOUDFLARE_DEFAULTS.registryHost})`,
+  },
+  {
+    key: 'FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL',
+    group: 'registry',
+    severity: 'optional',
+    hasCodeDefault: true,
+    note: 'RegistryClient.publish development gateway; HTTP loopback only',
   },
   {
     key: 'ROUTING_PROBE_BASE_URL',
@@ -160,12 +173,7 @@ export const ENV_CHECK_SPECS: Spec[] = [
     severity: 'optional',
     anyOf: ['ROUTING_PROBE_BASE_URL', 'PAGES_PUBLIC_URL'],
     hasCodeDefault: true,
-    note: `Pages public origin for routing proof (default https://${CLOUDFLARE_DEFAULTS.pages.customDomain}); not REGISTRY_URL`,
-  },
-  {
-    key: 'REGISTRY_PUBLIC_URL',
-    group: 'registry',
-    severity: 'optional',
+    note: `Pages public origin for routing proof (default https://${CLOUDFLARE_DEFAULTS.pages.customDomain})`,
   },
   {
     key: 'REGISTRY_SECRET',
@@ -173,7 +181,7 @@ export const ENV_CHECK_SPECS: Spec[] = [
     severity: 'required',
     anyOf: ['REGISTRY_SECRET', 'FACTORY_WAGER_TOKEN'],
     secret: true,
-    note: 'publish gate; without it POST versions → 503',
+    note: 'loopback development gateway secret; production writes use R2 credentials',
   },
   {
     key: 'API_KEY',

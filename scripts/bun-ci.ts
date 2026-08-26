@@ -53,6 +53,32 @@ if (!resolvedBun.matchesRuntime) {
 }
 const bunExecutable = resolvedBun.path;
 
+async function assertTrackedSourceClean(stage: 'before' | 'after'): Promise<void> {
+  const proc = Bun.spawn(['git', 'status', '--porcelain', '--untracked-files=no'], {
+    cwd: repoRoot,
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env },
+  });
+  const [stdout, stderr, exitCode] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (exitCode !== 0) {
+    console.error(`bun:ci could not inspect the tracked source tree ${stage} proof`);
+    if (stderr.trim()) console.error(stderr.trim());
+    process.exit(exitCode || 1);
+  }
+  if (stdout.trim()) {
+    console.error(`bun:ci refused ${stage} proof · tracked source tree is dirty`);
+    console.error(stdout.trimEnd());
+    process.exit(1);
+  }
+}
+
+await assertTrackedSourceClean('before');
+
 console.info(
   `bun:ci · ${shortSha} · ${branch || 'unknown'}${ciNote} · Bun ${Bun.version} (${Bun.revision}) · ${bunExecutable} · R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME}`
 );
@@ -123,4 +149,5 @@ for (const step of steps) {
   }
 }
 
+await assertTrackedSourceClean('after');
 console.info('\n✅ bun:ci local merge proof passed');

@@ -79,7 +79,7 @@ export const MAINTENANCE_RUNBOOKS: readonly TenantRunbook[] = [
     tenant: 'docs-integrity',
     signal:
       '`bun run spine:schedule:once -- --tenant=docs-integrity` exits non-zero (integrity FAIL)',
-    intervention: 'bun tools/bun-doc-refs.ts schedule --once',
+    intervention: 'bun tools/bun-doc-refs.ts integrity · bun tools/bun-doc-refs.ts schedule --once',
     proofId: 'docs-integrity',
     retirement:
       'Remove when docs integrity is solely owned by a required CI / operate schedule that does not need the spine daemon',

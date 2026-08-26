@@ -49,6 +49,8 @@ export const CLOUDFLARE_DEFAULTS = {
   wikiHost: 'wiki.factory-wager.com',
   /** HTTPS package registry (npm / CDN front). */
   registryHost: 'registry.factory-wager.com',
+  /** Public GET/HEAD-only npm packument prefix on the registry host. */
+  registryNpmPath: '/api/npm',
   /** Default registry object store path (pack/release/changelog scripts). */
   registryBucket: 'factory-wager-registry',
   /** Doctor / deploy fallback when no R2_* bucket env is set. */
@@ -91,6 +93,12 @@ function parseTruthy(raw: string, defaultValue: boolean): boolean {
 }
 
 const PLACEHOLDER_RE = /^(your_|replace_me|changeme|xxx|TODO|place.?holder)/i;
+
+export const FACTORY_WAGER_REGISTRY_ORIGIN =
+  `https://${CLOUDFLARE_DEFAULTS.registryHost}` as const;
+export const FACTORY_WAGER_NPM_REGISTRY_URL =
+  `${FACTORY_WAGER_REGISTRY_ORIGIN}${CLOUDFLARE_DEFAULTS.registryNpmPath}` as const;
+export const FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL = 'http://localhost:3000' as const;
 
 function isUsableSecret(value: string): boolean {
   return Boolean(value) && !PLACEHOLDER_RE.test(value);
@@ -157,10 +165,37 @@ export function searchBenchR2PublicBaseFromEnv(): string {
   return envString('SEARCH_BENCH_R2_PUBLIC_BASE');
 }
 
-/** FactoryWager npm registry URL (`REGISTRY_URL` overlay; `bun publish --registry`). */
-// @see https://bun.com/docs/pm/cli/publish#registry-configuration
+/** Public artifact/index origin. This is not a package-manager publish destination. */
 export function factoryWagerRegistryUrlFromEnv(): string {
-  return envString('REGISTRY_URL', `https://${CLOUDFLARE_DEFAULTS.registryHost}`);
+  return envString('FACTORY_WAGER_REGISTRY_ORIGIN', FACTORY_WAGER_REGISTRY_ORIGIN);
+}
+
+/** Public GET/HEAD-only npm base used by `bun info` and scoped installs. */
+// @see https://bun.com/docs/pm/cli/info
+export function factoryWagerNpmRegistryUrlFromEnv(): string {
+  return envString('FACTORY_WAGER_NPM_REGISTRY_URL', FACTORY_WAGER_NPM_REGISTRY_URL);
+}
+
+/** Explicit local SDK write gateway. Production writes use separately authorized R2 SigV4. */
+export function factoryWagerLocalRegistryWriteUrlFromEnv(): string {
+  const value = envString(
+    'FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL',
+    FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL
+  );
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    throw new Error('FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL must be a valid loopback URL');
+  }
+  const loopback =
+    url.hostname === 'localhost' ||
+    url.hostname === '::1' ||
+    /^127(?:\.\d{1,3}){3}$/.test(url.hostname);
+  if (url.protocol !== 'http:' || !loopback) {
+    throw new Error('FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL must use http on loopback');
+  }
+  return value.replace(/\/+$/, '');
 }
 
 export function factoryWagerWikiUrl(): string {
@@ -315,7 +350,8 @@ export function describeCloudflareEnv() {
     zone: CLOUDFLARE_ZONE,
     desiredBuild: cloudflarePagesDesiredBuild(),
     wikiUrl: factoryWagerWikiUrl(),
-    registryUrl: factoryWagerRegistryUrlFromEnv(),
+    registryReadOrigin: factoryWagerRegistryUrlFromEnv(),
+    npmReadUrl: factoryWagerNpmRegistryUrlFromEnv(),
     r2BucketUrl: r2BucketUrlFromEnv(),
     secrets,
     identity: CLOUDFLARE_ENV_KEYS.identity.map(presence),
@@ -571,7 +607,8 @@ async function runCloudflareEnvCli(): Promise<void> {
       console.log(`  secret ${s.key}: ${flag}`);
     }
     console.log(`  wiki          ${factoryWagerWikiUrl()}`);
-    console.log(`  registry      ${factoryWagerRegistryUrlFromEnv()}`);
+    console.log(`  registryRead  ${factoryWagerRegistryUrlFromEnv()}`);
+    console.log(`  npmRead       ${factoryWagerNpmRegistryUrlFromEnv()}`);
     console.log(`  r2BucketUrl   ${r2BucketUrlFromEnv()}`);
   }
 }

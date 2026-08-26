@@ -3,6 +3,7 @@
 import {parseArgs} from 'node:util';
 import {readdir, appendFile, mkdir} from 'node:fs/promises';
 import {availableParallelism} from 'node:os';
+import {resolve as resolvePath} from 'node:path';
 import {dns} from 'bun';
 import {z} from 'zod';
 import {BUN_SCANNER_COLUMNS} from './scan-columns';
@@ -62,6 +63,7 @@ const {values: flags, positionals} = parseArgs({
 		'sort': {type: 'string'},
 		'filter': {type: 'string'},
 		'json': {type: 'boolean', default: false},
+		'root': {type: 'string'},
 		'with-bunfig': {type: 'boolean', default: false},
 		'workspaces': {type: 'boolean', default: false},
 		'without-pkg': {type: 'boolean', default: false},
@@ -1421,8 +1423,8 @@ const BUN_DEFAULT_TRUSTED = new Set([
 	'zopflipng-bin',
 ]);
 
-/** Root directory to scan; uses parent directory or BUN_PLATFORM_HOME if set */
-const PROJECTS_ROOT = Bun.env.BUN_PLATFORM_HOME ?? '..';
+/** Root directory to scan; an explicit CLI root wins over environment/default resolution. */
+const PROJECTS_ROOT = resolvePath(flags.root ?? Bun.env.BUN_PLATFORM_HOME ?? '..');
 const projectDir = (p: {folder: string}) => `${PROJECTS_ROOT}/${p.folder}`;
 
 const _secrets = Bun.secrets;
@@ -2826,7 +2828,7 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 		}
 
 		for (let i = 0; i < poolSize; i++) {
-			const worker = Bun.spawn(['bun', workerPath], {
+			const worker = Bun.spawn([process.execPath, workerPath], {
 				stdio: ['ignore', 'ignore', 'ignore'],
 				ipc(message) {
 					try {
@@ -2841,6 +2843,13 @@ async function scanProjectsViaIPC(dirs: string[]): Promise<ProjectInfo[]> {
 				},
 			});
 			workers.push(worker);
+			void worker.exited.then(exitCode => {
+				if (!settled && exitCode !== 0) {
+					settled = true;
+					cleanup();
+					reject(new Error(`IPC worker exited before completing scans (code ${exitCode})`));
+				}
+			});
 		}
 
 		const sigHandler = () => {
@@ -4534,6 +4543,10 @@ async function fixDns(projects: ProjectInfo[], dryRun: boolean): Promise<void> {
 	console.info();
 }
 
+function rejectRegistryMutation(): void {
+	throw new Error('registry mutation helpers are retired; use the report-only registry:plan command');
+}
+
 // ── Fix Scopes: inject [install.scopes] into bunfig.toml ─────────────
 // Usage: --fix-scopes https://registry.factory-wager.com @factorywager @duoplus
 async function fixScopes(
@@ -4542,6 +4555,7 @@ async function fixScopes(
 	scopeNames: string[],
 	dryRun: boolean,
 ): Promise<void> {
+	rejectRegistryMutation();
 	const url = (registryUrl.startsWith('http') ? registryUrl : `https://${registryUrl}`).replace(/\/+$/, '') + '/';
 	const withPkg = projects.filter(p => p.hasPkg);
 
@@ -4627,6 +4641,7 @@ async function fixNpmrc(
 	scopeNames: string[],
 	dryRun: boolean,
 ): Promise<void> {
+	rejectRegistryMutation();
 	const url = (registryUrl.startsWith('http') ? registryUrl : `https://${registryUrl}`).replace(/\/+$/, '') + '/';
 	const display = url.replace(/^https?:\/\//, '');
 	const withPkg = projects.filter(p => p.hasPkg);
@@ -4695,6 +4710,7 @@ async function fixNpmrc(
 // ── Fix Registry: unify registry across all projects ─────────────────
 // Updates: bunfig.toml [install] + [publish], package.json publishConfig, .npmrc auth
 async function fixRegistry(projects: ProjectInfo[], registryUrl: string, dryRun: boolean): Promise<void> {
+	rejectRegistryMutation();
 	// Normalize: ensure https:// prefix, strip trailing slash
 	const url = (registryUrl.startsWith('http') ? registryUrl : `https://${registryUrl}`).replace(/\/+$/, '');
 	const display = url.replace(/^https?:\/\//, '');
@@ -5722,6 +5738,20 @@ async function infoPackage(pkg: string, projects: ProjectInfo[], jsonOut: boolea
 
 // ── Main ───────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
+	const retiredRegistryFlag = ['fix-registry', 'fix-scopes', 'fix-npmrc'].find(
+		flag => flags[flag as keyof typeof flags],
+	);
+	if (retiredRegistryFlag) {
+		console.error(
+			`${c.red('error:')} --${retiredRegistryFlag} is retired because it conflated registry read, write, and auth planes`,
+		);
+		console.error(
+			`  ${c.dim('use:')} bun run registry:plan -- --plane <read|local-write|production-write> --root <owned-project>`,
+		);
+		process.exitCode = 2;
+		return;
+	}
+
 	// Windows + mise function wrapper: if mise is active but MISE_SHELL isn't set,
 	// the PowerShell function wrapper may be mangling argv before bun sees it
 	if (shouldWarnMise(process.platform, Bun.env.MISE_SHELL)) {
@@ -5745,9 +5775,8 @@ ${c.bold('  Modes:')}
     ${c.cyan('--audit')}                            Metadata + infra + lifecycle security report
     ${c.cyan('--fix')} [--dry-run]                  Patch missing author/license, init missing pkg
     ${c.cyan('--fix-engine')} [--dry-run]           Unify engines.bun across all projects
-    ${c.cyan('--fix-registry')} <url> [--dry-run]   Unify registry (bunfig + pkg + .npmrc)
-    ${c.cyan('--fix-scopes')} <url> @s.. [--dry-run] Inject [install.scopes] into bunfig.toml
-    ${c.cyan('--fix-npmrc')} <url> @s.. [--dry-run] Rewrite .npmrc with scoped template
+    ${c.cyan('--fix-registry|--fix-scopes|--fix-npmrc')}  RETIRED: conflated read/write/auth planes
+    ${c.cyan('bun run registry:plan --')} ...       Report one explicitly owned root; never writes
     ${c.cyan('--fix-trusted')} [--dry-run]          Auto-detect native deps → trustedDependencies
     ${c.cyan('--fix-env-docs')}                     Inject audit recommendations into .env.template
     ${c.cyan('--fix-dns')} [--dry-run]              Set DNS TTL + generate prefetch snippets
@@ -5777,6 +5806,7 @@ ${c.bold('  Cookie Sessions:')}
     ${c.cyan('--cookie-remove')} <session-id> [project-id] <cookie-name>  Remove cookie from session
 
 ${c.bold('  Filters:')}
+    ${c.cyan('--root')} <directory>                 Explicit project-container root (overrides BUN_PLATFORM_HOME)
     ${c.cyan('--filter')} <glob|bool>               Filter by name, folder, or boolean field
     ${c.cyan('--with-bunfig')}                      Only projects with bunfig.toml
     ${c.cyan('--workspaces')}                       Only workspace roots
@@ -6465,7 +6495,9 @@ ${c.bold('  Other:')}
 			content += '\nBUN_RUNTIME_TRANSPILER_CACHE_PATH=${BUN_PLATFORM_HOME}/.bun-cache\n';
 			changed = true;
 			if (dryRun) {
-				console.info(`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
+				console.info(
+					`  ${c.yellow('DRY')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`,
+				);
 			} else {
 				console.info(`  ${c.green('FIX')}  BUN_RUNTIME_TRANSPILER_CACHE_PATH=\${BUN_PLATFORM_HOME}/.bun-cache`);
 			}

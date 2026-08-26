@@ -104,6 +104,43 @@ async function commandText(command: string[], cwd: string): Promise<string> {
   return stdout.trim();
 }
 
+async function homebaseWorkspacePackages(): Promise<
+  Array<{ directory: string; name: string; private: boolean }>
+> {
+  const rootPackage = (await Bun.file('package.json').json()) as {
+    workspaces?: { packages?: string[] } | string[];
+  };
+  const patterns = Array.isArray(rootPackage.workspaces)
+    ? rootPackage.workspaces
+    : rootPackage.workspaces?.packages;
+  if (!patterns?.length) throw new Error('root package must declare workspace package patterns');
+
+  const packagePaths = new Set<string>();
+  for (const pattern of patterns) {
+    for await (const packagePath of new Bun.Glob(`${pattern}/package.json`).scan({
+      cwd: '.',
+      onlyFiles: true,
+    })) {
+      packagePaths.add(packagePath);
+    }
+  }
+
+  return Promise.all(
+    [...packagePaths].sort().map(async packagePath => {
+      const packageManifest = (await Bun.file(packagePath).json()) as {
+        name?: string;
+        private?: boolean;
+      };
+      if (!packageManifest.name) throw new Error(`${packagePath} must declare a package name`);
+      return {
+        directory: packagePath.slice(0, -'/package.json'.length),
+        name: packageManifest.name,
+        private: packageManifest.private === true,
+      };
+    })
+  );
+}
+
 describe('release target manifest', () => {
   test('loads the checked-in target with an exact zero-binary contract', async () => {
     const parsed = parseReleaseTargets(await Bun.file('config/release-targets.json').json());
@@ -113,6 +150,47 @@ describe('release target manifest', () => {
     expect(Object.values(parsed.targets[0]!.publicationRoutes).every(route => !route.enabled)).toBe(
       true
     );
+  });
+
+  test('covers every public homebase workspace without admitting foreign roots', async () => {
+    const parsed = parseReleaseTargets(await Bun.file('config/release-targets.json').json());
+    const workspaces = await homebaseWorkspacePackages();
+    const workspaceDirectories = new Set(workspaces.map(workspace => workspace.directory));
+    const publicWorkspaces = workspaces
+      .filter(workspace => !workspace.private)
+      .map(workspace => workspace.directory)
+      .sort();
+    const targetDirectories = parsed.targets.map(item => item.packageDirectory).sort();
+
+    expect(targetDirectories).toEqual(publicWorkspaces);
+    expect(targetDirectories).toEqual(['packages/registry-client']);
+    expect(parsed.targets.map(item => item.packageName).sort()).toEqual([
+      '@factorywager/registry-client',
+    ]);
+    expect(parsed.targets.every(item => workspaceDirectories.has(item.packageDirectory))).toBe(
+      true
+    );
+
+    const nonHomebaseRoots = [
+      '.bun-create/',
+      'examples/',
+      'projects/archive/',
+      'projects/experimental/',
+      'scratch/',
+      'tests/fixtures/',
+    ];
+    expect(
+      targetDirectories.filter(directory =>
+        nonHomebaseRoots.some(prefix => directory.startsWith(prefix))
+      )
+    ).toEqual([]);
+    expect(
+      targetDirectories.filter(
+        directory =>
+          directory.startsWith('projects/active/') &&
+          directory !== 'projects/active/sports-terminal-os'
+      )
+    ).toEqual([]);
   });
 
   test('rejects traversal, duplicate files, and the read plane as a write endpoint', () => {

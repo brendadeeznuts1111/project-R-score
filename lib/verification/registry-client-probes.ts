@@ -21,9 +21,7 @@ export const REGISTRY_CLIENT_PROBE_VERSION = '1.0.0';
 export const REGISTRY_CLIENT_SDK_VERSION = registryClientPkg.version;
 
 export type RegistryClientProbeKind =
-  | 'registry-client.resolve'
-  | 'registry-client.download'
-  | 'registry-client.publish';
+  'registry-client.resolve' | 'registry-client.download' | 'registry-client.publish';
 
 export type RegistryClientProbeRow = VerificationResult & {
   probe: RegistryClientProbeKind;
@@ -128,11 +126,12 @@ export async function probeRegistryClientResolveParity(): Promise<RegistryClient
   const attempts: string[] = [];
 
   for (const lane of SCOPED_REGISTRY_LANES) {
-    const baseUrl = normalizeBaseUrl(lane.resolveUrl());
-    if (!baseUrl) continue;
+    const npmUrl = normalizeBaseUrl(lane.resolveUrl());
+    const baseUrl = normalizeBaseUrl(lane.resolveArtifactOrigin());
+    if (!npmUrl || !baseUrl) continue;
 
     const tarball = await npmTarballUrl(
-      baseUrl,
+      npmUrl,
       REGISTRY_CLIENT_PROBE_PACKAGE,
       REGISTRY_CLIENT_PROBE_VERSION
     );
@@ -188,7 +187,7 @@ export async function probeRegistryClientDownload(): Promise<RegistryClientProbe
   const attempts: string[] = [];
 
   for (const lane of SCOPED_REGISTRY_LANES) {
-    const baseUrl = normalizeBaseUrl(lane.resolveUrl());
+    const baseUrl = normalizeBaseUrl(lane.resolveArtifactOrigin());
     if (!baseUrl) continue;
 
     try {

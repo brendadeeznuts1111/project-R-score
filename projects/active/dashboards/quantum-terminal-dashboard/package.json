@@ -187,8 +187,5 @@
         "terminal": false
       }
     }
-  },
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
   }
 }

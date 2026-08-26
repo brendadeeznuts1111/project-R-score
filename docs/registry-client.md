@@ -97,19 +97,21 @@ exists (served from the R2-backed index).
 Three planes share "registry" vocabulary — do not cross them. Canonical names
 (scanner: `naming-cluster` findings in `bun tools/reference-discovery.ts`):
 
-| Plane        | Canonical                                                                             | Scope                                                          |
-| ------------ | ------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| npm registry | `factoryWagerRegistryUrlFromEnv()` · `REGISTRY_URL` · `registry.factory-wager.com`    | production metadata and artifact reads                         |
-| Pages public | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com` | Pages portal + routing probes — never `bun publish --registry` |
-| R2 bucket    | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry`    | object store bucket — see `config/r2-env.ts`                   |
+| Plane                | Canonical                                                                                                    | Scope                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| npm read             | `factoryWagerNpmRegistryUrlFromEnv()` · `FACTORY_WAGER_NPM_REGISTRY_URL` · `/api/npm`                        | tokenless `bun info` and scoped installs; GET/HEAD only             |
+| artifact read origin | `factoryWagerRegistryUrlFromEnv()` · `FACTORY_WAGER_REGISTRY_ORIGIN` · `registry.factory-wager.com`          | public index and verified artifact downloads                        |
+| local SDK write      | `factoryWagerLocalRegistryWriteUrlFromEnv()` · `FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL` · HTTP loopback only | authenticated development multipart writes                          |
+| production write     | `factoryRegistryBucketFromEnv()` · `R2_REGISTRY_BUCKET` · `factory-wager-registry`                           | separately authorized direct-to-R2 SigV4; no HTTP registry endpoint |
+| Pages public         | `factoryWagerPagesCustomUrl()` · `ROUTING_PROBE_BASE_URL` · `score.factory-wager.com`                        | portal and routing probes                                           |
 
 ### Proxy transport
 
 Registry clients implemented with Bun's native `fetch()` use the repository
 [`HTTP_PROXY` / `HTTPS_PROXY` / `NO_PROXY` contract](./guides/bun-fetch-proxy-environment.md).
-`REGISTRY_URL` chooses the npm registry destination; proxy variables choose the
-transport route and must never replace or rewrite that destination. Proxy URLs
-may contain credentials, so diagnostics and baked registry artifacts record only
+`FACTORY_WAGER_NPM_REGISTRY_URL` chooses the read destination; proxy variables
+choose the transport route and must never replace or rewrite it. Proxy URLs may
+contain credentials, so diagnostics and baked registry artifacts record only
 variable names and behavior—not values.
 
 ## Env naming: similar pairs

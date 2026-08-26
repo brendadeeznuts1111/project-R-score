@@ -2155,6 +2155,7 @@
     "cli:docs": "bun run scripts/generate-cli-docs.ts",
     "cli:flags:check": "bun scripts/check-cli-flag-allowlists.ts",
     "registry:projects": "bun run scripts/generate-project-registry.ts",
+    "registry:config:check": "bun scripts/check-registry-config.ts",
     "projects:roots:check": "bun tools/projects-root-check.ts",
     "projects:syntax:check": "bun tools/bun-doc-refs.ts syntax projects/active",
     "lib:domains:check": "bun tools/lib-domains-check.ts",
@@ -2584,10 +2585,6 @@
     "CHANGELOG.md",
     "CLAUDE.md"
   ],
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com/api/npm",
-    "access": "public"
-  },
   "overrides": {
     "@hono/node-server": "2.0.12",
     "axios": "1.18.1",

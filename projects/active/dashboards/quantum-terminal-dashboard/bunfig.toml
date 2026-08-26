@@ -1,11 +1,4 @@
-[install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-
 [install]
 exact = true
 # minimumReleaseAge inherited from machine ~/.bunfig.toml
-registry = "https://registry.factory-wager.com"
-
-[publish]
-registry = "https://registry.factory-wager.com"
+registry = "https://registry.npmjs.org/"

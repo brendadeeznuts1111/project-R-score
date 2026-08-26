@@ -65,6 +65,9 @@ describe('repository governance', () => {
     expect(localCi).toContain("Bun.env.R2_BUCKET_NAME");
     expect(localCi).toContain('factory-wager-wiki');
     expect(localCi).toContain('Bun.spawn([bunExecutable');
+    expect(localCi).toContain("await assertTrackedSourceClean('before')");
+    expect(localCi).toContain("await assertTrackedSourceClean('after')");
+    expect(localCi).toContain("'--porcelain', '--untracked-files=no'");
     const ciCore = await Bun.file(`${import.meta.dir}/../scripts/ci-core.ts`).text();
     const ciCoreRunner = await Bun.file(
       `${import.meta.dir}/../scripts/lib/ci-core-runner.ts`

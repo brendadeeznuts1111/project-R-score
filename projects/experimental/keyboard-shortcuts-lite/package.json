@@ -40,10 +40,6 @@
     "type": "git",
     "url": "https://github.com/brendadeeznuts1111/keyboard-shortcuts-lite.git"
   },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.factory-wager.com"
-  },
   "peerDependencies": {
     "typescript": "5.9.3"
   },
