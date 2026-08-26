@@ -20,7 +20,7 @@ import {
 	runTypes,
 } from "./analyze.ts";
 
-const FIXTURE_ROOT = "tools/__fixtures__/analyze";
+const FIXTURE_ROOT = import.meta.dir + "/__fixtures__/analyze";
 
 function opts(
 	overrides: Partial<ReturnType<typeof parseArgs>> = {},
