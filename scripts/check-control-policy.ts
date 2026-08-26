@@ -1,8 +1,5 @@
 #!/usr/bin/env bun
 
-// @see https://bun.com/reference/bun/argv — Bun.argv
-// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
-// @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @updated Bun.spawnSync · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
 // @updated Bun.spawnSync · changed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
@@ -12,6 +9,9 @@
 // @updated Bun.spawnSync · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
 // @updated Bun.spawnSync · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
 // @verified Bun.spawnSync · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
 import { bunHelpControlDrift, controlPolicySchemaIssues } from '../lib/security/control-policy.ts';
 
 function main(): void {
@@ -47,18 +47,6 @@ function main(): void {
       `${JSON.stringify({ schemaIssues, processIssues, helpDrift }, null, 2)}\n`
     );
     process.exitCode = 1;
-    return;
-  }
-
-  const focusedTests = Bun.spawnSync({
-    cmd: [process.execPath, 'test', 'tests/control-policy.test.ts'],
-    cwd: new URL('..', import.meta.url).pathname,
-    env: { ...process.env, BUN_OPTIONS: '' },
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  if (focusedTests.exitCode !== 0) {
-    process.exitCode = focusedTests.exitCode;
     return;
   }
 

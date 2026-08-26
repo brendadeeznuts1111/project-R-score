@@ -50,7 +50,7 @@ function manifestWire() {
     ],
     networkRouteIds: ['route.release-feed'],
     registries: [{ plane: 'metadata-read', origin: 'https://registry.example.test' }],
-    channelAliases: ['bun.release.stable'],
+    channelAliases: ['bun-release-stable'],
     contentRefs: [contentRef()],
     experimentalApproval: {
       controls: ['experimental-http2-fetch'],
@@ -71,7 +71,7 @@ function invocationWire() {
     request: {},
     networkRouteIds: ['route.release-feed'],
     registries: [{ plane: 'metadata-read', origin: 'https://registry.example.test' }],
-    channelAliases: ['bun.release.stable'],
+    channelAliases: ['bun-release-stable'],
     contentRefs: [contentRef()],
   };
 }
@@ -96,8 +96,8 @@ describe('agent capability wire boundary', () => {
     const request = invocationWire();
     request.argv = ['--preload', './unowned.ts'];
     request.networkRouteIds = ['route.admin'];
-    request.registries = [{ plane: 'publish-write', origin: 'https://registry.example.test' }];
-    request.channelAliases = ['bun.release.canary'];
+    request.registries = [{ plane: 'publish', origin: 'https://registry.example.test' }];
+    request.channelAliases = ['bun-release-canary'];
     request.contentRefs = [
       {
         ...contentRef(),
@@ -114,10 +114,39 @@ describe('agent capability wire boundary', () => {
     expect(result.rejected).toContain('control:missing-grant:--preload');
     expect(result.rejected).toContain('network-route-denied:route.admin');
     expect(result.rejected).toContain(
-      'registry-denied:publish-write|https://registry.example.test'
+      'registry-denied:publish|https://registry.example.test'
     );
     expect(result.rejected.some(value => value.startsWith('channel-denied:'))).toBeTrue();
     expect(result.rejected.some(value => value.startsWith('content-denied:'))).toBeTrue();
+  });
+
+  test('denies metadata substitution under an otherwise authorized content digest and key', () => {
+    const request = invocationWire();
+    request.contentRefs = [{ ...contentRef(), mediaType: 'image/png' }];
+    const result = authorizeAgentInvocation(
+      parseAgentCapabilityManifestWire(manifestWire()),
+      parseAgentInvocationWire(request),
+      new Date('2027-01-01T00:00:00.000Z')
+    );
+    expect(result.ok).toBeFalse();
+    expect(result.rejected.some(value => value.startsWith('content-denied:'))).toBeTrue();
+  });
+
+  test('uses the registry SDK operation vocabulary without aliases', () => {
+    for (const plane of ['publish', 'mirror-write']) {
+      expect(
+        parseAgentCapabilityManifestWire({
+          ...manifestWire(),
+          registries: [{ plane, origin: 'https://registry.example.test' }],
+        }).registries[0]?.plane
+      ).toBe(plane);
+    }
+    expect(() =>
+      parseAgentCapabilityManifestWire({
+        ...manifestWire(),
+        registries: [{ plane: 'publish-write', origin: 'https://registry.example.test' }],
+      })
+    ).toThrow('unknown plane publish-write');
   });
 
   test('rejects unknown keys, alias/case tricks, and raw locator substitution', () => {

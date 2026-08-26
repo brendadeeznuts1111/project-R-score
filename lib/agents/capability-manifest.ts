@@ -9,15 +9,18 @@ import {
   type EvaluateControlPolicyInput,
 } from '../security/control-policy.ts';
 import {
+  parseChannelAliasId,
   parseIdentityId,
   parseResourceId,
+  type ChannelAliasId,
   type IdentityId,
   type ResourceId,
 } from '../types/branded.ts';
+import type { RegistryOperation } from '../../packages/registry-client/src/index.ts';
 
 export const AGENT_CAPABILITY_MANIFEST_VERSION = 1 as const;
 export type AgentCapabilityKind = 'agent' | 'tool' | 'mcp-server' | 'skill';
-export type RegistryCapabilityPlane = 'metadata-read' | 'artifact-read' | 'publish-write';
+export type RegistryCapabilityPlane = RegistryOperation;
 
 export interface RegistryCapability {
   readonly plane: RegistryCapabilityPlane;
@@ -39,7 +42,7 @@ export interface AgentCapabilityManifest {
   readonly controls: readonly ControlGrant[];
   readonly networkRouteIds: readonly ResourceId[];
   readonly registries: readonly RegistryCapability[];
-  readonly channelAliases: readonly string[];
+  readonly channelAliases: readonly ChannelAliasId[];
   readonly contentRefs: readonly ContentRef[];
   readonly experimentalApproval?: ExperimentalControlApproval;
 }
@@ -54,7 +57,7 @@ export interface AgentInvocation {
   readonly request: Readonly<Record<string, unknown>>;
   readonly networkRouteIds: readonly ResourceId[];
   readonly registries: readonly RegistryCapability[];
-  readonly channelAliases: readonly string[];
+  readonly channelAliases: readonly ChannelAliasId[];
   readonly contentRefs: readonly ContentRef[];
 }
 
@@ -79,7 +82,8 @@ const KINDS = new Set<AgentCapabilityKind>(['agent', 'tool', 'mcp-server', 'skil
 const REGISTRY_PLANES = new Set<RegistryCapabilityPlane>([
   'metadata-read',
   'artifact-read',
-  'publish-write',
+  'publish',
+  'mirror-write',
 ]);
 const CANONICAL_NAME_RE = /^[a-z0-9][a-z0-9._:/-]*$/;
 
@@ -224,12 +228,18 @@ function parseResourceIds(value: unknown, field: string): readonly ResourceId[] 
   );
 }
 
-function parseAliases(value: unknown, field: string): readonly string[] {
+function parseAliases(value: unknown, field: string): readonly ChannelAliasId[] {
   return unique(
-    parseArray(value, field).map((entry, index) => parseCanonicalName(entry, `${field}[${index}]`)),
+    parseArray(value, field).map((entry, index) =>
+      parseChannelAliasId(parseCanonicalName(entry, `${field}[${index}]`))
+    ),
     field,
     String
   );
+}
+
+function contentAuthorizationKey(item: ContentRef): string {
+  return JSON.stringify(item);
 }
 
 function parseContentRefs(value: unknown, field: string): readonly ContentRef[] {
@@ -245,7 +255,7 @@ function parseContentRefs(value: unknown, field: string): readonly ContentRef[] 
       }
     }),
     field,
-    item => `${item.digest}|${item.key}`
+    contentAuthorizationKey
   );
 }
 
@@ -427,11 +437,9 @@ export function authorizeAgentInvocation(
     ...includesAll(invocation.channelAliases, manifest.channelAliases, String).map(
       value => `channel-denied:${value}`
     ),
-    ...includesAll(
-      invocation.contentRefs,
-      manifest.contentRefs,
-      item => `${item.digest}|${item.key}`
-    ).map(value => `content-denied:${value}`)
+    ...includesAll(invocation.contentRefs, manifest.contentRefs, contentAuthorizationKey).map(
+      value => `content-denied:${value}`
+    )
   );
   return { ok: rejected.length === 0, rejected, controls };
 }

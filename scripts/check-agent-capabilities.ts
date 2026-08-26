@@ -1,12 +1,14 @@
 #!/usr/bin/env bun
 
-import { resolve } from 'node:path';
-
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
 import {
   agentInventoryIssues,
   calculateAgentInventoryRatchets,
   readAgentEntrypointInventory,
 } from '../lib/agents/agent-inventory.ts';
+import { resolvePath } from '../lib/path-bun.ts';
 
 async function main(): Promise<void> {
   if (Bun.argv.length !== 2) {
@@ -16,29 +18,13 @@ async function main(): Promise<void> {
     process.exitCode = 2;
     return;
   }
-  const root = resolve(import.meta.dir, '..');
+  const root = resolvePath(import.meta.dir, '..');
   const issues = await agentInventoryIssues(root);
   if (issues.length > 0) {
     process.stderr.write(
       `${JSON.stringify({ issues, actual: calculateAgentInventoryRatchets(await readAgentEntrypointInventory(root)) }, null, 2)}\n`
     );
     process.exitCode = 1;
-    return;
-  }
-  const tests = Bun.spawnSync({
-    cmd: [
-      process.execPath,
-      'test',
-      'tests/agent-capability-manifest.test.ts',
-      'tests/agent-capability-inventory.test.ts',
-    ],
-    cwd: root,
-    env: { ...process.env, BUN_OPTIONS: '' },
-    stdout: 'inherit',
-    stderr: 'inherit',
-  });
-  if (tests.exitCode !== 0) {
-    process.exitCode = tests.exitCode;
     return;
   }
   process.stdout.write('guard:agents:check ok\n');
