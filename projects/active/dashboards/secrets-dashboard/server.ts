@@ -21,6 +21,7 @@ import {existsSync, watch} from 'node:fs';
 import {join, extname} from 'node:path';
 import { InputValidator, CommonSchemas, ValidationMiddleware } from '../../lib/input-validation.ts';
 import { Logger, LoggerFactory, LoggingMiddleware, LogLevel } from '../../lib/logging-monitoring.ts';
+import { asRequestId, type RequestId } from '../../../../lib/types/branded.ts';
 
 // ============================================================================
 // ERROR SANITIZATION UTILITIES
@@ -31,7 +32,7 @@ interface SanitizedError {
   message: string;
   details?: string;
   timestamp: string;
-  requestId?: string;
+  requestId?: RequestId;
 }
 
 class ErrorHandler {
@@ -40,7 +41,7 @@ class ErrorHandler {
   /**
    * Sanitize error for client response
    */
-  static sanitize(error: unknown, requestId?: string): SanitizedError {
+  static sanitize(error: unknown, requestId?: RequestId): SanitizedError {
     const timestamp = new Date().toISOString();
     
     if (error instanceof Error) {
@@ -112,7 +113,7 @@ class ErrorHandler {
   /**
    * Log error securely (without sensitive data)
    */
-  static log(error: unknown, context?: string, requestId?: string): void {
+  static log(error: unknown, context?: string, requestId?: RequestId): void {
     const sanitized = this.sanitize(error, requestId);
     console.error(`[${new Date().toISOString()}] ERROR ${requestId ? `[${requestId}]` : ''} ${context ? `[${context}]` : ''}:`, {
       code: sanitized.code,
@@ -639,11 +640,11 @@ async function listProjects(): Promise<{folder: string; name: string | null; pat
   return results.sort((a, b) => a.folder.localeCompare(b.folder));
 }
 
-function generateRequestId(): string {
-  return Bun.randomUUIDv7();
+function generateRequestId(): RequestId {
+  return asRequestId(Bun.randomUUIDv7());
 }
 
-function logResponse(response: Response, startTime: number, requestId: string): void {
+function logResponse(response: Response, startTime: number, requestId: RequestId): void {
   const duration = Date.now() - startTime;
   logger.logRequest('HTTP', response.url || 'unknown', response.status, duration, requestId);
 }
