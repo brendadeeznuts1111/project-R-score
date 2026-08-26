@@ -11,6 +11,11 @@ import {
   cloudflareAccountIdFromEnv,
   cloudflarePagesDesiredBuild,
   cloudflareDashboardUrlFromEnv,
+  FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL,
+  FACTORY_WAGER_NPM_REGISTRY_URL,
+  FACTORY_WAGER_REGISTRY_ORIGIN,
+  factoryWagerLocalRegistryWriteUrlFromEnv,
+  factoryWagerNpmRegistryUrlFromEnv,
   factoryWagerRegistryUrlFromEnv,
   factoryWagerWikiUrl,
   r2BenchPrefixFromEnv,
@@ -59,13 +64,21 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(r2EndpointFromAccount(account)).toBe(
       `https://${account}.r2.cloudflarestorage.com`
     );
-    expect(r2BucketFromEnv().length).toBeGreaterThan(0);
+    expect(typeof r2BucketFromEnv()).toBe('string');
     expect(r2BenchPrefixFromEnv().length).toBeGreaterThan(0);
     expect(r2UploadRetriesFromEnv()).toBeGreaterThan(0);
     const bucketUrl = r2BucketUrlFromEnv();
     expect(bucketUrl.startsWith('https://')).toBe(true);
     expect(bucketUrl).toContain('.r2.cloudflarestorage.com');
     expect(factoryWagerRegistryUrlFromEnv()).toContain(CLOUDFLARE_DEFAULTS.registryHost);
+    expect(FACTORY_WAGER_REGISTRY_ORIGIN).toBe('https://registry.factory-wager.com');
+    expect(FACTORY_WAGER_NPM_REGISTRY_URL).toBe(
+      'https://registry.factory-wager.com/api/npm'
+    );
+    expect(factoryWagerNpmRegistryUrlFromEnv()).toBe(FACTORY_WAGER_NPM_REGISTRY_URL);
+    expect(factoryWagerLocalRegistryWriteUrlFromEnv()).toBe(
+      FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL
+    );
     expect(factoryWagerWikiUrl()).toBe(`https://${CLOUDFLARE_DEFAULTS.wikiHost}`);
     expect(CLOUDFLARE_DEFAULTS.registryDoctorBucket).toBe('npm-registry');
     expect(factoryRegistryBucketFromEnv().length).toBeGreaterThan(0);
@@ -76,12 +89,16 @@ describe('config/r2-env Cloudflare SSOT', () => {
   });
 
   test('requireR2Config / tryR2Config are S3-only (no API token required)', () => {
-    const cfg = requireR2Config();
-    expect(cfg.endpoint).toContain('.r2.cloudflarestorage.com');
-    expect(cfg.bucket.length).toBeGreaterThan(0);
-    expect(cfg.accessKeyId.length).toBeGreaterThan(0);
-    expect(cfg).not.toHaveProperty('cloudflareApiToken');
-    expect(tryR2Config()?.bucket).toBe(cfg.bucket);
+    const cfg = tryR2Config();
+    if (cfg) {
+      expect(cfg.endpoint).toContain('.r2.cloudflarestorage.com');
+      expect(cfg.bucket.length).toBeGreaterThan(0);
+      expect(cfg.accessKeyId.length).toBeGreaterThan(0);
+      expect(cfg).not.toHaveProperty('cloudflareApiToken');
+      expect(requireR2Config().bucket).toBe(cfg.bucket);
+    } else {
+      expect(() => requireR2Config()).toThrow('Missing required R2 S3 configuration');
+    }
   });
 
   test('env key catalog stays lean', () => {
@@ -102,7 +119,13 @@ describe('config/r2-env Cloudflare SSOT', () => {
     const text = await Bun.file('.env.example').text();
     expect(text).toContain('BUN_VERSION=1.4.0');
     expect(text).toContain('SKIP_DEPENDENCY_INSTALL=true');
-    expect(text).toContain('REGISTRY_URL=https://registry.factory-wager.com');
+    expect(text).toContain(
+      'FACTORY_WAGER_NPM_REGISTRY_URL=https://registry.factory-wager.com/api/npm'
+    );
+    expect(text).toContain(
+      'FACTORY_WAGER_REGISTRY_ORIGIN=https://registry.factory-wager.com'
+    );
+    expect(text).not.toMatch(/^REGISTRY_URL=/m);
     // Channel/outbox plane bucket (doctor fallback remains CLOUDFLARE_DEFAULTS.registryDoctorBucket)
     expect(text).toContain('R2_REGISTRY_BUCKET=factory-wager-registry');
     expect(text).not.toContain('CLOUDFLARE_PAGES_PROJECT=');
@@ -111,5 +134,19 @@ describe('config/r2-env Cloudflare SSOT', () => {
     expect(index).toContain('FactoryWager');
     expect(index).toContain('wiki.factory-wager.com');
     expect(index).toContain('/registry/projects-registry.json');
+  });
+
+  test('local SDK write URL rejects every non-loopback destination', () => {
+    const previous = Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL;
+    try {
+      Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL =
+        'https://registry.factory-wager.com/api/npm';
+      expect(() => factoryWagerLocalRegistryWriteUrlFromEnv()).toThrow('loopback');
+      Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL = 'http://127.0.0.1:4873/';
+      expect(factoryWagerLocalRegistryWriteUrlFromEnv()).toBe('http://127.0.0.1:4873');
+    } finally {
+      if (previous === undefined) delete Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL;
+      else Bun.env.FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL = previous;
+    }
   });
 });

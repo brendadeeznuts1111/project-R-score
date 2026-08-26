@@ -2,14 +2,14 @@
 
 ## Canonical topology
 
-FactoryWager uses two deliberately separate registry planes:
+FactoryWager uses three deliberately separate registry planes:
 
-- **Private publish plane:** the authenticated Bun registry host.
-  Package-manager publishing uses the npm-compatible host; SDK writes terminate
-  at `POST /api/registry/:name/versions`.
-- **Public read plane:** Cloudflare Pages Functions backed by the
-  `REGISTRY_BUCKET` R2 binding. It serves only allowlisted registry keys and
-  never receives R2 API credentials.
+- **Public read plane:** tokenless Cloudflare Pages Functions backed by the
+  `REGISTRY_BUCKET` R2 binding. `/api/npm` accepts GET/HEAD only.
+- **Local SDK write plane:** an explicitly configured HTTP loopback gateway.
+  `RegistryClient.publish()` is a development operation only.
+- **Production write plane:** direct-to-R2 SigV4 under separate operator
+  authority. It has no native npm or SDK HTTP endpoint.
 
 Do not make the R2 bucket public and do not copy `R2_ACCESS_KEY_ID` or
 `R2_SECRET_ACCESS_KEY` into Pages. The Pages binding is the read authority.
@@ -49,9 +49,9 @@ do not register both on the same host.
 The runtime-neutral SDK lives at `packages/registry-client`. It uses Web APIs
 only and works in Bun, browsers, and Cloudflare Workers.
 
-Full usage, URL format, and verification: [`docs/registry-client.md`](../registry-client.md)
-· proof JSON at `/registry/registry-client-proof.json` ·
-`bun run verify:registry-client:save`.
+Full usage, URL format, and verification:
+[`docs/registry-client.md`](../registry-client.md) · proof JSON at
+`/registry/registry-client-proof.json` · `bun run verify:registry-client:save`.
 
 ```bash
 cd packages/registry-client
@@ -59,32 +59,31 @@ bun run build
 bun publish --dry-run --access public
 ```
 
-After inspecting the dry-run archive, publish through the authenticated
-FactoryWager registry:
+After inspecting the dry-run archive, run the immutable target gate. Publishing
+remains disabled until a publication route is separately authorized:
 
 ```bash
-bun publish --registry https://registry.factory-wager.com --access public
+bun run release:artifact:prepare -- --target=registry-client --channel=latest
 ```
 
 The SDK resolves dist-tags, produces allowlisted asset URLs, and verifies both
-byte length and SHA-256 on download. Its `publish()` method targets the private
-multipart endpoint; the Pages/R2 read plane rejects writes.
+byte length and SHA-256 on download. Its `publish()` method targets only the
+explicit loopback multipart gateway; the Pages/R2 read plane rejects writes.
 
-> **Lane note (ADR-0002):** `bun publish --registry https://registry.factory-wager.com`
-> does **not** work against the Pages deployment today (read-only, 405 on non-GET).
-> Publish via `RegistryClient.publish` (R2) or the loopback serve-public lane,
-> then refresh the snapshot.
+> **Lane note (ADR-0002):**
+> `bun publish --registry https://registry.factory-wager.com` does **not** work
+> against the Pages deployment today (read-only, 405 on non-GET). Production
+> writes use `bun run factory:publish -- <reviewed-archive>` with separately
+> authorized R2 credentials. The loopback gateway is for development.
 
-Configure the two origins independently so the bearer token is never sent to the
-public read plane. (`registry-write.internal.factory-wager.com` is a placeholder
-for the intended private publish plane — not provisioned; today the write
-origins are the local gateway on :3000 and direct-to-R2 SigV4, per ADR-0002.)
+Configure reads and local development writes independently so a bearer token is
+never sent to the public read plane:
 
 ```ts
 const client = new RegistryClient({
   baseUrl: 'https://registry.factory-wager.com',
-  publishUrl: 'https://registry-write.internal.factory-wager.com',
-  apiKey: runtimeConfig.registryToken,
+  publishUrl: 'http://localhost:3000',
+  apiKey: runtimeConfig.localRegistryToken,
 });
 ```
 
@@ -96,9 +95,9 @@ Cloudflare scales the read plane independently.
 
 > **Bucket reality:** the R2 artifact plane was activated on 2026-08-04 with
 > `@tennis-hq/ssot/1.5.0.tgz`. The 11,204-byte object and its SHA-256
-> `a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55`
-> were verified by a direct `RegistryClient.install()` download after publish.
-> The R2 index is canonical; `factory snapshot` refreshes the committed static
+> `a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55` were
+> verified by a direct `RegistryClient.install()` download after publish. The R2
+> index is canonical; `factory snapshot` refreshes the committed static
 > fallback. The bucket remains multi-tenant (registry + Telegram channels), and
 > the public read plane stays bounded by `lib/factory/http-keys.ts`, which never
 > exposes `channels/*`.
@@ -114,12 +113,12 @@ verifier release.
 
 ## Deployment checklist
 
-- Configure the private hostname and TLS termination.
-- Set `REGISTRY_AUTH=token` and a strong `REGISTRY_SECRET`; never use `none` in
-  production.
+- Keep `/api/npm` tokenless and restricted to GET/HEAD.
+- Set `REGISTRY_AUTH=token` and a strong `REGISTRY_SECRET` only for the loopback
+  development gateway.
 - Bind Pages `REGISTRY_BUCKET` to `factory-wager-registry`.
 - Set Pages `REGISTRY_CORS_ORIGINS` to explicit trusted origins.
-- Keep R2 API credentials only on the private Bun host and operator machines.
+- Keep R2 API credentials only in Proton Pass-backed operator environments.
 - Run `bun run registry:doctor`, `bun run factory:health`, and
   `bun run factory:integrity`.
 - Verify the edge health URL and a known artifact download.

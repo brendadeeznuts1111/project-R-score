@@ -2,36 +2,32 @@
 
 ## Canonical topology
 
-- Registry API URL (publish/install): private host from root `bunfig.toml` /
-  `.npmrc` (`@factorywager` scope) — not publicly resolvable without VPN/DNS
-- CDN / read path: same private registry plane when configured
-- Storage backend: Cloudflare R2 bucket `npm-registry`
+- npm read URL: `https://registry.factory-wager.com/api/npm` (tokenless
+  GET/HEAD)
+- artifact read origin: `https://registry.factory-wager.com`
+- local SDK write URL: explicit HTTP loopback only
+- production write: separately authorized direct-to-R2 SigV4 against
+  `factory-wager-registry`
 
-Registry is R2-backed. Domain/CDN are access layers over that backend. Public
-`HEAD` may fail (`ENOTFOUND`); use `bun run registry:doctor` on the machine that
-has registry DNS.
+The public domain is a read layer over R2, never a package-manager publication
+destination. `bun run registry:doctor` validates the checked-in contracts
+without reading secret values or mutating files.
 
 ## Permanent files in repo
 
-- Canonical registry config: `/Users/nolarose/Projects/registry.config.json5`
-- Canonical npm config: `/Users/nolarose/Projects/.npmrc`
-- Registry env template: `/Users/nolarose/Projects/.env.registry.example`
+- Canonical registry config: `config/registry.config.json5`
+- Canonical npm config: `.npmrc` and `bunfig.toml`
+- Registry env template: `.env.registry.example`
 
 ## Doctor commands
 
 ```bash
 bun run registry:doctor
-bun run registry:doctor:fix
 bun run registry:doctor:json
 ```
 
-`--fix` safely sets:
-
-- `registry.config.json5` canonical values
-- missing `REGISTRY_URL`, `R2_REGISTRY_BUCKET`, `REGISTRY_CDN_URL` in env file
-- missing canonical scope/auth lines in `.npmrc`
-
-`--fix` does not set secrets.
+The doctor is read-only. The legacy `--fix` entry point fails closed and never
+creates `.env.registry`, changes `.npmrc`, or rewrites registry configuration.
 
 ## Verify stack health
 

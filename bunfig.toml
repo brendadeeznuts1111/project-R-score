@@ -38,14 +38,11 @@ exact = true
 saveTextLockfile = true
 frozenLockfile = true
 
-# Scoped registries — private FactoryWager packages (SSOT for Bun).
-# Canonical URL per .npmrc + commit 13ce5157; both scope spellings are in use
-# (42× @factorywager, 1× @factory-wager/admin-cli). Token via FACTORY_WAGER_TOKEN env var.
+# Scoped registry — public GET/HEAD-only npm packuments.
+# Production writes use separately authorized direct-to-R2 SigV4. Local SDK writes
+# require the explicit `--config ./bunfig.local-registry.toml` override.
 [install.scopes]
-"@factorywager" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
-"@factory-wager" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
-"@factory" = { url = "http://localhost:3000/", token = "$FACTORY_WAGER_TOKEN" }
-"@factorywager-prod" = { url = "https://registry.factory-wager.com/api/npm", token = "$FACTORY_WAGER_TOKEN" }
+"@factorywager" = { url = "https://registry.factory-wager.com/api/npm" }
 
 # Test runner defaults.  Per-workspace bunfig.toml files
 # (e.g. projects/active/enterprise/bet-ticker-worker-v1.1/bunfig.toml) override these.

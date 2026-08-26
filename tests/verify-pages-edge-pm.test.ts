@@ -17,7 +17,6 @@ import {
   PM_PROOF_SCHEMA,
   readmeMetadata,
   registryHostOrigin,
-  scopeTokenPresence,
   scopedPackumentUrl,
 } from '../lib/verification/pm-registry-probes.ts';
 
@@ -276,12 +275,6 @@ describe('pm-registry-probes network fail-soft', () => {
     expect(row.ok).toBe(true);
   });
 
-  test('scopeTokenPresence never hard-fails', () => {
-    expect(scopeTokenPresence({ FACTORY_WAGER_TOKEN: 'abc' }).skipped).toBe(false);
-    const absent = scopeTokenPresence({});
-    expect(absent.ok).toBe(true);
-    expect(absent.skipped).toBe(true);
-  });
 });
 
 describe('pm-registry-probes readme metadata (Bun 1.3.14+)', () => {
