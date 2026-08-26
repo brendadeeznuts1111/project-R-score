@@ -1,16 +1,11 @@
-import {
-  parseReleaseAssetId,
-  parseReleaseKnowledgeExampleId,
-  parseReleaseKnowledgeNodeId,
-} from '../../../lib/types/branded.ts';
+import { parseReleaseKnowledgeExampleId } from '../../../lib/types/branded.ts';
 import { blogUrlForVersion, normalizeVersion } from './generator.ts';
+import { parseReleaseKnowledgeAst } from './knowledge-ast-wire.ts';
 import { parseReleaseKnowledgeShapeIssues } from './knowledge-shape.ts';
 import type {
   ExampleStability,
   ReleaseKnowledge,
-  ReleaseKnowledgeAst,
   ReleaseKnowledgeExample,
-  ReleaseKnowledgeNode,
 } from './knowledge-types.ts';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -69,63 +64,6 @@ function parseExample(value: unknown, index: number): ReleaseKnowledgeExample {
   };
 }
 
-function parseMetadata(value: unknown): Record<string, string> {
-  if (!isRecord(value)) throw new Error('AST metadata must be an object');
-  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, String(item)]));
-}
-
-function parseAst(input: unknown): ReleaseKnowledgeAst {
-  if (!isRecord(input) || typeof input.rootId !== 'string' || !Array.isArray(input.nodes)) {
-    throw new Error('Release knowledge AST metadata is invalid');
-  }
-  const nodes = input.nodes.map((value, index): ReleaseKnowledgeNode => {
-    if (!isRecord(value) || typeof value.id !== 'string' || typeof value.type !== 'string') {
-      throw new Error(`Release knowledge AST node ${index} is invalid`);
-    }
-    const base = {
-      id: parseReleaseKnowledgeNodeId(value.id),
-      parentId:
-        value.parentId === null ? null : parseReleaseKnowledgeNodeId(String(value.parentId)),
-      childIds: (value.childIds as string[]).map(parseReleaseKnowledgeNodeId),
-      sourceLine: Number(value.sourceLine),
-      endLine: Number(value.endLine),
-    };
-    if (value.type === 'document') {
-      return { ...base, type: 'document', parentId: null, metadata: parseMetadata(value.metadata) };
-    }
-    if (value.type === 'heading') {
-      return {
-        ...base,
-        type: 'heading',
-        depth: Number(value.depth) as 2 | 3 | 4,
-        text: String(value.text),
-        slug: String(value.slug),
-      };
-    }
-    if (value.type === 'codeBlock') {
-      return {
-        ...base,
-        type: 'codeBlock',
-        childIds: [],
-        language: String(value.language),
-        meta: String(value.meta),
-        code: String(value.code),
-        exampleId: parseReleaseKnowledgeExampleId(String(value.exampleId)),
-      };
-    }
-    return {
-      ...base,
-      type: 'asset',
-      childIds: [],
-      directive: value.directive as 'image' | 'lazyVideo' | 'iframe',
-      sourceUrls: [...(value.sourceUrls as string[])],
-      assetIds: (value.assetIds as string[]).map(parseReleaseAssetId),
-      metadata: parseMetadata(value.metadata),
-    };
-  });
-  return { rootId: parseReleaseKnowledgeNodeId(input.rootId), nodes };
-}
-
 export function parseReleaseKnowledge(input: unknown): ReleaseKnowledge {
   const shapeIssues = parseReleaseKnowledgeShapeIssues(input);
   if (shapeIssues.length > 0) {
@@ -164,7 +102,7 @@ export function parseReleaseKnowledge(input: unknown): ReleaseKnowledge {
   if (new Set(examples.map(example => example.slot)).size !== examples.length) {
     throw new Error('Release knowledge contains duplicate slots');
   }
-  const ast = input.schemaVersion === 2 ? parseAst(input.ast) : undefined;
+  const ast = input.schemaVersion === 2 ? parseReleaseKnowledgeAst(input.ast) : undefined;
   const counts: ReleaseKnowledge['counts'] = {
     examples: examples.length,
     runnable: examples.filter(example => example.runnable).length,

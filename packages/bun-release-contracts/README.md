@@ -89,11 +89,12 @@ metadata, sorted/unique arrays, source ordering, setup/runnable consistency,
 duplicate IDs and slots, and derived counts without network access:
 
 Schema v2 also materializes a structural release AST. Its document, heading,
-code-block, and asset nodes carry branded stable IDs, source ranges, parent and
-child IDs, fence/directive metadata, and exact code-block → example links. Media
-found only in the HTML plane stays in the asset manifest instead of being
-invented as a Markdown node; the Bun 1.4 capability test proves both planes join
-to the complete asset and behavior inventories.
+paragraph, list-item, code-block, and asset nodes carry branded stable IDs,
+source ranges, parent and child IDs, list indentation/markers, fence/directive
+metadata, and exact code-block → example links. Media found only in the HTML
+plane stays in the asset manifest instead of being invented as a Markdown node;
+the Bun 1.4 capability test proves both planes join to the complete asset and
+behavior inventories.
 
 ```bash
 bun run bun:release-knowledge:check

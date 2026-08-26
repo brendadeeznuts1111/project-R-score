@@ -3,8 +3,8 @@
   "runtime": "bun",
   "counts": {
     "releases": 6,
-    "planned": 2772,
-    "executable": 92
+    "planned": 2771,
+    "executable": 93
   },
   "releases": [
     {
@@ -12,8 +12,8 @@
       "sourceUrl": "https://bun.com/blog/bun-v1.4",
       "file": "bun-v1.4.0.json",
       "counts": {
-        "planned": 1823,
-        "executable": 78
+        "planned": 1822,
+        "executable": 79
       }
     },
     {

@@ -4,6 +4,8 @@ import {
   type ReleaseKnowledgeNodeId,
 } from '../../../lib/types/branded.ts';
 import { releaseAstAssetId, releaseAstNodeId } from './knowledge-ast-id.ts';
+import { parseReleaseAstMetadata, parseReleaseFrontmatter } from './knowledge-ast-metadata.ts';
+import { extractMarkdownParagraph } from './knowledge-ast-paragraph.ts';
 import {
   cleanInlineMarkdown,
   knowledgeSlug,
@@ -11,29 +13,6 @@ import {
 } from './knowledge-markdown.ts';
 import type { ReleaseKnowledgeAst, ReleaseKnowledgeNode } from './knowledge-types.ts';
 
-function parseMetadata(input: string): Record<string, string> {
-  const metadata: Record<string, string> = {};
-  const pattern = /([:\w-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/g;
-  for (const match of input.matchAll(pattern)) {
-    const key = match[1]?.toLowerCase();
-    if (key) metadata[key] = match[2] ?? match[3] ?? match[4] ?? '';
-  }
-  return Object.fromEntries(
-    Object.entries(metadata).sort(([left], [right]) => left.localeCompare(right))
-  );
-}
-
-function frontmatterMetadata(lines: readonly string[], closing: number): Record<string, string> {
-  if (closing <= 0) return {};
-  const entries: Array<[string, string]> = [];
-  for (const line of lines.slice(1, closing)) {
-    const match = /^([A-Za-z0-9_-]+):\s*(.*?)\s*$/.exec(line);
-    if (match?.[1]) entries.push([match[1], match[2] ?? '']);
-  }
-  return Object.fromEntries(entries.sort(([left], [right]) => left.localeCompare(right)));
-}
-
-/** Materializes heading, fenced-code, and media nodes without duplicating prose rows. */
 export function extractReleaseKnowledgeAst(
   markdown: string,
   version: string,
@@ -53,11 +32,12 @@ export function extractReleaseKnowledgeAst(
       childIds: [],
       sourceLine: 1,
       endLine: lines.length,
-      metadata: frontmatterMetadata(lines, closing),
+      metadata: parseReleaseFrontmatter(lines, closing),
     },
   ];
   const byId = new Map<ReleaseKnowledgeNodeId, ReleaseKnowledgeNode>([[rootId, nodes[0]!]]);
   const headingStack: Array<Extract<ReleaseKnowledgeNode, { type: 'heading' }>> = [];
+  const listStack: Array<Extract<ReleaseKnowledgeNode, { type: 'listItem' }>> = [];
   const siblingCounts = new Map<string, number>();
   const append = (node: ReleaseKnowledgeNode): void => {
     nodes.push(node);
@@ -72,6 +52,7 @@ export function extractReleaseKnowledgeAst(
     const line = lines[index] ?? '';
     const heading = /^(#{2,4})\s+(.+?)\s*$/.exec(line);
     if (heading) {
+      listStack.length = 0;
       const depth = heading[1]!.length as 2 | 3 | 4;
       const text = cleanInlineMarkdown(heading[2] ?? '');
       while (headingStack.at(-1) && headingStack.at(-1)!.depth >= depth) {
@@ -97,8 +78,35 @@ export function extractReleaseKnowledgeAst(
       continue;
     }
 
+    const listItem = /^(\s*)([-+*]|\d+[.)])\s+(.+?)\s*$/.exec(line);
+    if (listItem) {
+      const indent = (listItem[1] ?? '').replaceAll('\t', '    ').length;
+      const marker = listItem[2] ?? '-';
+      const text = cleanInlineMarkdown(listItem[3] ?? '');
+      while (listStack.at(-1) && listStack.at(-1)!.indent >= indent) listStack.pop();
+      const ownerId = listStack.at(-1)?.id ?? parentId();
+      const siblingKey = `${ownerId}\u0000${marker}\u0000${text}`;
+      const ordinal = (siblingCounts.get(siblingKey) ?? 0) + 1;
+      siblingCounts.set(siblingKey, ordinal);
+      const node: Extract<ReleaseKnowledgeNode, { type: 'listItem' }> = {
+        id: releaseAstNodeId(version, 'listItem', `${siblingKey}\u0000${ordinal}`),
+        type: 'listItem',
+        parentId: ownerId,
+        childIds: [],
+        sourceLine: index + 1,
+        endLine: index + 1,
+        marker,
+        indent,
+        text,
+      };
+      append(node);
+      listStack.push(node);
+      continue;
+    }
+
     const fence = /^\s*(`{3,}|~{3,})([^`]*)$/.exec(line);
     if (fence) {
+      listStack.length = 0;
       const marker = fence[1] ?? '```';
       const rawInfo = (fence[2] ?? '').trim();
       const body: string[] = [];
@@ -132,9 +140,30 @@ export function extractReleaseKnowledgeAst(
 
     const directive = /\{%\s*(image|lazyVideo)\s+(.+?)\s*\/\s*%\}/i.exec(line);
     const iframe = /<iframe\b([^>]*)>/i.exec(line);
-    if (!directive && !iframe) continue;
+    if (!directive && !iframe) {
+      listStack.length = 0;
+      const paragraph = extractMarkdownParagraph(lines, index);
+      if (!paragraph) continue;
+      const sourceLine = index + 1;
+      index = paragraph.endIndex;
+      const ownerId = parentId();
+      const siblingKey = `${ownerId}\u0000${paragraph.text}`;
+      const ordinal = (siblingCounts.get(siblingKey) ?? 0) + 1;
+      siblingCounts.set(siblingKey, ordinal);
+      append({
+        id: releaseAstNodeId(version, 'paragraph', `${siblingKey}\u0000${ordinal}`),
+        type: 'paragraph',
+        parentId: ownerId,
+        childIds: [],
+        sourceLine,
+        endLine: index + 1,
+        text: paragraph.text,
+      });
+      continue;
+    }
+    listStack.length = 0;
     const kind = directive?.[1] === 'lazyVideo' ? 'lazyVideo' : directive ? 'image' : 'iframe';
-    const metadata = parseMetadata(directive?.[2] ?? iframe?.[1] ?? '');
+    const metadata = parseReleaseAstMetadata(directive?.[2] ?? iframe?.[1] ?? '');
     const sourceUrls =
       kind === 'lazyVideo'
         ? [metadata.src, metadata.poster].filter((value): value is string => Boolean(value))

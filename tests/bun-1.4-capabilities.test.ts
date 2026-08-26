@@ -60,13 +60,23 @@ describe('Bun 1.4 normalized capability graph', () => {
     );
     const inventory = (await Bun.file(
       'packages/bun-release-contracts/contracts/bun-v1.4.0.json'
-    ).json()) as { items: Array<{ key: string; section: string }> };
+    ).json()) as {
+      items: Array<{
+        key: string;
+        section: string;
+        announcement: string;
+        status: 'planned' | 'covered';
+        testPath: string | null;
+      }>;
+    };
     expect(knowledge.schemaVersion).toBe(2);
     expect(knowledge.ast).toBeDefined();
 
     const nodes = knowledge.ast!.nodes;
     const codeNodes = nodes.filter(node => node.type === 'codeBlock');
     const headingNodes = nodes.filter(node => node.type === 'heading');
+    const listItemNodes = nodes.filter(node => node.type === 'listItem');
+    const paragraphNodes = nodes.filter(node => node.type === 'paragraph');
     expect(codeNodes).toHaveLength(knowledge.examples.length);
     expect(new Set(codeNodes.map(node => node.exampleId))).toEqual(
       new Set(knowledge.examples.map(example => example.id))
@@ -92,14 +102,39 @@ describe('Bun 1.4 normalized capability graph', () => {
         .replace(/[^a-z0-9]+/g, ' ')
         .trim();
     const headingsByKey = new Map(headingNodes.map(node => [mappingKey(node.text), node.id]));
+    const listItemsByKey = new Map(listItemNodes.map(node => [mappingKey(node.text), node.id]));
+    const paragraphsByKey = new Map(paragraphNodes.map(node => [mappingKey(node.text), node.id]));
     const behaviorMappings = inventory.items.map(item => ({
       behaviorKey: item.key,
-      nodeId: headingsByKey.get(mappingKey(item.section)),
+      nodeId:
+        listItemsByKey.get(mappingKey(item.announcement)) ??
+        paragraphsByKey.get(mappingKey(item.announcement)) ??
+        headingsByKey.get(mappingKey(item.section)),
     }));
     expect(behaviorMappings).toHaveLength(1_901);
     expect(behaviorMappings.every(mapping => mapping.nodeId !== undefined)).toBe(true);
     expect(new Set(behaviorMappings.map(mapping => mapping.behaviorKey)).size).toBe(
       inventory.items.length
+    );
+
+    const ownerOnly = inventory.items.find(item =>
+      item.announcement.includes('Build artifacts are created with owner-only permissions')
+    );
+    expect(ownerOnly).toEqual(
+      expect.objectContaining({
+        status: 'covered',
+        testPath: 'tests/bun-1.4.0-install-behavior-contract.test.ts',
+      })
+    );
+    const ownerOnlyNode = listItemNodes.find(
+      node => mappingKey(node.text) === mappingKey(ownerOnly!.announcement)
+    );
+    expect(ownerOnlyNode).toEqual(
+      expect.objectContaining({
+        type: 'listItem',
+        sourceLine: 5263,
+        text: 'bun install and registry auth Build artifacts are created with owner-only permissions.',
+      })
     );
   });
 

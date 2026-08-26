@@ -62,6 +62,19 @@ export type ReleaseKnowledgeHeadingNode = ReleaseKnowledgeNodeBase & {
   slug: string;
 };
 
+export type ReleaseKnowledgeListItemNode = ReleaseKnowledgeNodeBase & {
+  type: 'listItem';
+  marker: string;
+  indent: number;
+  text: string;
+};
+
+export type ReleaseKnowledgeParagraphNode = ReleaseKnowledgeNodeBase & {
+  type: 'paragraph';
+  childIds: [];
+  text: string;
+};
+
 export type ReleaseKnowledgeCodeBlockNode = ReleaseKnowledgeNodeBase & {
   type: 'codeBlock';
   childIds: [];
@@ -83,6 +96,8 @@ export type ReleaseKnowledgeAssetNode = ReleaseKnowledgeNodeBase & {
 export type ReleaseKnowledgeNode =
   | ReleaseKnowledgeDocumentNode
   | ReleaseKnowledgeHeadingNode
+  | ReleaseKnowledgeListItemNode
+  | ReleaseKnowledgeParagraphNode
   | ReleaseKnowledgeCodeBlockNode
   | ReleaseKnowledgeAssetNode;
 

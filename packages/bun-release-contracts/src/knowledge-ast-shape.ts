@@ -5,6 +5,8 @@ const NODE_BASE_KEYS = ['id', 'type', 'parentId', 'childIds', 'sourceLine', 'end
 const NODE_KEYS = {
   document: [...NODE_BASE_KEYS, 'metadata'],
   heading: [...NODE_BASE_KEYS, 'depth', 'text', 'slug'],
+  listItem: [...NODE_BASE_KEYS, 'marker', 'indent', 'text'],
+  paragraph: [...NODE_BASE_KEYS, 'text'],
   codeBlock: [...NODE_BASE_KEYS, 'language', 'meta', 'code', 'exampleId'],
   asset: [...NODE_BASE_KEYS, 'directive', 'sourceUrls', 'assetIds', 'metadata'],
 } as const;
@@ -92,7 +94,14 @@ export function parseAstShapeIssues(value: unknown): ReleaseKnowledgeShapeIssue[
     const path = `$.ast.nodes[${index}]`;
     if (!isRecord(node)) return add(issues, 'type', path, 'Expected an object');
     const type = node.type;
-    if (type !== 'document' && type !== 'heading' && type !== 'codeBlock' && type !== 'asset') {
+    if (
+      type !== 'document' &&
+      type !== 'heading' &&
+      type !== 'listItem' &&
+      type !== 'paragraph' &&
+      type !== 'codeBlock' &&
+      type !== 'asset'
+    ) {
       return add(issues, 'value', `${path}.type`, 'Expected a supported AST node type');
     }
     inspectKeys(node, NODE_KEYS[type], path, issues);
@@ -113,6 +122,14 @@ export function parseAstShapeIssues(value: unknown): ReleaseKnowledgeShapeIssue[
       nonEmptyString(node, 'text', path, issues);
       nonEmptyString(node, 'slug', path, issues);
     }
+    if (type === 'listItem') {
+      nonEmptyString(node, 'marker', path, issues);
+      nonEmptyString(node, 'text', path, issues);
+      if (!Number.isSafeInteger(node.indent) || Number(node.indent) < 0) {
+        add(issues, 'type', `${path}.indent`, 'Expected a non-negative safe integer');
+      }
+    }
+    if (type === 'paragraph') nonEmptyString(node, 'text', path, issues);
     if (type === 'codeBlock') {
       for (const key of ['language', 'code', 'exampleId']) nonEmptyString(node, key, path, issues);
       if (typeof node.meta !== 'string') add(issues, 'type', `${path}.meta`, 'Expected a string');

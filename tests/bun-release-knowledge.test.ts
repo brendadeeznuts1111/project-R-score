@@ -115,13 +115,16 @@ describe('Bun release knowledge', () => {
 
   test('normalizes stable IDs, exact API matches, provenance, and conservative execution metadata', () => {
     const result = knowledge();
-    expect(result.counts).toEqual({ examples: 3, runnable: 0, documented: 3, astNodes: 7 });
+    expect(result.counts).toEqual({ examples: 3, runnable: 0, documented: 3, astNodes: 10 });
     expect(result.ast?.nodes.map(node => node.type)).toEqual([
       'document',
       'heading',
+      'paragraph',
       'codeBlock',
       'heading',
+      'paragraph',
       'codeBlock',
+      'paragraph',
       'heading',
       'codeBlock',
     ]);
@@ -191,6 +194,40 @@ console.log("ok");
     expect(result.ast?.nodes.find(node => node.type === 'codeBlock')).toMatchObject({
       language: 'ts',
       meta: 'title="probe"',
+      childIds: [],
+    });
+  });
+
+  test('materializes list-item leaves with stable ownership and nesting', () => {
+    const result = knowledge(`## Security hardening
+
+- Parent behavior
+  - Nested behavior
+- **\`bun install\` and registry auth** Build artifacts are created with owner-only permissions.
+`);
+    const items = result.ast?.nodes.filter(node => node.type === 'listItem') ?? [];
+    expect(items).toHaveLength(3);
+    expect(items[0]).toMatchObject({ marker: '-', indent: 0, text: 'Parent behavior' });
+    expect(items[1]).toMatchObject({ marker: '-', indent: 2, text: 'Nested behavior' });
+    expect(items[0]?.childIds).toEqual([items[1]?.id]);
+    expect(items[1]?.parentId).toBe(items[0]?.id);
+    expect(items[2]).toMatchObject({
+      marker: '-',
+      indent: 0,
+      text: 'bun install and registry auth Build artifacts are created with owner-only permissions.',
+    });
+  });
+
+  test('materializes multi-line paragraph leaves', () => {
+    const result = knowledge(`## Runtime
+
+Bun starts this behavior on one line
+and completes it on the next line.
+`);
+    expect(result.ast?.nodes.find(node => node.type === 'paragraph')).toMatchObject({
+      sourceLine: 3,
+      endLine: 4,
+      text: 'Bun starts this behavior on one line and completes it on the next line.',
       childIds: [],
     });
   });

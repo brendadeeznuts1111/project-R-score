@@ -4,7 +4,7 @@
  * Never runs against the monorepo root (frozenLockfile / bun.lock stay untouched).
  */
 import { describe, expect, test } from 'bun:test';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -21,6 +21,43 @@ function withTempDir(prefix: string, fn: (dir: string) => void): void {
 }
 
 describe('Bun 1.4.0 Other behavior — install / update / init (tempdir)', () => {
+  // @see https://bun.com/blog/bun-v1.4#security-hardening
+  releaseTest('bun run --bun keeps its per-build shim directory owner-only', () => {
+    if (process.platform === 'win32') return;
+
+    withTempDir('bun-1.4-owner-only-shim-', dir => {
+      writeFileSync(
+        join(dir, 'package.json'),
+        JSON.stringify({
+          name: 'owner-only-shim-probe',
+          version: '0.0.0',
+          private: true,
+          scripts: { probe: 'node -e "process.exit(0)"' },
+        })
+      );
+
+      const previousUmask = process.umask(0);
+      let run: ReturnType<typeof Bun.spawnSync>;
+      try {
+        run = Bun.spawnSync([process.execPath, 'run', '--bun', 'probe'], {
+          cwd: dir,
+          stdout: 'pipe',
+          stderr: 'pipe',
+        });
+      } finally {
+        process.umask(previousUmask);
+      }
+      expect(run.exitCode).toBe(0);
+
+      const tempRoot = process.platform === 'darwin' ? '/private/tmp' : '/tmp';
+      const shimDirectory = join(tempRoot, `bun-node-${Bun.revision.slice(0, 9)}`);
+      const stat = statSync(shimDirectory);
+      expect(stat.isDirectory()).toBe(true);
+      expect(stat.mode & 0o777).toBe(0o700);
+      expect(stat.uid).toBe(process.getuid?.());
+    });
+  });
+
   releaseTest('bun update <name> exits 1 when nothing depends on it (#38333)', () => {
     withTempDir('bun-1.4-update-orphan-', dir => {
       writeFileSync(
