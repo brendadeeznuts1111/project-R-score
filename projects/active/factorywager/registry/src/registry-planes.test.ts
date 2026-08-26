@@ -101,6 +101,26 @@ describe('registry runtime planes', () => {
     expect(fetchCalls).toBe(0);
   });
 
+  it('keeps every request inside the selected read plane with no automatic redirects', async () => {
+    let observedInit: RequestInit | undefined;
+    const fetcher = ((_input: string | URL | Request, init?: RequestInit) => {
+      observedInit = init;
+      return Promise.resolve(new Response(null, { status: 200 }));
+    }) as typeof fetch;
+
+    await fetchRegistryReadTokenless(`${FACTORY_WAGER_NPM_READ_URL}/@scope/pkg`, {}, fetcher);
+    expect(observedInit?.redirect).toBe('error');
+    expect(observedInit?.credentials).toBe('omit');
+    expect(observedInit?.signal).toBeInstanceOf(AbortSignal);
+
+    expect(() =>
+      fetchRegistryReadTokenless('https://registry.factory-wager.com/api/npm-evil/pkg', {}, fetcher)
+    ).toThrow('selected read plane');
+    expect(() =>
+      fetchRegistryReadTokenless('https://registry.factory-wager.com/admin', {}, fetcher)
+    ).toThrow('selected read plane');
+  });
+
   it('routes CLI writes through the guard and bunx reads through tokenless fetch', async () => {
     const cliSource = await Bun.file(
       new URL('../apps/cli/src/cli.ts', import.meta.url)

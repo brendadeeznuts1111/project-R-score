@@ -108,6 +108,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
 // @see https://bun.com/docs/runtime/shell#getting-started — Bun.$
 import { joinPath } from '../lib/path-bun.ts';
 import { readServePublicBindManifest } from '../lib/http/serve-public-bind.ts';
+import { isNormalizedLoopbackHostname } from '../lib/http/outbound-policy.ts';
 import {
   BUN_DNS_CACHE_STATS_DOCS,
   BUN_DNS_PREFETCHING_DOCS,
@@ -240,11 +241,7 @@ export function isLoopbackNetworkingBase(input: string): boolean {
   if ((url.protocol !== 'http:' && url.protocol !== 'https:') || url.username || url.password) {
     return false;
   }
-  const bracketless = url.hostname.replace(/^\[|\]$/g, '').toLowerCase();
-  const host = bracketless.endsWith('.') ? bracketless.slice(0, -1) : bracketless;
-  if (host === 'localhost' || host.endsWith('.localhost')) return true;
-  if (host === '::1') return true;
-  return host.split('.')[0] === '127' && /^127(?:\.\d{1,3}){3}$/.test(host);
+  return isNormalizedLoopbackHostname(url.hostname);
 }
 
 export function assertNetworkingBaseAllowed(base: string, external: boolean): void {

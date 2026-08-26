@@ -1,3 +1,9 @@
+import {
+  isNormalizedLoopbackHostname,
+  prepareOutboundRequest,
+  type OutboundEndpointPolicy,
+} from '../../../../../lib/http/outbound-policy.ts';
+
 export const FACTORY_WAGER_NPM_READ_URL =
   'https://registry.factory-wager.com/api/npm' as const;
 export const FACTORY_WAGER_NPM_READ_ENV = 'FACTORY_WAGER_NPM_REGISTRY_URL' as const;
@@ -27,6 +33,7 @@ export interface RegistryPlaneSelection {
 }
 
 const CREDENTIAL_HEADERS = new Set(['authorization', 'cookie', 'proxy-authorization']);
+const REGISTRY_READ_TIMEOUT_MS = 10_000;
 
 function stringValue(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
@@ -36,15 +43,6 @@ function stringValue(value: unknown): string | undefined {
 
 function withoutTrailingSlash(url: URL): string {
   return url.toString().replace(/\/+$/, '');
-}
-
-function isLoopbackHostname(hostname: string): boolean {
-  return (
-    hostname === 'localhost' ||
-    hostname === '::1' ||
-    hostname === '[::1]' ||
-    /^127(?:\.\d{1,3}){3}$/.test(hostname)
-  );
 }
 
 function reportIgnoredLegacy(
@@ -79,7 +77,7 @@ export function parseRegistryReadUrl(value: unknown): RegistryReadUrl {
   if (normalized === FACTORY_WAGER_NPM_READ_URL) {
     return normalized as RegistryReadUrl;
   }
-  if (url.protocol === 'http:' && isLoopbackHostname(url.hostname)) {
+  if (url.protocol === 'http:' && isNormalizedLoopbackHostname(url.hostname)) {
     return normalized as RegistryReadUrl;
   }
 
@@ -118,7 +116,7 @@ export function parseLocalRegistryWriteUrl(value: unknown): LocalRegistryWriteUr
 
   if (
     url.protocol !== 'http:' ||
-    !isLoopbackHostname(url.hostname) ||
+    !isNormalizedLoopbackHostname(url.hostname) ||
     url.username ||
     url.password
   ) {
@@ -154,7 +152,6 @@ export function tokenlessRegistryReadInit(init: RequestInit = {}): RequestInit {
   if (init.credentials && init.credentials !== 'omit') {
     throw new Error('Registry reads must use credentials: omit');
   }
-
   const headers = new Headers(init.headers);
   for (const header of CREDENTIAL_HEADERS) {
     if (headers.has(header)) {
@@ -162,8 +159,33 @@ export function tokenlessRegistryReadInit(init: RequestInit = {}): RequestInit {
     }
   }
   if (!headers.has('Accept')) headers.set('Accept', 'application/json');
+  const policy = registryReadPolicy(new URL(FACTORY_WAGER_NPM_READ_URL));
+  return prepareOutboundRequest(FACTORY_WAGER_NPM_READ_URL, { ...init, headers }, policy).init;
+}
 
-  return { ...init, credentials: 'omit', headers };
+function assertRegistryReadRequestUrl(url: URL): void {
+  const publicBase = new URL(FACTORY_WAGER_NPM_READ_URL);
+  const publicPath = publicBase.pathname.replace(/\/$/, '');
+  const isPublicRead =
+    url.origin === publicBase.origin &&
+    (url.pathname === publicPath || url.pathname.startsWith(`${publicPath}/`));
+  const isLoopbackRead =
+    url.protocol === 'http:' && isNormalizedLoopbackHostname(url.hostname);
+  if (!isPublicRead && !isLoopbackRead) {
+    throw new Error('Registry request URL must remain inside the selected read plane');
+  }
+}
+
+function registryReadPolicy(url: URL): OutboundEndpointPolicy {
+  return {
+    name: 'registry-tokenless-read',
+    allowedOrigins: [url.origin],
+    allowedMethods: ['GET', 'HEAD'],
+    credentialMode: 'forbid',
+    credentialHeaders: [...CREDENTIAL_HEADERS],
+    redirect: 'error',
+    timeoutMs: REGISTRY_READ_TIMEOUT_MS,
+  };
 }
 
 export function fetchRegistryReadTokenless(
@@ -175,7 +197,10 @@ export function fetchRegistryReadTokenless(
   if (url.username || url.password) {
     throw new Error('Registry reads must not forward URL credentials');
   }
-  return fetcher(url, tokenlessRegistryReadInit(init));
+  assertRegistryReadRequestUrl(url);
+  const tokenlessInit = tokenlessRegistryReadInit(init);
+  const request = prepareOutboundRequest(url, tokenlessInit, registryReadPolicy(url));
+  return fetcher(request.url, request.init);
 }
 
 export function registryPackageUrl(baseUrl: RegistryReadUrl, packageName: string): string {
