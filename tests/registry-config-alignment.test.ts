@@ -5,6 +5,10 @@ import {
   type RegistryConfigDocuments,
 } from '../scripts/check-registry-config.ts';
 import { runRegistryDoctor } from '../scripts/registry-stack-doctor.ts';
+import {
+  checkProjectRegistryConfigs,
+  checkProjectRegistryDocuments,
+} from '../scripts/lib/project-registry-config-check.ts';
 
 function fixture(overrides: Partial<RegistryConfigDocuments> = {}): RegistryConfigDocuments {
   return {
@@ -98,5 +102,44 @@ registry = "https://registry.factory-wager.com/api/npm"`,
       'config/release-targets.json: readRegistryUrl differs from canonical npm URL'
     );
     expect(result.errors).toContain('.env.example: ambiguous REGISTRY_URL is forbidden');
+  });
+});
+
+describe('project-leaf registry configuration', () => {
+  test('all active and experimental product leaves avoid public write and auth routes', async () => {
+    expect(await checkProjectRegistryConfigs()).toEqual({ leaves: 31, errors: [] });
+  });
+
+  test('rejects copied publish, credential, default, and stale scope routes', () => {
+    const errors = checkProjectRegistryDocuments('projects/active/example', {
+      packageJson:
+        '{"publishConfig":{"registry":"https://registry.factory-wager.com"}}',
+      npmrc:
+        '@factorywager:registry=https://registry.factory-wager.com/\n@duoplus:registry=https://registry.factory-wager.com/\n//registry.factory-wager.com/:_authToken=${FW_REGISTRY_TOKEN}\n',
+      bunfig: `[install]
+registry = "https://registry.factory-wager.com"
+[install.scopes]
+"@factorywager" = { url = "https://registry.factory-wager.com/", token = "$FW_REGISTRY_TOKEN" }
+[publish]
+registry = "https://registry.factory-wager.com"`,
+    });
+    expect(errors.length).toBeGreaterThanOrEqual(7);
+    expect(errors.join('\n')).toContain('public FactoryWager host is read-only');
+    expect(errors.join('\n')).toContain('must not receive credentials');
+    expect(errors.join('\n')).toContain('not a publish plane');
+  });
+
+  test('allows canonical tokenless reads and independently owned registries', () => {
+    expect(
+      checkProjectRegistryDocuments('projects/active/example', {
+        packageJson:
+          '{"publishConfig":{"registry":"https://npm.pkg.github.com"}}',
+        npmrc:
+          '@factorywager:registry=https://registry.factory-wager.com/api/npm\n@fire22:registry=https://registry.fire22.com\n',
+        bunfig: `[install.scopes]
+"@factorywager" = { url = "https://registry.factory-wager.com/api/npm" }
+"@fire22" = { url = "$FIRE22_REGISTRY_URL", token = "$FIRE22_REGISTRY_TOKEN" }`,
+      })
+    ).toEqual([]);
   });
 });
