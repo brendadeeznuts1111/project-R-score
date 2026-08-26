@@ -50,6 +50,18 @@ function main(): void {
     return;
   }
 
+  const focusedTests = Bun.spawnSync({
+    cmd: [process.execPath, 'test', 'tests/control-policy.test.ts'],
+    cwd: new URL('..', import.meta.url).pathname,
+    env: { ...process.env, BUN_OPTIONS: '' },
+    stdout: 'inherit',
+    stderr: 'inherit',
+  });
+  if (focusedTests.exitCode !== 0) {
+    process.exitCode = focusedTests.exitCode;
+    return;
+  }
+
   process.stdout.write('guard:controls:check ok\n');
 }
 

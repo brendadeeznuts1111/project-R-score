@@ -2168,6 +2168,7 @@
     "cli:docs": "bun run scripts/generate-cli-docs.ts",
     "cli:flags:check": "bun scripts/check-cli-flag-allowlists.ts",
     "guard:controls:check": "bun scripts/check-control-policy.ts",
+    "guard:agents:check": "bun scripts/check-agent-capabilities.ts",
     "registry:projects": "bun run scripts/generate-project-registry.ts",
     "registry:config:check": "bun scripts/check-registry-config.ts",
     "projects:roots:check": "bun tools/projects-root-check.ts",

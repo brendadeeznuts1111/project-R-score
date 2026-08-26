@@ -43,6 +43,28 @@ describe('control-policy schema', () => {
     expect(install.exitCode).toBe(0);
     expect(bunHelpControlDrift(runtime.stdout.toString(), install.stdout.toString())).toEqual([]);
   });
+
+  test('reverse-inventory rejects newly advertised unowned connect, O, and R flags', () => {
+    const runtime = `${[
+      '-r, --preload=<val>',
+      '--require=<val>',
+      '--import=<val>',
+      '--fetch-preconnect=<val>',
+      '--experimental-http2-fetch',
+      '--experimental-http3-fetch',
+      '--env-file=<val>',
+      '--cwd=<val>',
+      '-c, --config=<val>',
+      '--connect=<val>',
+      '-O',
+    ].join('\n')}\n`;
+    const install = `${['--registry=<val>', '--cwd=<val>', '-c, --config=<val>', '-R'].join('\n')}\n`;
+    expect(bunHelpControlDrift(runtime, install)).toEqual([
+      'runtime-unowned:--connect',
+      'runtime-unowned:-O',
+      'install-unowned:-R',
+    ]);
+  });
 });
 
 describe('control-policy CLI boundary', () => {

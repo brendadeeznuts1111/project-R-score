@@ -892,7 +892,7 @@ export function bunHelpControlDrift(
   runtimeHelpText: string,
   installHelpText: string
 ): readonly string[] {
-  return [
+  const missing = [
     ...PINNED_BUN_HELP_ROWS.filter(row => !runtimeHelpText.includes(row)).map(
       row => `runtime:${row}`
     ),
@@ -900,4 +900,15 @@ export function bunHelpControlDrift(
       row => `install:${row}`
     ),
   ];
+  // These short/legacy spellings have no owner in Bun 1.4. If a later runtime
+  // advertises one, the control policy must classify it before wrappers accept it.
+  const unowned = ['--connect', '-O', '-R'].flatMap(flag => {
+    const escaped = flag.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const advertised = new RegExp(`^\\s*${escaped}(?:[=,\\s]|$)`, 'm');
+    return [
+      ...(advertised.test(runtimeHelpText) ? [`runtime-unowned:${flag}`] : []),
+      ...(advertised.test(installHelpText) ? [`install-unowned:${flag}`] : []),
+    ];
+  });
+  return [...missing, ...unowned];
 }
