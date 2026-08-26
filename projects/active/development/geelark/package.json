@@ -199,8 +199,5 @@
     "version:compare": "bun run --eval \"import { compareVersions } from './src/utils/version'; const v1 = process.argv[2]; const v2 = process.argv[3]; const r = compareVersions(v1, v2); console.log(r < 0 ? '<' : r > 0 ? '>' : '=')\" --",
     "version:validate": "bun run --eval \"import { isValidVersion } from './src/utils/version'; const v = process.argv[2]; console.log(isValidVersion(v) ? 'Valid' : 'Invalid')\" --",
     "version:satisfies": "bun run --eval \"import { satisfiesRange } from './src/utils/version'; const v = process.argv[2]; const r = process.argv[3]; console.log(satisfiesRange(v, r) ? 'Yes' : 'No')\" --"
-  },
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
   }
 }

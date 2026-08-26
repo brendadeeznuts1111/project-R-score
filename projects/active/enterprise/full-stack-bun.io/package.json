@@ -109,8 +109,5 @@
     "enterprise"
   ],
   "author": "Mission Control",
-  "license": "MIT",
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
-  }
+  "license": "MIT"
 }

@@ -124,8 +124,5 @@
       "performanceOptimization": true,
       "productionReady": true
     }
-  },
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
   }
 }
