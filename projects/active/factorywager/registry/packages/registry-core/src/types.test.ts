@@ -93,7 +93,8 @@ describe("RegistryConfig", () => {
   it("should validate R2 storage config", () => {
     const config: RegistryConfig = {
       name: "factory-wager-registry",
-      url: "https://registry.factory-wager.com",
+      readUrl: "https://registry.factory-wager.com/api/npm",
+      localWriteUrl: "http://localhost:4873",
       storage: {
         type: "r2",
         bucket: "registry-npm",
@@ -123,6 +124,8 @@ describe("RegistryConfig", () => {
     };
 
     expect(config.storage.type).toBe("r2");
+    expect(config.readUrl).toEndWith("/api/npm");
+    expect(config.localWriteUrl).toBe("http://localhost:4873");
     expect(config.cdn?.enabled).toBe(true);
     expect(config.packages).toHaveLength(2);
   });

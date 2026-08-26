@@ -147,7 +147,8 @@ export interface AuthToken {
 
 export interface RegistryConfig {
   name: string;
-  url: string;
+  readUrl: string;
+  localWriteUrl?: string;
   storage: {
     type: 'r2' | 'local' | 's3';
     bucket: string;

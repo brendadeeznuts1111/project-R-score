@@ -7,13 +7,19 @@
  */
 
 import { CLOUDFLARE_DEFAULTS } from '../../../../../../../config/r2-env.ts';
-import { sanitizeEnvVar } from '../../../../../../../lib/utils/env-validator';
 import { resolveR2InfraConfig } from '../../../../../../../lib/security/infra-secrets';
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
-import { NPMRegistryServer } from '../src/server';
+import { NPMRegistryServer } from '../../server/src/server';
 import { RegistryAuth, AuthConfigs } from '@factorywager/registry-core/auth';
-import { loadRegistryConfig } from './config-loader';
+import {
+  FACTORY_WAGER_NPM_READ_URL,
+  fetchRegistryReadTokenless,
+  prepareLocalRegistryWrite,
+  resolveRegistryReadUrl,
+  type LocalRegistryWriteUrl,
+  type RegistryReadUrl,
+} from '../../../src/registry-planes';
 
 // Bun v1.3.7: ANSI-aware text wrapping helper
 function wrapText(text: string, columns: number = 80): string {
@@ -29,9 +35,15 @@ function wrapText(text: string, columns: number = 80): string {
   return text;
 }
 
-const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
+function sanitizeDisplayValue(
+  value: string | undefined,
+  fallback: string,
+  sensitive = false
+): string {
+  const resolved = value?.trim();
+  if (!resolved) return fallback;
+  return sensitive ? '[configured]' : resolved;
+}
 
 const COMMANDS = {
   'start': 'Start the registry server',
@@ -47,11 +59,44 @@ const COMMANDS = {
   'help': 'Show this help',
 };
 
+interface RegistryPlaneCliOptions {
+  readonly registry?: unknown;
+  readonly 'read-registry'?: unknown;
+  readonly 'write-registry'?: unknown;
+}
+
 class RegistryCLI {
   private storage: R2StorageAdapter;
 
   constructor() {
     this.storage = new R2StorageAdapter();
+  }
+
+  private warnLegacyRegistry(message: string): void {
+    console.warn(styled(`⚠️ ${message}`, 'warning'));
+  }
+
+  private readRegistry(options: RegistryPlaneCliOptions): RegistryReadUrl {
+    return resolveRegistryReadUrl({
+      explicit: options['read-registry'],
+      legacyExplicit: options.registry,
+      env: process.env,
+      warn: message => this.warnLegacyRegistry(message),
+    });
+  }
+
+  private prepareWrite(
+    options: RegistryPlaneCliOptions
+  ): { readonly url: LocalRegistryWriteUrl; readonly credentials: string } {
+    return prepareLocalRegistryWrite(
+      {
+        explicit: options['write-registry'],
+        legacyExplicit: options.registry,
+        env: process.env,
+        warn: message => this.warnLegacyRegistry(message),
+      },
+      () => this.getAuthHeader(options)
+    );
   }
 
   async run(args: string[]): Promise<void> {
@@ -133,14 +178,11 @@ class RegistryCLI {
    */
   private async handlePublish(options: any): Promise<void> {
     const packagePath = options._[0] || '.';
-    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
-    const registry = options.registry || DEFAULT_REGISTRY_URL;
-
-    console.info(styled(`\n📦 Publishing from ${packagePath}...`, 'accent'));
 
     try {
+      const { url: registry, credentials: authorization } = this.prepareWrite(options);
+      console.info(styled(`\n📦 Publishing from ${packagePath}...`, 'accent'));
+
       // Read package.json
       const pkgPath = packagePath === '.' 
         ? './package.json' 
@@ -196,9 +238,10 @@ class RegistryCLI {
       // Publish to registry
       const response = await fetch(`${registry}/${pkg.name}`, {
         method: 'PUT',
+        redirect: 'error',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': this.getAuthHeader(options),
+          'Authorization': authorization,
         },
         body: JSON.stringify(publishData),
       });
@@ -223,10 +266,6 @@ class RegistryCLI {
   private async handleUnpublish(options: any): Promise<void> {
     const packageName = options._[0];
     const version = options.version;
-    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
-    const registry = options.registry || DEFAULT_REGISTRY_URL;
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
@@ -237,12 +276,14 @@ class RegistryCLI {
     console.info(styled(`\n🗑️ Unpublishing ${packageName}${version ? `@${version}` : ''}...`, 'warning'));
 
     try {
+      const { url: registry, credentials: authorization } = this.prepareWrite(options);
       if (version) {
         // Delete specific version
         const response = await fetch(`${registry}/${packageName}/-/${version}`, {
           method: 'DELETE',
+          redirect: 'error',
           headers: {
-            'Authorization': this.getAuthHeader(options),
+            'Authorization': authorization,
           },
         });
 
@@ -256,8 +297,9 @@ class RegistryCLI {
         // Delete entire package
         const response = await fetch(`${registry}/${packageName}`, {
           method: 'DELETE',
+          redirect: 'error',
           headers: {
-            'Authorization': this.getAuthHeader(options),
+            'Authorization': authorization,
           },
         });
 
@@ -278,10 +320,7 @@ class RegistryCLI {
    */
   private async handleInfo(options: any): Promise<void> {
     const packageName = options._[0];
-    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
-    const registry = options.registry || DEFAULT_REGISTRY_URL;
+    const registry = this.readRegistry(options);
 
     if (!packageName) {
       console.error(styled('❌ Package name required', 'error'));
@@ -289,7 +328,7 @@ class RegistryCLI {
     }
 
     try {
-      const response = await fetch(`${registry}/${packageName}`);
+      const response = await fetchRegistryReadTokenless(`${registry}/${packageName}`);
       
       if (!response.ok) {
         console.error(styled(`❌ Package not found: ${packageName}`, 'error'));
@@ -350,10 +389,7 @@ class RegistryCLI {
    */
   private async handleSearch(options: any): Promise<void> {
     const query = options._[0];
-    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
-    const registry = options.registry || DEFAULT_REGISTRY_URL;
+    const registry = this.readRegistry(options);
 
     if (!query) {
       console.error(styled('❌ Search query required', 'error'));
@@ -361,7 +397,9 @@ class RegistryCLI {
     }
 
     try {
-      const response = await fetch(`${registry}/-/search?text=${encodeURIComponent(query)}`);
+      const response = await fetchRegistryReadTokenless(
+        `${registry}/-/search?text=${encodeURIComponent(query)}`
+      );
       const results = await response.json();
 
       console.info(styled(`\n🔍 Search results for "${query}"`, 'accent'));
@@ -390,13 +428,10 @@ class RegistryCLI {
    * List all packages
    */
   private async handleList(options: any): Promise<void> {
-    const DEFAULT_REGISTRY_PORT = parseInt(process.env.REGISTRY_PORT || '4873', 10);
-    const DEFAULT_REGISTRY_HOST = process.env.REGISTRY_HOST || process.env.SERVER_HOST || 'localhost';
-    const DEFAULT_REGISTRY_URL = process.env.REGISTRY_URL || `http://${DEFAULT_REGISTRY_HOST}:${DEFAULT_REGISTRY_PORT}`;
-    const registry = options.registry || DEFAULT_REGISTRY_URL;
+    const registry = this.readRegistry(options);
 
     try {
-      const response = await fetch(`${registry}/-/all`);
+      const response = await fetchRegistryReadTokenless(`${registry}/-/all`);
       const data = await response.json();
 
       console.info(styled('\n📦 Registry Packages', 'accent'));
@@ -451,12 +486,24 @@ class RegistryCLI {
   private async handleTokens(subcommand: string, options: any): Promise<void> {
     switch (subcommand) {
       case 'create':
-        const auth = new RegistryAuth(AuthConfigs.jwt(options.secret || 'test'));
-        const token = auth.createJwt(options._[1] || 'admin', options.readonly === 'true');
+        const { url: writeUrl, credentials: token } = prepareLocalRegistryWrite(
+          {
+            explicit: options['write-registry'],
+            legacyExplicit: options.registry,
+            env: process.env,
+            warn: message => this.warnLegacyRegistry(message),
+          },
+          () => {
+            const auth = new RegistryAuth(AuthConfigs.jwt(options.secret || 'test'));
+            return auth.createJwt(options._[1] || 'admin', options.readonly === 'true');
+          }
+        );
         console.info(styled('\n🔑 Token created:', 'success'));
         console.info(styled(`  ${token}`, 'muted'));
         console.info(styled('\nAdd to .npmrc:', 'info'));
-        console.info(styled(`  //registry.factory-wager.com/:_authToken=${token}`, 'muted'));
+        console.info(
+          styled(`  ${writeUrl.replace(/^http:/, '')}/:_authToken=${token}`, 'muted')
+        );
         break;
 
       case 'list':
@@ -516,15 +563,15 @@ class RegistryCLI {
     console.info(styled('==========================', 'accent'));
     
     console.info(styled('\n🌐 Server:', 'info'));
-    console.info(styled(`  Port: ${sanitizeEnvVar(process.env.REGISTRY_PORT, '4873')}`, 'muted'));
-    console.info(styled(`  Auth: ${sanitizeEnvVar(process.env.REGISTRY_AUTH, 'none', true)}`, 'muted'));
+    console.info(styled(`  Port: ${sanitizeDisplayValue(process.env.REGISTRY_PORT, '4873')}`, 'muted'));
+    console.info(styled(`  Auth: ${sanitizeDisplayValue(process.env.REGISTRY_AUTH, 'none', true)}`, 'muted'));
 
     console.info(styled('\n🪣 R2 Storage:', 'info'));
-    console.info(styled(`  Bucket: ${sanitizeEnvVar(infraR2.bucketName, 'npm-registry')}`, 'muted'));
-    console.info(styled(`  Account: ${sanitizeEnvVar(infraR2.accountId, 'not set', true)}`, 'muted'));
+    console.info(styled(`  Bucket: ${sanitizeDisplayValue(infraR2.bucketName, 'npm-registry')}`, 'muted'));
+    console.info(styled(`  Account: ${sanitizeDisplayValue(infraR2.accountId, 'not set', true)}`, 'muted'));
 
     console.info(styled('\n📡 CDN:', 'info'));
-    console.info(styled(`  URL: ${sanitizeEnvVar(process.env.REGISTRY_CDN_URL, 'not set')}`, 'muted'));
+    console.info(styled(`  URL: ${sanitizeDisplayValue(process.env.REGISTRY_CDN_URL, 'not set')}`, 'muted'));
 
     console.info(styled('\n📝 Environment Variables:', 'info'));
     console.info(styled('  REGISTRY_PORT - Server port (default: 4873)', 'muted'));
@@ -535,6 +582,19 @@ class RegistryCLI {
     console.info(styled('  R2_SECRET_ACCESS_KEY - R2 secret key', 'muted'));
     console.info(styled('  R2_REGISTRY_BUCKET - R2 bucket name', 'muted'));
     console.info(styled('  REGISTRY_CDN_URL - CDN base URL', 'muted'));
+    console.info(
+      styled(
+        `  FACTORY_WAGER_NPM_REGISTRY_URL - Tokenless metadata reads (default: ${FACTORY_WAGER_NPM_READ_URL})`,
+        'muted'
+      )
+    );
+    console.info(
+      styled(
+        '  FACTORY_WAGER_LOCAL_REGISTRY_WRITE_URL - Explicit HTTP loopback publish/unpublish gateway',
+        'muted'
+      )
+    );
+    console.info(styled('  REGISTRY_URL - Legacy; warning-only and ignored', 'muted'));
   }
 
   /**
@@ -551,8 +611,15 @@ class RegistryCLI {
 
     console.info(styled('\nExamples:', 'info'));
     console.info(styled('  registry start --port 4873 --auth basic', 'muted'));
-    console.info(styled(`  registry publish ./my-package --registry ${DEFAULT_REGISTRY_URL}`, 'muted'));
-    console.info(styled('  registry info my-package', 'muted'));
+    console.info(
+      styled(
+        '  registry publish ./my-package --write-registry http://localhost:4873',
+        'muted'
+      )
+    );
+    console.info(
+      styled(`  registry info my-package --read-registry ${FACTORY_WAGER_NPM_READ_URL}`, 'muted')
+    );
     console.info(styled('  registry search utils', 'muted'));
     console.info(styled('  registry tokens create admin', 'muted'));
   }

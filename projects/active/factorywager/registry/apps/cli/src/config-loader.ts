@@ -5,8 +5,25 @@
  * Supports JSON, JSON5, and JSONL config files (Bun v1.3.7+)
  */
 
-import { styled } from '@factorywager/theme';
 import type { RegistryConfig } from '@factorywager/registry-core/types';
+import {
+  FACTORY_WAGER_NPM_READ_URL,
+  parseLocalRegistryWriteUrl,
+  resolveRegistryReadUrl,
+} from '../../../src/registry-planes';
+
+type RegistryConfigInput = Partial<RegistryConfig> & { url?: unknown };
+
+function styled(text: string, _style: string): string {
+  return text;
+}
+
+function parseConfigInput(value: unknown): RegistryConfigInput {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new Error('Registry config must be an object');
+  }
+  return value as RegistryConfigInput;
+}
 
 export interface ConfigLoadOptions {
   path?: string;
@@ -37,12 +54,12 @@ export async function loadRegistryConfig(
     const content = await file.text();
     const ext = configPath.split('.').pop()?.toLowerCase();
 
-    let config: Partial<RegistryConfig>;
+    let rawConfig: unknown;
 
     switch (ext) {
       case 'json5':
         // Bun v1.3.7: Native JSON5 support
-        config = Bun.JSON5.parse(content);
+        rawConfig = Bun.JSON5.parse(content);
         console.info(styled(`📄 Loaded JSON5 config: ${configPath}`, 'success'));
         break;
       
@@ -50,21 +67,21 @@ export async function loadRegistryConfig(
         // Bun v1.3.7: Native JSONL support
         const lines = Bun.JSONL.parse(content);
         // Use last line as config (for incremental updates)
-        config = lines[lines.length - 1] || {};
+        rawConfig = lines[lines.length - 1] || {};
         console.info(styled(`📄 Loaded JSONL config: ${configPath} (${lines.length} entries)`, 'success'));
         break;
       
       case 'json':
       default:
-        config = JSON.parse(content);
+        rawConfig = JSON.parse(content);
         console.info(styled(`📄 Loaded JSON config: ${configPath}`, 'success'));
         break;
     }
 
-    return mergeWithDefaults(config);
+    return mergeWithDefaults(parseConfigInput(rawConfig));
   } catch (error) {
     console.error(styled(`❌ Failed to load config: ${error.message}`, 'error'));
-    return getDefaultConfig();
+    return null;
   }
 }
 
@@ -138,10 +155,10 @@ function findConfigFile(): string | null {
 /**
  * Get default configuration
  */
-function getDefaultConfig(): RegistryConfig {
+export function getDefaultConfig(): RegistryConfig {
   return {
     name: 'FactoryWager Private Registry',
-    url: 'https://registry.factory-wager.com',
+    readUrl: FACTORY_WAGER_NPM_READ_URL,
     storage: {
       type: 'r2',
       bucket: 'npm-registry',
@@ -174,15 +191,35 @@ function getDefaultConfig(): RegistryConfig {
 /**
  * Merge config with defaults
  */
-function mergeWithDefaults(config: Partial<RegistryConfig>): RegistryConfig {
+export function mergeWithDefaults(
+  config: RegistryConfigInput,
+  warn: (message: string) => void = console.warn
+): RegistryConfig {
   const defaults = getDefaultConfig();
+  const { url: legacyUrl, ...planeConfig } = config;
+  if (legacyUrl !== undefined) {
+    warn(
+      'Legacy config.url is ambiguous and was ignored; use readUrl or localWriteUrl explicitly'
+    );
+  }
+  const readUrl = resolveRegistryReadUrl({
+    explicit: planeConfig.readUrl,
+    env: {},
+    warn,
+  });
+  const localWriteUrl =
+    planeConfig.localWriteUrl === undefined
+      ? undefined
+      : parseLocalRegistryWriteUrl(planeConfig.localWriteUrl);
   
   return {
     ...defaults,
-    ...config,
-    storage: { ...defaults.storage, ...config.storage },
-    cdn: { ...defaults.cdn, ...config.cdn },
-    auth: { ...defaults.auth, ...config.auth },
+    ...planeConfig,
+    readUrl,
+    ...(localWriteUrl ? { localWriteUrl } : {}),
+    storage: { ...defaults.storage, ...planeConfig.storage },
+    cdn: { ...defaults.cdn, ...planeConfig.cdn },
+    auth: { ...defaults.auth, ...planeConfig.auth },
   };
 }
 
@@ -196,8 +233,18 @@ export function validateConfig(config: RegistryConfig): { valid: boolean; errors
     errors.push('Registry name is required');
   }
 
-  if (!config.url) {
-    errors.push('Registry URL is required');
+  try {
+    resolveRegistryReadUrl({ explicit: config.readUrl, env: {}, warn: () => {} });
+  } catch (error) {
+    errors.push(error instanceof Error ? error.message : 'Registry read URL is invalid');
+  }
+
+  if (config.localWriteUrl !== undefined) {
+    try {
+      parseLocalRegistryWriteUrl(config.localWriteUrl);
+    } catch (error) {
+      errors.push(error instanceof Error ? error.message : 'Local registry write URL is invalid');
+    }
   }
 
   if (config.storage?.type === 'r2') {
@@ -263,8 +310,11 @@ if (import.meta.main) {
   // Registry name
   name: "My Private Registry",
   
-  // Public URL
-  url: "https://npm.mycompany.com",
+  // Public FactoryWager metadata read plane (GET/HEAD only, no credentials)
+  readUrl: "https://registry.factory-wager.com/api/npm",
+
+  // Optional development write gateway (HTTP loopback only)
+  localWriteUrl: "http://localhost:4873",
   
   // R2 Storage configuration
   storage: {
