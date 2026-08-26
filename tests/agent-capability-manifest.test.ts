@@ -129,7 +129,8 @@ describe('agent capability wire boundary', () => {
       new Date('2027-01-01T00:00:00.000Z')
     );
     expect(result.ok).toBeFalse();
-    expect(result.rejected.some(value => value.startsWith('content-denied:'))).toBeTrue();
+    expect(result.rejected).toContain(`content-denied:${contentRef().digest}`);
+    expect(result.rejected.join(' ')).not.toContain('image/png');
   });
 
   test('uses the registry SDK operation vocabulary without aliases', () => {

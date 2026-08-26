@@ -242,6 +242,16 @@ function contentAuthorizationKey(item: ContentRef): string {
   return JSON.stringify(item);
 }
 
+function unauthorizedContentDigests(
+  requested: readonly ContentRef[],
+  allowed: readonly ContentRef[]
+): readonly string[] {
+  const authorized = new Set(allowed.map(contentAuthorizationKey));
+  return requested
+    .filter(item => !authorized.has(contentAuthorizationKey(item)))
+    .map(item => String(item.digest));
+}
+
 function parseContentRefs(value: unknown, field: string): readonly ContentRef[] {
   return unique(
     parseArray(value, field, 1_024).map((entry, index) => {
@@ -437,7 +447,7 @@ export function authorizeAgentInvocation(
     ...includesAll(invocation.channelAliases, manifest.channelAliases, String).map(
       value => `channel-denied:${value}`
     ),
-    ...includesAll(invocation.contentRefs, manifest.contentRefs, contentAuthorizationKey).map(
+    ...unauthorizedContentDigests(invocation.contentRefs, manifest.contentRefs).map(
       value => `content-denied:${value}`
     )
   );
