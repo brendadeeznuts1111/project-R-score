@@ -34,6 +34,12 @@ import {
   setBroadcastFunction,
 } from "./sportsbook-routes";
 import { checkRateLimit, applyRateLimitHeaders } from "./rate-limiter";
+import {
+  fetchInternalProxy,
+  INTERNAL_PROXY_ROUTES,
+  selectInternalProxyAuthHeaders,
+  type InternalProxyRoute,
+} from "@utils/internal-proxy-client";
 
 // Zone 3: Prediction Markets
 import {
@@ -126,8 +132,7 @@ async function proxyAuthHandler(req: Request): Promise<Response> {
   try {
     const body = await req.json();
     // Delegate to proxy bridge
-    const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
-    const response = await fetch(`${proxyUrl}/api/proxy/auth`, {
+    const response = await fetchInternalProxy(INTERNAL_PROXY_ROUTES.auth, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -148,8 +153,7 @@ async function proxyAuthHandler(req: Request): Promise<Response> {
 async function proxyRenewTokenHandler(req: Request): Promise<Response> {
   try {
     const body = await req.json();
-    const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
-    const response = await fetch(`${proxyUrl}/api/proxy/renewToken`, {
+    const response = await fetchInternalProxy(INTERNAL_PROXY_ROUTES.renewToken, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
@@ -170,16 +174,14 @@ async function proxyAccountInfoHandler(req: Request): Promise<Response> {
   try {
     const url = new URL(req.url);
     const sessionId = url.searchParams.get("sessionId");
-    const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
-    const proxyReqUrl = new URL(`${proxyUrl}/api/proxy/accountInfo`);
-    if (sessionId) proxyReqUrl.searchParams.set("sessionId", sessionId);
+    const query = new URLSearchParams();
+    if (sessionId) query.set("sessionId", sessionId);
 
-    const response = await fetch(proxyReqUrl.toString(), {
-      headers: {
-        "Content-Type": "application/json",
-        ...Object.fromEntries(req.headers.entries()),
-      },
-    });
+    const response = await fetchInternalProxy(
+      INTERNAL_PROXY_ROUTES.accountInfo,
+      { headers: selectInternalProxyAuthHeaders(req.headers) },
+      { query }
+    );
 
     const data = await response.json().catch(() => ({}));
     return Response.json(data, { status: response.status });
@@ -197,10 +199,9 @@ async function proxyAccountInfoHandler(req: Request): Promise<Response> {
 // ---------------------------------------------------------------------------
 
 // Proxy helpers — forward to Buckeye upstream, fall back to empty if unreachable
-async function proxyToUpstream(path: string, auth: AuthContext): Promise<Response> {
-  const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
+async function proxyToUpstream(path: InternalProxyRoute, auth: AuthContext): Promise<Response> {
   try {
-    const resp = await fetch(`${proxyUrl}${path}`, {
+    const resp = await fetchInternalProxy(path, {
       headers: { "X-Internal-Token": process.env.INTERNAL_API_TOKEN || "" },
     });
     if (resp.ok) {
@@ -218,19 +219,19 @@ async function proxyToUpstream(path: string, auth: AuthContext): Promise<Respons
 
 /** Zone 1: Sportsbook Grid — Live data proxy */
 async function proxyPlayersHandler(req: Request, auth: AuthContext): Promise<Response> {
-  return proxyToUpstream("/api/proxy/players", auth);
+  return proxyToUpstream(INTERNAL_PROXY_ROUTES.players, auth);
 }
 
 async function proxyWagersHandler(req: Request, auth: AuthContext): Promise<Response> {
-  return proxyToUpstream("/api/proxy/wagers", auth);
+  return proxyToUpstream(INTERNAL_PROXY_ROUTES.wagers, auth);
 }
 
 async function proxyAgentPerformanceHandler(req: Request, auth: AuthContext): Promise<Response> {
-  return proxyToUpstream("/api/proxy/agentPerformance", auth);
+  return proxyToUpstream(INTERNAL_PROXY_ROUTES.agentPerformance, auth);
 }
 
 async function proxyPendingHandler(req: Request, auth: AuthContext): Promise<Response> {
-  return proxyToUpstream("/api/proxy/pending", auth);
+  return proxyToUpstream(INTERNAL_PROXY_ROUTES.pending, auth);
 }
 
 /** Zone D: Agent Decisions */

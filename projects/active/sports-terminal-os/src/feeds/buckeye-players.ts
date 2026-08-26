@@ -13,6 +13,7 @@ import { createLogger } from "@utils/logger";
 import { logHealth, logBuckeye } from "@utils/tableLogger";
 import { getDb } from "@db/index";
 import { env } from "@utils/env";
+import { fetchInternalProxy, INTERNAL_PROXY_ROUTES } from "@utils/internal-proxy-client";
 
 // ---------------------------------------------------------------------------
 // Logger
@@ -103,7 +104,6 @@ export async function refresh(): Promise<PlayerFeedResult> {
     return result;
   }
 
-  const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
   const apiKey = process.env.PROXY_API_KEY;
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (apiKey) headers["X-API-Key"] = apiKey;
@@ -112,7 +112,7 @@ export async function refresh(): Promise<PlayerFeedResult> {
   const sessionId = `player-refresh-${result.timestamp}`;
 
   try {
-    const resp = await fetch(`${proxyUrl}/api/proxy/players`, {
+    const resp = await fetchInternalProxy(INTERNAL_PROXY_ROUTES.players, {
       method: "GET",
       headers,
     });

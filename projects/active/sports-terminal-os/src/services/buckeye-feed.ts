@@ -12,6 +12,7 @@
 import { env } from "@utils/env";
 import { createLogger } from "@utils/logger";
 import { logHealth, logBuckeye } from "@utils/tableLogger";
+import { fetchInternalProxy, INTERNAL_PROXY_ROUTES } from "@utils/internal-proxy-client";
 import { processSignalRoute } from "../zones/partner-profile/cascade-engine-integration";
 import type { SignalContext, GateResult } from "../zones/partner-profile/partner-profile-schema";
 
@@ -163,7 +164,6 @@ export async function pollBuckeyeWagers(): Promise<FeedResult> {
     return result;
   }
 
-  const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
   const apiKey = process.env.PROXY_API_KEY;
   const headers: Record<string, string> = { "Content-Type": "application/json" };
   if (apiKey) headers["X-API-Key"] = apiKey;
@@ -174,7 +174,7 @@ export async function pollBuckeyeWagers(): Promise<FeedResult> {
   let wagers: BuckeyeWager[] = [];
 
   try {
-    const resp = await fetch(`${proxyUrl}/api/proxy/wagers`, {
+    const resp = await fetchInternalProxy(INTERNAL_PROXY_ROUTES.wagers, {
       method: "GET",
       headers,
     });
