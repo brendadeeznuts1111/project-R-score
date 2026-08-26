@@ -1306,9 +1306,9 @@
       "column": 13,
       "callee": "fetch",
       "fingerprint": "4a4c4cdacfd9f796",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Hermetic Bun.serve loopback benchmark intentionally measures the native fetch path against its ephemeral port."
     },
     {
       "id": "projects/active/development/geelark/bench/networking-security.bench.ts#fetch#4a4c4cdacfd9f796#1",
@@ -1317,42 +1317,9 @@
       "column": 9,
       "callee": "fetch",
       "fingerprint": "4a4c4cdacfd9f796",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/geelark/dev/dev-hq/servers/dashboard-server.ts#fetch#d2377022def9b390#1",
-      "path": "projects/active/development/geelark/dev/dev-hq/servers/dashboard-server.ts",
-      "line": 387,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "d2377022def9b390",
-      "classification": "unowned",
-      "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/geelark/dev/tools/network-cli.ts#fetch#8128d307939ebded#1",
-      "path": "projects/active/development/geelark/dev/tools/network-cli.ts",
-      "line": 72,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "8128d307939ebded",
-      "classification": "unowned",
-      "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/geelark/dev/tools/network-cli.ts#fetch#8bcd7327e319444a#1",
-      "path": "projects/active/development/geelark/dev/tools/network-cli.ts",
-      "line": 115,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "8bcd7327e319444a",
-      "classification": "unowned",
-      "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Hermetic concurrent Bun.serve loopback benchmark intentionally probes native fetch scheduling against its ephemeral port."
     },
     {
       "id": "projects/active/development/geelark/src/cli/benchmark-cli.ts#fetch#9ad3ad065f8d1a2b#1",
@@ -1361,31 +1328,20 @@
       "column": 9,
       "callee": "fetch",
       "fingerprint": "9ad3ad065f8d1a2b",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Explicit network benchmark intentionally measures Bun native fetch concurrency against the fixed public httpbin target."
     },
     {
-      "id": "projects/active/development/geelark/src/server/TelemetrySystem.ts#fetch#ee63207844135eb1#1",
-      "path": "projects/active/development/geelark/src/server/TelemetrySystem.ts",
-      "line": 425,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "ee63207844135eb1",
-      "classification": "unowned",
-      "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/geelark/src/server/TelemetrySystem.ts#fetch#ee63207844135eb1#2",
-      "path": "projects/active/development/geelark/src/server/TelemetrySystem.ts",
-      "line": 460,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "ee63207844135eb1",
-      "classification": "unowned",
-      "owner": "projects/active/development/geelark",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/development/geelark/src/http/outbound.ts#fetchWithPolicy#8c612ddeca3c5b17#1",
+      "path": "projects/active/development/geelark/src/http/outbound.ts",
+      "line": 51,
+      "column": 10,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "8c612ddeca3c5b17",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/development/geelark/src/http/outbound.ts",
+      "reason": "Typed Geelark boundary grants only exact demo-registry, public geolocation, Slack, and Discord authorities with method, credential, redirect, route, protocol, DNS, offline, deadline, replay, and response-size policy."
     },
     {
       "id": "projects/active/development/geelark/src/services/ServiceFactory.ts#fetch#7ca7cf2718c229d3#1",

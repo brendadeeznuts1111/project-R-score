@@ -14,6 +14,10 @@
 import { spawn } from "bun";
 import { Terminal } from "bun";
 import {
+  fetchGeelarkDemoRegistryPackage,
+  fetchGeelarkDemoRegistryPublish,
+} from "../../src/http/outbound.js";
+import {
   HEADERS,
   getConfigState,
   updateConfigState,
@@ -69,7 +73,7 @@ async function installPackage(packageName: string): Promise<void> {
 
   // Simulate install with config-aware fetch
   try {
-    const response = await fetch(`https://registry.example.com/${packageName}`, headers);
+    const response = await fetchGeelarkDemoRegistryPackage(packageName, headers);
 
     if (!response.ok) {
       console.error(`❌ Failed to install: ${response.statusText}`);
@@ -112,7 +116,7 @@ async function publishPackage(): Promise<void> {
   console.info(`\nPublishing to registry (hash: 0x${config.registryHash.toString(16)})...\n`);
 
   try {
-    const response = await fetch("https://registry.example.com/publish", {
+    const response = await fetchGeelarkDemoRegistryPublish({
       ...headers,
       body: JSON.stringify({
         name: "my-package",

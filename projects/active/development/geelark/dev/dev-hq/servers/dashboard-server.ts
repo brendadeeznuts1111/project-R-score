@@ -21,6 +21,7 @@ import { DashboardConfigSystem } from "../../src/server/DashboardConfig.js";
 import { SocketInspectionSystem } from "../../src/server/SocketInspection.js";
 import { TelemetrySystem } from "../../src/server/TelemetrySystem.js";
 import { UploadService } from "../../src/server/UploadService.js";
+import { fetchGeelarkGeolocation } from "../../../src/http/outbound.js";
 import {
   NETWORK,
   HTTP,
@@ -384,7 +385,7 @@ async function fetchGeolocation(ip: string): Promise<Partial<{
   try {
     // Try to use a free geolocation API (ip-api.com)
     // Note: In production, use a paid service or local database like MaxMind GeoLite2
-    const response = await fetch(`http://ip-api.com/json/${ip}?fields=status,message,country,countryCode,region,city,lat,lon,timezone,isp,org`);
+    const response = await fetchGeelarkGeolocation(ip);
     if (response.ok) {
       const data = await response.json();
       if (data.status === "success") {
