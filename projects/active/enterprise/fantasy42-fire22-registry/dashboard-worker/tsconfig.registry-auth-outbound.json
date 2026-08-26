@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["bun"]
+  },
+  "files": [
+    "scripts/registry-outbound.ts",
+    "scripts/registry-outbound.test.ts",
+    "scripts/registry-auth-plugin.ts",
+    "scripts/setup-registry-token.ts"
+  ]
+}
