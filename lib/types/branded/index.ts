@@ -117,6 +117,8 @@ import type {
   ContentDigest,
   ContentKey,
   SourceLocatorId,
+  ChannelAliasId,
+  ContentChannelId,
   ReleaseAssetId,
   ReleaseCapabilityId,
   RunId,
@@ -244,6 +246,8 @@ export type AnyId =
   | WebhookId
   | FeedId
   | SourceLocatorId
+  | ChannelAliasId
+  | ContentChannelId
   | ReleaseAssetId
   | ReleaseCapabilityId
   | RunId

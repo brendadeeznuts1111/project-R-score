@@ -407,7 +407,16 @@ export async function probeRegistryReadPlane(): Promise<InstallEnvProbeRow> {
 
   for (const lane of lanes) {
     try {
-      const client = new RegistryClient({ baseUrl: lane.baseUrl });
+      const client = new RegistryClient({
+        baseUrl: lane.baseUrl,
+        grants: [
+          {
+            operation: 'metadata-read',
+            origins: [new URL(lane.baseUrl).origin],
+            reason: `install environment read-plane verification (${lane.id})`,
+          },
+        ],
+      });
       try {
         const health = await client.health();
         if (health.status === 'ok' || health.indexOk) {

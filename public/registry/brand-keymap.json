@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T12:22:07.263Z",
+  "generatedAt": "2026-08-26T12:31:20.624Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -12,14 +12,14 @@
     "colorKernel": "public/portal/theme.jsonc"
   },
   "summary": {
-    "brands": 100,
+    "brands": 102,
     "domains": 10,
-    "ids": 76,
+    "ids": 78,
     "keys": 4,
     "codes": 19,
     "digests": 1,
     "covered": 79,
-    "referencedUnconstructed": 7,
+    "referencedUnconstructed": 9,
     "unused": 14,
     "cataloguedProjects": 35,
     "trackedProjects": 31,
@@ -96,7 +96,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 44,
+      "brandCount": 46,
       "colorKey": "accent",
       "color": "#58a6ff",
       "tone": "info"
@@ -1783,7 +1783,7 @@
         "constructors": {
           "as": 3,
           "try": 0,
-          "parse": 5
+          "parse": 6
         },
         "guards": 0,
         "files": [
@@ -1800,7 +1800,7 @@
           "spine": {
             "status": "covered",
             "references": 22,
-            "constructionCalls": 8,
+            "constructionCalls": 9,
             "guardCalls": 0,
             "files": [
               "lib/content-store/content-contract.ts",
@@ -3363,7 +3363,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 26,
+        "references": 31,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3371,20 +3371,24 @@
         },
         "guards": 0,
         "files": [
+          "lib/content-store/channel-alias-store.ts",
           "lib/content-store/content-contract.ts",
           "lib/content-store/local-content-store.ts",
-          "lib/content-store/memory-content-store.ts"
+          "lib/content-store/memory-content-store.ts",
+          "lib/content-store/offline-content.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 26,
+            "references": 31,
             "constructionCalls": 4,
             "guardCalls": 0,
             "files": [
+              "lib/content-store/channel-alias-store.ts",
               "lib/content-store/content-contract.ts",
               "lib/content-store/local-content-store.ts",
-              "lib/content-store/memory-content-store.ts"
+              "lib/content-store/memory-content-store.ts",
+              "lib/content-store/offline-content.ts"
             ]
           },
           "projects": {
@@ -3431,7 +3435,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 5,
+        "references": 7,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3440,17 +3444,19 @@
         "guards": 0,
         "files": [
           "lib/content-store/content-contract.ts",
-          "lib/content-store/memory-content-store.ts"
+          "lib/content-store/memory-content-store.ts",
+          "lib/content-store/offline-content.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 5,
+            "references": 7,
             "constructionCalls": 2,
             "guardCalls": 0,
             "files": [
               "lib/content-store/content-contract.ts",
-              "lib/content-store/memory-content-store.ts"
+              "lib/content-store/memory-content-store.ts",
+              "lib/content-store/offline-content.ts"
             ]
           },
           "projects": {
@@ -3515,6 +3521,134 @@
             "guardCalls": 0,
             "files": [
               "lib/content-store/content-contract.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ChannelAliasId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable mutable channel alias identity, distinct from content and locators",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asChannelAliasId",
+        "try": "tryChannelAliasId",
+        "parse": "parseChannelAliasId"
+      },
+      "guard": "BRAND_GUARDS.isChannelAliasId",
+      "shortName": "channelAliasId",
+      "envName": "CHANNEL_ALIAS_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 9,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/content-store/channel-alias-store.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 9,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/content-store/channel-alias-store.ts"
+            ]
+          },
+          "projects": {
+            "status": "unused",
+            "references": 0,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": []
+          }
+        }
+      }
+    },
+    {
+      "name": "ContentChannelId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable identity of a channel that issued content",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentChannelId",
+        "try": "tryContentChannelId",
+        "parse": "parseContentChannelId"
+      },
+      "guard": "BRAND_GUARDS.isContentChannelId",
+      "shortName": "contentChannelId",
+      "envName": "CONTENT_CHANNEL_ID",
+      "colorKey": "accent",
+      "color": "#58a6ff",
+      "tone": "info",
+      "glossaryConcepts": [],
+      "coverage": {
+        "status": "referenced-unconstructed",
+        "references": 3,
+        "constructors": {
+          "as": 0,
+          "try": 0,
+          "parse": 0
+        },
+        "guards": 0,
+        "files": [
+          "lib/content-store/channel-alias-store.ts"
+        ],
+        "scopes": {
+          "spine": {
+            "status": "referenced-unconstructed",
+            "references": 3,
+            "constructionCalls": 0,
+            "guardCalls": 0,
+            "files": [
+              "lib/content-store/channel-alias-store.ts"
             ]
           },
           "projects": {
@@ -7297,7 +7431,7 @@
     },
     {
       "project": "projects/active/sports-terminal-os",
-      "sourceFiles": 183,
+      "sourceFiles": 184,
       "brandedFiles": 2,
       "brands": [
         "RequestId",

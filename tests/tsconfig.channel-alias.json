@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": ["bun"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
+  },
+  "files": [
+    "channel-alias-store.test.ts",
+    "../lib/content-store/channel-alias-store.ts",
+    "../lib/content-store/content-contract.ts",
+    "../lib/content-store/memory-content-store.ts",
+    "../lib/content-store/index.ts"
+  ]
+}

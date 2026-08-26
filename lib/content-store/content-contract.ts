@@ -154,6 +154,41 @@ export function decideContentRights(
   return { operation, allowed: false, reason: 'rights-not-approved' };
 }
 
+/** Ratchet the lifecycle/operation matrix without coupling it to content identity. */
+export function contentRightsContractIssues(): readonly string[] {
+  const reviewedAt = '2026-08-26T00:00:00.000Z';
+  const reviewEvidenceId = parseEvidenceId('rights-contract-ratchet');
+  const now = new Date('2026-08-26T12:00:00.000Z');
+  const approved: ContentRights = {
+    state: 'approved-vendor',
+    reviewEvidenceId,
+    reviewedAt,
+    validUntil: '2026-08-27T00:00:00.000Z',
+  };
+  const external: ContentRights = {
+    state: 'external-only',
+    reviewEvidenceId,
+    reviewedAt,
+  };
+  const revoked: ContentRights = {
+    state: 'expired-or-revoked',
+    reviewEvidenceId,
+    reviewedAt,
+  };
+  const checks = [
+    ['approved-store', decideContentRights(approved, 'store-bytes', now).allowed, true],
+    ['approved-alias', decideContentRights(approved, 'publish-active-alias', now).allowed, true],
+    ['external-link', decideContentRights(external, 'link-external', now).allowed, true],
+    ['external-alias', decideContentRights(external, 'publish-active-alias', now).allowed, false],
+    ['unknown-store', decideContentRights({ state: 'unknown' }, 'store-bytes', now).allowed, false],
+    ['revoked-alias', decideContentRights(revoked, 'publish-active-alias', now).allowed, false],
+    ['revoked-provenance', decideContentRights(revoked, 'retain-provenance', now).allowed, true],
+  ] as const;
+  return checks
+    .filter(([, actual, expected]) => actual !== expected)
+    .map(([name]) => `rights decision drift: ${name}`);
+}
+
 function fail(field: string, detail: string): never {
   throw new TypeError(`Invalid ContentRef ${field}: ${detail}`);
 }

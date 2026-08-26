@@ -29,6 +29,10 @@ export type ContentDigest = BrandedString<'ContentDigest'>;
 export type ContentKey = BrandedString<'ContentKey'>;
 /** Digest identity of a source locator string, distinct from byte identity. */
 export type SourceLocatorId = BrandedString<'SourceLocatorId'>;
+/** Stable identity of a mutable channel alias; never a content digest or locator. */
+export type ChannelAliasId = BrandedString<'ChannelAliasId'>;
+/** Stable identity of the source channel that issued content. */
+export type ContentChannelId = BrandedString<'ContentChannelId'>;
 /** Stable identity for a versioned release asset. */
 export type ReleaseAssetId = BrandedString<'ReleaseAssetId'>;
 /** Stable identity for a versioned release capability. */
@@ -159,6 +163,8 @@ const sourceLocatorId = defineValidatedBrandConstructors(
   'SourceLocatorId',
   SOURCE_LOCATOR_ID_VALIDATION
 );
+const channelAliasId = defineValidatedBrandConstructors('ChannelAliasId', SLUG_ID_VALIDATION);
+const contentChannelId = defineValidatedBrandConstructors('ContentChannelId', SLUG_ID_VALIDATION);
 const releaseAsset = defineBrandConstructors('ReleaseAssetId');
 const releaseCapability = defineBrandConstructors('ReleaseCapabilityId');
 const run = defineBrandConstructors('RunId');
@@ -239,6 +245,14 @@ export const parseContentKey = contentKey.parse;
 export const asSourceLocatorId = sourceLocatorId.as;
 export const trySourceLocatorId = sourceLocatorId.try;
 export const parseSourceLocatorId = sourceLocatorId.parse;
+
+export const asChannelAliasId = channelAliasId.as;
+export const tryChannelAliasId = channelAliasId.try;
+export const parseChannelAliasId = channelAliasId.parse;
+
+export const asContentChannelId = contentChannelId.as;
+export const tryContentChannelId = contentChannelId.try;
+export const parseContentChannelId = contentChannelId.parse;
 
 export const asReleaseAssetId = releaseAsset.as;
 export const tryReleaseAssetId = releaseAsset.try;
@@ -536,6 +550,22 @@ export const OPERATIONS_BRAND_SPECS = [
     mint: ['system-internal', 'wire-input'],
     description: 'SHA-256 identity of a source locator string, never of fetched bytes',
     validation: SOURCE_LOCATOR_ID_VALIDATION,
+  },
+  {
+    name: 'ChannelAliasId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Stable mutable channel alias identity, distinct from content and locators',
+    validation: SLUG_ID_VALIDATION,
+  },
+  {
+    name: 'ContentChannelId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Stable identity of a channel that issued content',
+    validation: SLUG_ID_VALIDATION,
   },
   {
     name: 'ReleaseAssetId',

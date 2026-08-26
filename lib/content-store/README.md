@@ -28,8 +28,13 @@ Core invariants:
   derived only from the validated `ContentDigest`, never a source URL. Bun 1.4
   has no native atomic-rename or fsync API, so this adapter uses Bun's built-in
   `node:fs` compatibility for those two durability primitives.
+- `MemoryChannelAliasStore` atomically promotes or revokes immutable alias
+  records with exact-revision and exact-digest compare-and-swap. Resolution
+  re-verifies content, expiry, rights, and authority separation before exposing
+  an active target. Rights lifecycle changes never rewrite byte identity.
 
-R2 and channel adapters remain separate follow-up work.
+An R2 alias adapter remains deferred until its conditional-write contract can
+provide the same exact revision/digest CAS and post-write verification.
 
 ## Area map
 
@@ -38,4 +43,5 @@ R2 and channel adapters remain separate follow-up work.
 | Identity, rights, dependencies, and wire parsing | `content-contract.ts`     |
 | Bounded process-local adapter                    | `memory-content-store.ts` |
 | Atomic persistent local adapter                  | `local-content-store.ts`  |
+| Guarded immutable channel aliases                | `channel-alias-store.ts`  |
 | Stable module exports                            | `index.ts`                |

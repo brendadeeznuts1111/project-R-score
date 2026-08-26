@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-26T12:00:27.853Z",
+  "generatedAt": "2026-08-26T12:24:03.322Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 100,
+  "brandCount": 102,
   "domainCount": 10,
   "domains": [
     "audit",
@@ -17,7 +17,7 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 76,
+    "id": 78,
     "key": 4,
     "code": 19,
     "digest": 1
@@ -51,7 +51,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 44
+      "brandCount": 46
     },
     {
       "name": "portal",
@@ -1518,6 +1518,64 @@
       "guard": "BRAND_GUARDS.isSourceLocatorId",
       "shortName": "sourceLocatorId",
       "envName": "SOURCE_LOCATOR_ID"
+    },
+    {
+      "name": "ChannelAliasId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable mutable channel alias identity, distinct from content and locators",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asChannelAliasId",
+        "try": "tryChannelAliasId",
+        "parse": "parseChannelAliasId"
+      },
+      "guard": "BRAND_GUARDS.isChannelAliasId",
+      "shortName": "channelAliasId",
+      "envName": "CHANNEL_ALIAS_ID"
+    },
+    {
+      "name": "ContentChannelId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable identity of a channel that issued content",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentChannelId",
+        "try": "tryContentChannelId",
+        "parse": "parseContentChannelId"
+      },
+      "guard": "BRAND_GUARDS.isContentChannelId",
+      "shortName": "contentChannelId",
+      "envName": "CONTENT_CHANNEL_ID"
     },
     {
       "name": "ReleaseAssetId",
