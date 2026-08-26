@@ -177,6 +177,24 @@ describe('guarded Bun package-manager planners', () => {
     }
   });
 
+  test('requires exact origin-only grants and exact read access', () => {
+    for (const grant of [
+      { ...readGrant, origins: ['https://cli.example/scoped'] },
+      { ...readGrant, access: 'write' as const },
+    ]) {
+      expect(() =>
+        planBunInfo({
+          executable,
+          cwd,
+          profile: 'ci',
+          registry: { cli: 'https://cli.example' },
+          grants: [grant],
+          packageName: 'react',
+        })
+      ).toThrow('exact metadata-read read plane grant');
+    }
+  });
+
   test('requires write-plane authority and an explicit publish registry', () => {
     expect(() =>
       planBunPublish({

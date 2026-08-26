@@ -14,15 +14,16 @@
 // @updated --production · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
 // @verified --production · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/bundler/fullstack#production-mode
 import type { ControlProfile } from '../security/control-policy.ts';
+import type { RegistryOperation as RegistrySdkOperation } from '../../packages/registry-client/src/index.ts';
 
 export const REGISTRY_OPERATIONS = [
   'metadata-read',
   'artifact-read',
   'publish',
   'mirror-write',
-] as const;
+] as const satisfies readonly RegistrySdkOperation[];
 
-export type RegistryOperation = (typeof REGISTRY_OPERATIONS)[number];
+export type RegistryOperation = RegistrySdkOperation;
 export type RegistryResolutionIntent = RegistryOperation | 'install';
 export type RegistrySource =
   'cli' | 'environment' | 'publishConfig' | 'bunfig' | 'npmrc' | 'default';
@@ -163,11 +164,15 @@ export function requireRegistryPlaneGrant(
   for (const operation of requiredOperations) {
     const allowed = grants.some(grant => {
       if (grant.operation !== operation || !grant.reason.trim()) return false;
-      if (needsWrite && grant.access !== 'write') return false;
+      if (grant.access !== (needsWrite ? 'write' : 'read')) return false;
       return grant.origins.some(candidate => {
         try {
           const parsed = normalizeRegistryUrl(candidate, 'default');
-          return parsed.url === candidate.replace(/\/+$/, '') && parsed.origin === registry.origin;
+          return (
+            parsed.url === parsed.origin &&
+            parsed.url === candidate.replace(/\/+$/, '') &&
+            parsed.origin === registry.origin
+          );
         } catch {
           return false;
         }
