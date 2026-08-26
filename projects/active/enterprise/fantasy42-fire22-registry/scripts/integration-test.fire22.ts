@@ -5,6 +5,12 @@
  */
 
 import { $ } from 'bun';
+import {
+  fetchCloudflareApi,
+  fetchGithubApi,
+  fetchPublicRead,
+  fetchServiceOrigin,
+} from '../dashboard-worker/src/security/outbound-client.ts';
 
 // ╔══════════════════════════════════════════════════════════════╗
 // ║                 INTEGRATION TEST CONFIGURATION             ║
@@ -25,6 +31,10 @@ interface TestResult {
   required: boolean;
 }
 
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
 // ╔══════════════════════════════════════════════════════════════╗
 // ║                 TEST IMPLEMENTATIONS                       ║
 // ╚══════════════════════════════════════════════════════════════╝
@@ -37,7 +47,7 @@ const repositoryTests: IntegrationTest[] = [
     required: true,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch(
+        const response = await fetchGithubApi(
           'https://api.github.com/repos/brendadeeznuts1111/fantasy42-fire22-registry',
           {
             headers: {
@@ -62,7 +72,7 @@ const repositoryTests: IntegrationTest[] = [
     required: true,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch('https://api.github.com/user', {
+        const response = await fetchGithubApi('https://api.github.com/user', {
           headers: {
             Authorization: `token ${process.env.GITHUB_TOKEN}`,
             Accept: 'application/vnd.github.v3+json',
@@ -80,7 +90,7 @@ const repositoryTests: IntegrationTest[] = [
     required: false,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch(
+        const response = await fetchGithubApi(
           'https://api.github.com/repos/brendadeeznuts1111/fantasy42-fire22-registry/branches/main/protection',
           {
             headers: {
@@ -109,7 +119,13 @@ const registryTests: IntegrationTest[] = [
     required: true,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch(`${process.env.FIRE22_REGISTRY_URL}/-/ping`);
+        const registryOrigin = process.env.FIRE22_REGISTRY_URL;
+        if (!registryOrigin) return false;
+        const response = await fetchServiceOrigin(
+          registryOrigin,
+          new URL('/-/ping', registryOrigin),
+          {}
+        );
         return response.ok;
       } catch {
         return false;
@@ -122,7 +138,7 @@ const registryTests: IntegrationTest[] = [
     required: true,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch('https://registry.npmjs.org/-/ping');
+        const response = await fetchPublicRead('https://registry.npmjs.org/-/ping');
         return response.ok;
       } catch {
         return false;
@@ -149,7 +165,7 @@ const cloudflareTests: IntegrationTest[] = [
     required: true,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
+        const response = await fetchCloudflareApi('https://api.cloudflare.com/client/v4/user/tokens/verify', {
           headers: {
             Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
             'Content-Type': 'application/json',
@@ -184,7 +200,7 @@ const cloudflareTests: IntegrationTest[] = [
     required: false,
     test: async (): Promise<boolean> => {
       try {
-        const response = await fetch('https://api.apexodds.net/health');
+        const response = await fetchPublicRead('https://api.apexodds.net/health');
         return response.ok;
       } catch {
         return false;
@@ -221,7 +237,8 @@ const hubTests: IntegrationTest[] = [
     test: async (): Promise<boolean> => {
       try {
         const hubPort = process.env.FIRE22_HUB_PORT || '3001';
-        const response = await fetch(`http://localhost:${hubPort}/health`);
+        const hubOrigin = `http://localhost:${hubPort}`;
+        const response = await fetchServiceOrigin(hubOrigin, new URL('/health', hubOrigin), {});
         return response.ok;
       } catch {
         return false;
@@ -254,7 +271,7 @@ async function runTest(test: IntegrationTest): Promise<TestResult> {
     return {
       name: test.name,
       success: false,
-      message: `ERROR: ${error.message}`,
+      message: `ERROR: ${errorMessage(error)}`,
       duration,
       required: test.required,
     };

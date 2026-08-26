@@ -6,6 +6,10 @@
  */
 
 import { setTimeout } from 'timers/promises';
+import {
+  fetchServiceOrigin,
+  type Fantasy42OutboundOptions,
+} from '../../../src/security/outbound-client.ts';
 
 interface AuthResponse {
   message: string;
@@ -51,9 +55,20 @@ interface RefreshResponse {
 
 class AuthTestClient {
   private baseUrl: string;
+  private outbound: Fantasy42OutboundOptions;
 
-  constructor(baseUrl: string = 'http://localhost:8787') {
+  constructor(baseUrl: string = 'http://localhost:8787', outbound: Fantasy42OutboundOptions = {}) {
     this.baseUrl = baseUrl;
+    this.outbound = outbound;
+  }
+
+  private request(pathname: string, init: BunFetchRequestInit): Promise<Response> {
+    return fetchServiceOrigin(
+      this.baseUrl,
+      new URL(pathname, this.baseUrl),
+      init,
+      this.outbound
+    );
   }
 
   /**
@@ -65,7 +80,7 @@ class AuthTestClient {
     const credentials = btoa(`${username}:${password}`);
 
     try {
-      const response = await fetch(`${this.baseUrl}/auth/basic`, {
+      const response = await this.request('/auth/basic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -97,7 +112,7 @@ class AuthTestClient {
     console.info('🔍 Testing Token Verification');
 
     try {
-      const response = await fetch(`${this.baseUrl}/auth/verify`, {
+      const response = await this.request('/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +148,7 @@ class AuthTestClient {
     console.info('🛡️ Testing Protected Route Access');
 
     try {
-      const response = await fetch(`${this.baseUrl}/protected`, {
+      const response = await this.request('/protected', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -169,7 +184,7 @@ class AuthTestClient {
     console.info('🔄 Testing Token Refresh');
 
     try {
-      const response = await fetch(`${this.baseUrl}/auth/refresh`, {
+      const response = await this.request('/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -205,7 +220,7 @@ class AuthTestClient {
     try {
       const credentials = btoa('invalid:invalid');
 
-      const response = await fetch(`${this.baseUrl}/auth/basic`, {
+      const response = await this.request('/auth/basic', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,7 +253,7 @@ class AuthTestClient {
     console.info('🚫 Testing Invalid Token');
 
     try {
-      const response = await fetch(`${this.baseUrl}/auth/verify`, {
+      const response = await this.request('/auth/verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,7 +286,7 @@ class AuthTestClient {
     console.info('🚫 Testing No Authentication');
 
     try {
-      const response = await fetch(`${this.baseUrl}/protected`, {
+      const response = await this.request('/protected', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -303,7 +318,7 @@ class AuthTestClient {
     console.info('ℹ️ Testing Service Info');
 
     try {
-      const response = await fetch(`${this.baseUrl}`, {
+      const response = await this.request('/', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

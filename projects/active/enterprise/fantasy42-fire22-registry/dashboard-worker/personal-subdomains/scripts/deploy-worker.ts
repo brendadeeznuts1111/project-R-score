@@ -5,6 +5,10 @@
  */
 
 import { $ } from 'bun';
+import {
+  fetchCloudflareApi,
+  fetchPublicRead,
+} from '../../src/security/outbound-client.ts';
 
 interface CloudflareConfig {
   accountId: string;
@@ -105,7 +109,7 @@ async function createKVNamespaces(config: CloudflareConfig) {
   // Create PERSONAL_SITES namespace
   console.info('Creating PERSONAL_SITES KV namespace...');
   try {
-    const response = await fetch(
+    const response = await fetchCloudflareApi(
       `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces`,
       {
         method: 'POST',
@@ -141,7 +145,7 @@ async function createKVNamespaces(config: CloudflareConfig) {
   // Create EMPLOYEE_DATA namespace
   console.info('Creating EMPLOYEE_DATA KV namespace...');
   try {
-    const response = await fetch(
+    const response = await fetchCloudflareApi(
       `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces`,
       {
         method: 'POST',
@@ -223,7 +227,7 @@ async function seedEmployeeData(config: CloudflareConfig) {
     const key = `employee:${employee.id}`;
 
     try {
-      const response = await fetch(
+      const response = await fetchCloudflareApi(
         `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${encodeURIComponent(key)}`,
         {
           method: 'PUT',
@@ -246,7 +250,7 @@ async function seedEmployeeData(config: CloudflareConfig) {
         console.info('🎯 CRITICAL: Vinny2Times data seeded - verifying access...');
 
         // Verify the data was stored correctly
-        const verifyResponse = await fetch(
+        const verifyResponse = await fetchCloudflareApi(
           `https://api.cloudflare.com/client/v4/accounts/${accountId}/storage/kv/namespaces/${namespaceId}/values/${encodeURIComponent(key)}`,
           {
             headers: {
@@ -277,7 +281,7 @@ async function configureDNS(config: CloudflareConfig) {
 
   // Check if wildcard DNS record already exists
   try {
-    const listResponse = await fetch(
+    const listResponse = await fetchCloudflareApi(
       `https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records?type=CNAME&name=*.fire22.workers.dev`,
       {
         headers: {
@@ -299,7 +303,7 @@ async function configureDNS(config: CloudflareConfig) {
 
   // Create wildcard CNAME record
   try {
-    const response = await fetch(
+    const response = await fetchCloudflareApi(
       `https://api.cloudflare.com/client/v4/zones/${zoneId}/dns_records`,
       {
         method: 'POST',
@@ -343,7 +347,7 @@ async function testDeployment() {
   for (const url of testUrls) {
     try {
       console.info(`Testing ${url}...`);
-      const response = await fetch(url, {
+      const response = await fetchPublicRead(url, {
         method: 'HEAD',
         headers: {
           'User-Agent': 'Fire22-Deployment-Test/1.0',
@@ -355,7 +359,7 @@ async function testDeployment() {
 
         // Special verification for VIP subdomain
         if (url.includes('vinny2times')) {
-          const body = await fetch(url).then(r => r.text());
+          const body = await fetchPublicRead(url).then(r => r.text());
           if (body.includes('Vinny2Times') && body.includes('VIP Management')) {
             console.info('🎯 CRITICAL: Vinny2Times VIP features verified!');
           }

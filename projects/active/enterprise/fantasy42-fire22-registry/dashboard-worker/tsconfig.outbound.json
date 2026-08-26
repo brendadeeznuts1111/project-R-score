@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["bun"]
+  },
+  "files": [
+    "src/security/outbound-client.ts",
+    "core/api/handlers/jwt-auth-test-client.ts",
+    "../scripts/global-setup.fire22.ts",
+    "../scripts/integration-test.fire22.ts"
+  ]
+}
