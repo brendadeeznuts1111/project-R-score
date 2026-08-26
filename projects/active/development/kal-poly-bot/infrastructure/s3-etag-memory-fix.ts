@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 import { feature } from "bun:bundle";
 import "./types.d.ts";
 
@@ -94,7 +95,7 @@ export class S3ETagMemoryFix {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
     if (itemCount > 10000) {
-      fetch("https://api.buncatalog.com/v1/audit", {
+      fetchBunCatalog("/v1/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -111,7 +112,7 @@ export class S3ETagMemoryFix {
   private static logETagProcessing(count: number): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

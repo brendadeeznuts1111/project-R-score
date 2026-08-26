@@ -6,6 +6,7 @@ import { PatternIngestionService, PatternIngestionAPI } from './PatternIngestion
 import { ExecutionBridge } from './ExecutionBridge';
 import { RiskManagementSystem } from './RiskManagementSystem';
 import { nanoseconds } from 'bun';
+import { createKalPolyLoopbackAuthority, fetchKalPolyLoopback } from '../outbound-client.ts';
 
 // =============================================================================
 // LIVE EXECUTION ENGINE INTEGRATION
@@ -16,6 +17,7 @@ export const LIVE_ENGINE_CONFIG = {
   // Server configuration
   PORT: 8082,
   HOST: '0.0.0.0',
+  CLIENT_HOST: '127.0.0.1',
 
   // Health check configuration
   HEALTH_CHECK_INTERVAL: 30000, // 30 seconds
@@ -404,7 +406,10 @@ export class LiveExecutionCLI {
   /// Status command
   private async statusCommand(): Promise<void> {
     try {
-      const response = await fetch(`http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/status`);
+      const response = await fetchKalPolyLoopback(
+        createKalPolyLoopbackAuthority(LIVE_ENGINE_CONFIG.CLIENT_HOST, LIVE_ENGINE_CONFIG.PORT),
+        '/status'
+      );
       const status = await response.json();
       console.info('📊 Live Execution Engine Status:');
       console.info(JSON.stringify(status, null, 2));
@@ -417,7 +422,10 @@ export class LiveExecutionCLI {
   /// Health command
   private async healthCommand(): Promise<void> {
     try {
-      const response = await fetch(`http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/health`);
+      const response = await fetchKalPolyLoopback(
+        createKalPolyLoopbackAuthority(LIVE_ENGINE_CONFIG.CLIENT_HOST, LIVE_ENGINE_CONFIG.PORT),
+        '/health'
+      );
       const health = await response.json();
 
       if (health.status === 'healthy') {
@@ -441,13 +449,19 @@ export class LiveExecutionCLI {
 
     try {
       // Test health endpoint
-      const healthResponse = await fetch(`http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/health`);
+      const healthResponse = await fetchKalPolyLoopback(
+        createKalPolyLoopbackAuthority(LIVE_ENGINE_CONFIG.CLIENT_HOST, LIVE_ENGINE_CONFIG.PORT),
+        '/health'
+      );
       if (!healthResponse.ok) {
         throw new Error(`Health check failed: ${healthResponse.status}`);
       }
 
       // Test metrics endpoint
-      const metricsResponse = await fetch(`http://${LIVE_ENGINE_CONFIG.HOST}:${LIVE_ENGINE_CONFIG.PORT}/metrics`);
+      const metricsResponse = await fetchKalPolyLoopback(
+        createKalPolyLoopbackAuthority(LIVE_ENGINE_CONFIG.CLIENT_HOST, LIVE_ENGINE_CONFIG.PORT),
+        '/metrics'
+      );
       if (!metricsResponse.ok) {
         throw new Error(`Metrics check failed: ${metricsResponse.status}`);
       }
@@ -505,5 +519,4 @@ if (import.meta.main) {
 // EXPORTS
 // =============================================================================
 
-export { LiveExecutionEngineIntegration, LiveExecutionCLI };
 export default LiveExecutionEngineIntegration;

@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/mysql-parameter-binding-guard.ts
 import { feature } from "bun:bundle";
 
@@ -90,7 +91,7 @@ export class MySQLParameterBindingGuard {
     const isSuspicious = dangerousPatterns.some((p) => p.test(sqlLower));
 
     if (isSuspicious) {
-      fetch("https://api.buncatalog.com/v1/threat", {
+      fetchBunCatalog("/v1/threat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -107,7 +108,7 @@ export class MySQLParameterBindingGuard {
   private static logParameterValidation(index: number, type: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

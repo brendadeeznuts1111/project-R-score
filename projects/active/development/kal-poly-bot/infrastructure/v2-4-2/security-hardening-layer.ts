@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/security-hardening-layer.ts
 // Component #49: Security Hardening Layer (CVE-2024 Prevention)
@@ -502,7 +503,7 @@ export class SecurityHardeningLayer {
     console.error("[CVE-2024 VIOLATION]", violation);
 
     // Send to audit system
-    fetch("https://api.buncatalog.com/v1/security/violation", {
+    fetchBunCatalog("/v1/security/violation", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

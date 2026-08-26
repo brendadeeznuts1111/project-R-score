@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v1-3-3/napi-threadsafety-guard.ts
 // Component #72: N-API ThreadSafety Guard for Native Addon Stability
@@ -216,7 +217,7 @@ export class NAPIThreadSafetyGuard {
   private static logThreadRelease(id: number): void {
     if (!process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS === "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -231,7 +232,7 @@ export class NAPIThreadSafetyGuard {
   private static logPrematureFinalization(id: number): void {
     if (!process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS === "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -247,7 +248,7 @@ export class NAPIThreadSafetyGuard {
   private static logQueueOverflow(id: number): void {
     if (!process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS === "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/sqlite-3-51-1-engine.ts
 // Component #48: SQLite 3.51.1 Engine (EXISTS-to-JOIN Optimization)
@@ -357,7 +358,7 @@ export class SQLite3511Engine {
     };
 
     try {
-      await fetch("https://api.buncatalog.com/v1/audit", {
+      await fetchBunCatalog("/v1/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(auditData),

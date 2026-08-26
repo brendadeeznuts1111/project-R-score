@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 import { feature } from "bun:bundle";
 import "./types.d.ts";
 
@@ -66,7 +67,7 @@ export class NodeJSCompatPatch {
   private static logPatchApplied(): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

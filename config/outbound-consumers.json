@@ -411,7 +411,7 @@
     {
       "id": "lib/operator-research/registry-desk.ts#fetch#cc81338343410f9d#1",
       "path": "lib/operator-research/registry-desk.ts",
-      "line": 454,
+      "line": 455,
       "column": 25,
       "callee": "fetch",
       "fingerprint": "cc81338343410f9d",
@@ -598,7 +598,7 @@
     {
       "id": "lib/verification/install-env-probes.ts#fetch#87327d40f688e162#1",
       "path": "lib/verification/install-env-probes.ts",
-      "line": 177,
+      "line": 182,
       "column": 23,
       "callee": "fetch",
       "fingerprint": "87327d40f688e162",
@@ -2565,268 +2565,15 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/bunx-windows-utf8-fix.ts#fetch#5665833c2acd9171#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/bunx-windows-utf8-fix.ts",
-      "line": 76,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "5665833c2acd9171",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/cloudflare-security-patch.ts#fetch#65e357f95e55019b#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/cloudflare-security-patch.ts",
-      "line": 143,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "65e357f95e55019b",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/compile-time-flag-engine.ts#fetch#fe6ba50b279999fd#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/compile-time-flag-engine.ts",
-      "line": 85,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "fe6ba50b279999fd",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/index.ts#fetch#acb2b7ded7c4bb8e#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/index.ts",
-      "line": 125,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "acb2b7ded7c4bb8e",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/mysql-parameter-binding-guard.ts#fetch#0cf3f77486088ed3#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/mysql-parameter-binding-guard.ts",
-      "line": 93,
-      "column": 7,
-      "callee": "fetch",
-      "fingerprint": "0cf3f77486088ed3",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/mysql-parameter-binding-guard.ts#fetch#4c756d08f51315ce#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/mysql-parameter-binding-guard.ts",
-      "line": 110,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "4c756d08f51315ce",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/napi-threadsafety-guard.ts#fetch#7e98b7ea5b6985c1#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/napi-threadsafety-guard.ts",
-      "line": 59,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "7e98b7ea5b6985c1",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/napi-threadsafety-guard.ts#fetch#0dea3b4b7402f816#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/napi-threadsafety-guard.ts",
-      "line": 74,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "0dea3b4b7402f816",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/nodejs-compat-patch.ts#fetch#ea733df721521a73#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/nodejs-compat-patch.ts",
-      "line": 69,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "ea733df721521a73",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/npmrc-env-expander.ts#fetch#2dffc3b4d8c48c3f#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/npmrc-env-expander.ts",
-      "line": 91,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "2dffc3b4d8c48c3f",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/redis-url-validator.ts#fetch#b78dcc208f92ef67#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/redis-url-validator.ts",
-      "line": 77,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "b78dcc208f92ef67",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/s3-content-disposition.ts#fetch#53c2a5e45f5b5af1#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/s3-content-disposition.ts",
-      "line": 71,
-      "column": 7,
-      "callee": "fetch",
-      "fingerprint": "53c2a5e45f5b5af1",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/s3-content-disposition.ts#fetch#eb71d1b798ee2c33#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/s3-content-disposition.ts",
-      "line": 88,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "eb71d1b798ee2c33",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/s3-etag-memory-fix.ts#fetch#2f0c3ea1c891b917#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/s3-etag-memory-fix.ts",
-      "line": 97,
-      "column": 7,
-      "callee": "fetch",
-      "fingerprint": "2f0c3ea1c891b917",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/s3-etag-memory-fix.ts#fetch#2dc8ad01763ae722#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/s3-etag-memory-fix.ts",
-      "line": 114,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "2dc8ad01763ae722",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/selective-hoist-controller.ts#fetch#17249b8929b1f088#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/selective-hoist-controller.ts",
-      "line": 77,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "17249b8929b1f088",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/sourcemap-integrity-validator.ts#fetch#25fa7e863b2a5482#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/sourcemap-integrity-validator.ts",
-      "line": 91,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "25fa7e863b2a5482",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/unicode-stringwidth-engine.ts#fetch#158f20aa8f478ec2#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/unicode-stringwidth-engine.ts",
-      "line": 139,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "158f20aa8f478ec2",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts#fetch#527da99f35443e08#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts",
-      "line": 60,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "527da99f35443e08",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts#fetch#f12c359457f06d60#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts",
-      "line": 144,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "f12c359457f06d60",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts#fetch#a702ee1ed21501ee#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts",
-      "line": 221,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "a702ee1ed21501ee",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts#fetch#dfe13032d3a49682#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts",
-      "line": 236,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "dfe13032d3a49682",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts#fetch#84a62f8a037aeeb8#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts",
-      "line": 406,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "84a62f8a037aeeb8",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts#fetch#0a17f8838f4232f1#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3-package-manager.ts",
-      "line": 423,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "0a17f8838f4232f1",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/development/kal-poly-bot/infrastructure/outbound-client.ts#fetchWithPolicy#208f34f7ee050032#1",
+      "path": "projects/active/development/kal-poly-bot/infrastructure/outbound-client.ts",
+      "line": 65,
+      "column": 16,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "208f34f7ee050032",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/development/kal-poly-bot/infrastructure",
+      "reason": "Exact fixed-origin Bun catalog adapter enforces route and method allowlists, credential denial, direct-route ownership, public DNS authority, deadlines, bounded responses, offline denial, and non-replay of unsafe telemetry writes."
     },
     {
       "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/git-dependency-security-layer.ts#fetch#c97a4e967105e2c9#1",
@@ -2851,105 +2598,6 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/napi-threadsafety-guard.ts#fetch#f59980bf47431a8e#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/napi-threadsafety-guard.ts",
-      "line": 219,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "f59980bf47431a8e",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/napi-threadsafety-guard.ts#fetch#1c30ef18f6f432e7#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/napi-threadsafety-guard.ts",
-      "line": 234,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "1c30ef18f6f432e7",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/napi-threadsafety-guard.ts#fetch#dcb4d5ba01c441da#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/napi-threadsafety-guard.ts",
-      "line": 250,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "dcb4d5ba01c441da",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/sourcemap-integrity-validator.ts#fetch#b6a179ce4eecb123#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/sourcemap-integrity-validator.ts",
-      "line": 181,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "b6a179ce4eecb123",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/websocket-fragment-guard.ts#fetch#99b0cbfab4d85d67#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/websocket-fragment-guard.ts",
-      "line": 231,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "99b0cbfab4d85d67",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/websocket-fragment-guard.ts#fetch#163b30ac2958cd79#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/websocket-fragment-guard.ts",
-      "line": 247,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "163b30ac2958cd79",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/worker-thread-safety-engine.ts#fetch#b736665239153332#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/worker-thread-safety-engine.ts",
-      "line": 224,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "b736665239153332",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/yaml-doc-end-fix.ts#fetch#9e3d2b2d892edcb0#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/yaml-doc-end-fix.ts",
-      "line": 411,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "9e3d2b2d892edcb0",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/yaml-doc-end-fix.ts#fetch#e026897590140a5b#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v1-3-3/yaml-doc-end-fix.ts",
-      "line": 426,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "e026897590140a5b",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/development/kal-poly-bot/infrastructure/v1.3.3-integration.bun.ts#fetch#383a8c382c6b8c91#1",
       "path": "projects/active/development/kal-poly-bot/infrastructure/v1.3.3-integration.bun.ts",
       "line": 267,
@@ -2961,42 +2609,9 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/component-106-http-server-engine.ts#fetch#ece43823ece0f2eb#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/component-106-http-server-engine.ts",
-      "line": 168,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "ece43823ece0f2eb",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/console-json-formatter.ts#fetch#21b4b4dba2344c2f#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/console-json-formatter.ts",
-      "line": 287,
-      "column": 7,
-      "callee": "fetch",
-      "fingerprint": "21b4b4dba2344c2f",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/httpagent-connection-pool.ts#fetch#26d652b4294a6d55#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/httpagent-connection-pool.ts",
-      "line": 333,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "26d652b4294a6d55",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/httpagent-connection-pool.ts#fetch#8a08ee5a66be30ae#1",
       "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/httpagent-connection-pool.ts",
-      "line": 357,
+      "line": 358,
       "column": 30,
       "callee": "fetch",
       "fingerprint": "8a08ee5a66be30ae",
@@ -3007,87 +2622,10 @@
     {
       "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/security-hardening-layer.ts#fetch#4f0d017dc055ac45#1",
       "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/security-hardening-layer.ts",
-      "line": 476,
+      "line": 477,
       "column": 14,
       "callee": "fetch",
       "fingerprint": "4f0d017dc055ac45",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/security-hardening-layer.ts#fetch#c5066caa96b034a0#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/security-hardening-layer.ts",
-      "line": 505,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "c5066caa96b034a0",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/sqlite-3-51-1-engine.ts#fetch#7aa2c22d2d563ef0#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/sqlite-3-51-1-engine.ts",
-      "line": 360,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "7aa2c22d2d563ef0",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/standalone-executable-config.ts#fetch#7aa2c22d2d563ef0#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v2-4-2/standalone-executable-config.ts",
-      "line": 457,
-      "column": 13,
-      "callee": "fetch",
-      "fingerprint": "7aa2c22d2d563ef0",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/v8-type-check-api.ts#fetch#cc19ff7884e8a68f#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/v8-type-check-api.ts",
-      "line": 78,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "cc19ff7884e8a68f",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/websocket-cookie-fix.ts#fetch#e639e45a5d367c37#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/websocket-cookie-fix.ts",
-      "line": 59,
-      "column": 7,
-      "callee": "fetch",
-      "fingerprint": "e639e45a5d367c37",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/websocket-fragment-guard.ts#fetch#e6da9815e854bdbe#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/websocket-fragment-guard.ts",
-      "line": 97,
-      "column": 9,
-      "callee": "fetch",
-      "fingerprint": "e6da9815e854bdbe",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/infrastructure/websocket-fragment-guard.ts#fetch#569bbe07e81a7f6b#1",
-      "path": "projects/active/development/kal-poly-bot/infrastructure/websocket-fragment-guard.ts",
-      "line": 114,
-      "column": 5,
-      "callee": "fetch",
-      "fingerprint": "569bbe07e81a7f6b",
       "classification": "unowned",
       "owner": "projects/active/development/kal-poly-bot",
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
@@ -3148,59 +2686,15 @@
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
     },
     {
-      "id": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts#fetch#6cf7bbfe3ef5d058#1",
-      "path": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts",
-      "line": 407,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "6cf7bbfe3ef5d058",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts#fetch#723945dafbca0965#1",
-      "path": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts",
-      "line": 420,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "723945dafbca0965",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts#fetch#723945dafbca0965#2",
-      "path": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts",
-      "line": 444,
-      "column": 36,
-      "callee": "fetch",
-      "fingerprint": "723945dafbca0965",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts#fetch#3485352b3c4e04e0#1",
-      "path": "projects/active/development/kal-poly-bot/operation_surgical_precision/LiveExecutionEngineMain.ts",
-      "line": 450,
-      "column": 37,
-      "callee": "fetch",
-      "fingerprint": "3485352b3c4e04e0",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
       "id": "projects/active/development/kal-poly-bot/operation_surgical_precision/surgical-precision-dashboard.bench.ts#fetch#fd078f449501e61d#1",
       "path": "projects/active/development/kal-poly-bot/operation_surgical_precision/surgical-precision-dashboard.bench.ts",
       "line": 85,
       "column": 48,
       "callee": "fetch",
       "fingerprint": "fd078f449501e61d",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "projects/active/development/kal-poly-bot/benchmarks",
+      "reason": "Benchmark-only DNS timing probe intentionally measures Bun native fetch against Google DNS; it is not a production transport boundary and requires explicit operator-run online execution."
     },
     {
       "id": "projects/active/development/kal-poly-bot/operation_surgical_precision/surgical-precision-dashboard.bench.ts#fetch#2e20d116c5935410#1",
@@ -3209,9 +2703,9 @@
       "column": 52,
       "callee": "fetch",
       "fingerprint": "2e20d116c5935410",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "projects/active/development/kal-poly-bot/benchmarks",
+      "reason": "Benchmark-only provider timing matrix intentionally measures Bun native fetch across fixed public fixtures; it is not a production transport boundary and requires explicit operator-run online execution."
     },
     {
       "id": "projects/active/development/kal-poly-bot/operation-surgical-precision/surgical-precision-dashboard.bench.ts#fetch#fd078f449501e61d#1",
@@ -3220,9 +2714,9 @@
       "column": 48,
       "callee": "fetch",
       "fingerprint": "fd078f449501e61d",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "projects/active/development/kal-poly-bot/benchmarks",
+      "reason": "Mirrored benchmark-only DNS timing probe intentionally measures Bun native fetch against Google DNS; it is not a production transport boundary and requires explicit operator-run online execution."
     },
     {
       "id": "projects/active/development/kal-poly-bot/operation-surgical-precision/surgical-precision-dashboard.bench.ts#fetch#2e20d116c5935410#1",
@@ -3231,20 +2725,31 @@
       "column": 52,
       "callee": "fetch",
       "fingerprint": "2e20d116c5935410",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "classification": "intentional-native-probe",
+      "owner": "projects/active/development/kal-poly-bot/benchmarks",
+      "reason": "Mirrored benchmark-only provider timing matrix intentionally measures Bun native fetch across fixed public fixtures; it is not a production transport boundary and requires explicit operator-run online execution."
     },
     {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/bot-controller.ts#fetch#c1eaca99af020a0a#1",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/bot-controller.ts",
-      "line": 162,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "c1eaca99af020a0a",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "id": "projects/active/development/kal-poly-bot/outbound-client.ts#fetchWithPolicy#68c03257b4e36548#1",
+      "path": "projects/active/development/kal-poly-bot/outbound-client.ts",
+      "line": 85,
+      "column": 16,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "68c03257b4e36548",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/development/kal-poly-bot/internal-http",
+      "reason": "Typed loopback authority rejects bind and external hosts, invalid ports, authority-escaping routes, unsupported methods, credentials, redirects, proxies, and offline execution before a socket effect; it also owns deadlines, response bounds, and unsafe POST replay classification."
+    },
+    {
+      "id": "projects/active/development/kal-poly-bot/outbound-client.ts#fetchWithPolicy#ca93acf37822309f#1",
+      "path": "projects/active/development/kal-poly-bot/outbound-client.ts",
+      "line": 102,
+      "column": 16,
+      "callee": "fetchWithPolicy",
+      "fingerprint": "ca93acf37822309f",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/development/kal-poly-bot/telegram",
+      "reason": "Telegram sendMessage authority validates token path shape, fixes the origin and method, forbids ambient credentials and redirects, bounds deadline and response size, checks public DNS, rejects offline execution before effect, and never retries ambiguous sends."
     },
     {
       "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/bun-optimized-api.ts#fetch#d5dff05b688b626e#1",
@@ -3264,72 +2769,6 @@
       "column": 28,
       "callee": "fetch",
       "fingerprint": "a85500e47fa32618",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/http-lsp-client.ts#fetch#7b10c1aaa6b87174#1",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/http-lsp-client.ts",
-      "line": 77,
-      "column": 34,
-      "callee": "fetch",
-      "fingerprint": "7b10c1aaa6b87174",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/http-lsp-client.ts#fetch#aeb62444b567b82b#1",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/http-lsp-client.ts",
-      "line": 132,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "aeb62444b567b82b",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/http-lsp-client.ts#fetch#4e4f6389d4e0d226#1",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/http-lsp-client.ts",
-      "line": 145,
-      "column": 11,
-      "callee": "fetch",
-      "fingerprint": "4e4f6389d4e0d226",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/lsp-client.ts#fetch#49069095357d004c#1",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/lsp-client.ts",
-      "line": 102,
-      "column": 17,
-      "callee": "fetch",
-      "fingerprint": "49069095357d004c",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/lsp-client.ts#fetch#53275052c3d57f31#1",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/lsp-client.ts",
-      "line": 227,
-      "column": 34,
-      "callee": "fetch",
-      "fingerprint": "53275052c3d57f31",
-      "classification": "unowned",
-      "owner": "projects/active/development/kal-poly-bot",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/development/kal-poly-bot/poly-kalshi-arb/lsp-client.ts#fetch#53275052c3d57f31#2",
-      "path": "projects/active/development/kal-poly-bot/poly-kalshi-arb/lsp-client.ts",
-      "line": 435,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "53275052c3d57f31",
       "classification": "unowned",
       "owner": "projects/active/development/kal-poly-bot",
       "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
@@ -8463,7 +7902,7 @@
     {
       "id": "tools/bun-docs-releases.ts#fetch#64646fdcff8638b5#1",
       "path": "tools/bun-docs-releases.ts",
-      "line": 288,
+      "line": 302,
       "column": 17,
       "callee": "fetch",
       "fingerprint": "64646fdcff8638b5",
@@ -8474,7 +7913,7 @@
     {
       "id": "tools/bun-docs-releases.ts#fetch#70b577a770db5d04#1",
       "path": "tools/bun-docs-releases.ts",
-      "line": 827,
+      "line": 841,
       "column": 23,
       "callee": "fetch",
       "fingerprint": "70b577a770db5d04",

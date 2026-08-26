@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/index.ts - Golden Matrix v2.4.1 Infrastructure Components
 import { feature } from "bun:bundle";
 
@@ -122,7 +123,7 @@ export async function infrastructureHealthCheck(): Promise<{
     };
   }
 
-  const response = await fetch("https://api.buncatalog.com/v1/infrastructure/status", {
+  const response = await fetchBunCatalog("/v1/infrastructure/status", {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   }).catch(() => null);

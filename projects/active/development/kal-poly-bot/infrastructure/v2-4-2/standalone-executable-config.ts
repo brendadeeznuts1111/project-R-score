@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/standalone-executable-config.ts
 // Component #46: Standalone Executable Optimizer (8-byte Alignment)
@@ -454,7 +455,7 @@ export class StandaloneExecutableOptimizer {
     };
 
     try {
-      await fetch("https://api.buncatalog.com/v1/audit", {
+      await fetchBunCatalog("/v1/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(auditData),

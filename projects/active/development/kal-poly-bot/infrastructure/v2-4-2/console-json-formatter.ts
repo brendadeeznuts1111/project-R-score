@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/console-json-formatter.ts
 // Component #47: Console JSON Formatter (%j Specifier Support)
@@ -284,7 +285,7 @@ export class ConsoleJSONFormatter {
 
     // Send batch to audit system (Component #11)
     if (feature("INFRASTRUCTURE_HEALTH_CHECKS")) {
-      fetch("https://api.buncatalog.com/v1/audit/batch", {
+      fetchBunCatalog("/v1/audit/batch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

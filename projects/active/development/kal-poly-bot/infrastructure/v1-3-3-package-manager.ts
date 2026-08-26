@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { fetchBunCatalog } from "./outbound-client.ts";
 /**
  * Golden Matrix v1.3.3: Package Manager Infrastructure
  * Components #65-70: Bun v1.3.3 Package Manager Optimizations
@@ -57,7 +58,7 @@ export class NoPeerDepsOptimizer {
   private static logOptimization(action: string, path: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -141,7 +142,7 @@ export class NpmrcEmailForwarder {
   private static logEmailForward(registry: string, authType: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -218,7 +219,7 @@ export class SelectiveHoistingController {
   private static logHoistingConfig(config: { publicHoistPattern: string[]; hoistPattern: string[] }): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -233,7 +234,7 @@ export class SelectiveHoistingController {
   private static logSymlinkCreation(packageName: string, target: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -403,7 +404,7 @@ export class BundlerDeterminismPatch {
   private static logSymlinkCreation(source: string, target: string, crossVolume: boolean): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -420,7 +421,7 @@ export class BundlerDeterminismPatch {
   private static logDeterministicHoisting(bunDir: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
