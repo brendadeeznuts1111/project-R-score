@@ -11,6 +11,7 @@
 import { Database, type SQLQueryBindings } from "bun:sqlite";
 import { createLogger } from "@utils/logger";
 import { logAgent, logAgentAction } from "@utils/tableLogger";
+import { fetchInternalProxy, INTERNAL_PROXY_ROUTES } from "@utils/internal-proxy-client";
 
 // ---------------------------------------------------------------------------
 // Logger
@@ -826,7 +827,6 @@ export async function syncAgentData(): Promise<SyncResult> {
 
   try {
     // Fetch from Buckeye proxy endpoint
-    const proxyUrl = process.env.PROXY_INTERNAL_URL || "http://localhost:3001";
     const apiKey = process.env.PROXY_API_KEY;
 
     const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -834,7 +834,7 @@ export async function syncAgentData(): Promise<SyncResult> {
 
     // Try to fetch agent downline from Buckeye
     try {
-      const resp = await fetch(`${proxyUrl}/api/proxy/agentDownline`, {
+      const resp = await fetchInternalProxy(INTERNAL_PROXY_ROUTES.agentDownline, {
         method: "GET",
         headers,
       });
@@ -875,7 +875,7 @@ export async function syncAgentData(): Promise<SyncResult> {
 
     // Try to fetch billing data
     try {
-      const resp = await fetch(`${proxyUrl}/api/proxy/agentBilling`, {
+      const resp = await fetchInternalProxy(INTERNAL_PROXY_ROUTES.agentBilling, {
         method: "GET",
         headers,
       });
