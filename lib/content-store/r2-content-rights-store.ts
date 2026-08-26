@@ -8,6 +8,7 @@
 // @verified Bun.CryptoHasher · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/hashing#bun-cryptohasher
 import type { ContentDigest } from '../types/branded.ts';
 import {
+  MAX_CONTENT_RIGHTS_RECORD_BYTES,
   ContentRightsStoreError,
   MemoryContentRightsStore,
   parseRightsDecisionRecordJson,
@@ -233,6 +234,11 @@ export class R2ContentRightsStore implements ContentRightsStore {
   ): Promise<RightsSnapshot> {
     if (object.key !== expectedKey || !Number.isSafeInteger(object.size) || object.size < 0) {
       throw new TypeError('Invalid R2 content rights object metadata');
+    }
+    if (object.size > MAX_CONTENT_RIGHTS_RECORD_BYTES) {
+      throw new TypeError(
+        `Invalid R2 content rights object: exceeds ${MAX_CONTENT_RIGHTS_RECORD_BYTES} bytes`
+      );
     }
     const bytes = new Uint8Array(await object.arrayBuffer());
     if (bytes.byteLength !== object.size) {

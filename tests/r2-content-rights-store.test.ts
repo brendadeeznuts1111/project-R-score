@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test';
 
 import {
   CONTENT_REF_VERSION,
+  MAX_CONTENT_RIGHTS_RECORD_BYTES,
   ContentRightsStoreError,
   MemoryContentStore,
   R2ContentRightsStore,
@@ -26,6 +27,7 @@ type FakeObject = {
 
 class FakeRightsBucket implements R2ContentRightsBucket {
   readonly objects = new Map<string, FakeObject>();
+  bodyReads = 0;
   #revision = 0;
 
   async get(key: string): Promise<R2ObjectBody | null> {
@@ -37,8 +39,13 @@ class FakeRightsBucket implements R2ContentRightsBucket {
       size: bytes.byteLength,
       etag: object.etag,
       customMetadata: object.customMetadata,
-      arrayBuffer: async () =>
-        bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer,
+      arrayBuffer: async () => {
+        this.bodyReads += 1;
+        return bytes.buffer.slice(
+          bytes.byteOffset,
+          bytes.byteOffset + bytes.byteLength
+        ) as ArrayBuffer;
+      },
     };
   }
 
@@ -155,5 +162,26 @@ describe('R2ContentRightsStore', () => {
     wire.rights.reason = 'Tampered';
     current[1].bytes = new TextEncoder().encode(`${JSON.stringify(wire)}\n`);
     await expect(reopened.get(ref.digest)).rejects.toThrow('hash mismatch');
+  });
+
+  test('rejects oversized persisted records before body materialization', async () => {
+    const bucket = new FakeRightsBucket();
+    const bytes = new MemoryContentStore();
+    const ref = target(await bytes.put(new TextEncoder().encode('asset')));
+    const store = new R2ContentRightsStore(bucket);
+    await store.decide({
+      target: ref,
+      actor: reviewer,
+      rights: approval(),
+      expectedRevision: 0,
+    });
+    const current = [...bucket.objects.entries()].find(([key]) => key.includes('/current/'))!;
+    current[1].bytes = new Uint8Array(MAX_CONTENT_RIGHTS_RECORD_BYTES + 1);
+    const bodyReads = bucket.bodyReads;
+
+    await expect(store.get(ref.digest)).rejects.toThrow(
+      `exceeds ${MAX_CONTENT_RIGHTS_RECORD_BYTES} bytes`
+    );
+    expect(bucket.bodyReads).toBe(bodyReads);
   });
 });
