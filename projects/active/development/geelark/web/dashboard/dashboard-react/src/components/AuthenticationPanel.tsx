@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Lock, LogOut, Shield, User, Key, Eye } from "lucide-react";
+import { fetchBrowserSameOrigin } from "../../../../../src/http/browser-outbound";
 
 interface AuthToken {
   token: string;
@@ -54,13 +55,12 @@ export const AuthenticationPanel: React.FC = () => {
   const validateToken = async (token: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/validate`, {
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/validate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
-      });
+      }, { bearerToken: token });
 
       if (!response.ok) {
         localStorage.removeItem("auth_token");
@@ -94,7 +94,7 @@ export const AuthenticationPanel: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_BASE}/login`, {
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
@@ -131,13 +131,12 @@ export const AuthenticationPanel: React.FC = () => {
     const token = localStorage.getItem("auth_token");
     if (token) {
       try {
-        await fetch(`${API_BASE}/logout`, {
+        await fetchBrowserSameOrigin(`${API_BASE}/logout`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
-        });
+        }, { bearerToken: token });
       } catch (err) {
         console.error("Logout error:", err);
       }
@@ -155,11 +154,11 @@ export const AuthenticationPanel: React.FC = () => {
 
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/audit?limit=100`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetchBrowserSameOrigin(
+        `${API_BASE}/audit?limit=100`,
+        {},
+        { bearerToken: token },
+      );
 
       if (!response.ok) throw new Error("Failed to fetch audit logs");
 

@@ -9,5 +9,11 @@
     "skipLibCheck": true,
     "types": ["bun"]
   },
-  "include": ["../src/http/outbound.ts", "unit/http/outbound.test.ts"]
+  "include": [
+    "../src/http/browser-outbound.ts",
+    "../src/http/outbound.ts",
+    "unit/http/browser-outbound-routes.test.ts",
+    "unit/http/browser-outbound.test.ts",
+    "unit/http/outbound.test.ts"
+  ]
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AlertOctagon, CheckCircle, Clock, Globe, Shield, TrendingUp } from "lucide-react";
+import { fetchBrowserSameOrigin } from "../../../../../src/http/browser-outbound";
 
 interface Alert {
   id?: number;
@@ -64,7 +65,7 @@ export const AlertsPanel: React.FC = () => {
     try {
       setLoading(true);
       const endpoint = filter === "active" ? `${API_BASE}/active` : `${API_BASE}/all`;
-      const response = await fetch(endpoint);
+      const response = await fetchBrowserSameOrigin(endpoint);
       if (!response.ok) throw new Error("Failed to fetch alerts");
       const data = await response.json();
       setAlerts(data);
@@ -78,7 +79,7 @@ export const AlertsPanel: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${API_BASE}/stats`);
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/stats`);
       if (!response.ok) throw new Error("Failed to fetch stats");
       const data = await response.json();
       setStats(data);
@@ -89,7 +90,7 @@ export const AlertsPanel: React.FC = () => {
 
   const fetchRules = async () => {
     try {
-      const response = await fetch(`${API_BASE}/rules`);
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/rules`);
       if (!response.ok) throw new Error("Failed to fetch rules");
       const data = await response.json();
       setRules(data);
@@ -100,7 +101,7 @@ export const AlertsPanel: React.FC = () => {
 
   const resolveAlert = async (id: number) => {
     try {
-      const response = await fetch(`/api/alerts/resolve/${id}`, {
+      const response = await fetchBrowserSameOrigin(`/api/alerts/resolve/${id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resolvedBy: "dashboard" }),

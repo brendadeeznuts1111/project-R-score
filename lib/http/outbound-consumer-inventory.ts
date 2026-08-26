@@ -108,6 +108,7 @@ export type OutboundConsumerCallee =
   | 'fetch'
   | 'Bun.fetch'
   | 'fetchWithPolicy'
+  | 'fetchBrowserSameOrigin'
   | 'fetchPublicResource'
   | 'fetchRegistryReadTokenless'
   | 'fetchKimiRisk'
@@ -120,6 +121,7 @@ export type OutboundConsumerCallee =
 
 const OWNED_BOUNDARY_CALLEES = new Set<OutboundConsumerCallee>([
   'fetchWithPolicy',
+  'fetchBrowserSameOrigin',
   'fetchPublicResource',
   'fetchRegistryReadTokenless',
   'fetchKimiRisk',

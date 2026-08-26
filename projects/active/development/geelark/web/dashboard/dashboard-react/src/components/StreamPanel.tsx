@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { HardDrive, ArrowRight, AlertCircle, CheckCircle, Terminal, Activity } from 'lucide-react';
+import { fetchBrowserSameOrigin } from '../../../../../src/http/browser-outbound';
 
 interface StreamStats {
   stdin: {
@@ -35,8 +36,8 @@ export const StreamPanel: React.FC = () => {
     const fetchStreamData = async () => {
       try {
         const [statsRes, metricsRes] = await Promise.all([
-          fetch('/api/streams/stats'),
-          fetch('/api/file-io/metrics')
+          fetchBrowserSameOrigin('/api/streams/stats'),
+          fetchBrowserSameOrigin('/api/file-io/metrics')
         ]);
 
         if (statsRes.ok) {

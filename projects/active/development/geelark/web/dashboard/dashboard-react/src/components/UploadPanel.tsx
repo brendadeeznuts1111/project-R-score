@@ -7,6 +7,7 @@
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Upload, CloudUpload, FileCheck, XCircle, Trash2, AlertCircle } from 'lucide-react';
+import { fetchBrowserSameOrigin } from '../../../../../src/http/browser-outbound';
 
 interface UploadProgress {
   uploadId: string;
@@ -94,7 +95,7 @@ export const UploadPanel: React.FC<UploadPanelProps> = ({
 
       for (const upload of activeUploads) {
         try {
-          const response = await fetch(`${apiBaseUrl}/upload/status/${upload.uploadId}`);
+          const response = await fetchBrowserSameOrigin(`${apiBaseUrl}/upload/status/${upload.uploadId}`);
           if (response.ok) {
             const progress: UploadProgress = await response.json();
             setUploads(prev => new Map(prev).set(progress.uploadId, progress));
@@ -150,7 +151,7 @@ export const UploadPanel: React.FC<UploadPanelProps> = ({
     formData.append('contentType', file.type);
 
     try {
-      const response = await fetch(`${apiBaseUrl}/upload/initiate`, {
+      const response = await fetchBrowserSameOrigin(`${apiBaseUrl}/upload/initiate`, {
         method: 'POST',
         body: formData,
       });
@@ -192,7 +193,7 @@ export const UploadPanel: React.FC<UploadPanelProps> = ({
 
     const poll = async () => {
       try {
-        const response = await fetch(`${apiBaseUrl}/upload/status/${uploadId}`);
+        const response = await fetchBrowserSameOrigin(`${apiBaseUrl}/upload/status/${uploadId}`);
         if (response.ok) {
           const progress: UploadProgress = await response.json();
           setUploads(prev => new Map(prev).set(uploadId, progress));
@@ -216,7 +217,7 @@ export const UploadPanel: React.FC<UploadPanelProps> = ({
 
   const cancelUpload = async (uploadId: string) => {
     try {
-      const response = await fetch(`${apiBaseUrl}/upload/cancel/${uploadId}`, {
+      const response = await fetchBrowserSameOrigin(`${apiBaseUrl}/upload/cancel/${uploadId}`, {
         method: 'POST',
       });
 

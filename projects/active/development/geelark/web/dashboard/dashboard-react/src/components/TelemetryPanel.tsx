@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, AlertTriangle, TrendingUp, Clock, Camera, Settings, CheckCircle, XCircle } from 'lucide-react';
+import { fetchBrowserSameOrigin } from '../../../../../src/http/browser-outbound';
 
 interface TelemetryAlert {
   id: number;
@@ -97,7 +98,7 @@ export const TelemetryPanel: React.FC = () => {
 
   const fetchAlerts = async () => {
     try {
-      const response = await fetch(`${API_BASE}/alerts?env=${process.env.NODE_ENV || 'development'}`);
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/alerts?env=${process.env.NODE_ENV || 'development'}`);
       if (!response.ok) throw new Error('Failed to fetch alerts');
       const data = await response.json();
       setAlerts(data);
@@ -111,7 +112,7 @@ export const TelemetryPanel: React.FC = () => {
       const url = method
         ? `${API_BASE}/traces?method=${encodeURIComponent(method)}&limit=100`
         : `${API_BASE}/traces?limit=100`;
-      const response = await fetch(url);
+      const response = await fetchBrowserSameOrigin(url);
       if (!response.ok) throw new Error('Failed to fetch traces');
       const data = await response.json();
       setTraces(data);
@@ -125,7 +126,7 @@ export const TelemetryPanel: React.FC = () => {
       const url = method
         ? `${API_BASE}/traces/stats?method=${encodeURIComponent(method)}`
         : `${API_BASE}/traces/stats`;
-      const response = await fetch(url);
+      const response = await fetchBrowserSameOrigin(url);
       if (!response.ok) throw new Error('Failed to fetch trace statistics');
       const data = await response.json();
       setTraceStats(Array.isArray(data) ? data : [data]);
@@ -136,7 +137,7 @@ export const TelemetryPanel: React.FC = () => {
 
   const fetchSnapshots = async () => {
     try {
-      const response = await fetch(`${API_BASE}/snapshots?limit=50`);
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/snapshots?limit=50`);
       if (!response.ok) throw new Error('Failed to fetch snapshots');
       const data = await response.json();
       setSnapshots(data);
@@ -147,7 +148,7 @@ export const TelemetryPanel: React.FC = () => {
 
   const fetchConfig = async () => {
     try {
-      const response = await fetch(`${API_BASE}/config`);
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/config`);
       if (!response.ok) throw new Error('Failed to fetch config');
       const data = await response.json();
       setConfig(data);
@@ -158,7 +159,7 @@ export const TelemetryPanel: React.FC = () => {
 
   const resolveAlert = async (id: number) => {
     try {
-      const response = await fetch(`${API_BASE}/alerts/resolve/${id}`, {
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/alerts/resolve/${id}`, {
         method: 'POST',
       });
       if (!response.ok) throw new Error('Failed to resolve alert');
@@ -170,7 +171,7 @@ export const TelemetryPanel: React.FC = () => {
 
   const takeSnapshot = async () => {
     try {
-      const response = await fetch(`${API_BASE}/snapshots/take`, {
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/snapshots/take`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ label: 'manual', env: process.env.NODE_ENV || 'development' }),
@@ -293,7 +294,7 @@ export const TelemetryPanel: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">Active Alerts</h3>
               <button
                 onClick={() => {
-                  fetch(`${API_BASE}/alerts/check`, { method: 'POST' }).then(fetchAlerts);
+                  fetchBrowserSameOrigin(`${API_BASE}/alerts/check`, { method: 'POST' }).then(fetchAlerts);
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
