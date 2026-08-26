@@ -220,9 +220,11 @@ Both RSS parsers reject DTD/entity declarations and enforce input, depth, node,
 attribute, and text quotas. Feed images are MIME/dimension bounded and can store
 rights-gated originals and derived thumbnails as verified, related content
 references. A deterministic manifest now verifies offline snapshot identity and
-the hermetic R2 adapter loads it without online fallback. A terminable XML
-boundary, central network migration, and complete production feed/R2 binding
-consumer migration remain open, so this row is not `Implemented`.
+the hermetic R2 adapter loads it without online fallback. All known
+network-backed RSS consumers parse through a per-request Bun Worker with a hard
+deadline and unconditional termination; trusted checked-in inputs retain the
+synchronous parser. Central network migration and complete production feed/R2
+binding consumer migration remain open, so this row is not `Implemented`.
 
 ### `CHAN-001` Channel publication and aliases
 
