@@ -7,6 +7,7 @@
 
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { ConcurrencyManagers } from '../core/safe-concurrency';
+import { fetchPublicResource } from '../http/public-resource-client';
 
 const NPM_REGISTRY_BASE_URL = Bun.env.NPM_REGISTRY_BASE_URL ?? 'https://registry.npmjs.org';
 
@@ -230,7 +231,11 @@ export class PackageManager {
     // Try to fetch from npm registry
     try {
       const response = await withCircuitBreaker('npm-registry', () =>
-        fetch(`${NPM_REGISTRY_BASE_URL}/${encodeURIComponent(name)}/${encodeURIComponent(version)}`)
+        fetchPublicResource(
+          `${NPM_REGISTRY_BASE_URL}/${encodeURIComponent(name)}/${encodeURIComponent(version)}`,
+          { headers: { Accept: 'application/json' } },
+          { responseByteLimit: 2_000_000 }
+        )
       );
       if (response.ok) {
         const pkg = (await response.json()) as unknown;

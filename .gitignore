@@ -296,6 +296,7 @@ config/*
 !config/images.toml
 !config/runtime-flags.json
 !config/project-r-agent-contract.json
+!config/outbound-consumers.json
 !config/scraper-targets.ts
 !config/scrape-agents.toml
 !config/onboarding-defaults.toml

@@ -2,6 +2,8 @@
 // @see https://bun.com/docs/runtime/networking/fetch — fetch
 // @see https://bun.com/blog/bun-v1.3.14#experimental-http-2-client-for-fetch — per-request protocol
 
+import { fetchPublicResource, type PublicResourceOptions } from '../http/public-resource-client.ts';
+
 export const FETCH_MAX_RETRIES = 3;
 export const FETCH_BASE_DELAY_MS = 500;
 
@@ -10,6 +12,7 @@ export type FetchRetryOptions = BunFetchRequestInit & {
   baseDelayMs?: number;
   /** Extra statuses to retry beyond 429 + 5xx. */
   retryStatuses?: number[];
+  execution?: PublicResourceOptions;
 };
 
 function shouldRetryStatus(status: number, extra: number[]): boolean {
@@ -30,6 +33,7 @@ export async function fetchWithRetry(
     maxRetries = FETCH_MAX_RETRIES,
     baseDelayMs = FETCH_BASE_DELAY_MS,
     retryStatuses = [],
+    execution,
     ...init
   } = options;
 
@@ -40,7 +44,7 @@ export async function fetchWithRetry(
   while (attempt < maxRetries) {
     attempt++;
     try {
-      const response = await fetch(url, init);
+      const response = await fetchPublicResource(url, init, execution);
       if (shouldRetryStatus(response.status, retryStatuses) && attempt < maxRetries) {
         lastResponse = response;
         // Drain body so the socket can be reused.

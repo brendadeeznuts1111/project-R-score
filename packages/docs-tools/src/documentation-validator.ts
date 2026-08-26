@@ -2,6 +2,7 @@
 
 import { CLI_DOCUMENTATION_URLS } from '../../../lib/docs/constants/cli';
 import { BUN_UTILS_URLS } from '../../../lib/docs/constants/utils';
+import { fetchPublicResource } from '../../../lib/http/public-resource-client';
 import { getPlatformValidators } from './documentation-validator.internal';
 
 // ============================================================================
@@ -32,7 +33,7 @@ class DocumentationValidator {
 
         try {
           const startTime = performance.now();
-          const response = await fetch(fullUrl, {
+          const response = await fetchPublicResource(fullUrl, {
             method: 'HEAD',
             signal: AbortSignal.timeout(10000),
           });
@@ -92,7 +93,7 @@ class DocumentationValidator {
 
         try {
           const startTime = performance.now();
-          const response = await fetch(fullUrl, {
+          const response = await fetchPublicResource(fullUrl, {
             method: 'HEAD',
             signal: AbortSignal.timeout(10000),
           });
