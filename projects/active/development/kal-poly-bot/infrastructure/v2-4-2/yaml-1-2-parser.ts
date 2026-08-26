@@ -114,6 +114,14 @@ export class YAML12StrictParser {
   }
 
   static parseConfig(yamlContent: string): Record<string, unknown> {
+    if (/^\s*[\w.-]+\s*:/m.test(yamlContent)) {
+      const parsed = Bun.YAML.parse(yamlContent);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return Object.fromEntries(Object.entries(parsed));
+      }
+      throw new TypeError("YAML configuration must contain a mapping");
+    }
+
     if (!feature("YAML12_STRICT")) {
       const parsed = Bun.YAML.parse(yamlContent);
       if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {

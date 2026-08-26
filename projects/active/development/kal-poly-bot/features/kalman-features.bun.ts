@@ -141,12 +141,12 @@ alertThreshold: 200
 
   validateProviderFingerprint(provider: string): string {
     // Component #45: Prevent trustedDependencies spoofing
-    const isValid = SecurityHardeningLayer.validateTrustedDependency(
+    const validation = SecurityHardeningLayer.validateTrustedDependency(
       provider,
       'odds-provider'
     );
 
-    if (!isValid) {
+    if (!validation.valid) {
       throw new Error(`[SECURITY] Untrusted provider: ${provider}`);
     }
 
@@ -190,9 +190,13 @@ export class ProviderDivergenceKF {
     // Multi-source Kalman filter with outlier detection
     const timestampDelta = Math.abs(primary.timestamp - backup.timestamp);
 
-    // Component #43: Validate timestamps are Int32
-    if (!this.typeBridge.isInt32(primary.timestamp) ||
-        !this.typeBridge.isInt32(backup.timestamp)) {
+    // Epoch milliseconds exceed Int32; require positive safe integers.
+    if (
+      !Number.isSafeInteger(primary.timestamp) ||
+      primary.timestamp <= 0 ||
+      !Number.isSafeInteger(backup.timestamp) ||
+      backup.timestamp <= 0
+    ) {
       console.error('[SECURITY] Invalid timestamp type detected');
       return null;
     }
@@ -481,12 +485,12 @@ export class AltLinesKF {
     if (!isGitHub) {
       console.warn(`[SECURITY] Non-GitHub indicator: ${gitSpec}`);
 
-      const isTrusted = SecurityHardeningLayer.validateTrustedDependency(
+      const validation = SecurityHardeningLayer.validateTrustedDependency(
         gitSpec,
         'custom-indicator'
       );
 
-      if (!isTrusted) {
+      if (!validation.valid) {
         throw new Error(`Untrusted indicator source: ${gitSpec}`);
       }
     }
@@ -500,7 +504,11 @@ export class AltLinesKF {
 
     if (result.exitCode === 0) {
       const indicatorCode = result.stdout.toString();
-      const context = SecurityHardeningLayer.createIsolatedContext();
+      const isolated = SecurityHardeningLayer.createIsolatedContext();
+      const context = isolated.context as { eval?: (code: string) => unknown };
+      if (!context.eval) {
+        throw new Error("Isolated context does not provide an evaluator");
+      }
       const indicator = context.eval(`(${indicatorCode})`);
 
       this.customIndicators.set(gitSpec, indicator);

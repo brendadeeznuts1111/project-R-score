@@ -33,7 +33,7 @@ class ConfigVersionStabilizer {
   };
 
   static async initializeLockfile(): Promise<void> {
-    const lockfilePath = `${import.meta.dir}/../../bun.lock`;
+    const lockfilePath = `${import.meta.dir}/../bun.lock`;
     const lockfile = Bun.file(lockfilePath);
 
     if (!(await lockfile.exists())) {
@@ -47,7 +47,7 @@ class ConfigVersionStabilizer {
       await Bun.write(lockfilePath, JSON.stringify(initialConfig, null, 2));
     } else {
       // Ensure configVersion is set to 1 for stability
-      const content = JSON.parse(await lockfile.text());
+      const content = Bun.JSONC.parse(await lockfile.text());
       if (content.configVersion !== this.VERSIONS.V1) {
         console.info(`[STABILITY] Updating configVersion from ${content.configVersion} to ${this.VERSIONS.V1}`);
         content.configVersion = this.VERSIONS.V1;
@@ -594,18 +594,20 @@ export class KalmanStabilityIntegration {
   }
 
   // Component #62: Dependency inspection
-  static inspectKalmanDependencies(): void {
+  static inspectKalmanDependencies(): { command: string; args: string[] } {
+    const plan = BunListAlias.executeAlias(["list", "--all"]);
     if (!this.featureEnabled("BUN_LIST_ALIAS")) {
       console.info('Use: bun pm ls --all to see Kalman dependencies');
-      return;
+      return plan;
     }
 
-    const { command, args } = BunListAlias.executeAlias(['list', '--all']);
+    const { command, args } = plan;
     console.info(`[DEPS] Running: ${command} ${args.join(' ')}`);
 
     const result = Bun.spawnSync([command, ...args], {
       stdio: ['inherit', 'inherit', 'inherit']
     });
+    return plan;
   }
 
   // Component #63: Config loading patch
@@ -672,7 +674,15 @@ export class KalmanStabilityIntegration {
     return (
       V8TypeCheckingBridge.isArray(state) ||
       V8TypeCheckingBridge.isMap(state) ||
-      (V8TypeCheckingBridge.isInt32(state) && typeof state === "number" && state > 0)
+      V8TypeCheckingBridge.isTypedArray(state) ||
+      V8TypeCheckingBridge.isDate(state) ||
+      V8TypeCheckingBridge.isArrayBuffer(state) ||
+      V8TypeCheckingBridge.isRegExp(state) ||
+      state instanceof Set ||
+      state instanceof Promise ||
+      state instanceof Error ||
+      (V8TypeCheckingBridge.isInt32(state) && typeof state === "number" && state > 0) ||
+      (typeof state === "object" && state !== null)
     );
   }
 
@@ -687,7 +697,8 @@ export class KalmanStabilityIntegration {
   }
 
   static createIsolatedFilterContext(): any {
-    const baseContext = SecurityHardeningLayer.createIsolatedContext();
+    const isolated = SecurityHardeningLayer.createIsolatedContext();
+    const baseContext = isolated.context as Record<string, unknown>;
 
     return {
       ...baseContext,
@@ -716,7 +727,7 @@ export class KalmanStabilityIntegration {
         break;
       case 85:
         if (config.minCancellationRate && config.minCancellationRate > 0.6) {
-          warnings.push("[SECURITY] High cancellation rate - possible mirage attack");
+          warnings.push("[SECURITY] High cancellation rate");
         }
         break;
     }
