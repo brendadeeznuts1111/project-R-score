@@ -6,8 +6,7 @@ exact = true
 # Cache configuration
 cache = true
 cache-dir = "./.bun-cache"
-# Public packages resolve from npm. Private FactoryWager packages use the
-# authenticated scopes below.
+# Public packages resolve from npm.
 registry = "https://registry.npmjs.org/"
 # Lockfile configuration
 lockfile = true
@@ -41,13 +40,3 @@ host = "localhost"
 [dev]
 hotReload = true
 liveReload = true
-
-
-
-
-[publish]
-registry = "https://registry.factory-wager.com"
-
-[install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }

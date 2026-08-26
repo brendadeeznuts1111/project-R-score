@@ -3,19 +3,13 @@
 
 [install]
 exact = true
-registry = "https://registry.factory-wager.com"
+registry = "https://registry.npmjs.org/"
 # Auto-install peer dependencies
 auto = true
 # Production mode (skip devDependencies)
 production = false
 # Trusted dependencies (for postinstall scripts)
 # trustedDependencies = []
-
-[install.scopes]
-"@factorywager" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-"@duoplus" = { token = "$FW_REGISTRY_TOKEN", url = "https://registry.factory-wager.com/" }
-# Scope-specific configuration
-# Example: "@myorg/*" = { token = "..." }
 
 [test]
 # Test configuration
@@ -25,6 +19,3 @@ production = false
 [run]
 # Runtime configuration
 # bun = "latest"
-
-[publish]
-registry = "https://registry.factory-wager.com"

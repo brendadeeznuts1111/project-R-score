@@ -541,9 +541,6 @@
   ],
   "author": "mike.hunt@factory.wager.com",
   "license": "MIT",
-  "publishConfig": {
-    "registry": "https://registry.factory-wager.com"
-  },
   "trustedDependencies": [
     "puppeteer"
   ]
