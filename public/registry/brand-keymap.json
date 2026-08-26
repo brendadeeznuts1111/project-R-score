@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T12:31:20.624Z",
+  "generatedAt": "2026-08-26T12:40:53.089Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -18,8 +18,8 @@
     "keys": 4,
     "codes": 19,
     "digests": 1,
-    "covered": 79,
-    "referencedUnconstructed": 9,
+    "covered": 81,
+    "referencedUnconstructed": 7,
     "unused": 14,
     "cataloguedProjects": 35,
     "trackedProjects": 31,
@@ -660,14 +660,15 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 18,
+        "references": 21,
         "constructors": {
           "as": 5,
           "try": 0,
-          "parse": 1
+          "parse": 3
         },
         "guards": 0,
         "files": [
+          "lib/agents/capability-manifest.ts",
           "lib/content-store/content-contract.ts",
           "lib/docs/bun-brand-usages.ts",
           "lib/identity/identity.ts",
@@ -677,10 +678,11 @@
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 18,
-            "constructionCalls": 6,
+            "references": 21,
+            "constructionCalls": 8,
             "guardCalls": 0,
             "files": [
+              "lib/agents/capability-manifest.ts",
               "lib/content-store/content-contract.ts",
               "lib/docs/bun-brand-usages.ts",
               "lib/identity/identity.ts",
@@ -2910,24 +2912,26 @@
       "tone": "info",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "referenced-unconstructed",
-        "references": 5,
+        "status": "covered",
+        "references": 9,
         "constructors": {
           "as": 0,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
+          "lib/agents/capability-manifest.ts",
           "lib/core/core-errors.ts"
         ],
         "scopes": {
           "spine": {
-            "status": "referenced-unconstructed",
-            "references": 5,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 9,
+            "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
+              "lib/agents/capability-manifest.ts",
               "lib/core/core-errors.ts"
             ]
           },
@@ -3566,24 +3570,26 @@
       "tone": "info",
       "glossaryConcepts": [],
       "coverage": {
-        "status": "referenced-unconstructed",
-        "references": 9,
+        "status": "covered",
+        "references": 13,
         "constructors": {
           "as": 0,
           "try": 0,
-          "parse": 0
+          "parse": 1
         },
         "guards": 0,
         "files": [
+          "lib/agents/capability-manifest.ts",
           "lib/content-store/channel-alias-store.ts"
         ],
         "scopes": {
           "spine": {
-            "status": "referenced-unconstructed",
-            "references": 9,
-            "constructionCalls": 0,
+            "status": "covered",
+            "references": 13,
+            "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
+              "lib/agents/capability-manifest.ts",
               "lib/content-store/channel-alias-store.ts"
             ]
           },
