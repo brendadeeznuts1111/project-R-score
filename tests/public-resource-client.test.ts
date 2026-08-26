@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { fetchPublicResource as fetchDocumentationResource } from '../lib/docs/public-resource-client.ts';
 import {
   fetchPublicResource,
   parsePublicResourceUrl,
@@ -6,6 +7,10 @@ import {
 import type { OutboundFetch } from '../lib/http/outbound-policy.ts';
 
 describe('public resource client', () => {
+  test('documentation bridge preserves the canonical hardened client', () => {
+    expect(fetchDocumentationResource).toBe(fetchPublicResource);
+  });
+
   test('rejects credentials, non-HTTPS, redirects, private DNS, and override extensions before fetch', async () => {
     let calls = 0;
     const fetcher: OutboundFetch = async () => {

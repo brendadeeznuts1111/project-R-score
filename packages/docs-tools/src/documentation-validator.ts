@@ -1,8 +1,8 @@
 // lib/docs/documentation-validator.ts — Documentation constants validator
 
 import { CLI_DOCUMENTATION_URLS } from '../../../lib/docs/constants/cli';
+import { fetchPublicResource } from '../../../lib/docs/public-resource-client';
 import { BUN_UTILS_URLS } from '../../../lib/docs/constants/utils';
-import { fetchPublicResource } from '../../../lib/http/public-resource-client';
 import { getPlatformValidators } from './documentation-validator.internal';
 
 // ============================================================================

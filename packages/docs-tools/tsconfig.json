@@ -11,7 +11,12 @@
     "../../lib/docs/benchmarking-profile-loci.ts",
     "../../lib/docs/bun-blog-url.ts",
     "../../lib/docs/bun-site-url.ts",
-    "../../lib/docs/constants/**/*"
+    "../../lib/docs/constants/**/*",
+    "../../lib/docs/public-resource-client.ts",
+    "../../lib/http/ip-authority.ts",
+    "../../lib/http/outbound-policy.ts",
+    "../../lib/http/public-resource-client.ts",
+    "../../lib/security/control-policy.ts"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }
