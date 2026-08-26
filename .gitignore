@@ -298,6 +298,8 @@ config/*
 !config/control-override-ownership.json
 !config/control-override-ownership.schema.json
 !config/project-r-agent-contract.json
+!config/agent-consumer-ownership.json
+!config/subprocess-consumer-ownership.json
 !config/outbound-consumers.json
 !config/scraper-targets.ts
 !config/scrape-agents.toml

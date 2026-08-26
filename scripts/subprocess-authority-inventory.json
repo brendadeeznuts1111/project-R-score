@@ -10,20 +10,25 @@
       "controlSpellings": []
     },
     {
-      "id": "lib/docs/bun-install-platform-docs.ts#Bun.spawnSync#4c229b70eb7d8ce6#1",
+      "id": "lib/docs/bun-install-platform-docs.ts#spawnGuardedBunChildSync#275d85de35517edb#1",
       "file": "lib/docs/bun-install-platform-docs.ts",
-      "callee": "Bun.spawnSync",
-      "authority": "raw-bun-package-manager-probe",
-      "expressionHash": "4c229b70eb7d8ce6c1ed210e08c9bec896163f3be7cb4c14603f8e259a4aedcb",
-      "controlSpellings": []
-    },
-    {
-      "id": "lib/docs/bun-install-platform-docs.ts#Bun.spawnSync#b97f03051434ba18#1",
-      "file": "lib/docs/bun-install-platform-docs.ts",
-      "callee": "Bun.spawnSync",
-      "authority": "raw-bun-package-manager-probe",
-      "expressionHash": "b97f03051434ba184ecb4f974e23904d0cbc80843dbd1f5a17f21823b80c6530",
-      "controlSpellings": []
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "275d85de35517edb93b554900a03c36503e34805b3b59618da74c4c6ee8c50e3",
+      "controlSpellings": [],
+      "review": {
+        "owner": "bun-docs",
+        "executable": "verified-bun",
+        "args": "call-exact",
+        "cwd": "disposable-temp",
+        "environment": "empty",
+        "stdio": "pipe",
+        "network": "denied",
+        "offline": "required",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "The platform probe permits only its fixed install argv in its owned temporary directory."
+      }
     },
     {
       "id": "lib/docs/bun-native-capabilities-sync.ts#Bun.spawn#e6ceefdabe65bbb4#1",
@@ -42,12 +47,25 @@
       "controlSpellings": []
     },
     {
-      "id": "lib/docs/bun-release-tracker.ts#Bun.spawnSync#6dcb6fdea026b375#1",
+      "id": "lib/docs/bun-release-tracker.ts#spawnGuardedBunChildSync#eb9a4e62915181d0#1",
       "file": "lib/docs/bun-release-tracker.ts",
-      "callee": "Bun.spawnSync",
-      "authority": "raw-bun-runtime-tooling",
-      "expressionHash": "6dcb6fdea026b375112cd31f7e916d2f9b32fb921692ab00251e4aef6334dfc6",
-      "controlSpellings": []
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "eb9a4e62915181d0488e4aaf77471b06627fed93bb11f9e570c7ce836d6a1fe2",
+      "controlSpellings": [],
+      "review": {
+        "owner": "bun-release-proof",
+        "executable": "process-exec-path",
+        "args": "fixed-build",
+        "cwd": "disposable-temp",
+        "environment": "empty",
+        "stdio": "pipe",
+        "network": "denied",
+        "offline": "required",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Compile feature proof permits only its fixed build argv and owned temporary paths."
+      }
     },
     {
       "id": "lib/docs/fetch-protocol-docs.ts#Bun.spawn#834f48c152b13b3d#1",
@@ -452,6 +470,48 @@
       "controlSpellings": [
         "--registry"
       ]
+    },
+    {
+      "id": "lib/registry/command-policy.ts#spawnGuardedBunChild#11f516e5c3c78e12#1",
+      "file": "lib/registry/command-policy.ts",
+      "callee": "spawnGuardedBunChild",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "11f516e5c3c78e124721e98ef2388f62b008ead18879dd02ddb99163d4c4b5cc",
+      "controlSpellings": [],
+      "review": {
+        "owner": "registry-control",
+        "executable": "plan-exact",
+        "args": "plan-exact",
+        "cwd": "plan-exact",
+        "environment": "allowlisted",
+        "stdio": "caller-bounded",
+        "network": "registry-origin-bound",
+        "offline": "invocation-policy",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Registry planner binds every process and network authority before async spawn."
+      }
+    },
+    {
+      "id": "lib/registry/command-policy.ts#spawnGuardedBunChildSync#90198e41b6f00dc6#1",
+      "file": "lib/registry/command-policy.ts",
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "90198e41b6f00dc62b952f4b6875d866dc12f25a6afe18cf55fef95a75e928ff",
+      "controlSpellings": [],
+      "review": {
+        "owner": "registry-control",
+        "executable": "plan-exact",
+        "args": "plan-exact",
+        "cwd": "plan-exact",
+        "environment": "allowlisted",
+        "stdio": "caller-bounded",
+        "network": "registry-origin-bound",
+        "offline": "invocation-policy",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Registry planner binds every process and network authority before sync spawn."
+      }
     },
     {
       "id": "lib/registry/npm-publish-readme.ts#Bun.spawn#56ce849fce111f2e#1",

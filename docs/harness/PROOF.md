@@ -324,8 +324,9 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   fail-closed decisions and Bun 1.4 help-drift coverage _Ratchet_ →
   `bun run guard:controls:check`
 - **`guard-subprocess-authority-v1`** — guarded Bun children bind executable,
-  argv, cwd, environment, and grants; an exact hashed raw-spawn inventory
-  rejects added, removed, or changed expressions _Ratchet_ →
+  argv, cwd, environment, stdio, offline/network authority, and grants; an exact
+  hashed raw-spawn inventory rejects added, removed, changed, or unreviewed
+  guarded expressions _Ratchet_ →
   `bun run guard:subprocess:check`
 - **`guard-network-authority-v1`** — typed outbound policy rejects the
   undeclared routes, address classes, redirects, protocols, proxies, replay,

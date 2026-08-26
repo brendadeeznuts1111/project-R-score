@@ -145,4 +145,49 @@ describe('guarded Bun child authority', () => {
       ).toThrow(`${autoInstall.split('=')[0]}: unknown-control`);
     }
   });
+
+  test('cannot transit registry, connect, proxy, preload, or experimental overrides implicitly', () => {
+    const fixedAuthority: BunChildAuthority = {
+      executable,
+      argv: ['run', 'fixed-tool.ts'],
+      cwd,
+      environment: {},
+      profile: 'ci',
+      command: 'runtime',
+      reason: 'fixed hermetic tool fixture',
+    };
+    const injected = [
+      '--registry=https://registry.attacker.test',
+      '--connect=https://connect.attacker.test',
+      '-O=preload-attacker.ts',
+      '-R=preload-attacker.ts',
+      '--experimental-http2-fetch',
+      '--experimental-http3-fetch',
+    ];
+    for (const control of injected) {
+      expect(() =>
+        prepareGuardedBunChild({
+          authority: fixedAuthority,
+          executable,
+          argv: [control, ...fixedAuthority.argv],
+          cwd,
+        })
+      ).toThrow('argv is not exactly authorized');
+    }
+    for (const [name, value] of [
+      ['HTTPS_PROXY', 'http://proxy.attacker.test'],
+      ['BUN_CONFIG_REGISTRY', 'https://registry.attacker.test'],
+      ['BUN_OPTIONS', '--experimental-http2-fetch'],
+    ] as const) {
+      expect(() =>
+        prepareGuardedBunChild({
+          authority: fixedAuthority,
+          executable,
+          argv: fixedAuthority.argv,
+          cwd,
+          environment: { [name]: value },
+        })
+      ).toThrow();
+    }
+  });
 });

@@ -71,6 +71,19 @@ export type AgentConsumerKind = 'agent-tool' | 'mcp-configuration' | 'skill-exec
 export type AgentEffectKind = 'network' | 'subprocess' | 'registry' | 'channel' | 'content';
 export type AgentConsumerEnforcement = 'authorized' | 'unowned' | 'effect-free';
 
+export interface AgentConsumerAuthorityReview {
+  readonly profile: string;
+  readonly executable: string;
+  readonly args: string;
+  readonly cwd: string;
+  readonly environment: string;
+  readonly stdio: string;
+  readonly network: string;
+  readonly offline: string;
+  readonly flagPassthrough: string;
+  readonly defaultDeny: boolean;
+}
+
 export interface AgentExecutableEntrypoint {
   readonly id: string; // brand-ok -- repository inventory key, not a domain entity ID
   readonly kind: AgentConsumerKind;
@@ -78,6 +91,7 @@ export interface AgentExecutableEntrypoint {
   readonly source: string;
   readonly effects: readonly AgentEffectKind[];
   readonly enforcement: AgentConsumerEnforcement;
+  readonly authority: AgentConsumerAuthorityReview;
 }
 
 export interface AgentConsumerInventoryRatchet {
@@ -87,7 +101,21 @@ export interface AgentConsumerInventoryRatchet {
 
 const EXPECTED_AGENT_CONSUMER_RATCHET: AgentConsumerInventoryRatchet = {
   count: 59,
-  sha256: '8f8dc992f7e4edf5fc6240a07c1c0ef2fd707b2b1a31f4244f6b111b936c679a',
+  sha256: 'bc7be76cde6332ea5556c06f0f485c204e0d069b9d24eefe33d59cd97aefde38',
+};
+
+type DiscoveredAgentEntrypoint = Omit<AgentExecutableEntrypoint, 'authority' | 'enforcement'>;
+
+type OwnershipProfile = Omit<AgentConsumerAuthorityReview, 'profile'> & {
+  readonly enforcement: AgentConsumerEnforcement;
+};
+
+type OwnershipManifest = {
+  readonly schema: 'factorywager.agent-consumer-ownership.v1';
+  readonly profiles: Readonly<Record<string, OwnershipProfile>>;
+  readonly assignments: Readonly<
+    Record<string, Readonly<Record<string, Readonly<Record<string, readonly string[]>>>>>
+  >;
 };
 
 const SOURCE_EFFECTS: ReadonlyArray<readonly [AgentEffectKind, RegExp]> = [
@@ -119,7 +147,7 @@ function sourceRow(
   owner: string,
   path: string,
   source: string
-): AgentExecutableEntrypoint {
+): DiscoveredAgentEntrypoint {
   const effects = sourceEffects(source, path);
   return {
     id: `${kind}:${path}`,
@@ -127,19 +155,13 @@ function sourceRow(
     owner,
     source: path,
     effects,
-    enforcement:
-      effects.length === 0
-        ? 'effect-free'
-        : source.includes('executeAuthorizedAgentInvocation')
-          ? 'authorized'
-          : 'unowned',
   };
 }
 
 function parseMcpRow(
   id: string, // brand-ok -- workspace MCP config key, not a domain entity ID
   value: unknown
-): AgentExecutableEntrypoint {
+): DiscoveredAgentEntrypoint {
   const record =
     typeof value === 'object' && value !== null && !Array.isArray(value)
       ? (value as Record<string, unknown>)
@@ -151,8 +173,61 @@ function parseMcpRow(
     owner: `workspace-mcp:${id}`,
     source: '.mcp.json',
     effects: [remote ? 'network' : 'subprocess'],
-    enforcement: 'unowned',
   };
+}
+
+async function readOwnershipManifest(root: string): Promise<OwnershipManifest> {
+  return (await Bun.file(
+    joinPath(root, 'config/agent-consumer-ownership.json')
+  ).json()) as OwnershipManifest;
+}
+
+function expandOwnershipManifest(
+  manifest: OwnershipManifest
+): Map<string, AgentExecutableEntrypoint> {
+  if (manifest.schema !== 'factorywager.agent-consumer-ownership.v1') {
+    throw new TypeError(`Unsupported agent consumer ownership schema: ${String(manifest.schema)}`);
+  }
+  const reviewed = new Map<string, AgentExecutableEntrypoint>();
+  for (const [profileName, owners] of Object.entries(manifest.assignments)) {
+    const profile = manifest.profiles[profileName];
+    if (!profile) throw new TypeError(`Unknown agent consumer ownership profile: ${profileName}`);
+    for (const [owner, effectGroups] of Object.entries(owners)) {
+      if (!owner.trim()) throw new TypeError(`Agent consumer profile ${profileName} has no owner`);
+      for (const [effectList, ids] of Object.entries(effectGroups)) {
+        const effects = effectList === '' ? [] : effectList.split(',');
+        if (effects.some(effect => !SOURCE_EFFECTS.some(([kind]) => kind === effect))) {
+          throw new TypeError(`Agent consumer profile ${profileName} has an unknown effect`);
+        }
+        for (const id of ids) {
+          if (reviewed.has(id)) throw new TypeError(`Duplicate agent consumer review: ${id}`);
+          const kind = id.split(':', 1)[0] as AgentConsumerKind;
+          const source = kind === 'mcp-configuration' ? '.mcp.json' : id.slice(id.indexOf(':') + 1);
+          reviewed.set(id, {
+            id,
+            kind,
+            owner,
+            source,
+            effects: effects as AgentEffectKind[],
+            enforcement: profile.enforcement,
+            authority: {
+              profile: profileName,
+              executable: profile.executable,
+              args: profile.args,
+              cwd: profile.cwd,
+              environment: profile.environment,
+              stdio: profile.stdio,
+              network: profile.network,
+              offline: profile.offline,
+              flagPassthrough: profile.flagPassthrough,
+              defaultDeny: profile.defaultDeny,
+            },
+          });
+        }
+      }
+    }
+  }
+  return reviewed;
 }
 
 /**
@@ -164,14 +239,14 @@ function parseMcpRow(
 export async function readAgentExecutableEntrypoints(
   root: string
 ): Promise<readonly AgentExecutableEntrypoint[]> {
-  const rows: AgentExecutableEntrypoint[] = [];
+  const discovered: DiscoveredAgentEntrypoint[] = [];
   const mcp = JSON.parse(await Bun.file(joinPath(root, '.mcp.json')).text()) as {
     mcpServers?: Record<string, unknown>;
   };
   for (const [id, value] of Object.entries(mcp.mcpServers ?? {}).sort(([a], [b]) =>
     a.localeCompare(b)
   )) {
-    rows.push(parseMcpRow(id, value));
+    discovered.push(parseMcpRow(id, value));
   }
 
   for (const path of [
@@ -179,17 +254,43 @@ export async function readAgentExecutableEntrypoints(
     ...files('tools/**/*{agent,mcp}*.{ts,sh}', root),
   ].sort()) {
     const source = await Bun.file(joinPath(root, path)).text();
-    if (hasShebang(source)) rows.push(sourceRow('agent-tool', 'project-r', path, source));
+    if (hasShebang(source)) discovered.push(sourceRow('agent-tool', 'project-r', path, source));
   }
 
   for (const path of files('.agents/skills/**/*.{ts,sh}', root)) {
     const source = await Bun.file(joinPath(root, path)).text();
     if (!hasShebang(source)) continue;
     const skillName = path.split('/')[2] ?? 'unknown';
-    rows.push(sourceRow('skill-executable', `skill:${skillName}`, path, source));
+    discovered.push(sourceRow('skill-executable', `skill:${skillName}`, path, source));
   }
 
-  return rows.sort((a, b) => a.id.localeCompare(b.id));
+  const reviewed = expandOwnershipManifest(await readOwnershipManifest(root));
+  const discoveredById = new Map(discovered.map(row => [row.id, row]));
+  const issues: string[] = [];
+  for (const row of discovered) {
+    const review = reviewed.get(row.id);
+    if (!review) {
+      issues.push(`unreviewed executable surface: ${row.id}`);
+      continue;
+    }
+    if (review.kind !== row.kind || review.owner !== row.owner || review.source !== row.source) {
+      issues.push(`agent consumer identity drift: ${row.id}`);
+    }
+    if (JSON.stringify(review.effects) !== JSON.stringify(row.effects)) {
+      issues.push(`agent consumer effect drift: ${row.id}`);
+    }
+    if (review.enforcement === 'effect-free' && review.effects.length !== 0) {
+      issues.push(`effect-free agent consumer declares effects: ${row.id}`);
+    }
+    if (review.enforcement === 'authorized' && !review.authority.defaultDeny) {
+      issues.push(`authorized agent consumer is not default-deny: ${row.id}`);
+    }
+  }
+  for (const id of reviewed.keys()) {
+    if (!discoveredById.has(id)) issues.push(`stale executable review: ${id}`);
+  }
+  if (issues.length > 0) throw new TypeError(issues.join('\n'));
+  return [...reviewed.values()].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 export function calculateAgentConsumerRatchet(

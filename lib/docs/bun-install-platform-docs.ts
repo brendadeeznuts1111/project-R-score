@@ -1,3 +1,7 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+// @updated --dry-run · fixed v1.3.4 · 2025-12-06 · https://bun.com/blog/bun-v1.3.4
+// @updated --dry-run · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @verified --dry-run · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/pm/cli/install#dry-run
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 /**
@@ -10,6 +14,10 @@
 import { joinPath } from '../path-bun.ts';
 import { makeTempDir, removeTempDir } from '../tmp-probe.ts';
 import { resolveVerificationBunBinary } from '../verification/resolve-bun-binary.ts';
+import {
+  spawnGuardedBunChildSync,
+  type BunChildAuthority,
+} from '../security/guarded-bun-process.ts';
 import { bunDocs } from './bun-site-url.ts';
 
 export const INSTALL_PLATFORM_DOCS = {
@@ -74,14 +82,29 @@ export async function probeBunInstallPlatformFlags(): Promise<BunInstallPlatform
       JSON.stringify({ name: 'fw-install-platform-probe', dependencies: {} })
     );
 
-    const valid = Bun.spawnSync(
-      [bunPath, 'install', '--cpu=x64', '--os=linux', '--dry-run', '--ignore-scripts'],
-      { cwd: dir, stdout: 'pipe', stderr: 'pipe', stdin: 'ignore' }
+    const runProbe = (argv: readonly string[], reason: string) => {
+      const authority: BunChildAuthority = {
+        executable: bunPath,
+        argv,
+        cwd: dir,
+        environment: {},
+        profile: 'test',
+        command: 'install',
+        reason,
+      };
+      return spawnGuardedBunChildSync(
+        // guarded-process-consumer-reviewed owner=bun-docs executable=verified-bun args=call-exact cwd=disposable-temp env=empty stdio=pipe network=denied offline=required flags=control-policy defaultDeny=true reason="The platform probe permits only its fixed install argv in its owned temporary directory."
+        { authority, executable: bunPath, argv, cwd: dir },
+        { stdout: 'pipe', stderr: 'pipe', stdin: 'ignore' }
+      );
+    };
+    const valid = runProbe(
+      ['install', '--cpu=x64', '--os=linux', '--dry-run', '--ignore-scripts'],
+      'verify documented Bun install platform flags in a disposable directory'
     );
-
-    const invalid = Bun.spawnSync(
-      [bunPath, 'install', '--cpu=bogus', '--os=linux', '--dry-run', '--ignore-scripts'],
-      { cwd: dir, stdout: 'pipe', stderr: 'pipe', stdin: 'ignore' }
+    const invalid = runProbe(
+      ['install', '--cpu=bogus', '--os=linux', '--dry-run', '--ignore-scripts'],
+      'verify invalid Bun install CPU values fail in a disposable directory'
     );
 
     const validOk = valid.exitCode === 0;

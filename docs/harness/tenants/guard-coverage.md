@@ -108,11 +108,14 @@ reintroduced after sanitization.
 The guarded child contract binds an absolute executable, complete runtime argv,
 working directory, and a non-inherited environment to exact control grants. The
 first migrated set covers five registry info/publish consumers, including the
-operator publish lane, and rejects changed registry, reserved `--connect` / `-O`
-/ `-R`, experimental HTTP, and runtime preload controls before spawn. The
-bidirectional hashed inventory records guarded consumers and exact native-probe
-owner/reason exceptions; 182 raw or dynamic consumers remain explicit unowned
-gaps, so this row is not yet `Implemented`.
+operator publish lane. A second bounded tranche moves the Bun install platform
+and compile-feature documentation probes behind the same boundary. Hermetic
+tests reject changed registry, reserved `--connect`, proxy, `-O` / `-R`,
+experimental HTTP, and runtime preload controls before spawn. The bidirectional
+hashed inventory now records guarded consumers with executable, argv, cwd,
+environment, stdio, network, offline, flag-passthrough, owner, and default-deny
+review metadata; 179 raw or dynamic consumers remain explicit unowned gaps, so
+this row is not yet `Implemented`.
 
 ### `REG-001` Registry read, write, and resolution planes
 

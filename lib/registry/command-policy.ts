@@ -127,6 +127,7 @@ export function prepareRegistryCommandPlan(plan: RegistryCommandPlan): PreparedB
 
 export function spawnRegistryCommandPlan(plan: RegistryCommandPlan, io: RegistryCommandIo = {}) {
   return spawnGuardedBunChild(
+    // guarded-process-consumer-reviewed owner=registry-control executable=plan-exact args=plan-exact cwd=plan-exact env=allowlisted stdio=caller-bounded network=registry-origin-bound offline=invocation-policy flags=control-policy defaultDeny=true reason="Registry planner binds every process and network authority before async spawn."
     {
       authority: registryCommandAuthority(plan),
       executable: plan.executable,
@@ -143,6 +144,7 @@ export function spawnRegistryCommandPlanSync(
   io: RegistryCommandIo = {}
 ) {
   return spawnGuardedBunChildSync(
+    // guarded-process-consumer-reviewed owner=registry-control executable=plan-exact args=plan-exact cwd=plan-exact env=allowlisted stdio=caller-bounded network=registry-origin-bound offline=invocation-policy flags=control-policy defaultDeny=true reason="Registry planner binds every process and network authority before sync spawn."
     {
       authority: registryCommandAuthority(plan),
       executable: plan.executable,

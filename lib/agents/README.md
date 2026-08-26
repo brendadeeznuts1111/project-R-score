@@ -10,18 +10,23 @@ credentials or remote access. Runtime flag semantics remain owned by
 
 ## Area map
 
-| Area                                                   | Owner                                                          |
-| ------------------------------------------------------ | -------------------------------------------------------------- |
-| Strict wire parsing and exact invocation authorization | [`capability-manifest.ts`](./capability-manifest.ts)           |
-| MCP, skill, tool, and preload inventory ratchets       | [`agent-inventory.ts`](./agent-inventory.ts)                   |
-| Parse-authorize-before-effect execution                | [`authorized-execution.ts`](./authorized-execution.ts)         |
-| Executable consumer ownership and effect ratchet       | [`agent-consumer-inventory.ts`](./agent-consumer-inventory.ts) |
+| Area                                                   | Owner                                                                                                                                                 |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Strict wire parsing and exact invocation authorization | [`capability-manifest.ts`](./capability-manifest.ts)                                                                                                  |
+| MCP, skill, tool, and preload inventory ratchets       | [`agent-inventory.ts`](./agent-inventory.ts)                                                                                                          |
+| Parse-authorize-before-effect execution                | [`authorized-execution.ts`](./authorized-execution.ts)                                                                                                |
+| Executable consumer ownership and effect ratchet       | [`agent-consumer-inventory.ts`](./agent-consumer-inventory.ts) · [`config/agent-consumer-ownership.json`](../../config/agent-consumer-ownership.json) |
 
 Consumer migration is explicit: `executeAuthorizedAgentInvocation` parses an
 unknown manifest and invocation, refuses unknown controls or undeclared
 capabilities, and only then enters an injected effect callback. The consumer
 inventory covers executable shebang files plus configured MCP launches; helper
 modules and declarative skill definition documents are not misreported as
-entrypoints. Source rows classify direct effect calls. Imported helper effects
-remain debt owned by the executable row until that row adopts the guarded
-boundary.
+entrypoints. The reviewed ownership manifest, rather than a source-text
+authorization hint, decides whether each row is authorized, effect-free, or an
+unowned gap. Every profile records executable, args, cwd, environment, stdio,
+network, offline, flag-passthrough, and default-deny posture. Discovery still
+detects direct effects and fails when they drift from the reviewed declaration.
+Imported helper effects remain debt owned by the executable row until that row
+adopts the guarded boundary. The current exact inventory remains 59 surfaces: 1
+authorized, 21 reviewed effect-free, and 37 explicitly unowned.

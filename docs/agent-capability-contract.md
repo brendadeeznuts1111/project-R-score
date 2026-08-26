@@ -29,7 +29,12 @@ module, and raw samples. Timing variance alone cannot change
 skill agent descriptors, agent/MCP entrypoint files, browser preload consumers,
 the four preload concepts, and the focused authorization tests. It separately
 ratchets 59 executable consumer surfaces (configured MCP launches, first-party
-agent/MCP shebang files, and local-skill shebang files). New surfaces or changed
-direct-effect classifications fail the exact digest until an owner reviews the
-row. `executeAuthorizedAgentInvocation` is the reusable before-effect boundary;
-the local registry smoke is the first migrated consumer.
+agent/MCP shebang files, and local-skill shebang files) against
+`config/agent-consumer-ownership.json`. The manifest explicitly records owner,
+direct effects, process/network/offline authority, flag passthrough, and
+default-deny posture. New surfaces, stale reviews, or changed direct-effect
+classifications fail until an owner reviews the row. The exact residual is 1
+authorized, 21 effect-free, and 37 unowned; an unowned row is deliberately not
+treated as default-deny enforcement. `executeAuthorizedAgentInvocation` is the
+reusable before-effect boundary; the local registry smoke is the first migrated
+consumer.

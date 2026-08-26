@@ -1,0 +1,87 @@
+{
+  "schema": "factorywager.subprocess-consumer-ownership.v1",
+  "scopePrefixes": ["lib/docs/"],
+  "profiles": {
+    "guarded-doc-probe": {
+      "executable": "exact-reviewed",
+      "args": "exact-reviewed",
+      "cwd": "exact-reviewed",
+      "environment": "allowlisted-no-ambient-authority",
+      "stdio": "pipe-or-ignore-reviewed",
+      "network": "denied",
+      "offline": "required",
+      "flagPassthrough": "control-policy-bound",
+      "defaultDeny": true,
+      "enforcement": "guarded"
+    },
+    "unowned-doc-gap": {
+      "executable": "dynamic-or-unreviewed",
+      "args": "dynamic-or-unreviewed",
+      "cwd": "undeclared",
+      "environment": "ambient-or-undeclared",
+      "stdio": "undeclared",
+      "network": "undeclared",
+      "offline": "undeclared",
+      "flagPassthrough": "implicit-gap",
+      "defaultDeny": false,
+      "enforcement": "unowned"
+    }
+  },
+  "entries": [
+    {
+      "id": "lib/docs/bun-install-platform-docs.ts#spawnGuardedBunChildSync#275d85de35517edb#1",
+      "owner": "bun-docs",
+      "profile": "guarded-doc-probe"
+    },
+    {
+      "id": "lib/docs/bun-native-capabilities-sync.ts#Bun.spawn#e6ceefdabe65bbb4#1",
+      "owner": "bun-native-docs",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/bun-release-tracker.ts#Bun.spawn#fad3427a7df2f22e#1",
+      "owner": "bun-release-proof",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/bun-release-tracker.ts#spawnGuardedBunChildSync#eb9a4e62915181d0#1",
+      "owner": "bun-release-proof",
+      "profile": "guarded-doc-probe"
+    },
+    {
+      "id": "lib/docs/fetch-protocol-docs.ts#Bun.spawn#834f48c152b13b3d#1",
+      "owner": "fetch-protocol-docs",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#355f1734340e301d#1",
+      "owner": "docs-search",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#355f1734340e301d#2",
+      "owner": "docs-search",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#ca7a7e8580baef5e#1",
+      "owner": "docs-search",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#ca7a7e8580baef5e#2",
+      "owner": "docs-search",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawnSync#a87bed7ed92e708f#1",
+      "owner": "docs-search",
+      "profile": "unowned-doc-gap"
+    },
+    {
+      "id": "lib/docs/smart-symbol-index.ts#Bun.spawnSync#a87bed7ed92e708f#1",
+      "owner": "docs-search",
+      "profile": "unowned-doc-gap"
+    }
+  ]
+}

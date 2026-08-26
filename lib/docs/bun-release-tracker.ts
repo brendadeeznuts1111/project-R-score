@@ -67,6 +67,10 @@
  * @see https://github.com/oven-sh/bun/pull/29526 — lazy-load system certs
  */
 import tls from 'node:tls';
+import {
+  spawnGuardedBunChildSync,
+  type BunChildAuthority,
+} from '../security/guarded-bun-process.ts';
 import { probeUrlHostLegacy } from '../verification/bun-runtime-nits-probes.ts';
 import { buildVerificationLinks } from '../verification/links.ts';
 import {
@@ -665,9 +669,27 @@ export async function probeCompileTimeFeatureFlags(): Promise<{ ok: boolean; not
       entry,
       'import { feature } from "bun:bundle";\nexport const mode = feature("FW_PROBE_PREMIUM") ? "premium" : "free";\n'
     );
-    const proc = Bun.spawnSync(
-      ['bun', 'build', '--feature=FW_PROBE_PREMIUM', entry, '--outdir', outdir, '--minify'],
-      { cwd: dir, stdout: 'pipe', stderr: 'pipe' }
+    const argv = [
+      'build',
+      '--feature=FW_PROBE_PREMIUM',
+      entry,
+      '--outdir',
+      outdir,
+      '--minify',
+    ] as const;
+    const authority: BunChildAuthority = {
+      executable: process.execPath,
+      argv,
+      cwd: dir,
+      environment: {},
+      profile: 'test',
+      command: 'runtime',
+      reason: 'compile a fixed feature-flag fixture without ambient child authority',
+    };
+    const proc = spawnGuardedBunChildSync(
+      // guarded-process-consumer-reviewed owner=bun-release-proof executable=process-exec-path args=fixed-build cwd=disposable-temp env=empty stdio=pipe network=denied offline=required flags=control-policy defaultDeny=true reason="Compile feature proof permits only its fixed build argv and owned temporary paths."
+      { authority, executable: process.execPath, argv, cwd: dir },
+      { stdout: 'pipe', stderr: 'pipe', stdin: 'ignore' }
     );
     if (proc.exitCode !== 0) {
       return {

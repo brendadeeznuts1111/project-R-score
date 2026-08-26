@@ -33,6 +33,7 @@ describe('subprocess consumer inventory', () => {
         authority: string;
         controlSpellings: string[];
         exception?: { owner: string; reason: string };
+        review?: { owner?: string; defaultDeny?: boolean; flagPassthrough?: string };
       }>;
     };
     const spellings = manifest.entries.flatMap(entry => entry.controlSpellings).sort();
@@ -44,5 +45,43 @@ describe('subprocess consumer inventory', () => {
       reason:
         'Exercises Bun install environment behavior in disposable directories; shared policy would suppress the behavior under test.',
     });
+    const guarded = manifest.entries.filter(
+      entry => entry.authority === 'guarded-process-consumer'
+    );
+    expect(guarded.length).toBeGreaterThanOrEqual(4);
+    expect(
+      guarded.every(
+        entry =>
+          entry.review?.defaultDeny === true &&
+          Boolean(entry.review.owner) &&
+          entry.review.flagPassthrough === 'control-policy'
+      )
+    ).toBeTrue();
+  });
+
+  test('reviews the complete lib/docs subprocess scope without claiming gaps are guarded', async () => {
+    const ownership = (await Bun.file(
+      new URL('../config/subprocess-consumer-ownership.json', import.meta.url)
+    ).json()) as {
+      profiles: Record<string, { enforcement: string; defaultDeny: boolean }>;
+      entries: Array<{ id: string; owner: string; profile: string }>; // brand-ok — test fixture inventory identity
+    };
+    expect(ownership.entries).toHaveLength(11);
+    expect(ownership.entries.every(entry => entry.id.startsWith('lib/docs/'))).toBeTrue();
+    expect(ownership.entries.every(entry => entry.owner.length > 0)).toBeTrue();
+    const guarded = ownership.entries.filter(
+      entry => ownership.profiles[entry.profile]?.enforcement === 'guarded'
+    );
+    const unowned = ownership.entries.filter(
+      entry => ownership.profiles[entry.profile]?.enforcement === 'unowned'
+    );
+    expect(guarded).toHaveLength(2);
+    expect(unowned).toHaveLength(9);
+    expect(
+      guarded.every(entry => ownership.profiles[entry.profile]?.defaultDeny === true)
+    ).toBeTrue();
+    expect(
+      unowned.every(entry => ownership.profiles[entry.profile]?.defaultDeny === false)
+    ).toBeTrue();
   });
 });

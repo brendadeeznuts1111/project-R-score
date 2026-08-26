@@ -17,6 +17,20 @@ describe('agent executable consumer inventory', () => {
     const ids = rows.map(row => row.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(rows.every(row => row.owner.length > 0 && row.source.length > 0)).toBeTrue();
+    expect(
+      rows.every(
+        row =>
+          row.authority.profile.length > 0 &&
+          row.authority.executable.length > 0 &&
+          row.authority.args.length > 0 &&
+          row.authority.cwd.length > 0 &&
+          row.authority.environment.length > 0 &&
+          row.authority.stdio.length > 0 &&
+          row.authority.network.length > 0 &&
+          row.authority.offline.length > 0 &&
+          row.authority.flagPassthrough.length > 0
+      )
+    ).toBeTrue();
     expect(calculateAgentConsumerRatchet(rows)).toEqual(expectedAgentConsumerRatchet());
     expect(await agentConsumerInventoryIssues(ROOT)).toEqual([]);
   });
@@ -33,5 +47,11 @@ describe('agent executable consumer inventory', () => {
     const summary = summarizeAgentConsumers(rows);
     expect(summary.authorized).toBeGreaterThan(0);
     expect(summary.unowned).toBeGreaterThan(0);
+    expect(
+      rows.filter(row => row.enforcement === 'authorized').every(row => row.authority.defaultDeny)
+    ).toBeTrue();
+    expect(
+      rows.filter(row => row.enforcement === 'unowned').every(row => !row.authority.defaultDeny)
+    ).toBeTrue();
   });
 });

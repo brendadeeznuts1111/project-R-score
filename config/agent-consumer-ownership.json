@@ -1,0 +1,156 @@
+{
+  "schema": "factorywager.agent-consumer-ownership.v1",
+  "profiles": {
+    "authorized-manifest": {
+      "executable": "manifest-bound",
+      "args": "invocation-wire-bound",
+      "cwd": "repository-bound",
+      "environment": "allowlisted-no-ambient-authority",
+      "stdio": "entrypoint-owned",
+      "network": "manifest-route-bound",
+      "offline": "invocation-policy-bound",
+      "flagPassthrough": "control-policy-bound",
+      "defaultDeny": true,
+      "enforcement": "authorized"
+    },
+    "effect-free": {
+      "executable": "not-applicable",
+      "args": "application-only",
+      "cwd": "not-applicable",
+      "environment": "no-effect-authority",
+      "stdio": "application-only",
+      "network": "none",
+      "offline": "not-applicable",
+      "flagPassthrough": "none",
+      "defaultDeny": true,
+      "enforcement": "effect-free"
+    },
+    "unowned-gap": {
+      "executable": "undeclared",
+      "args": "undeclared",
+      "cwd": "undeclared",
+      "environment": "ambient-or-undeclared",
+      "stdio": "undeclared",
+      "network": "undeclared",
+      "offline": "undeclared",
+      "flagPassthrough": "implicit-gap",
+      "defaultDeny": false,
+      "enforcement": "unowned"
+    }
+  },
+  "assignments": {
+    "authorized-manifest": {
+      "project-r": {
+        "network,registry": ["agent-tool:scripts/agent-registry-live-smoke.ts"]
+      }
+    },
+    "effect-free": {
+      "project-r": {
+        "": [
+          "agent-tool:scripts/check-agent-capabilities.ts",
+          "agent-tool:scripts/mcp-sync.ts",
+          "agent-tool:scripts/validate-agent-skills.ts",
+          "agent-tool:tools/bake-tennis-agent-auth.ts",
+          "agent-tool:tools/sync-well-known-mcp.ts"
+        ]
+      },
+      "skill:ast-grep": {
+        "": [
+          "skill-executable:.agents/skills/ast-grep/scripts/audit-pool.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/bundle-threat-scan.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/format-terminal-report.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/markdown-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/network-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/platform-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/policy-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/scan-packages.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/skill-loop-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/snapshot-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/validate-snapshot.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/workflow-cli.ts"
+        ]
+      },
+      "skill:trace-behavior-research": {
+        "": [
+          "skill-executable:.agents/skills/trace-behavior-research/scripts/archive-report.ts",
+          "skill-executable:.agents/skills/trace-behavior-research/scripts/mine-traces.ts",
+          "skill-executable:.agents/skills/trace-behavior-research/scripts/record-telemetry.ts",
+          "skill-executable:.agents/skills/trace-behavior-research/scripts/validate-drafts.ts"
+        ]
+      }
+    },
+    "unowned-gap": {
+      "project-r": {
+        "subprocess": [
+          "agent-tool:scripts/github-mcp-stdio.sh",
+          "agent-tool:tools/bun-docs-mcp.ts"
+        ],
+        "network": [
+          "agent-tool:tools/agent-odds-dashboard-serve.ts",
+          "agent-tool:tools/mcp-cloudflare-probe.ts"
+        ],
+        "network,registry": ["agent-tool:tools/operator-agent.ts"],
+        "channel": ["agent-tool:tools/telegram-catalog-research-agent.ts"]
+      },
+      "workspace-mcp:ast-grep": {
+        "subprocess": ["mcp-configuration:ast-grep"]
+      },
+      "workspace-mcp:bun-docs": {
+        "subprocess": ["mcp-configuration:bun-docs"]
+      },
+      "workspace-mcp:cascade-mover": {
+        "network": ["mcp-configuration:cascade-mover"]
+      },
+      "workspace-mcp:cloudflare": {
+        "network": ["mcp-configuration:cloudflare"]
+      },
+      "workspace-mcp:cloudflare-bindings": {
+        "network": ["mcp-configuration:cloudflare-bindings"]
+      },
+      "workspace-mcp:cloudflare-docs": {
+        "network": ["mcp-configuration:cloudflare-docs"]
+      },
+      "workspace-mcp:cloudflare-observability": {
+        "network": ["mcp-configuration:cloudflare-observability"]
+      },
+      "workspace-mcp:github": { "subprocess": ["mcp-configuration:github"] },
+      "skill:ast-grep": {
+        "subprocess": [
+          "skill-executable:.agents/skills/ast-grep/mcp/ast-grep-mcp.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/baseline.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/bun-1.4-migration-audit.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/bun-ci.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/bun-install-ci.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/bun-test-ci.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/bun-test-matrix.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/ci.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/close-loop-ci.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/doctor.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/install.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/sg.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/skill-loop-matrix.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/smoke.sh",
+          "skill-executable:.agents/skills/ast-grep/scripts/test-cli.ts",
+          "skill-executable:.agents/skills/ast-grep/scripts/verify-mcp.sh"
+        ],
+        "network,subprocess": [
+          "skill-executable:.agents/skills/ast-grep/scripts/bun-cli.ts"
+        ]
+      },
+      "skill:trace-behavior-research": {
+        "network": [
+          "skill-executable:.agents/skills/trace-behavior-research/scripts/review-server.ts",
+          "skill-executable:.agents/skills/trace-behavior-research/scripts/sidecar.ts"
+        ]
+      },
+      "skill:turnstile-spin": {
+        "subprocess": [
+          "skill-executable:.agents/skills/turnstile-spin/scripts/auth-probe.sh",
+          "skill-executable:.agents/skills/turnstile-spin/scripts/persist-skill.sh",
+          "skill-executable:.agents/skills/turnstile-spin/scripts/validate.sh",
+          "skill-executable:.agents/skills/turnstile-spin/scripts/widget-create.sh"
+        ]
+      }
+    }
+  }
+}
