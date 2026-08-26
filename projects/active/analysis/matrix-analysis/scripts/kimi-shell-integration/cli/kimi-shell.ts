@@ -10,6 +10,7 @@ import { $ } from "bun";
 import { existsSync } from "fs";
 import { join } from "path";
 import { homedir } from "os";
+import { fetchMatrixLoopbackRead } from "../../../src/lib/matrix-outbound.ts";
 
 // ============================================================================
 // Configuration
@@ -189,7 +190,7 @@ async function cmdStatus(): Promise<void> {
 
   // Try to get health from dashboard
   try {
-    const response = await fetch("http://127.0.0.1:18790/api/health");
+    const response = await fetchMatrixLoopbackRead("http://127.0.0.1:18790/api/health");
     if (response.ok) {
       const health = await response.json();
       console.info("\n📈 Bridge Health:");

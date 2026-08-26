@@ -2,6 +2,7 @@
 // performance-suite.ts — Complete performance monitoring suite
 
 import { Database } from "bun:sqlite";
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
 
 // ANSI colors for output
 const colors = {
@@ -168,7 +169,7 @@ async function parseRSS(feedUrl: string = "https://bun.com/rss.xml") {
 	colorLog("cyan", "\n📰 RSS Feed Parser");
 
 	try {
-		const response = await fetch(feedUrl);
+		const response = await fetchMatrixPublicResource(feedUrl);
 		const text = await response.text();
 
 		const titleMatch = text.match(/<title>([^<]+)<\/title>/i);

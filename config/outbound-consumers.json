@@ -778,9 +778,9 @@
       "column": 23,
       "callee": "fetch",
       "fingerprint": "2e9403e8d1d205e2",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Cold native fetch timing probe; a policy wrapper would change the operation being benchmarked, so this exact identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/benchmarks-combined/utils/parallel-bench.ts#fetch#391465d4940bb3ff#1",
@@ -789,9 +789,9 @@
       "column": 27,
       "callee": "fetch",
       "fingerprint": "391465d4940bb3ff",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Parallel native fetch timing probe; a policy wrapper would change the operation being benchmarked, so this exact identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/benchmarks-combined/utils/preconnect-fetch.ts#fetch#2e9403e8d1d205e2#1",
@@ -800,9 +800,9 @@
       "column": 23,
       "callee": "fetch",
       "fingerprint": "2e9403e8d1d205e2",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Preconnect-versus-native-fetch timing probe; wrapping fetch would invalidate the measured comparison, so this exact identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/benchmarks-combined/utils/route-bench-mitata.ts#fetch#1ec32afcc8b4c784#1",
@@ -811,383 +811,9 @@
       "column": 17,
       "callee": "fetch",
       "fingerprint": "1ec32afcc8b4c784",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/cli/tier1380-audit.ts#fetch#f219afbe7d4762b8#1",
-      "path": "projects/active/analysis/matrix-analysis/cli/tier1380-audit.ts",
-      "line": 237,
-      "column": 20,
-      "callee": "fetch",
-      "fingerprint": "f219afbe7d4762b8",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/factory-wager/nexus/infrastructure-monitor.ts#fetch#1b5c8435ab04afbf#1",
-      "path": "projects/active/analysis/matrix-analysis/factory-wager/nexus/infrastructure-monitor.ts",
-      "line": 54,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "1b5c8435ab04afbf",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/factory-wager/nexus/infrastructure-monitor.ts#fetch#5dc85c417214e850#1",
-      "path": "projects/active/analysis/matrix-analysis/factory-wager/nexus/infrastructure-monitor.ts",
-      "line": 94,
-      "column": 25,
-      "callee": "fetch",
-      "fingerprint": "5dc85c417214e850",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/factory-wager/nexus/infrastructure-monitor.ts#fetch#ff70952d4c77a45d#1",
-      "path": "projects/active/analysis/matrix-analysis/factory-wager/nexus/infrastructure-monitor.ts",
-      "line": 110,
-      "column": 38,
-      "callee": "fetch",
-      "fingerprint": "ff70952d4c77a45d",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/factorywager-edge/deploy-xss-safe.ts#fetch#9ad3ad065f8d1a2b#1",
-      "path": "projects/active/analysis/matrix-analysis/factorywager-edge/deploy-xss-safe.ts",
-      "line": 268,
-      "column": 34,
-      "callee": "fetch",
-      "fingerprint": "9ad3ad065f8d1a2b",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/future/bun-future-ready.ts#fetch#37fdede96859da2f#1",
-      "path": "projects/active/analysis/matrix-analysis/future/bun-future-ready.ts",
-      "line": 221,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "37fdede96859da2f",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/matrix-agent/integrations/openclaw-bridge.ts#fetch#888cb5dbfe00317c#1",
-      "path": "projects/active/analysis/matrix-analysis/matrix-agent/integrations/openclaw-bridge.ts",
-      "line": 178,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "888cb5dbfe00317c",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/lib.ts#fetch#f8d757801e4f92ee#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/lib.ts",
-      "line": 214,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "f8d757801e4f92ee",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/lib.ts#fetch#c0159df253ba71ff#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/lib.ts",
-      "line": 242,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "c0159df253ba71ff",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/lib.ts#fetch#96214423dfbab645#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/lib.ts",
-      "line": 2660,
-      "column": 22,
-      "callee": "fetch",
-      "fingerprint": "96214423dfbab645",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/rss.ts#fetch#5d06bbea21d70d0a#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/rss.ts",
-      "line": 329,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "5d06bbea21d70d0a",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/rss.ts#fetch#564b31197ce26860#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/rss.ts",
-      "line": 412,
-      "column": 20,
-      "callee": "fetch",
-      "fingerprint": "564b31197ce26860",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/scripts/matrix-rss.ts#fetch#95de59477a4227d9#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/scripts/matrix-rss.ts",
-      "line": 13,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "95de59477a4227d9",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/scripts/verify-rss-canonicalization.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/scripts/verify-rss-canonicalization.ts",
-      "line": 26,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/scripts/verify-rss-canonicalization.ts#fetch#02080ee9df202934#2",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/scripts/verify-rss-canonicalization.ts",
-      "line": 43,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/skills-matrix-integration.ts#fetch#482adf5d451e720d#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/skills-matrix-integration.ts",
-      "line": 43,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "482adf5d451e720d",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-bun-docs/skills-matrix-integration.ts#fetch#af28f29c57e625ec#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-bun-docs/skills-matrix-integration.ts",
-      "line": 202,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "af28f29c57e625ec",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#7789a7ca3bcfaa9d#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 233,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "7789a7ca3bcfaa9d",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#3a92e80fdfbed9ed#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 299,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "3a92e80fdfbed9ed",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#b71cf842c1be6565#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 370,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "b71cf842c1be6565",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#bf17fdeb19dee93b#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 400,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "bf17fdeb19dee93b",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#8f831dcb76774728#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 445,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "8f831dcb76774728",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#33ece134de2e2e80#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 493,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "33ece134de2e2e80",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#33ece134de2e2e80#2",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 511,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "33ece134de2e2e80",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts#fetch#7789a7ca3bcfaa9d#2",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/dashboard-cli.ts",
-      "line": 565,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "7789a7ca3bcfaa9d",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/r2-storage.ts#fetch#4c0c07f2f6a8685c#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/r2-storage.ts",
-      "line": 48,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "4c0c07f2f6a8685c",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/r2-storage.ts#fetch#0803214af45369c0#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/r2-storage.ts",
-      "line": 130,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "0803214af45369c0",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/r2-storage.ts#fetch#5aa908f316d84269#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/r2-storage.ts",
-      "line": 236,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "5aa908f316d84269",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/simulate-multi-tenant-data.ts#fetch#d261af381391712e#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/simulate-multi-tenant-data.ts",
-      "line": 71,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "d261af381391712e",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/mcp-tools/simulate-multi-tenant-data.ts#fetch#862866b760e6a910#1",
-      "path": "projects/active/analysis/matrix-analysis/mcp-tools/simulate-multi-tenant-data.ts",
-      "line": 89,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "862866b760e6a910",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/monitoring/alerts/alert-manager.ts#fetch#fb141c213e193a62#1",
-      "path": "projects/active/analysis/matrix-analysis/monitoring/alerts/alert-manager.ts",
-      "line": 64,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "fb141c213e193a62",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/monitoring/prometheus/metrics-server.ts#fetch#5143a62d50c95c67#1",
-      "path": "projects/active/analysis/matrix-analysis/monitoring/prometheus/metrics-server.ts",
-      "line": 35,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "5143a62d50c95c67",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/my-wager-v3/src/matrix-view/rss.ts#fetch#f219afbe7d4762b8#1",
-      "path": "projects/active/analysis/matrix-analysis/my-wager-v3/src/matrix-view/rss.ts",
-      "line": 16,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "f219afbe7d4762b8",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/packages/pm-integrity/scripts/matrix-validate.ts#fetch#a5c0c3fca61f7b8f#1",
-      "path": "projects/active/analysis/matrix-analysis/packages/pm-integrity/scripts/matrix-validate.ts",
-      "line": 43,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "a5c0c3fca61f7b8f",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Mitata route benchmark measures native fetch methods directly; a policy wrapper would alter the benchmark, so this exact identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/Projects/network/dns-prefetch-performance.ts#fetch#b60293d909365be9#1",
@@ -1196,9 +822,9 @@
       "column": 29,
       "callee": "fetch",
       "fingerprint": "b60293d909365be9",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "DNS baseline benchmark measures native fetch before Bun.dns.prefetch; wrapping it would invalidate the experiment, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/Projects/network/dns-prefetch-performance.ts#fetch#dcccd2deb383999f#1",
@@ -1207,9 +833,9 @@
       "column": 29,
       "callee": "fetch",
       "fingerprint": "dcccd2deb383999f",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "DNS prefetch benchmark measures native fetch after Bun.dns.prefetch; wrapping it would invalidate the experiment, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/Projects/network/dns-prefetch-performance.ts#fetch#c199593636316cc4#1",
@@ -1218,9 +844,9 @@
       "column": 13,
       "callee": "fetch",
       "fingerprint": "c199593636316cc4",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "DNS concurrency benchmark intentionally observes native fetch timing; a policy wrapper would alter the result, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/scripts/kimi-shell-integration/bench/ipc-transport.bench.ts#fetch#a7d3ba71d1097ae5#1",
@@ -1229,9 +855,9 @@
       "column": 13,
       "callee": "fetch",
       "fingerprint": "a7d3ba71d1097ae5",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "IPC benchmark directly measures native HTTP fetch dispatch latency; a policy wrapper would contaminate the sample, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/scripts/kimi-shell-integration/bench/ipc-transport.bench.ts#fetch#a7d3ba71d1097ae5#2",
@@ -1240,9 +866,9 @@
       "column": 30,
       "callee": "fetch",
       "fingerprint": "a7d3ba71d1097ae5",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "IPC benchmark directly measures native HTTP fetch response latency; a policy wrapper would contaminate the sample, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/scripts/kimi-shell-integration/bench/ipc-transport.bench.ts#fetch#25ae7ed190175ae2#1",
@@ -1251,9 +877,9 @@
       "column": 13,
       "callee": "fetch",
       "fingerprint": "25ae7ed190175ae2",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "IPC benchmark directly measures native Unix-socket fetch dispatch latency; a policy wrapper would contaminate the sample, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/scripts/kimi-shell-integration/bench/ipc-transport.bench.ts#fetch#25ae7ed190175ae2#2",
@@ -1262,372 +888,31 @@
       "column": 30,
       "callee": "fetch",
       "fingerprint": "25ae7ed190175ae2",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "IPC benchmark directly measures native Unix-socket fetch response latency; a policy wrapper would contaminate the sample, so this identity remains inventory-locked."
     },
     {
-      "id": "projects/active/analysis/matrix-analysis/scripts/kimi-shell-integration/cli/kimi-shell.ts#fetch#793c651000a2042c#1",
-      "path": "projects/active/analysis/matrix-analysis/scripts/kimi-shell-integration/cli/kimi-shell.ts",
-      "line": 192,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "793c651000a2042c",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/scripts/monitoring/alerts/alert-manager.ts#fetch#fb141c213e193a62#1",
-      "path": "projects/active/analysis/matrix-analysis/scripts/monitoring/alerts/alert-manager.ts",
-      "line": 64,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "fb141c213e193a62",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/scripts/monitoring/cli-status.ts#fetch#afca565c33f7578c#1",
-      "path": "projects/active/analysis/matrix-analysis/scripts/monitoring/cli-status.ts",
-      "line": 74,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "afca565c33f7578c",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/scripts/monitoring/prometheus/metrics-server.ts#fetch#5143a62d50c95c67#1",
-      "path": "projects/active/analysis/matrix-analysis/scripts/monitoring/prometheus/metrics-server.ts",
-      "line": 35,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "5143a62d50c95c67",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/scripts/openclaw-cron/refresh-rss.ts#fetch#798f353648a6f045#1",
-      "path": "projects/active/analysis/matrix-analysis/scripts/openclaw-cron/refresh-rss.ts",
-      "line": 19,
-      "column": 30,
-      "callee": "fetch",
-      "fingerprint": "798f353648a6f045",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/bun-search.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/bun-search.ts",
-      "line": 27,
-      "column": 21,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/enhanced-performance-suite.ts#fetch#f219afbe7d4762b8#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/enhanced-performance-suite.ts",
-      "line": 317,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "f219afbe7d4762b8",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/performance-suite.ts#fetch#f219afbe7d4762b8#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/performance-suite.ts",
-      "line": 171,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "f219afbe7d4762b8",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/rss-parser.ts#fetch#f219afbe7d4762b8#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/rss-parser.ts",
-      "line": 10,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "f219afbe7d4762b8",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/smoke-test-suite.ts#fetch#453a046b057dd082#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/smoke-test-suite.ts",
-      "line": 86,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "453a046b057dd082",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts",
-      "line": 13,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts#fetch#dc47f16500743b89#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts",
-      "line": 107,
-      "column": 32,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts#fetch#dc47f16500743b89#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts",
-      "line": 132,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts#fetch#dc47f16500743b89#3",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts",
-      "line": 147,
-      "column": 25,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts#fetch#02080ee9df202934#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator-bun.ts",
-      "line": 235,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts",
-      "line": 12,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts#fetch#dc47f16500743b89#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts",
-      "line": 83,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts#fetch#dc47f16500743b89#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts",
-      "line": 101,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts#fetch#dc47f16500743b89#3",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts",
-      "line": 116,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts#fetch#02080ee9df202934#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-feed-validator.ts",
-      "line": 183,
-      "column": 10,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts",
-      "line": 11,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts#fetch#dc47f16500743b89#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts",
-      "line": 188,
-      "column": 29,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts#fetch#dc47f16500743b89#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts",
-      "line": 208,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts#fetch#dc47f16500743b89#3",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-audit.ts",
-      "line": 229,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts#fetch#70b577a770db5d04#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts",
-      "line": 21,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "70b577a770db5d04",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts#fetch#02080ee9df202934#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts",
-      "line": 70,
-      "column": 27,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts#fetch#02080ee9df202934#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts",
-      "line": 126,
-      "column": 26,
-      "callee": "fetch",
-      "fingerprint": "02080ee9df202934",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts#fetch#dc47f16500743b89#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts",
-      "line": 208,
-      "column": 28,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts#fetch#dc47f16500743b89#2",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts",
-      "line": 224,
+      "id": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts#fetchPublicResource#adf689cbc6bb07fa#1",
+      "path": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts",
+      "line": 103,
       "column": 9,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "callee": "fetchPublicResource",
+      "fingerprint": "adf689cbc6bb07fa",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts",
+      "reason": "Typed public-read adapter delegates to the root HTTPS, public-authority, no-redirect, credential-free, deadline, response-bound, and offline policy boundary."
     },
     {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts#fetch#dc47f16500743b89#3",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-rss-cache-analytics.ts",
-      "line": 238,
+      "id": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts#fetchWithPolicy#cac927f0a4ff37f6#1",
+      "path": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts",
+      "line": 145,
       "column": 9,
-      "callee": "fetch",
-      "fingerprint": "dc47f16500743b89",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts#fetch#b096c5d0e7953af9#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-sse-alerts.ts",
-      "line": 700,
-      "column": 22,
-      "callee": "fetch",
-      "fingerprint": "b096c5d0e7953af9",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-standalone.ts#fetch#723471bd36d2b4c7#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-standalone.ts",
-      "line": 73,
-      "column": 22,
-      "callee": "fetch",
-      "fingerprint": "723471bd36d2b4c7",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
-    },
-    {
-      "id": "projects/active/analysis/matrix-analysis/tools/tier1380-v2.ts#fetch#fa6f1199ada585c5#1",
-      "path": "projects/active/analysis/matrix-analysis/tools/tier1380-v2.ts",
-      "line": 74,
-      "column": 22,
-      "callee": "fetch",
-      "fingerprint": "fa6f1199ada585c5",
-      "classification": "unowned",
-      "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "callee": "fetchWithPolicy",
+      "fingerprint": "cac927f0a4ff37f6",
+      "classification": "owned-policy-boundary",
+      "owner": "projects/active/analysis/matrix-analysis/src/lib/matrix-outbound.ts",
+      "reason": "Typed exact-origin adapter delegates configured and loopback operations to root policy with explicit methods, credentials, replay class, deadline, body bound, route, and offline mode."
     },
     {
       "id": "projects/active/analysis/matrix-analysis/tools/webapi-security-fixes.ts#fetch#8e388766bc8d9d10#1",
@@ -1636,9 +921,9 @@
       "column": 26,
       "callee": "fetch",
       "fingerprint": "8e388766bc8d9d10",
-      "classification": "unowned",
+      "classification": "intentional-native-probe",
       "owner": "projects/active/analysis/matrix-analysis",
-      "reason": "Direct transport remains a visible migration gap; this exact row cannot be added, removed, or replaced without manifest review."
+      "reason": "Bun fetch ReadableStream cleanup reproduction intentionally exercises the native API under test; wrapping it would invalidate the regression probe, so this identity remains inventory-locked."
     },
     {
       "id": "projects/active/analysis/scanner/lib/fetch-config.ts#fetch#9cb2f9ba8aef37e7#1",

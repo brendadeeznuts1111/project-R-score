@@ -7,6 +7,7 @@
 
 import { defineCommand, fmt } from "../.claude/lib/cli.ts";
 import { EXIT_CODES } from "../.claude/lib/exit-codes.ts";
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
 
 defineCommand({
 	name: "bun-search",
@@ -24,7 +25,7 @@ defineCommand({
 
 		const url = `https://registry.npmjs.org/-/v1/search?text=${encodeURIComponent(query)}&size=20`;
 
-		const res = await fetch(url);
+		const res = await fetchMatrixPublicResource(url);
 		const data = await res.json();
 
 		console.info(`\nSearch results for "${query}":\n`);

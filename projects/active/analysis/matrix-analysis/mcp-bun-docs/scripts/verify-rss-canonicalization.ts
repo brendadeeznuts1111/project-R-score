@@ -11,6 +11,7 @@
  */
 
 import { BUN_CHANGELOG_RSS } from "../lib.ts";
+import { fetchMatrixPublicResource } from "../../src/lib/matrix-outbound.ts";
 
 const BUN_SH_RSS = "https://bun.sh/rss.xml";
 const DEAD_PATHS = [
@@ -23,7 +24,7 @@ async function main(): Promise<void> {
 
 	// 1. Unified feed on both hosts
 	for (const url of [BUN_CHANGELOG_RSS, BUN_SH_RSS]) {
-		const res = await fetch(url);
+		const res = await fetchMatrixPublicResource(url);
 		const ct = res.headers.get("content-type") ?? "";
 		const ok = res.ok && (ct.includes("xml") || ct.includes("rss"));
 		console.info(url);
@@ -40,7 +41,7 @@ async function main(): Promise<void> {
 
 	// 2. Dead paths 404
 	for (const url of DEAD_PATHS) {
-		const res = await fetch(url);
+		const res = await fetchMatrixPublicResource(url);
 		const expect404 = res.status === 404;
 		console.info(url);
 		console.info(`  HTTP ${res.status}  ${expect404 ? "✓ (404 expected)" : "✗"}`);

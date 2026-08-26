@@ -1,6 +1,11 @@
 // factory-wager/nexus/infrastructure-monitor.ts
 import { S3Client } from "bun";
 import type { SystemProfile } from "/Users/nolarose/.factory-wager/system-probe-v431";
+import {
+  fetchMatrixGrantedResource,
+  fetchMatrixPublicResource,
+  type MatrixGrantedEndpoint,
+} from "../../src/lib/matrix-outbound.ts";
 
 interface DomainConfig {
   name: string;
@@ -51,7 +56,7 @@ export class InfrastructureNexus {
     const results = await Promise.all(
       this.domain.endpoints.map(async (endpoint) => {
         try {
-          const res = await fetch(`${endpoint}${this.domain.healthPath}`, {
+          const res = await fetchMatrixPublicResource(`${endpoint}${this.domain.healthPath}`, {
             headers: { "User-Agent": "FactoryWager-Probe/5.0" },
           });
           const latency = (Bun.nanoseconds() - start) / 1e6; // ms
@@ -90,14 +95,25 @@ export class InfrastructureNexus {
     const start = Bun.nanoseconds();
 
     try {
+      const registryOrigin = new URL(this.registry.url).origin;
+      const registryGrant = {
+        name: "matrix-infrastructure-registry-read",
+        origin: registryOrigin,
+        authority: "public-https",
+        allowedMethods: ["GET"],
+        credentialHeaders: ["authorization"],
+        replayClass: "safe",
+        responseByteLimit: 5_000_000,
+        timeoutMs: 10_000,
+      } as const satisfies MatrixGrantedEndpoint;
       // Fetch package manifest using Bun's native fetch with secure cookies
-      const res = await fetch(`${this.registry.url}/api/v2/packages`, {
+      const res = await fetchMatrixGrantedResource(`${this.registry.url}/api/v2/packages`, {
         headers: {
           "Authorization": `Bearer ${this.registry.token}`,
           "X-Factory-Probe": "v5.0",
           "Accept": "application/json",
         },
-      });
+      }, registryGrant);
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
@@ -107,9 +123,9 @@ export class InfrastructureNexus {
           // Validate package tarball CRC32 if available
           let crcValid = false;
           if (pkg.crc32 && pkg.tarballUrl) {
-            const tarballRes = await fetch(pkg.tarballUrl, {
+            const tarballRes = await fetchMatrixGrantedResource(pkg.tarballUrl, {
               headers: { "Authorization": `Bearer ${this.registry.token}` },
-            });
+            }, { ...registryGrant, name: "matrix-infrastructure-registry-tarball", responseByteLimit: 25_000_000 });
             const blob = await tarballRes.blob();
             const arrayBuffer = await blob.arrayBuffer();
             const computedCrc = (Bun as any).hash?.crc32(arrayBuffer);

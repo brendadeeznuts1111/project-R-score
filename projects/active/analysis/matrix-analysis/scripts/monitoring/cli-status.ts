@@ -6,6 +6,7 @@
 
 import { $ } from "bun";
 import { write, stdout } from "process";
+import { fetchMatrixLoopbackRead } from "../../src/lib/matrix-outbound.ts";
 
 // ANSI Colors
 const Colors = {
@@ -71,7 +72,7 @@ async function checkOpenClaw(): Promise<ComponentStatus> {
       name: "gateway_token"
     });
     
-    const response = await fetch("http://127.0.0.1:18789/health", {
+    const response = await fetchMatrixLoopbackRead("http://127.0.0.1:18789/health", {
       headers: token ? { "Authorization": `Bearer ${token}` } : {},
       timeout: 5000
     });

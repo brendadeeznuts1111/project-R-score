@@ -5,6 +5,7 @@
  */
 
 import { $ } from "bun";
+import { fetchMatrixPublicResource } from "../../src/lib/matrix-outbound.ts";
 
 const RSS_FEEDS = [
   "https://openclaw.ai/changelog/rss",
@@ -16,7 +17,7 @@ async function refreshRSS() {
   
   for (const feed of RSS_FEEDS) {
     try {
-      const response = await fetch(feed);
+      const response = await fetchMatrixPublicResource(feed);
       if (response.ok) {
         console.info(`  ✅ ${feed}`);
       } else {

@@ -1,6 +1,11 @@
 // future/bun-future-ready.ts
 // Patterns that will work with future Bun versions
 
+import {
+  fetchMatrixGrantedResource,
+  type MatrixGrantedEndpoint,
+} from "../src/lib/matrix-outbound.ts";
+
 // 1. Async file system operations with progress
 export async function copyWithProgress(source: string, dest: string): Promise<void> {
   const stats = await Bun.file(source).stat()
@@ -211,30 +216,34 @@ export class FutureFileOperations {
 // 6. Future-ready networking
 export class FutureNetworking {
   // HTTP/2 and HTTP/3 ready client
-  static async makeRequest(url: string, options: {
+  static async makeRequest(url: string, grant: MatrixGrantedEndpoint, options: {
     method?: string
     headers?: Record<string, string>
     body?: string | Uint8Array
     // Future: http3?: boolean
     // Future: quic?: boolean
   } = {}): Promise<Response> {
-    const response = await fetch(url, {
+    const response = await fetchMatrixGrantedResource(url, {
       method: options.method || 'GET',
       headers: options.headers,
       body: options.body
-    })
+    }, grant)
     
     return response
   }
   
   // Connection pooling (future)
-  static createConnectionPool(baseURL: string, size: number = 10) {
+  static createConnectionPool(
+    baseURL: string,
+    grant: MatrixGrantedEndpoint,
+    size: number = 10
+  ) {
     const connections: any[] = []
     
     return {
       async request(path: string, options: any = {}) {
         // Future: would reuse connections
-        return this.makeRequest(`${baseURL}${path}`, options)
+        return FutureNetworking.makeRequest(`${baseURL}${path}`, grant, options)
       },
       
       close() {

@@ -6,6 +6,7 @@
  */
 
 import { BUN_137_COMPLETE_MATRIX, MatrixDashboard, Tier1380Profiler } from "./lib";
+import { fetchMatrixLoopbackWrite } from "../src/lib/matrix-outbound.ts";
 
 // Skills Registry API endpoints
 const SKILLS_API_BASE = "http://localhost:3000";
@@ -40,7 +41,7 @@ export class SecureMatrixMonitor {
 		password: string;
 	}): Promise<boolean> {
 		try {
-			const response = await fetch(`${SKILLS_API_BASE}/api/auth/login`, {
+			const response = await fetchMatrixLoopbackWrite(`${SKILLS_API_BASE}/api/auth/login`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(credentials),
@@ -199,14 +200,14 @@ export class SecureMatrixMonitor {
 
 	private async logAuditResults(results: any): Promise<void> {
 		try {
-			await fetch(`${SKILLS_API_BASE}/api/audit/log`, {
+			await fetchMatrixLoopbackWrite(`${SKILLS_API_BASE}/api/audit/log`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${this.authToken}`,
 				},
 				body: JSON.stringify(results),
-			});
+			}, { credentialHeaders: ["authorization"] });
 		} catch (error) {
 			console.error("Failed to log audit results:", error);
 		}

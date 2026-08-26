@@ -12,6 +12,7 @@
 
 import { Database } from "bun:sqlite";
 import { existsSync } from "fs";
+import { fetchMatrixLoopbackWrite } from "../src/lib/matrix-outbound.ts";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // TYPES & INTERFACES
@@ -697,7 +698,7 @@ async function main() {
 				preview: "Test violation preview...",
 			};
 
-			const res = await fetch(`http://127.0.0.1:${port}/mcp/alerts/test`, {
+			const res = await fetchMatrixLoopbackWrite(`http://127.0.0.1:${port}/mcp/alerts/test`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(testAlert),

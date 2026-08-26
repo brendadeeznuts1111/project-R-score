@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
 // simulate-multi-tenant-data.ts - Create sample multi-tenant data for testing
 
+import { fetchMatrixLoopbackWrite } from "../src/lib/matrix-outbound.ts";
+
 const SIM_API_BASE = "http://localhost:3333";
 
 // Sample compliance data for different tenants
@@ -68,7 +70,7 @@ async function insertSampleData() {
   try {
     // Insert compliance data
     for (const data of sampleData) {
-      const response = await fetch(`${SIM_API_BASE}/api/insert-compliance`, {
+      const response = await fetchMatrixLoopbackWrite(`${SIM_API_BASE}/api/insert-compliance`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +88,7 @@ async function insertSampleData() {
 
     // Insert violation data
     for (const violation of sampleViolations) {
-      const response = await fetch(`${SIM_API_BASE}/api/log-violation`, {
+      const response = await fetchMatrixLoopbackWrite(`${SIM_API_BASE}/api/log-violation`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

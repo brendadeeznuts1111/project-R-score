@@ -5,6 +5,7 @@
  */
 
 import { $ } from "bun";
+import { fetchMatrixLoopbackRead } from "../src/lib/matrix-outbound.ts";
 
 const RESET = "\x1b[0m";
 const BOLD = "\x1b[1m";
@@ -83,7 +84,7 @@ class SmokeTestSuite {
 				},
 			});
 
-			const response = await fetch(`http://localhost:${server.port}/test`, {
+			const response = await fetchMatrixLoopbackRead(`http://localhost:${server.port}/test`, {
 				headers: {
 					"X-Custom-Case": "Value",
 					"X-Another-Header": "Test",

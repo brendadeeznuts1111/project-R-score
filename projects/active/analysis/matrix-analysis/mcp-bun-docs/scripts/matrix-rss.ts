@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { existsSync, mkdirSync } from "node:fs";
+import { fetchMatrixPublicResource } from "../../src/lib/matrix-outbound.ts";
 /**
  * Tier-1380 RSS hydration — v1.3.7 changelog feed
  *
@@ -10,7 +11,7 @@ import { BUN_CHANGELOG_RSS, BUN_DOCS_VERSION } from "../lib.ts";
 async function fetchBunRss(source: string): Promise<string> {
 	if (source === "bun-sh-releases" || source === "bun.com") {
 		const url = BUN_CHANGELOG_RSS;
-		const res = await fetch(url, { signal: AbortSignal.timeout(10000) });
+		const res = await fetchMatrixPublicResource(url, { signal: AbortSignal.timeout(10000) });
 		if (!res.ok) throw new Error(`RSS fetch failed: ${res.status}`);
 		return res.text();
 	}

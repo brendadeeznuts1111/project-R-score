@@ -11,6 +11,11 @@
  * - Audit: fetchTimeMs, sizeBytes, parseTimeMs (and optionally log)
  */
 
+import {
+	fetchMatrixPublicResource,
+	type MatrixPublicResourceOptions,
+} from "../src/lib/matrix-outbound.ts";
+
 /** Options for safeRSSPreview (Col-89 compliant, XSS-safe title/preview renderer). */
 export interface SafeRSSPreviewOptions {
 	/** Maximum allowed display columns (default: 89). */
@@ -74,7 +79,9 @@ export function safeRSSPreview<T extends string>(
 							s: string,
 							o?: { countAnsiEscapeCodes?: boolean },
 						) => number
-					)(s, { countAnsiEscapeCodes: false })
+					)(s, {
+						countAnsiEscapeCodes: false,
+					})
 			: (s: string) => s.length;
 
 	const escapeHTML =
@@ -187,6 +194,8 @@ export interface ParseRSSOptions {
 	cacheKey?: string;
 	/** Callback for audit log (fetchTimeMs, sizeBytes, parseTimeMs). */
 	onAudit?: (audit: RSSFeedAudit) => void;
+	/** Hermetic transport/DNS seam and explicit network mode. */
+	outbound?: MatrixPublicResourceOptions;
 }
 
 const USER_AGENT = "Tier-1380 RSS Reader/1.0";
@@ -322,15 +331,19 @@ export async function parseRSS(
 			options.cacheDir,
 			options.cacheKey,
 			timeoutMs,
+			options.outbound,
 		);
 		text = result.body;
 		fromCache = result.fromCache;
 	} else {
-		const res = await fetch(url, {
-			headers: { "User-Agent": USER_AGENT },
-			redirect: "follow",
-			signal: AbortSignal.timeout(timeoutMs),
-		});
+		const res = await fetchMatrixPublicResource(
+			url,
+			{
+				headers: { "User-Agent": USER_AGENT },
+				signal: AbortSignal.timeout(timeoutMs),
+			},
+			{ ...options.outbound, timeoutMs },
+		);
 
 		if (!res.ok) {
 			throw new Error(`RSS fetch failed: ${res.status} ${res.statusText}`);
@@ -391,6 +404,7 @@ async function fetchWithFileCache(
 	cacheDir: string,
 	cacheKey: string | undefined,
 	timeoutMs: number,
+	outbound: MatrixPublicResourceOptions | undefined,
 ): Promise<{ body: string; fromCache: boolean }> {
 	const key = cacheKey ?? url.replace(/[^a-zA-Z0-9.-]/g, "_").slice(0, 120);
 	const cachePath = `${cacheDir}/${key}.json`;
@@ -409,11 +423,14 @@ async function fetchWithFileCache(
 	if (previous?.etag) headers["If-None-Match"] = previous.etag;
 	if (previous?.lastModified) headers["If-Modified-Since"] = previous.lastModified;
 
-	const res = await fetch(url, {
-		headers,
-		redirect: "follow",
-		signal: AbortSignal.timeout(timeoutMs),
-	});
+	const res = await fetchMatrixPublicResource(
+		url,
+		{
+			headers,
+			signal: AbortSignal.timeout(timeoutMs),
+		},
+		{ ...outbound, timeoutMs },
+	);
 
 	if (res.status === 304 && previous) {
 		return { body: previous.body, fromCache: true };

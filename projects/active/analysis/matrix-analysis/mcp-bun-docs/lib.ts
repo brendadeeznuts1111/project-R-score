@@ -7,6 +7,8 @@
  * Exception: BUN_INSTALL_SCRIPT_URL (bun.sh/install) is the canonical URL in official install instructions.
  */
 
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
+
 /** Canonical base for docs, reference, guides, blog, RSS. Single source of truth. */
 export const BUN_BASE_URL = "https://bun.com";
 
@@ -211,7 +213,7 @@ export async function getRssCanonicalizationAuditEvent(): Promise<{
 
 	let feed_preview_width: number | undefined;
 	try {
-		const res = await fetch(rssFeed);
+		const res = await fetchMatrixPublicResource(rssFeed);
 		const text = await res.text();
 		const preview = text.slice(0, 200);
 		feed_preview_width =
@@ -239,7 +241,7 @@ const FIRST_ITEM_TITLE_RE = /<item[^>]*>[\s\S]*?<title[^>]*>([^<]+)<\/title>/i;
 
 export async function getLatestBunReleaseTitleFromRss(): Promise<string | null> {
 	try {
-		const res = await fetch(BUN_CHANGELOG_RSS);
+		const res = await fetchMatrixPublicResource(BUN_CHANGELOG_RSS);
 		const xml = await res.text();
 		const m = xml.match(FIRST_ITEM_TITLE_RE);
 		return m ? m[1].trim() : null;
@@ -2657,7 +2659,7 @@ export async function searchBunDocs(
 
 	for (const url of searchUrls) {
 		try {
-			const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+			const res = await fetchMatrixPublicResource(url, { signal: AbortSignal.timeout(5000) });
 			if (!res.ok) continue;
 			const contentType = res.headers.get("content-type") ?? "";
 			if (!contentType.includes("json")) continue;

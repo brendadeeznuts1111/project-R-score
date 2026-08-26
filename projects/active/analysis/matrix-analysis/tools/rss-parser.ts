@@ -1,13 +1,15 @@
 #!/usr/bin/env bun
 // rss-parser.ts — dependency-free RSS summary
 
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
+
 export {};
 
 const feedUrl = process.argv[2] || "https://bun.com/rss.xml";
 
 async function parseRSS() {
 	try {
-		const response = await fetch(feedUrl);
+		const response = await fetchMatrixPublicResource(feedUrl);
 		const text = await response.text();
 
 		const titleMatch = text.match(/<title>([^<]+)<\/title>/i);
