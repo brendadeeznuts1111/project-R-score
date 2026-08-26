@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "bun-brand-map",
   "path": "/registry/bun-brand-map.json",
-  "generatedAt": "2026-08-18T02:34:09.697Z",
+  "generatedAt": "2026-08-26T07:41:10.812Z",
   "sources": {
     "declarations": "lib/docs/bun-brand-usages.ts",
     "catalog": "tools/bun-docs-catalog.json",
@@ -12,24 +12,24 @@
     "proof": "public/registry/release-features.json"
   },
   "sourceDigests": {
-    "declarations": "28548421f55640bcadcf09305d02d24c3bdcdceb0d910440785f2183adc28416",
-    "catalog": "30344b44b00eb5fa8d2156a2aed6126897f6cf51fe22774072eabdc612823cfb",
-    "brandManifest": "af23fc482d19a16764ab8fc574cfe46a181993bab41ecdcd4480c28cbd424027",
-    "brandKeymap": "ff32bb0b1976ea034722923ede487dd9a6e2899181f91becbe539bfe4dc0fc86",
-    "observations": "9a15f1600f75c7bf52bfd54e896eff2a9a0e6a432d259232b9182274a5d6fa2c",
+    "declarations": "fe104af24189201566dcc3ee3d508c04edad6a1bcd9d80a5f833d00b325dbc21",
+    "catalog": "0bda3a7722e79235f8b368e4d7dd08f6177cf1da40c2294413072627bb474ec4",
+    "brandManifest": "803f11b7ce65c5f54c078f37a6d731f781717d3f26eba9befd75fe238d5af3eb",
+    "brandKeymap": "411a00fa13d2ba0ae26d9a76627eeda6c79a3dc3eb07ab60c00afca508a7a6e6",
+    "observations": "4cb9deda6633c48d31e1bca360e62d80ce09a980b53b4e29a99cdd5b8e33375d",
     "baseline": "12deacd645ff9f5adcc24c9ff70c7d4d6de99a1d8f536c7a1fdc2f86db3c93a4",
-    "proofs": "53261d0176406620894fd5d32cd17d9fcec54878019ed910530174917c3d88db"
+    "proofs": "b8f9ba320cb43d6ef2e2d203aa16cdfed01fc69da8b6405c78f03c8fc6fc3d3d"
   },
   "summary": {
     "apis": 12,
-    "relationships": 85,
-    "wrappers": 36,
+    "relationships": 95,
+    "wrappers": 43,
     "projects": 31,
     "verified": 2,
-    "attention": 50,
-    "declared": 38,
-    "observed": 350,
-    "matched": 112,
+    "attention": 58,
+    "declared": 46,
+    "observed": 355,
+    "matched": 117,
     "undeclared": 238,
     "baselineUndeclared": 238,
     "legacyUndeclared": 238,
@@ -38,9 +38,9 @@
     "productionProofErrors": 0,
     "stale": 0,
     "experimentalApprovals": 0,
-    "brands": 94,
-    "mappedBrands": 13,
-    "totalCanonicalBrands": 94,
+    "brands": 96,
+    "mappedBrands": 15,
+    "totalCanonicalBrands": 96,
     "trackedProjects": 31,
     "externalProjects": 4
   },
@@ -113,6 +113,137 @@
       ],
       "observations": 4,
       "attention": []
+    },
+    {
+      "id": "bun-image-feed-processing",
+      "key": "bun-image-feed-processing",
+      "token": "Bun.Image",
+      "variant": "image-processing",
+      "kind": "api",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/image",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "lib/rss/feed-image.ts",
+          "symbol": "FeedImageEnricher.enrich"
+        },
+        {
+          "path": "lib/rss/image-color.ts",
+          "symbol": "averageImageColor"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "lib/rss/feed-image.ts",
+          "symbol": "FeedImageEnricher.enrich"
+        },
+        {
+          "path": "lib/rss/image-color.ts",
+          "symbol": "averageImageColor"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Feed resizing and dominant-color extraction transform public media bytes without minting or transporting a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 2,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-image-release-contract-audit",
+      "key": "bun-image-release-contract-audit",
+      "token": "Bun.Image",
+      "variant": "image-processing",
+      "kind": "api",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/image",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "tools/audit-bun-1.4-other-behavior-snapshot.ts",
+          "symbol": "auditImageTerminals"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/audit-bun-1.4-other-behavior-snapshot.ts",
+          "symbol": "auditImageTerminals"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The audit records native image terminal behavior and hashes but does not create a FactoryWager identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-image-release-asset-validation",
+      "key": "bun-image-release-asset-validation",
+      "token": "Bun.Image",
+      "variant": "image-processing",
+      "kind": "api",
+      "versionIntroduced": "1.3.14",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/image",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "tools/bun-blog-assets/media-validation.ts",
+          "symbol": "inspectRasterImage"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/bun-blog-assets/media-validation.ts",
+          "symbol": "inspectRasterImage"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "input",
+          "brand": "ReleaseAssetId",
+          "rationale": "Raster validation preserves the ReleaseAssetId carried by the reviewed asset manifest while checking its bytes."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
     },
     {
       "id": "bun-webview-dod-evidence",
@@ -210,6 +341,88 @@
         "project-R-score"
       ],
       "observations": 3,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-secrets-request-id",
+      "key": "bun-randomuuidv7-secrets-request-id",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "session",
+      "implementations": [
+        {
+          "path": "projects/active/dashboards/secrets-dashboard/server.ts",
+          "symbol": "generateRequestId"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "projects/active/dashboards/secrets-dashboard/server.ts",
+          "symbol": "logResponse"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "output",
+          "brand": "RequestId",
+          "rationale": "Each dashboard request mints a RequestId for response-log correlation."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "projects/active/dashboards/secrets-dashboard"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-randomuuidv7-wagering-demo-handle",
+      "key": "bun-randomuuidv7-wagering-demo-handle",
+      "token": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "kind": "api",
+      "versionIntroduced": null,
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/utils#bun-randomuuidv7",
+      "scope": "production",
+      "policy": "optional",
+      "ownerLane": "operations",
+      "implementations": [
+        {
+          "path": "projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts",
+          "symbol": "AdvancedWageringAPI.generateId"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts",
+          "symbol": "AdvancedWageringAPI.handleMicroMarketBet"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The surgical-precision demo keeps an explicitly opaque local wager handle; no approved wager identity exists in the brand catalog."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "projects/active/development/kal-poly-bot"
+      ],
+      "observations": 1,
       "attention": [
         "declared-unproven"
       ]
@@ -1345,6 +1558,88 @@
       ]
     },
     {
+      "id": "bun-cron-lane-status-watch",
+      "key": "bun-cron-lane-status-watch",
+      "token": "Bun.cron",
+      "variant": "in-process",
+      "kind": "api",
+      "versionIntroduced": "1.3.12",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/cron",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "tools/lane-status.ts",
+          "symbol": "main"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/lane-status.ts",
+          "symbol": "main"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The optional lane-status watch only schedules terminal refreshes and does not transport a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
+      "id": "bun-cron-lane-status-preview",
+      "key": "bun-cron-lane-status-preview",
+      "token": "Bun.cron",
+      "variant": "parse",
+      "kind": "api",
+      "versionIntroduced": "1.3.12",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/runtime/cron",
+      "scope": "tooling",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "tools/lane-status.ts",
+          "symbol": "nextFireIso"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "tools/lane-status.ts",
+          "symbol": "main"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "The preview parses a schedule into display metadata without registering work or creating an identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
       "id": "bun-cron-os-persistent",
       "key": "bun-cron-os-persistent",
       "token": "Bun.cron",
@@ -1562,6 +1857,47 @@
       "attention": []
     },
     {
+      "id": "bun-run-parallel-lane-pulse",
+      "key": "bun-run-parallel-lane-pulse",
+      "token": "--parallel",
+      "variant": "bun-run",
+      "kind": "cli-flag",
+      "versionIntroduced": "1.3.13",
+      "stability": "stable",
+      "docsUrl": "https://bun.com/docs/test/parallel#parallel",
+      "scope": "config",
+      "policy": "optional",
+      "ownerLane": "runtime-tooling",
+      "implementations": [
+        {
+          "path": "package.json",
+          "symbol": "pulse:lane"
+        }
+      ],
+      "consumers": [
+        {
+          "path": "package.json",
+          "symbol": "scripts.pulse:lane"
+        }
+      ],
+      "brands": [
+        {
+          "direction": "none",
+          "brand": null,
+          "rationale": "Parallel script execution changes operator scheduling without transporting a domain identity."
+        }
+      ],
+      "proofs": [],
+      "evidenceState": "declared-unproven",
+      "projects": [
+        "project-R-score"
+      ],
+      "observations": 1,
+      "attention": [
+        "declared-unproven"
+      ]
+    },
+    {
       "id": "bun-test-parallel",
       "key": "bun-test-parallel",
       "token": "--parallel",
@@ -1574,6 +1910,10 @@
       "policy": "optional",
       "ownerLane": "runtime-tooling",
       "implementations": [
+        {
+          "path": "package.json",
+          "symbol": "test"
+        },
         {
           "path": "package.json",
           "symbol": "test:shard:parallel"
@@ -1637,7 +1977,7 @@
       "projects": [
         "project-R-score"
       ],
-      "observations": 11,
+      "observations": 10,
       "attention": [
         "declared-unproven"
       ]
@@ -1788,7 +2128,7 @@
       "projects": [
         "project-R-score"
       ],
-      "observations": 7,
+      "observations": 5,
       "attention": [
         "declared-unproven"
       ]
@@ -1829,7 +2169,7 @@
       "projects": [
         "project-R-score"
       ],
-      "observations": 1,
+      "observations": 0,
       "attention": [
         "declared-unproven"
       ]
@@ -1962,6 +2302,82 @@
       ]
     },
     {
+      "id": "bun-image-feed-processing:0:0",
+      "key": "bun-image-feed-processing:0:0",
+      "capabilityId": "bun-image-feed-processing",
+      "capabilityKey": "bun-image-feed-processing",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Feed resizing and dominant-color extraction transform public media bytes without minting or transporting a domain identity.",
+      "wrapper": "lib/rss/feed-image.ts",
+      "wrapperSymbol": "FeedImageEnricher.enrich",
+      "consumer": "lib/rss/feed-image.ts",
+      "consumerSymbol": "FeedImageEnricher.enrich",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-image-feed-processing:1:0",
+      "key": "bun-image-feed-processing:1:0",
+      "capabilityId": "bun-image-feed-processing",
+      "capabilityKey": "bun-image-feed-processing",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Feed resizing and dominant-color extraction transform public media bytes without minting or transporting a domain identity.",
+      "wrapper": "lib/rss/image-color.ts",
+      "wrapperSymbol": "averageImageColor",
+      "consumer": "lib/rss/image-color.ts",
+      "consumerSymbol": "averageImageColor",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-image-release-contract-audit:0:0",
+      "key": "bun-image-release-contract-audit:0:0",
+      "capabilityId": "bun-image-release-contract-audit",
+      "capabilityKey": "bun-image-release-contract-audit",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The audit records native image terminal behavior and hashes but does not create a FactoryWager identity.",
+      "wrapper": "tools/audit-bun-1.4-other-behavior-snapshot.ts",
+      "wrapperSymbol": "auditImageTerminals",
+      "consumer": "tools/audit-bun-1.4-other-behavior-snapshot.ts",
+      "consumerSymbol": "auditImageTerminals",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-image-release-asset-validation:0:0",
+      "key": "bun-image-release-asset-validation:0:0",
+      "capabilityId": "bun-image-release-asset-validation",
+      "capabilityKey": "bun-image-release-asset-validation",
+      "api": "Bun.Image",
+      "variant": "image-processing",
+      "brand": "ReleaseAssetId",
+      "direction": "input",
+      "rationale": "Raster validation preserves the ReleaseAssetId carried by the reviewed asset manifest while checking its bytes.",
+      "wrapper": "tools/bun-blog-assets/media-validation.ts",
+      "wrapperSymbol": "inspectRasterImage",
+      "consumer": "tools/bun-blog-assets/media-validation.ts",
+      "consumerSymbol": "inspectRasterImage",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-webview-dod-evidence:0:0",
       "key": "bun-webview-dod-evidence:0:0",
       "capabilityId": "bun-webview-dod-evidence",
@@ -2033,6 +2449,44 @@
       "consumer": "lib/time.ts",
       "consumerSymbol": "mintEvidenceIdAt",
       "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-secrets-request-id:0:0",
+      "key": "bun-randomuuidv7-secrets-request-id:0:0",
+      "capabilityId": "bun-randomuuidv7-secrets-request-id",
+      "capabilityKey": "bun-randomuuidv7-secrets-request-id",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": "RequestId",
+      "direction": "output",
+      "rationale": "Each dashboard request mints a RequestId for response-log correlation.",
+      "wrapper": "projects/active/dashboards/secrets-dashboard/server.ts",
+      "wrapperSymbol": "generateRequestId",
+      "consumer": "projects/active/dashboards/secrets-dashboard/server.ts",
+      "consumerSymbol": "logResponse",
+      "project": "projects/active/dashboards/secrets-dashboard",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-randomuuidv7-wagering-demo-handle:0:0",
+      "key": "bun-randomuuidv7-wagering-demo-handle:0:0",
+      "capabilityId": "bun-randomuuidv7-wagering-demo-handle",
+      "capabilityKey": "bun-randomuuidv7-wagering-demo-handle",
+      "api": "Bun.randomUUIDv7",
+      "variant": "uuid-string",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The surgical-precision demo keeps an explicitly opaque local wager handle; no approved wager identity exists in the brand catalog.",
+      "wrapper": "projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts",
+      "wrapperSymbol": "AdvancedWageringAPI.generateId",
+      "consumer": "projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts",
+      "consumerSymbol": "AdvancedWageringAPI.handleMicroMarketBet",
+      "project": "projects/active/development/kal-poly-bot",
       "policy": "optional",
       "evidenceState": "declared-unproven",
       "proofs": []
@@ -2950,6 +3404,44 @@
       "proofs": []
     },
     {
+      "id": "bun-cron-lane-status-watch:0:0",
+      "key": "bun-cron-lane-status-watch:0:0",
+      "capabilityId": "bun-cron-lane-status-watch",
+      "capabilityKey": "bun-cron-lane-status-watch",
+      "api": "Bun.cron",
+      "variant": "in-process",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The optional lane-status watch only schedules terminal refreshes and does not transport a domain identity.",
+      "wrapper": "tools/lane-status.ts",
+      "wrapperSymbol": "main",
+      "consumer": "tools/lane-status.ts",
+      "consumerSymbol": "main",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-cron-lane-status-preview:0:0",
+      "key": "bun-cron-lane-status-preview:0:0",
+      "capabilityId": "bun-cron-lane-status-preview",
+      "capabilityKey": "bun-cron-lane-status-preview",
+      "api": "Bun.cron",
+      "variant": "parse",
+      "brand": null,
+      "direction": "none",
+      "rationale": "The preview parses a schedule into display metadata without registering work or creating an identity.",
+      "wrapper": "tools/lane-status.ts",
+      "wrapperSymbol": "nextFireIso",
+      "consumer": "tools/lane-status.ts",
+      "consumerSymbol": "main",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-cron-os-persistent:0:0",
       "key": "bun-cron-os-persistent:0:0",
       "capabilityId": "bun-cron-os-persistent",
@@ -3066,6 +3558,25 @@
       ]
     },
     {
+      "id": "bun-run-parallel-lane-pulse:0:0",
+      "key": "bun-run-parallel-lane-pulse:0:0",
+      "capabilityId": "bun-run-parallel-lane-pulse",
+      "capabilityKey": "bun-run-parallel-lane-pulse",
+      "api": "--parallel",
+      "variant": "bun-run",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Parallel script execution changes operator scheduling without transporting a domain identity.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "pulse:lane",
+      "consumer": "package.json",
+      "consumerSymbol": "scripts.pulse:lane",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
       "id": "bun-test-parallel:0:0",
       "key": "bun-test-parallel:0:0",
       "capabilityId": "bun-test-parallel",
@@ -3076,7 +3587,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:shard:parallel",
+      "wrapperSymbol": "test",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3095,7 +3606,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:ci:shard:parallel",
+      "wrapperSymbol": "test:shard:parallel",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3114,7 +3625,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:parallel",
+      "wrapperSymbol": "test:ci:shard:parallel",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3133,7 +3644,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:dev",
+      "wrapperSymbol": "test:parallel",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3152,7 +3663,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch",
+      "wrapperSymbol": "test:dev",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3171,7 +3682,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:full",
+      "wrapperSymbol": "test:watch",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3190,7 +3701,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:shard1",
+      "wrapperSymbol": "test:watch:full",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3209,7 +3720,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:shard2",
+      "wrapperSymbol": "test:watch:shard1",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3228,7 +3739,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:watch:shard3",
+      "wrapperSymbol": "test:watch:shard2",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3247,7 +3758,7 @@
       "direction": "none",
       "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
       "wrapper": "package.json",
-      "wrapperSymbol": "test:state-compliance",
+      "wrapperSymbol": "test:watch:shard3",
       "consumer": ".github/workflows/test-sharded.yml",
       "consumerSymbol": "tests shard",
       "project": "project-R-score",
@@ -3258,6 +3769,25 @@
     {
       "id": "bun-test-parallel:10:0",
       "key": "bun-test-parallel:10:0",
+      "capabilityId": "bun-test-parallel",
+      "capabilityKey": "bun-test-parallel",
+      "api": "--parallel",
+      "variant": "bun-test",
+      "brand": null,
+      "direction": "none",
+      "rationale": "Test scheduling changes execution topology but does not transport domain identities.",
+      "wrapper": "package.json",
+      "wrapperSymbol": "test:state-compliance",
+      "consumer": ".github/workflows/test-sharded.yml",
+      "consumerSymbol": "tests shard",
+      "project": "project-R-score",
+      "policy": "optional",
+      "evidenceState": "declared-unproven",
+      "proofs": []
+    },
+    {
+      "id": "bun-test-parallel:11:0",
+      "key": "bun-test-parallel:11:0",
       "capabilityId": "bun-test-parallel",
       "capabilityKey": "bun-test-parallel",
       "api": "--parallel",
@@ -3521,9 +4051,13 @@
     {
       "name": "RequestId",
       "domain": "session",
-      "capabilities": [],
-      "relationships": 0,
-      "projects": []
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "projects": [
+        "projects/active/dashboards/secrets-dashboard"
+      ]
     },
     {
       "name": "CorrelationId",
@@ -3846,6 +4380,24 @@
     },
     {
       "name": "FeedId",
+      "domain": "operations",
+      "capabilities": [],
+      "relationships": 0,
+      "projects": []
+    },
+    {
+      "name": "ReleaseAssetId",
+      "domain": "operations",
+      "capabilities": [
+        "Bun.Image"
+      ],
+      "relationships": 1,
+      "projects": [
+        "project-R-score"
+      ]
+    },
+    {
+      "name": "ReleaseCapabilityId",
       "domain": "operations",
       "capabilities": [],
       "relationships": 0,
@@ -4329,12 +4881,16 @@
     {
       "path": "projects/active/dashboards/secrets-dashboard",
       "status": "governed-no-usage",
-      "capabilities": [],
-      "relationships": 0,
-      "brands": [],
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
+      "brands": [
+        "RequestId"
+      ],
       "verified": 0,
-      "attention": 0,
-      "observed": 0,
+      "attention": 1,
+      "observed": 1,
       "undeclared": 0,
       "legacyUndeclared": 0
     },
@@ -4377,12 +4933,14 @@
     {
       "path": "projects/active/development/kal-poly-bot",
       "status": "governed-no-usage",
-      "capabilities": [],
-      "relationships": 0,
+      "capabilities": [
+        "Bun.randomUUIDv7"
+      ],
+      "relationships": 1,
       "brands": [],
       "verified": 0,
-      "attention": 5,
-      "observed": 5,
+      "attention": 6,
+      "observed": 6,
       "undeclared": 5,
       "legacyUndeclared": 5
     },
@@ -4698,7 +5256,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v3.ts",
-      "line": 462,
+      "line": 475,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4708,7 +5266,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v7.ts",
-      "line": 443,
+      "line": 465,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4718,7 +5276,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
-      "line": 736,
+      "line": 760,
       "detail": "Bun.cron (in-process) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4768,7 +5326,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 669,
+      "line": 800,
       "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4778,7 +5336,7 @@
       "severity": "warning",
       "api": "Bun.cron",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 329,
+      "line": 343,
       "detail": "Bun.cron (parse) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4938,7 +5496,7 @@
       "severity": "warning",
       "api": "Bun.Image",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v7.ts",
-      "line": 246,
+      "line": 268,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -4948,7 +5506,7 @@
       "severity": "warning",
       "api": "Bun.Image",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
-      "line": 341,
+      "line": 365,
       "detail": "Bun.Image (image-processing) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -5898,7 +6456,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "projects/active/enterprise/fantasy42-fire22-registry/src/bun-optimized-server.ts",
-      "line": 367,
+      "line": 369,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6048,7 +6606,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
-      "line": 181,
+      "line": 205,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6218,7 +6776,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "projects/active/utilities/bun-file-analyzer/api/server.ts",
-      "line": 15,
+      "line": 14,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6458,7 +7016,7 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 197,
+      "line": 328,
       "detail": "Bun.randomUUIDv7 (uuid-string) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6518,7 +7076,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "lib/factory/cli.ts",
-      "line": 408,
+      "line": 413,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6538,7 +7096,7 @@
       "severity": "warning",
       "api": "Bun.sliceAnsi",
       "path": "tools/bun-api-oneliners.ts",
-      "line": 259,
+      "line": 390,
       "detail": "Bun.sliceAnsi (display-width) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6668,7 +7226,7 @@
       "severity": "warning",
       "api": "Bun.Terminal",
       "path": "projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts",
-      "line": 104,
+      "line": 106,
       "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6678,7 +7236,7 @@
       "severity": "warning",
       "api": "Bun.Terminal",
       "path": "projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts",
-      "line": 203,
+      "line": 205,
       "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6688,7 +7246,7 @@
       "severity": "warning",
       "api": "Bun.Terminal",
       "path": "projects/active/dashboards/quantum-terminal-dashboard/src/components/Terminal/PTYManager.ts",
-      "line": 430,
+      "line": 432,
       "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6728,7 +7286,7 @@
       "severity": "warning",
       "api": "Bun.Terminal",
       "path": "projects/active/development/geelark/src/websocket/config-handler.ts",
-      "line": 179,
+      "line": 184,
       "detail": "Bun.Terminal (pty) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6968,7 +7526,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v3.ts",
-      "line": 259,
+      "line": 272,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6978,7 +7536,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v7.ts",
-      "line": 235,
+      "line": 257,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -6988,7 +7546,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "projects/active/sports-terminal-os/demos/mega-liner-v8.ts",
-      "line": 329,
+      "line": 353,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -7018,7 +7576,7 @@
       "severity": "warning",
       "api": "Bun.WebView",
       "path": "tools/bun-ops-oneliners.ts",
-      "line": 204,
+      "line": 218,
       "detail": "Bun.WebView (headless) has no reviewed declaration for this owner path",
       "baseline": true
     },
@@ -7053,11 +7611,61 @@
       "baseline": false
     },
     {
+      "key": "proof-state|bun-cron-lane-status-preview",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/lane-status.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-cron-lane-status-watch",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.cron",
+      "path": "tools/lane-status.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
       "key": "proof-state|bun-cron-os-persistent",
       "kind": "proof-state",
       "severity": "warning",
       "api": "Bun.cron",
       "path": "lib/harness/cron.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-image-feed-processing",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "lib/rss/feed-image.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-image-release-asset-validation",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/bun-blog-assets/media-validation.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-image-release-contract-audit",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.Image",
+      "path": "tools/audit-bun-1.4-other-behavior-snapshot.ts",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false
@@ -7243,6 +7851,16 @@
       "baseline": false
     },
     {
+      "key": "proof-state|bun-randomuuidv7-secrets-request-id",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/dashboards/secrets-dashboard/server.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
       "key": "proof-state|bun-randomuuidv7-telegram-broadcast-opaque",
       "kind": "proof-state",
       "severity": "warning",
@@ -7308,6 +7926,26 @@
       "severity": "warning",
       "api": "Bun.randomUUIDv7",
       "path": "lib/accounts/accounts.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-randomuuidv7-wagering-demo-handle",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "Bun.randomUUIDv7",
+      "path": "projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts",
+      "line": 1,
+      "detail": "optional capability is declared-unproven",
+      "baseline": false
+    },
+    {
+      "key": "proof-state|bun-run-parallel-lane-pulse",
+      "kind": "proof-state",
+      "severity": "warning",
+      "api": "--parallel",
+      "path": "package.json",
       "line": 1,
       "detail": "optional capability is declared-unproven",
       "baseline": false

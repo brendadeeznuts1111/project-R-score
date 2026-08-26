@@ -4,8 +4,8 @@
   "releaseVersion": "1.4.0",
   "sourceUrl": "https://bun.com/blog/bun-v1.4",
   "counts": {
-    "planned": 1823,
-    "executable": 78
+    "planned": 1822,
+    "executable": 79
   },
   "items": [
     {
@@ -12589,8 +12589,8 @@
       "category": "security-hardening",
       "section": "Security hardening",
       "announcement": "bun install and registry auth Build artifacts are created with owner-only permissions.",
-      "status": "planned",
-      "testPath": null
+      "status": "covered",
+      "testPath": "tests/bun-1.4.0-install-behavior-contract.test.ts"
     },
     {
       "key": "security-hardening-9f938b06",

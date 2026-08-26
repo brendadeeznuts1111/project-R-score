@@ -13,8 +13,9 @@ const ROOT_KEYS = [
   'publishedAt',
   'counts',
   'examples',
+  'ast',
 ] as const;
-const COUNT_KEYS = ['examples', 'runnable', 'documented'] as const;
+const COUNT_KEYS = ['examples', 'runnable', 'documented', 'astNodes'] as const;
 const EXAMPLE_KEYS = [
   'id',
   'slot',
@@ -91,7 +92,11 @@ function parseStringArrayIssues(
   });
 }
 
-function parseCountsIssues(value: unknown, issues: ReleaseKnowledgeShapeIssue[]): void {
+function parseCountsIssues(
+  value: unknown,
+  schemaVersion: unknown,
+  issues: ReleaseKnowledgeShapeIssue[]
+): void {
   if (!isRecord(value)) {
     add(issues, 'type', '$.counts', 'Expected an object');
     return;
@@ -99,6 +104,7 @@ function parseCountsIssues(value: unknown, issues: ReleaseKnowledgeShapeIssue[])
   inspectKeys(value, COUNT_KEYS, '$.counts', issues);
   for (const key of COUNT_KEYS) {
     const count = value[key];
+    if (key === 'astNodes' && schemaVersion === 1 && count === undefined) continue;
     if (!Number.isSafeInteger(count) || Number(count) < 0) {
       add(issues, 'type', `$.counts.${key}`, 'Expected a non-negative safe integer');
     }
@@ -141,17 +147,24 @@ export function parseReleaseKnowledgeShapeIssues(input: unknown): ReleaseKnowled
     return issues;
   }
   inspectKeys(input, ROOT_KEYS, '$', issues);
-  if (input.schemaVersion !== 1)
-    add(issues, 'value', '$.schemaVersion', 'Expected schemaVersion 1');
+  if (input.schemaVersion !== 1 && input.schemaVersion !== 2)
+    add(issues, 'value', '$.schemaVersion', 'Expected schemaVersion 1 or 2');
   if (input.runtime !== 'bun') add(issues, 'value', '$.runtime', 'Expected runtime bun');
   for (const key of ['releaseVersion', 'sourceUrl', 'sourceMarkdownUrl', 'publishedAt']) {
     inspectNonEmptyString(input, key, '$', issues);
   }
-  parseCountsIssues(input.counts, issues);
+  parseCountsIssues(input.counts, input.schemaVersion, issues);
   if (!Array.isArray(input.examples)) {
     add(issues, 'type', '$.examples', 'Expected an array');
   } else {
     input.examples.forEach((example, index) => parseExampleIssues(example, index, issues));
   }
+  if (input.schemaVersion === 2) {
+    if (input.ast === undefined) add(issues, 'required', '$.ast', 'Property is required');
+    else issues.push(...parseAstShapeIssues(input.ast));
+  } else if (input.ast !== undefined) {
+    add(issues, 'value', '$.ast', 'AST requires schemaVersion 2');
+  }
   return issues;
 }
+import { parseAstShapeIssues } from './knowledge-ast-shape.ts';

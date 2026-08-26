@@ -1,15 +1,50 @@
 {
   "kind": "registry-bake-manifest",
   "schemaVersion": 2,
-  "generatedAt": "2026-08-06T04:14:24.385Z",
-  "root": "/Users/nolarose/Projects/.worktrees/github-issue-portal-review/public/registry",
+  "generatedAt": "2026-08-26T09:41:09.105Z",
+  "root": "/Users/nolarose/Projects/.worktrees/bun14-polish-cleanup/public/registry",
   "runtime": {
     "runtime": "bun",
     "runtimeVersion": "1.4.0",
-    "bakedAt": "2026-08-06T04:14:24.385Z",
-    "runtimeRevision": "3f93daaf0ae1"
+    "bakedAt": "2026-08-26T09:41:09.105Z",
+    "runtimeRevision": "34cbb9a40b4b"
   },
   "entries": [
+    {
+      "path": "/registry/bun-1.4-assets.json",
+      "bakedAt": "2026-08-25T17:33:30.428Z",
+      "source": null,
+      "bytes": 28053,
+      "etag": null
+    },
+    {
+      "path": "/registry/bun-1.4-capabilities.json",
+      "bakedAt": "2026-08-25T17:33:30.428Z",
+      "source": null,
+      "bytes": 39405,
+      "etag": null
+    },
+    {
+      "path": "/registry/bun-1.4-channel-release.json",
+      "bakedAt": "2026-08-25T17:33:30.428Z",
+      "source": null,
+      "bytes": 14539,
+      "etag": null
+    },
+    {
+      "path": "/registry/bun-1.4-color-formats.json",
+      "bakedAt": null,
+      "source": null,
+      "bytes": 1527,
+      "etag": null
+    },
+    {
+      "path": "/registry/bun-1.4-project-media.json",
+      "bakedAt": "2026-08-26T09:38:51.004Z",
+      "source": null,
+      "bytes": 1239,
+      "etag": null
+    },
     {
       "path": "/registry/concepts-graph.json",
       "bakedAt": "2026-08-06T04:14:24.350Z",
@@ -21,7 +56,7 @@
       "path": "/registry/domain-glossary.json",
       "bakedAt": "2026-07-31T13:43:54.333Z",
       "source": null,
-      "bytes": 449079,
+      "bytes": 472908,
       "etag": null
     },
     {
@@ -33,9 +68,9 @@
     },
     {
       "path": "/registry/limit-raises.json",
-      "bakedAt": "2026-07-31T23:41:59.270Z",
+      "bakedAt": "2026-08-09T03:02:33.057Z",
       "source": null,
-      "bytes": 134123,
+      "bytes": 138363,
       "etag": null
     },
     {
@@ -54,9 +89,16 @@
     },
     {
       "path": "/registry/portal-chrome.json",
-      "bakedAt": "2026-08-06T04:14:03.369Z",
+      "bakedAt": "2026-08-26T09:41:08.981Z",
       "source": null,
-      "bytes": 28317,
+      "bytes": 29836,
+      "etag": null
+    },
+    {
+      "path": "/registry/project-rss-channels.json",
+      "bakedAt": null,
+      "source": null,
+      "bytes": 10114,
       "etag": null
     },
     {
@@ -68,7 +110,7 @@
     },
     {
       "path": "/registry/telegram-handshake.json",
-      "bakedAt": "2026-07-28T16:41:44.049Z",
+      "bakedAt": "2026-08-09T03:02:33.057Z",
       "source": "snapshot",
       "bytes": 3073,
       "etag": null
@@ -89,15 +131,15 @@
     },
     {
       "path": "/registry/tennis/partner-contracts.json",
-      "bakedAt": "2026-08-05T17:37:45.981Z",
+      "bakedAt": "2026-08-09T03:02:33.057Z",
       "source": "live",
       "bytes": 4811,
       "etag": null
     }
   ],
   "summary": {
-    "files": 12,
-    "withTimestamp": 11,
-    "totalBytes": 976403
+    "files": 18,
+    "withTimestamp": 15,
+    "totalBytes": 1100868
   }
 }

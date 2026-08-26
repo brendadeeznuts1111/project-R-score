@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "publisher": {
+    "name": "FactoryWager",
+    "url": "https://score.factory-wager.com/"
+  },
+  "sourceApi": "Bun.color",
+  "sourceDocs": "https://bun.com/docs/runtime/color",
+  "generatedAt": "2026-08-26T09:38:51.004Z",
+  "runtime": {
+    "bunVersion": "1.4.0",
+    "bunRevision": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
+    "ffmpeg": "ffmpeg version 7.1.1 Copyright (c) 2000-2025 the FFmpeg developers"
+  },
+  "rights": "FactoryWager-generated proof; contains no Bun blog or press-kit media.",
+  "media": [
+    {
+      "id": "factorywager-bun-color-palette",
+      "title": "Bun.color palette proof",
+      "description": "Deterministic six-format palette clip captured with Bun.WebView.",
+      "videoUrl": "/portal/bun-1.4/media/factorywager-bun-color-palette.mp4",
+      "posterUrl": "/portal/bun-1.4/media/factorywager-bun-color-palette.png",
+      "width": 960,
+      "height": 540,
+      "fps": 20,
+      "durationSeconds": 3,
+      "videoBytes": 79143,
+      "videoSha256": "ce893d687b2c3e03c22ae0f70d9fea838db32b562c7a9f206dfcb47f08381242",
+      "posterBytes": 31655,
+      "posterSha256": "42e4f2f86d4400c2b09c8b320389e6d177b2abd721d4d7d377d57ece4fd6f86f",
+      "posterFormat": "png"
+    }
+  ]
+}

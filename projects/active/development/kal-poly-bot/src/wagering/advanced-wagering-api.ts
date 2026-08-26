@@ -32,7 +32,7 @@ export interface WagerResponse {
 }
 
 export interface BetSlip {
-  id: string;
+  id: string; // brand-ok — demo-local opaque wager handle; no approved wager identity exists.
   sport: string;
   eventId: string;
   marketType: string;

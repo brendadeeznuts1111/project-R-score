@@ -194,8 +194,8 @@ describe('operator odds pipeline', () => {
     const signals = detectArbitrage(simple, { minEdge: 0.0 });
     // best Yes 2.2 + best No 2.25 → invSum ≈ 0.899 < 1 → arb
     expect(signals.some(s => s.type === 'arbitrage')).toBe(true);
-    expect(detectArbitrage(snaps).length).toBeGreaterThanOrEqual(0);
-    expect(detectArbitrage(arbSnaps).length).toBeGreaterThanOrEqual(0);
+    expect(detectArbitrage(snaps).length).toBeGreaterThan(0);
+    expect(detectArbitrage(arbSnaps).length).toBeGreaterThan(0);
   });
 
   test('runMonitorTick fixture fallback produces ok results', async () => {

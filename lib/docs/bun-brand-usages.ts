@@ -75,6 +75,73 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     ],
   },
   {
+    key: 'bun-image-feed-processing',
+    token: asDocTokenId('Bun.Image'),
+    variant: 'image-processing',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [
+      { path: 'lib/rss/feed-image.ts', symbol: 'FeedImageEnricher.enrich' },
+      { path: 'lib/rss/image-color.ts', symbol: 'averageImageColor' },
+    ],
+    consumers: [
+      { path: 'lib/rss/feed-image.ts', symbol: 'FeedImageEnricher.enrich' },
+      { path: 'lib/rss/image-color.ts', symbol: 'averageImageColor' },
+    ],
+    relationships: none(
+      'Feed resizing and dominant-color extraction transform public media bytes without minting or transporting a domain identity.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-image-release-contract-audit',
+    token: asDocTokenId('Bun.Image'),
+    variant: 'image-processing',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [
+      {
+        path: 'tools/audit-bun-1.4-other-behavior-snapshot.ts',
+        symbol: 'auditImageTerminals',
+      },
+    ],
+    consumers: [
+      {
+        path: 'tools/audit-bun-1.4-other-behavior-snapshot.ts',
+        symbol: 'auditImageTerminals',
+      },
+    ],
+    relationships: none(
+      'The audit records native image terminal behavior and hashes but does not create a FactoryWager identity.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-image-release-asset-validation',
+    token: asDocTokenId('Bun.Image'),
+    variant: 'image-processing',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [
+      { path: 'tools/bun-blog-assets/media-validation.ts', symbol: 'inspectRasterImage' },
+    ],
+    consumers: [
+      { path: 'tools/bun-blog-assets/media-validation.ts', symbol: 'inspectRasterImage' },
+    ],
+    relationships: [
+      {
+        direction: 'input',
+        brand: 'ReleaseAssetId',
+        rationale:
+          'Raster validation preserves the ReleaseAssetId carried by the reviewed asset manifest while checking its bytes.',
+      },
+    ],
+    proofs: [],
+  },
+  {
     key: 'bun-webview-dod-evidence',
     token: asDocTokenId('Bun.WebView'),
     variant: 'headless',
@@ -120,6 +187,55 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
         rationale: 'The owned mint converts a UUIDv7 result into EvidenceId.',
       },
     ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-secrets-request-id',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'session',
+    implementations: [
+      {
+        path: 'projects/active/dashboards/secrets-dashboard/server.ts',
+        symbol: 'generateRequestId',
+      },
+    ],
+    consumers: [
+      { path: 'projects/active/dashboards/secrets-dashboard/server.ts', symbol: 'logResponse' },
+    ],
+    relationships: [
+      {
+        direction: 'output',
+        brand: 'RequestId',
+        rationale: 'Each dashboard request mints a RequestId for response-log correlation.',
+      },
+    ],
+    proofs: [],
+  },
+  {
+    key: 'bun-randomuuidv7-wagering-demo-handle',
+    token: asDocTokenId('Bun.randomUUIDv7'),
+    variant: 'uuid-string',
+    scope: 'production',
+    policy: 'optional',
+    ownerLane: 'operations',
+    implementations: [
+      {
+        path: 'projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts',
+        symbol: 'AdvancedWageringAPI.generateId',
+      },
+    ],
+    consumers: [
+      {
+        path: 'projects/active/development/kal-poly-bot/src/wagering/advanced-wagering-api.ts',
+        symbol: 'AdvancedWageringAPI.handleMicroMarketBet',
+      },
+    ],
+    relationships: none(
+      'The surgical-precision demo keeps an explicitly opaque local wager handle; no approved wager identity exists in the brand catalog.'
+    ),
     proofs: [],
   },
   {
@@ -610,6 +726,34 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     proofs: [],
   },
   {
+    key: 'bun-cron-lane-status-watch',
+    token: asDocTokenId('Bun.cron'),
+    variant: 'in-process',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [{ path: 'tools/lane-status.ts', symbol: 'main' }],
+    consumers: [{ path: 'tools/lane-status.ts', symbol: 'main' }],
+    relationships: none(
+      'The optional lane-status watch only schedules terminal refreshes and does not transport a domain identity.'
+    ),
+    proofs: [],
+  },
+  {
+    key: 'bun-cron-lane-status-preview',
+    token: asDocTokenId('Bun.cron'),
+    variant: 'parse',
+    scope: 'tooling',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: [{ path: 'tools/lane-status.ts', symbol: 'nextFireIso' }],
+    consumers: [{ path: 'tools/lane-status.ts', symbol: 'main' }],
+    relationships: none(
+      'The preview parses a schedule into display metadata without registering work or creating an identity.'
+    ),
+    proofs: [],
+  },
+  {
     key: 'bun-cron-os-persistent',
     token: asDocTokenId('Bun.cron'),
     variant: 'os-persistent',
@@ -699,6 +843,20 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     ],
   },
   {
+    key: 'bun-run-parallel-lane-pulse',
+    token: asDocTokenId('--parallel'),
+    variant: 'bun-run',
+    scope: 'config',
+    policy: 'optional',
+    ownerLane: 'runtime-tooling',
+    implementations: packageScripts('pulse:lane'),
+    consumers: [{ path: 'package.json', symbol: 'scripts.pulse:lane' }],
+    relationships: none(
+      'Parallel script execution changes operator scheduling without transporting a domain identity.'
+    ),
+    proofs: [],
+  },
+  {
     key: 'bun-test-parallel',
     token: asDocTokenId('--parallel'),
     variant: 'bun-test',
@@ -706,6 +864,7 @@ export const BUN_BRAND_USAGES = defineBunBrandUsages([
     policy: 'optional',
     ownerLane: 'runtime-tooling',
     implementations: packageScripts(
+      'test',
       'test:shard:parallel',
       'test:ci:shard:parallel',
       'test:parallel',

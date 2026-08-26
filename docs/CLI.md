@@ -293,6 +293,7 @@ All commands run via `bun run <name>` from the project root:
 ### Registry
 | Command | Description |
 |---------|-------------|
+| `bun run registry:config:check` | scripts/check-registry-config.ts |
 | `bun run registry:doctor` | scripts/registry-stack-doctor.ts |
 | `bun run registry:doctor:fix` | scripts/registry-stack-doctor.ts --fix |
 | `bun run registry:doctor:json` | scripts/registry-stack-doctor.ts --json |

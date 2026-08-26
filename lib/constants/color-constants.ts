@@ -111,7 +111,10 @@ export const COLOR_INPUT_FORMATS = [
   'RGBA objects (e.g., { r: 255, g: 0, b: 0, a: 1 })',
   'RGB arrays (e.g., [255, 0, 0])',
   'RGBA arrays (e.g., [255, 0, 0, 255])',
-  'LAB strings (e.g., "lab(50% 50% 50%)")',
+  'LAB strings (e.g., "lab(50% 50 50)")',
+  'LCH strings (e.g., "lch(50% 50 100)")',
+  'OKLab strings with percentage lightness (e.g., "oklab(50% 0.1 0.1)")',
+  'OKLCH strings with percentage lightness (e.g., "oklch(50% 0.2 120)")',
 ] as const;
 
 // ============================================================================
@@ -180,32 +183,6 @@ export class ColorDocumentationURLBuilder {
       bundleTime: this.buildURL('#bundle-time-client-side-color-formatting'),
     };
   }
-}
-
-// ============================================================================
-// CLI
-// ============================================================================
-
-if (import.meta.main) {
-  console.info(`
-╔═══════════════════════════════════════════════════════════╗
-║  Bun.color() Documentation v1.0                           ║
-║  API: Bun.color(input, outputFormat?)                     ║
-╚═══════════════════════════════════════════════════════════╝
-
-Output Formats:
-${Object.entries(COLOR_OUTPUT_FORMATS)
-  .map(([k, v]) => `  ${k.padEnd(15)} "${v}"`)
-  .join('\n')}
-
-Examples:
-${COLOR_EXAMPLES.NUMBER.code}
-
-All URLs:
-${Object.entries(ColorDocumentationURLBuilder.getAllURLs())
-  .map(([k, v]) => `  ${k}: ${v}`)
-  .join('\n')}
-`);
 }
 
 export default {

@@ -1,5 +1,6 @@
 /** Public facade for deterministic, provenance-bearing Bun release knowledge. */
 export * from './knowledge-types.ts';
+export { extractReleaseKnowledgeAst } from './knowledge-ast.ts';
 export { extractMarkdownCodeExamples } from './knowledge-markdown.ts';
 export { parseKnowledgeCatalog } from './knowledge-enrichment.ts';
 export { normalizeReleaseKnowledge, releaseKnowledgeExampleId } from './knowledge-normalize.ts';

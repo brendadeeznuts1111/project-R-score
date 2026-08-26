@@ -2,10 +2,10 @@
   "schemaVersion": 2,
   "kind": "portal-weave",
   "path": "/registry/portal-weave.json",
-  "generated": "2026-08-25T04:55:21.147Z",
+  "generated": "2026-08-26T09:41:08.983Z",
   "summary": {
     "surfaces": 38,
-    "artifacts": 48,
+    "artifacts": 50,
     "components": 21,
     "wiki": 6,
     "scripts": 48
@@ -724,6 +724,24 @@
       "href": "/registry/bun-1.4-capabilities.json",
       "note": "Official-source capability graph · asset relations · adoption and contract evidence",
       "group": "registry",
+      "purpose": "ui"
+    },
+    {
+      "id": "bun-1-4-project-media",
+      "label": "bun-1.4-project-media",
+      "href": "/registry/bun-1.4-project-media.json",
+      "note": "FactoryWager-generated Bun runtime proof media · separate from official Bun release assets and feeds",
+      "group": "registry",
+      "cli": "bun run generate:bun-1.4-palette-clip",
+      "purpose": "ui"
+    },
+    {
+      "id": "bun-1-4-color-formats",
+      "label": "bun-1.4-color-formats",
+      "href": "/registry/bun-1.4-color-formats.json",
+      "note": "Bun 1.4 runtime-baked advanced color input and output support matrix",
+      "group": "registry",
+      "cli": "bun run bun-1.4:color-formats:bake",
       "purpose": "ui"
     },
     {

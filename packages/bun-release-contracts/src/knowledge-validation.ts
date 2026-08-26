@@ -1,4 +1,5 @@
 import { releaseKnowledgeExampleId } from './knowledge-normalize.ts';
+import { inspectKnowledgeAst } from './knowledge-ast-validation.ts';
 import { parseReleaseKnowledge } from './knowledge-schema.ts';
 import { parseReleaseKnowledgeShapeIssues } from './knowledge-shape.ts';
 import type { ReleaseKnowledge, ReleaseKnowledgeExample } from './knowledge-types.ts';
@@ -161,6 +162,7 @@ export function parseReleaseKnowledgeValidation(input: unknown): KnowledgeValida
   knowledge.examples.forEach((example, index) =>
     inspectExampleSemantics(knowledge, example, index, findings)
   );
+  inspectKnowledgeAst(knowledge, findings);
   knowledge.examples.forEach((example, index) => {
     if (example.sourceLine <= 0) {
       findings.push(

@@ -81,7 +81,7 @@ describe('Bun release knowledge enterprise validation', () => {
 
   test('collects recursive shape defects instead of stopping at the first field', () => {
     const issues = parseReleaseKnowledgeShapeIssues({
-      schemaVersion: 2,
+      schemaVersion: 3,
       runtime: 'node',
       releaseVersion: 14,
       sourceUrl: SOURCE_URL,

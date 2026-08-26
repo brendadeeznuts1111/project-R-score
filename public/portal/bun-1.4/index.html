@@ -105,6 +105,8 @@
           >
           <a href="/registry/bun-1.4-assets.json">Asset manifest</a>
           <a href="/registry/bun-1.4-capabilities.json">Capability registry</a>
+          <a href="/registry/bun-1.4-project-media.json">Repository proof media</a>
+          <a href="/registry/bun-1.4-color-formats.json">Color format proof</a>
           <a href="/registry/bun-1.4-channel-release.json">Channel release</a>
           <a href="/registry/project-rss-channels.json">Project/channel map</a>
           <a href="/feeds/v1/all.xml">RSS: all media</a>
@@ -157,6 +159,45 @@
           <div class="portal-card bun-empty">
             <strong>Loading release chapters…</strong>
           </div>
+        </div>
+      </section>
+      <section id="bun-color-demo" class="portal-section" aria-labelledby="bun-color-title">
+        <h2 id="bun-color-title">Advanced Bun.color inputs</h2>
+        <p class="section-sub">
+          Runtime-proven conversions from Bun 1.4. The Pages browser does not execute Bun APIs, so
+          this finite sample set keeps the server-runtime boundary explicit.
+        </p>
+        <div class="portal-card bun-color-lab">
+          <div
+            id="bun-color-choices"
+            class="bun-color-choices"
+            aria-label="Color format samples"
+          ></div>
+          <div class="bun-color-control">
+            <label for="bun-color-input">Input</label>
+            <input
+              id="bun-color-input"
+              list="bun-color-suggestions"
+              placeholder="Choose a runtime-proven sample"
+              autocomplete="off"
+            />
+            <datalist id="bun-color-suggestions"></datalist>
+            <button id="bun-color-apply" type="button">Apply sample</button>
+          </div>
+          <div class="bun-color-output">
+            <span id="bun-color-swatch" class="bun-color-swatch" aria-hidden="true"></span>
+            <div id="bun-color-result" class="bun-color-result" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+      <section class="portal-section" aria-labelledby="bun-project-media-title">
+        <h2 id="bun-project-media-title">Repository-generated proofs</h2>
+        <p class="section-sub">
+          FactoryWager-authored runtime evidence, kept separate from Bun's official release-media
+          manifest and feeds.
+        </p>
+        <div id="bun-project-media" class="bun-gallery" aria-live="polite">
+          <div class="portal-card bun-empty"><strong>Loading repository proof media…</strong></div>
         </div>
       </section>
       <section class="portal-section" aria-labelledby="bun-media-title">

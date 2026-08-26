@@ -1,5 +1,6 @@
 import { parseReleaseKnowledgeExampleId } from '../../../lib/types/branded.ts';
 import { blogUrlForVersion, normalizeVersion } from './generator.ts';
+import { parseReleaseKnowledgeAst } from './knowledge-ast-wire.ts';
 import { parseReleaseKnowledgeShapeIssues } from './knowledge-shape.ts';
 import type {
   ExampleStability,
@@ -72,8 +73,12 @@ export function parseReleaseKnowledge(input: unknown): ReleaseKnowledge {
         .join('\n')}`
     );
   }
-  if (!isRecord(input) || input.schemaVersion !== 1 || input.runtime !== 'bun') {
-    throw new Error('Release knowledge must use schemaVersion 1 and runtime bun');
+  if (
+    !isRecord(input) ||
+    (input.schemaVersion !== 1 && input.schemaVersion !== 2) ||
+    input.runtime !== 'bun'
+  ) {
+    throw new Error('Release knowledge must use schemaVersion 1 or 2 and runtime bun');
   }
   if (
     typeof input.releaseVersion !== 'string' ||
@@ -97,16 +102,18 @@ export function parseReleaseKnowledge(input: unknown): ReleaseKnowledge {
   if (new Set(examples.map(example => example.slot)).size !== examples.length) {
     throw new Error('Release knowledge contains duplicate slots');
   }
-  const counts = {
+  const ast = input.schemaVersion === 2 ? parseReleaseKnowledgeAst(input.ast) : undefined;
+  const counts: ReleaseKnowledge['counts'] = {
     examples: examples.length,
     runnable: examples.filter(example => example.runnable).length,
     documented: examples.filter(example => example.docsLinks.length > 0).length,
   };
+  if (ast) counts.astNodes = ast.nodes.length;
   if (!isRecord(input.counts) || JSON.stringify(input.counts) !== JSON.stringify(counts)) {
     throw new Error('Release knowledge counts are stale');
   }
   return {
-    schemaVersion: 1,
+    schemaVersion: input.schemaVersion,
     runtime: 'bun',
     releaseVersion,
     sourceUrl: canonicalUrl,
@@ -114,6 +121,7 @@ export function parseReleaseKnowledge(input: unknown): ReleaseKnowledge {
     publishedAt: input.publishedAt,
     counts,
     examples,
+    ...(ast ? { ast } : {}),
   };
 }
 

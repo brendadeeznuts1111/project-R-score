@@ -8,6 +8,12 @@ import {
   normalizeCapabilityRegistry,
   normalizeReleaseChapters,
 } from '../public/portal/bun-1.4/bun-1.4-capabilities.js';
+import {
+  normalizeColorSamples,
+  sampleByIndex,
+  sampleByInput,
+} from '../public/portal/bun-1.4/bun-1.4-color-demo.js';
+import { normalizeProjectMedia } from '../public/portal/bun-1.4/bun-1.4-project-media.js';
 
 const ROOT = resolvePath(import.meta.dir, '..');
 
@@ -115,6 +121,12 @@ describe('Bun 1.4 asset gallery', () => {
     );
     expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
       expect.objectContaining({
+        id: 'bun-1-4-project-media',
+        href: '/registry/bun-1.4-project-media.json',
+      })
+    );
+    expect(PORTAL_WEAVE_ARTIFACTS).toContainEqual(
+      expect.objectContaining({
         id: 'bun-1-4-capabilities',
         href: '/registry/bun-1.4-capabilities.json',
       })
@@ -130,6 +142,8 @@ describe('Bun 1.4 asset gallery', () => {
     expect(html).toContain('/portal/bun-1.4/bun-1.4-theme.css');
     expect(html).toContain('/registry/bun-1.4-assets.json');
     expect(html).toContain('/registry/bun-1.4-capabilities.json');
+    expect(html).toContain('/registry/bun-1.4-project-media.json');
+    expect(html).toContain('/registry/bun-1.4-color-formats.json');
     expect(html).toContain('/registry/bun-1.4-channel-release.json');
     expect(html).toContain('/feeds/v1/all.xml');
     expect(html).toContain('/feeds/v1/images.xml');
@@ -145,6 +159,9 @@ describe('Bun 1.4 asset gallery', () => {
     expect(html).toContain('id="bun-capability"');
     expect(html).toContain('id="bun-breaking-changes"');
     expect(html).toContain('id="bun-upgrade-guide"');
+    expect(html).toContain('id="bun-color-demo"');
+    expect(html).toContain('id="bun-color-suggestions"');
+    expect(html).toContain('id="bun-project-media"');
     expect(script).toContain('CAPABILITIES_URL');
     expect(script).toContain('normalizeMigrationSources');
     expect(script).toContain('manifest.rightsDelivery');
@@ -162,12 +179,49 @@ describe('Bun 1.4 asset gallery', () => {
     expect(mediaScript).toContain("sourceLink('Official asset source ↗', officialSourceUrl(asset))");
     expect(mediaScript).toContain('asset.raw?.watchUrl || asset.raw?.sourcePage || asset.sourceUrl');
     expect(mediaScript).not.toContain('innerHTML');
+    const colorScript = await Bun.file(
+      joinPath(ROOT, 'public/portal/bun-1.4/bun-1.4-color-demo.js')
+    ).text();
+    expect(colorScript).toContain('dataset.idx = String(index)');
+    expect(colorScript).not.toContain('data-value');
+    expect(colorScript).not.toContain('innerHTML');
     expect(styles).toContain('prefers-reduced-motion');
     expect(styles).toContain('var(--fw-bun-14-color-accent)');
     expect(styles).toContain('var(--fw-bun-14-color-focus-ring)');
     expect(styles).not.toMatch(
       /var\(--(?:bg|surface|border|text|text-dim|accent)\)/
     );
+  });
+
+  test('keeps FactoryWager proof media separate from the official Bun manifest', async () => {
+    const projectMedia = await readJson('public/registry/bun-1.4-project-media.json');
+    const normalized = normalizeProjectMedia(projectMedia);
+    expect(normalized.publisher.name).toBe('FactoryWager');
+    expect(normalized.item.videoUrl).toBe(
+      '/portal/bun-1.4/media/factorywager-bun-color-palette.mp4'
+    );
+    const official = await readJson('public/registry/bun-1.4-assets.json');
+    expect(official.assets).toHaveLength(26);
+    expect(JSON.stringify(official)).not.toContain('factorywager-bun-color-palette');
+  });
+
+  test('advanced color samples use bounded indices and honest Bun 1.4 support', async () => {
+    const registry = await readJson('public/registry/bun-1.4-color-formats.json');
+    const samples = normalizeColorSamples(registry);
+    expect(samples).toHaveLength(5);
+    expect(sampleByIndex(samples, '0')?.input).toBe('lab(50% 50 50)');
+    expect(sampleByInput(samples, 'oklch(50% 0.2 120)')?.hex).toBe('#5b6d00');
+    for (const invalid of ['', '-1', '1.2', '01', '5', '9007199254740992']) {
+      expect(sampleByIndex(samples, invalid)).toBeNull();
+    }
+    expect(samples.at(-1)).toMatchObject({
+      label: 'HSV',
+      status: 'unsupported',
+      hex: null,
+    });
+    const injected = structuredClone(registry);
+    (injected.samples as Array<Record<string, unknown>>)[0]!.hex = 'red;display:none';
+    expect(() => normalizeColorSamples(injected)).toThrow(/sample 0/);
   });
 
   test('browser consumer rejects stale aliases and inconsistent rights before rendering', async () => {
@@ -198,7 +252,7 @@ describe('Bun 1.4 asset gallery', () => {
 
   test('browser capability consumer rejects stale or partial registry projections', async () => {
     const registry = await readJson('public/registry/bun-1.4-capabilities.json');
-    expect(normalizeCapabilityRegistry(registry)).toHaveLength(60);
+    expect(normalizeCapabilityRegistry(registry)).toHaveLength(61);
     expect(normalizeReleaseChapters(registry)).toHaveLength(5);
 
     const staleSchema = structuredClone(registry);

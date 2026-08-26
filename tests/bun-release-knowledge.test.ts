@@ -115,7 +115,23 @@ describe('Bun release knowledge', () => {
 
   test('normalizes stable IDs, exact API matches, provenance, and conservative execution metadata', () => {
     const result = knowledge();
-    expect(result.counts).toEqual({ examples: 3, runnable: 0, documented: 3 });
+    expect(result.counts).toEqual({ examples: 3, runnable: 0, documented: 3, astNodes: 10 });
+    expect(result.ast?.nodes.map(node => node.type)).toEqual([
+      'document',
+      'heading',
+      'paragraph',
+      'codeBlock',
+      'heading',
+      'paragraph',
+      'codeBlock',
+      'paragraph',
+      'heading',
+      'codeBlock',
+    ]);
+    const root = result.ast?.nodes[0];
+    const headings = result.ast?.nodes.filter(node => node.type === 'heading') ?? [];
+    expect(root?.childIds).toEqual([headings[0]?.id, headings[1]?.id]);
+    expect(headings[1]?.childIds).toContain(headings[2]?.id);
     expect(result.publishedAt).toBe('2026-05-13T03:19:35.000Z');
     expect(result.examples[0]).toMatchObject({
       feature: 'Bun.Image',
@@ -147,6 +163,72 @@ describe('Bun release knowledge', () => {
     expect(cleanupExample).toMatchObject({
       runnable: false,
       requiresSetup: ['external-bindings'],
+    });
+  });
+
+  test('preserves media directive metadata and links asset AST nodes', () => {
+    const result = knowledge(`---
+title: Fixture
+---
+
+## Media
+
+{% image src="/images/blog/bun-1.4/cpu.png" alt="CPU dropped 42.3%" /%}
+<iframe src="https://www.youtube.com/embed/example" title="Overview"></iframe>
+
+\`\`\`ts title="probe"
+console.log("ok");
+\`\`\`
+`);
+    const assets = result.ast?.nodes.filter(node => node.type === 'asset') ?? [];
+    expect(assets).toHaveLength(2);
+    expect(assets[0]).toMatchObject({
+      directive: 'image',
+      assetIds: ['bun-1.3.14-cpu'],
+      metadata: { alt: 'CPU dropped 42.3%', src: '/images/blog/bun-1.4/cpu.png' },
+    });
+    expect(assets[1]).toMatchObject({
+      directive: 'iframe',
+      assetIds: ['bun-1.3.14-youtube-overview'],
+    });
+    expect(result.ast?.nodes.find(node => node.type === 'codeBlock')).toMatchObject({
+      language: 'ts',
+      meta: 'title="probe"',
+      childIds: [],
+    });
+  });
+
+  test('materializes list-item leaves with stable ownership and nesting', () => {
+    const result = knowledge(`## Security hardening
+
+- Parent behavior
+  - Nested behavior
+- **\`bun install\` and registry auth** Build artifacts are created with owner-only permissions.
+`);
+    const items = result.ast?.nodes.filter(node => node.type === 'listItem') ?? [];
+    expect(items).toHaveLength(3);
+    expect(items[0]).toMatchObject({ marker: '-', indent: 0, text: 'Parent behavior' });
+    expect(items[1]).toMatchObject({ marker: '-', indent: 2, text: 'Nested behavior' });
+    expect(items[0]?.childIds).toEqual([items[1]?.id]);
+    expect(items[1]?.parentId).toBe(items[0]?.id);
+    expect(items[2]).toMatchObject({
+      marker: '-',
+      indent: 0,
+      text: 'bun install and registry auth Build artifacts are created with owner-only permissions.',
+    });
+  });
+
+  test('materializes multi-line paragraph leaves', () => {
+    const result = knowledge(`## Runtime
+
+Bun starts this behavior on one line
+and completes it on the next line.
+`);
+    expect(result.ast?.nodes.find(node => node.type === 'paragraph')).toMatchObject({
+      sourceLine: 3,
+      endLine: 4,
+      text: 'Bun starts this behavior on one line and completes it on the next line.',
+      childIds: [],
     });
   });
 

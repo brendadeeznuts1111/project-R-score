@@ -15,10 +15,16 @@ behavior must remain behind a focused runtime contract test.
 | `MARKDOWN_PRESETS` / `resolveMarkdownPreset`    | Named CLI/configuration boundary        |
 | `markdownHtml` / `mergeMarkdownOptions`         | Render helpers                          |
 | `markdownNestedList` / `markdownNestedListRows` | Nested tree, lineage, table rows + meta |
+| `createTrustedAccentHeadingCallback`            | Trusted HTML heading accent callback    |
 
 `Bun.markdown` parses and renders Markdown; it does not format source text.
 Generate deterministic Markdown first, then use `.render` for structural proof
 or `.html` for the HTML projection.
+
+`createTrustedAccentHeadingCallback()` canonicalizes its palette through
+`Bun.color(..., '[rgb]')` and derives the element level from `HeadingMeta`.
+Callback children remain unsanitized, so this helper is restricted to trusted,
+repository-generated Markdown. Untrusted HTML stays on `markdownSafeHtml()`.
 
 For list-aware consumers, `markdownNestedList(source)` retains both
 `Bun.markdown.ListMeta` and `ListItemMeta`, returning a nested tree,
