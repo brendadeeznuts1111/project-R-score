@@ -101,7 +101,8 @@ reintroduced after sanitization.
 
 The guarded child contract binds an absolute executable, complete runtime argv,
 working directory, and a non-inherited environment to exact control grants. A
-growth ratchet inventories 349 raw process sites, but those sites have not been
+hashed inventory rejects added, removed, or changed raw process expressions,
+but its reviewed classifications still include direct sites that have not been
 migrated through the wrapper; therefore this row is not yet `Implemented`.
 
 ### `REG-001` Registry read, write, and resolution planes
@@ -122,11 +123,17 @@ and production auto-install fail closed. Runtime, dev, optional, peer, and
 
 **Fresh rerun** `bun run guard:registry:check`
 
-The registry SDK now separates metadata read, artifact read, publish, and mirror
+**Scoped proof** `guard-registry-authority-v1`
+
+The registry SDK separates metadata read, artifact read, publish, and mirror
 write grants, rejects credential-bearing origins, bounds and parses responses,
 and preserves runtime, development, optional, peer, and optional-peer edges.
-Native `.npmrc`, `bunfig.toml`, `publishConfig`, install, and publish precedence
-are not yet routed through the contract, so this row is not `Implemented`.
+Guarded install/publish planners enforce the modeled source precedence, explicit
+write authority, clean child environments, and hermetic metadata parsing. The
+exact subprocess inventory still classifies direct package-manager probes
+outside those planners, and configuration values are modeled inputs rather than
+a completed migration of every native file parser and consumer, so this row is
+not `Implemented`.
 
 ### `NET-001` Network authority
 
@@ -200,11 +207,17 @@ by content digest rather than URL.
 
 **Fresh rerun** `bun run guard:feeds:check`
 
+**Scoped proof** `guard-feed-ingestion-v1`
+
+**Durable adapter proof** `guard-r2-content-v1`
+
 Both RSS parsers reject DTD/entity declarations and enforce input, depth, node,
 attribute, and text quotas. Feed images are MIME/dimension bounded and can store
 rights-gated originals and derived thumbnails as verified, related content
-references. The terminable XML boundary, central network migration, durable
-offline manifest, and R2 consumer remain open, so this row is not `Implemented`.
+references. A deterministic manifest now verifies offline snapshot identity and
+the hermetic R2 adapter loads it without online fallback. A terminable XML
+boundary, central network migration, and complete production feed/R2 binding
+consumer migration remain open, so this row is not `Implemented`.
 
 ### `CHAN-001` Channel publication and aliases
 
@@ -225,11 +238,14 @@ revocation are atomic; stale or rights-ineligible targets cannot remain active.
 
 **Scoped proof** `guard-channel-alias-contract-v1`
 
+**Durable adapter proof** `guard-r2-content-v1`
+
 The branded in-memory alias store has exact revision/digest compare-and-swap,
 distinct authority roles, immutable verified targets, expiry, promotion, and
-terminal revocation tests. A durable R2 alias adapter and propagation from an
-independent rights-revocation registry are not yet integrated, so this row is
-`Contracted`, not `Implemented`.
+terminal revocation tests. The hermetic R2 adapter persists strict alias JSON,
+rehashes it on read, and uses ETag compare-and-swap. Production R2 binding/live
+proof and propagation from an independent rights-revocation registry remain
+open, so this row is `Contracted`, not `Implemented`.
 
 ### `CAS-001` ContentStore and media addressability
 
@@ -252,11 +268,15 @@ application ContentStore.
 
 **Scoped proof** `guard-content-store-contract-v1`
 
+**Durable adapter proof** `guard-r2-content-v1`
+
 Branded content and locator identities, strict `ContentRef` parsing,
 operation-specific rights decisions, content/package relation separation, the
-bounded memory adapter, and an atomic fsync-backed local adapter are tested. R2,
-alias storage, reachability, and complete consumer migration remain open, so
-this row is not yet `Implemented`.
+bounded memory adapter, and an atomic fsync-backed local adapter are tested. The
+hermetic R2 binding adapter conditionally creates digest-keyed objects and
+rehashes bounded reads; the R2 alias adapter verifies persisted JSON around ETag
+CAS. Production binding/live proof, reachability, and complete consumer
+migration remain open, so this row is not yet `Implemented`.
 
 ### `RIGHTS-001` Content rights and lifecycle
 
@@ -326,9 +346,10 @@ object-store, and external probe activity, including child processes.
 
 The offline loader resolves verified local objects and rejects configured DNS,
 proxy, registry, object-store, and external-probe effects before invoking them.
-Those effects are injected sentinels rather than a process-wide syscall/socket
-sentinel, and child processes are not globally observed, so zero-socket mode is
-not yet `Implemented`.
+The feed manifest also rejects missing or corrupt local snapshots without an
+online fallback. Those effects are injected sentinels rather than a process-wide
+syscall/socket sentinel, and child processes are not globally observed, so
+zero-socket mode is not yet `Implemented`.
 
 ### `PROTO-001` HTTP protocol and proxy matrix
 

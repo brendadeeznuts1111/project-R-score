@@ -47,6 +47,9 @@ const GUARD_PROOF_CONTRACTS = [
     'release-governance',
   ],
   ['guard-agent-capabilities-v1', 'bun run guard:agents:check', 'agent-tooling'],
+  ['guard-registry-authority-v1', 'bun run guard:registry:check', 'factory-registry'],
+  ['guard-feed-ingestion-v1', 'bun run guard:feeds:check', 'release-tracker'],
+  ['guard-r2-content-v1', 'bun run guard:r2-content-store:check', 'content-store'],
   [
     'sports-integration-type-v1',
     'bun run --filter sports-terminal-os typecheck',
