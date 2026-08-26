@@ -10,8 +10,13 @@
  */
 
 import { styled } from '@factorywager/theme';
-import { R2StorageAdapter } from '@factorywager/r2-storage';
-import { RegistrySecretsManager } from '@factorywager/secrets';
+import {
+  fetchRegistryReadTokenless,
+  registryPackageUrl,
+  resolveRegistryReadUrl,
+  type RegistryPlaneEnvironment,
+  type RegistryReadUrl,
+} from '../../../src/registry-planes';
 
 // Use bun.semver if available
 const semver = Bun.semver ?? {
@@ -23,7 +28,6 @@ const semver = Bun.semver ?? {
 export interface BunXOptions {
   package: string;
   version?: string;
-  registry?: string;
   args?: string[];
   cacheDir?: string;
   force?: boolean;
@@ -41,23 +45,27 @@ export interface CachedPackage {
 }
 
 export class BunXIntegration {
-  private storage: R2StorageAdapter;
-  private secretsManager: RegistrySecretsManager;
   private cacheDir: string;
+  private readRegistryUrl: RegistryReadUrl;
   private metadataCache = new Map<string, any>();
 
   constructor(
     options: {
       cacheDir?: string;
+      readRegistryUrl?: string;
+      /** @deprecated Ambiguous and warning-only. */
       registry?: string;
+      env?: RegistryPlaneEnvironment;
+      warn?: (message: string) => void;
     } = {}
   ) {
     this.cacheDir = options.cacheDir || `${process.env.HOME}/.bun/registry-cache`;
-    // Bucket/account/endpoint resolve via R2StorageAdapter → config/r2-env SSOT.
-    this.storage = new R2StorageAdapter({
-      bucketName: Bun.env.R2_REGISTRY_BUCKET,
+    this.readRegistryUrl = resolveRegistryReadUrl({
+      explicit: options.readRegistryUrl,
+      legacyExplicit: options.registry,
+      env: options.env ?? process.env,
+      warn: options.warn,
     });
-    this.secretsManager = new RegistrySecretsManager();
   }
 
   /**
@@ -148,18 +156,9 @@ export class BunXIntegration {
     }
 
     try {
-      const registry = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
-      const credentials = await this.secretsManager.getRegistryCredentials(registry);
-      
-      const headers: Record<string, string> = {
-        'Accept': 'application/json',
-      };
-
-      if (credentials?.token) {
-        headers['Authorization'] = `Bearer ${credentials.token}`;
-      }
-
-      const response = await fetch(`${registry}/${pkgName}`, { headers });
+      const response = await fetchRegistryReadTokenless(
+        registryPackageUrl(this.readRegistryUrl, pkgName)
+      );
       
       if (!response.ok) {
         return [];
@@ -191,13 +190,10 @@ export class BunXIntegration {
    */
   private async downloadAndCache(pkgName: string, version: string): Promise<CachedPackage | null> {
     try {
-      const registry = process.env.REGISTRY_URL || 'https://registry.factory-wager.com';
-      const credentials = await this.secretsManager.getRegistryCredentials(registry);
-      
       // Get manifest
-      const manifestResponse = await fetch(`${registry}/${pkgName}`, {
-        headers: credentials?.token ? { 'Authorization': `Bearer ${credentials.token}` } : {},
-      });
+      const manifestResponse = await fetchRegistryReadTokenless(
+        registryPackageUrl(this.readRegistryUrl, pkgName)
+      );
 
       if (!manifestResponse.ok) {
         return null;
@@ -214,9 +210,7 @@ export class BunXIntegration {
       const tarballUrl = versionData.dist.tarball;
       console.info(styled(`📥 Downloading from ${tarballUrl}`, 'info'));
 
-      const tarballResponse = await fetch(tarballUrl, {
-        headers: credentials?.token ? { 'Authorization': `Bearer ${credentials.token}` } : {},
-      });
+      const tarballResponse = await fetchRegistryReadTokenless(tarballUrl);
 
       if (!tarballResponse.ok) {
         return null;
