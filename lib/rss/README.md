@@ -23,9 +23,9 @@ semantics are owned by
 | [`rss-fanout.ts`](./rss-fanout.ts)                     | Versioned one-channel documents, stable GUID membership, deterministic dates, and exact-byte strong ETags.           |
 | [`rss-response.ts`](./rss-response.ts)                 | GET/HEAD plus conditional ETag and Last-Modified response semantics.                                                 |
 | [`rss-manager.ts`](./rss-manager.ts)                   | Cache, enrich, generate, and publish normalized RSS feeds.                                                           |
+| [`feed-image.ts`](./feed-image.ts)                     | Validate/enrich images, persist rights-gated original/thumbnail `ContentRef`s, and perform strict offline CAS reads. |
 | [`remote-fetch.ts`](./remote-fetch.ts)                 | Shared HTTPS, origin, redirect, deadline, identity-encoding, and streaming-byte policy.                              |
 | [`fetch-feed-xml.ts`](./fetch-feed-xml.ts)             | Bounded XML retrieval and MIME validation before parsing.                                                            |
-| [`feed-image.ts`](./feed-image.ts)                     | Validate image enclosures, read Bun.Image metadata, create WebP thumbnails and colors, and conditionally revalidate. |
 | [`fetch-image-bytes.ts`](./fetch-image-bytes.ts)       | Image-specific adapter over the shared remote-fetch boundary.                                                        |
 | [`image-color.ts`](./image-color.ts)                   | Downsample images and decode Bun's one-pixel PNG terminal for average colors.                                        |
 | `project-channel-registry*.ts`                         | Project/repository ownership, strict registry parsing, channel registration, and alias routes.                       |

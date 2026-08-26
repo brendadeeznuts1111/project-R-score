@@ -22,11 +22,14 @@ Core invariants:
   storage, derivation, external-link, alias-publication, and retention
   decisions.
 - `MemoryContentStore` copies exact bytes, deduplicates by digest, bounds reads
-  and writes, and detects backing-store corruption. Persistent local and R2
-  adapters remain separate follow-up work.
+  and supports hermetic process-local tests.
+- `LocalContentStore` writes verified bytes through a same-directory temporary
+  file and atomic rename, then re-hashes every read. Its filesystem path is
+  derived only from the validated `ContentDigest`, never a source URL. Bun 1.4
+  has no native atomic-rename or fsync API, so this adapter uses Bun's built-in
+  `node:fs` compatibility for those two durability primitives.
 
-RSS, image, registry, R2, and channel consumers are intentionally not migrated
-in this foundation change.
+R2 and channel adapters remain separate follow-up work.
 
 ## Area map
 
@@ -34,4 +37,5 @@ in this foundation change.
 | ------------------------------------------------ | ------------------------- |
 | Identity, rights, dependencies, and wire parsing | `content-contract.ts`     |
 | Bounded process-local adapter                    | `memory-content-store.ts` |
+| Atomic persistent local adapter                  | `local-content-store.ts`  |
 | Stable module exports                            | `index.ts`                |

@@ -2222,6 +2222,7 @@
     "docs:sync:integrated": "bun run tools/cli/integrated-cli.ts sync",
     "test:rss:native": "bun test tests/bun-rss.test.ts tests/rss-xml-native.test.ts tests/rss-xml-shape-contract.test.ts tests/rss-image-fetch-policy.test.ts tests/rss-image-enrichment.test.ts tests/rss-package-feed.test.ts tests/rss-fanout.test.ts tests/rss-response.test.ts tests/bun-1.4-capabilities.test.ts tests/bun-1.4-feeds.test.ts tests/bun-1.4-channel-release.test.ts",
     "test:rss:images": "bun test tests/rss-image-enrichment.test.ts tests/rss-image-fetch-policy.test.ts",
+    "guard:feeds:check": "bun test tests/content-store-contract.test.ts tests/local-content-store.test.ts tests/bun-rss.test.ts tests/rss-xml-native.test.ts tests/rss-xml-shape-contract.test.ts tests/rss-image-enrichment.test.ts tests/rss-image-fetch-policy.test.ts",
     "search:smart": "bun run scripts/search-smart.ts",
     "search:coverage:loc": "bun run scripts/search-coverage-loc.ts",
     "search:bench": "bun run scripts/search-benchmark.ts",

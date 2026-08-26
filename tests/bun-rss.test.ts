@@ -55,7 +55,12 @@ describe('bun-rss', () => {
       parseRssChannelItems(
         '<!DOCTYPE rss [<!ENTITY x "Bun">]><rss version="2.0"><channel><title>&x;</title><link>https://bun.com</link><description>Posts</description></channel></rss>'
       )
-    ).toThrow('must not contain a DOCTYPE');
+    ).toThrow('DOCTYPE or entity declaration');
+    expect(() =>
+      parseRssChannelItems(
+        '<!dOcTyPe rss><rss version="2.0"><channel><title>Bun</title><link>https://bun.com</link><description>Posts</description></channel></rss>'
+      )
+    ).toThrow('DOCTYPE or entity declaration');
     expect(() =>
       parseRssChannelItems(
         '<rss version="2.0"><channel><title>Bun</title><link>https://bun.com</link><description>Posts</description><item><title>Missing fields</title></item></channel></rss>'

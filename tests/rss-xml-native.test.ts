@@ -27,8 +27,22 @@ describe('native RSS XML boundary', () => {
       'version must be 2.0'
     );
     expect(() => parseRSSFeed(`<!DOCTYPE rss><rss version="2.0"><channel/></rss>`)).toThrow(
-      'must not contain a DOCTYPE'
+      'must not contain a DOCTYPE or entity declaration'
     );
+    expect(() =>
+      parseRSSFeed(`<!DoCtYpE rss [<!ENTITY x "boom">]>${BASE}`)
+    ).toThrow('DOCTYPE or entity declaration');
+    expect(() => parseRSSFeed(`<!ENTITY x "boom">${BASE}`)).toThrow(
+      'DOCTYPE or entity declaration'
+    );
+  });
+
+  test('enforces byte, depth, node, attribute, and text quotas around Bun.XML', () => {
+    expect(() => parseRSSFeed(BASE, { maxInputBytes: 32 })).toThrow('input exceeds 32 byte');
+    expect(() => parseRSSFeed(BASE, { maxDepth: 2 })).toThrow('depth quota');
+    expect(() => parseRSSFeed(BASE, { maxNodes: 4 })).toThrow('node quota');
+    expect(() => parseRSSFeed(BASE, { maxAttributesPerElement: 0 })).toThrow('attribute quota');
+    expect(() => parseRSSFeed(BASE, { maxTextBytes: 8 })).toThrow('text byte quota');
   });
 
   test('requires the exact Media RSS namespace before interpreting media keys', () => {

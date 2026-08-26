@@ -4,7 +4,14 @@
 // @see https://www.rssboard.org/rss-specification — RSS 2.0
 // @see https://www.rssboard.org/media-rss — Media RSS 1.5.1
 
-import { assertNoRssDoctype, type RSSXmlInput } from './rss-xml-input.ts';
+import {
+  assertNoRssDoctype,
+  assertRssXmlInputWithinQuota,
+  assertRssXmlShapeWithinQuotas,
+  DEFAULT_RSS_XML_QUOTAS,
+  type RSSXmlInput,
+  type RSSXmlQuotas,
+} from './rss-xml-input.ts';
 import { parseAtomSelfUrl } from './rss-atom.ts';
 import { itemImageCandidate } from './rss-media-validation.ts';
 import type { RSSChannelImage, RSSFeed, RSSFeedItem } from './rss-types.ts';
@@ -52,7 +59,8 @@ const ITEM_SINGLETONS = [
   'comments',
 ] as const;
 
-export type { RSSXmlInput } from './rss-xml-input.ts';
+export type { RSSXmlInput, RSSXmlQuotas } from './rss-xml-input.ts';
+export { DEFAULT_RSS_XML_QUOTAS } from './rss-xml-input.ts';
 export type {
   RSSChannelImage,
   RSSEnclosure,
@@ -157,9 +165,15 @@ function channelImage(channel: XmlRecord): RSSChannelImage | undefined {
   };
 }
 
-export function parseRSSFeed(input: RSSXmlInput): RSSFeed {
+export function parseRSSFeed(
+  input: RSSXmlInput,
+  quotaOverrides: Partial<RSSXmlQuotas> = {}
+): RSSFeed {
+  const quotas = { ...DEFAULT_RSS_XML_QUOTAS, ...quotaOverrides };
+  assertRssXmlInputWithinQuota(input, quotas.maxInputBytes);
   assertNoRssDoctype(input);
   const document: unknown = Bun.XML.parse(input);
+  assertRssXmlShapeWithinQuotas(document, quotas);
   if (!isXmlRecord(document) || !isXmlRecord(document.rss)) {
     throw new Error('Expected one RSS root');
   }

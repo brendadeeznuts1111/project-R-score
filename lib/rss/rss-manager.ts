@@ -97,7 +97,7 @@ export class RSSManager {
         })
       );
       const feed = parseRSSFeed(xml);
-      if (this.enrichImages) await this.enrichFeedImages(feed);
+      if (this.enrichImages) await this.enrichFeedImages(feed, feedUrl);
 
       // Cache with CacheManager (TTL handled by manager)
       await this.cache.set(feedUrl, feed, { tags: ['rss'] });
@@ -218,7 +218,7 @@ export class RSSManager {
     return `https://${bucket}.${this.r2Storage['config'].accountId}.r2.dev/feeds/${packageName}.rss`;
   }
 
-  private async enrichFeedImages(feed: RSSFeed): Promise<void> {
+  private async enrichFeedImages(feed: RSSFeed, feedUrl: string): Promise<void> {
     const candidates = feed.items
       .filter((item): item is RSSFeedItem & { imageUrl: string; imageSource: FeedImageSource } =>
         Boolean(item.imageUrl && item.imageSource)
@@ -235,6 +235,7 @@ export class RSSManager {
             item.image = await this.imageEnricher.enrich({
               url: item.imageUrl,
               source: item.imageSource,
+              feedUrl,
             });
           } catch (error) {
             console.warn(`Failed to enrich RSS image ${item.imageUrl}:`, error);
