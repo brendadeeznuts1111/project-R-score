@@ -5,6 +5,8 @@
  * Supports multiple worksheets, formatting, and data transformation
  */
 
+import { fetchSameOriginGet } from '../security/browser-outbound.ts';
+
 import { EventEmitter } from 'events';
 
 export interface ExcelExportOptions {
@@ -302,7 +304,7 @@ export class ExcelExportService extends EventEmitter {
 
     try {
       // Agent Summary Sheet
-      const agentResponse = await fetch('/api/agents');
+      const agentResponse = await fetchSameOriginGet('/api/agents');
       const agents = await agentResponse.json();
 
       sheets.push({
@@ -323,7 +325,7 @@ export class ExcelExportService extends EventEmitter {
 
       // Performance Data Sheet
       if (options.includePerformance) {
-        const perfResponse = await fetch('/api/agents/performance');
+        const perfResponse = await fetchSameOriginGet('/api/agents/performance');
         const performance = await perfResponse.json();
 
         sheets.push({
@@ -364,7 +366,7 @@ export class ExcelExportService extends EventEmitter {
     } = {}
   ): Promise<ExportResult> {
     try {
-      const response = await fetch('/api/customers');
+      const response = await fetchSameOriginGet('/api/customers');
       const customers = await response.json();
 
       const filteredCustomers = customers.results
@@ -426,7 +428,7 @@ export class ExcelExportService extends EventEmitter {
     } = {}
   ): Promise<ExportResult> {
     try {
-      const response = await fetch('/api/betting/ticker');
+      const response = await fetchSameOriginGet('/api/betting/ticker');
       const bettingData = await response.json();
 
       const sheets: ExcelSheet[] = [

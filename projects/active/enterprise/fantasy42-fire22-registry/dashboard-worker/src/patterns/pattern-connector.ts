@@ -5,6 +5,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 
 import { patternWeaver } from './pattern-weaver';
+import { fetchFixedFantasyApi } from '../security/runtime-outbound.ts';
 
 /**
  * Pattern Connector - Connects different parts of the application
@@ -111,7 +112,7 @@ export class PatternConnector {
           
           // Apply TIMING pattern for performance
           const timing = patternWeaver.applyPattern('TIMING', async () => {
-            const response = await fetch(endpoint, {
+            const response = await fetchFixedFantasyApi(endpoint, {
               headers: { Authorization: `Bearer ${token}` }
             });
             return await response.json();

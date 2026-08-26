@@ -135,3 +135,41 @@ export function fetchConfiguredWebhook(
     options
   );
 }
+
+export function fetchLanguageHub(
+  input: string | URL,
+  init: BunFetchRequestInit,
+  options: Fantasy42OutboundOptions = {}
+): Promise<Response> {
+  const url = parseUrl(input, 'Language hub URL');
+  const isLanguagePath = url.pathname.startsWith('/api/hub/language/');
+  const isHealthPath = url.pathname === '/api/hub/health';
+  if (
+    url.origin !== 'http://localhost:3001' ||
+    (!isLanguagePath && !isHealthPath)
+  ) {
+    throw new Error('Language hub requires the exact localhost:3001 language authority');
+  }
+  const method = requestMethod(init);
+  return execute(
+    url,
+    init,
+    {
+      name: 'fantasy42-language-hub',
+      allowedOrigins: [url.origin],
+      allowedMethods: ['GET', 'POST', 'PUT'],
+      credentialMode: 'scoped',
+      credentialHeaders: ['authorization'],
+      redirect: 'error',
+      timeoutMs: 10_000,
+      totalDeadlineMs: 10_000,
+      responseByteLimit: 4_000_000,
+      route: { mode: 'direct' },
+      networkMode: networkMode(options),
+      protocol: { allowed: ['auto'], default: 'auto' },
+      ipAuthority: { mode: 'allow-non-public', enforcement: 'resolve-before-connect' },
+      replayClass: replayClass(method),
+    },
+    options
+  );
+}

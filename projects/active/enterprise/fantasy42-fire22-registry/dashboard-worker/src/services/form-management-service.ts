@@ -4,6 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { fetchSameOriginGet, fetchSameOriginPost } from '../security/browser-outbound.ts';
 
 export interface FormField {
   id: string;
@@ -955,14 +956,17 @@ export class FormManagementService extends EventEmitter {
   ): Promise<any> {
     if (!dataSource) throw new Error('No data source configured');
 
-    const response = await fetch(dataSource.url, {
-      method: dataSource.method,
+    const init = {
       headers: {
         'Content-Type': 'application/json',
         ...dataSource.headers,
       },
       body: dataSource.method === 'POST' ? JSON.stringify(data) : undefined,
-    });
+    };
+    const response =
+      dataSource.method === 'POST'
+        ? await fetchSameOriginPost(dataSource.url, init)
+        : await fetchSameOriginGet(dataSource.url, { headers: init.headers });
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);

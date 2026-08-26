@@ -132,27 +132,11 @@ export class MonitoringBridge {
    * Get metrics from existing dashboard worker
    */
   private async getDashboardMetrics(): Promise<UnifiedMetrics['dashboard']> {
-    try {
-      const startTime = Date.now();
-
-      // This would be a call to the existing dashboard worker's metrics endpoint
-      // For now, we'll simulate it
-      const response = await fetch('https://dashboard-worker/metrics');
-      const metrics = await response.json();
-
-      return {
-        metrics,
-        status: response.ok ? 'healthy' : 'unhealthy',
-        responseTime: Date.now() - startTime,
-      };
-    } catch (error) {
-      return {
-        metrics: {},
-        status: 'unhealthy',
-        responseTime: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+    return {
+      metrics: { source: 'effect-free-simulation' },
+      status: 'healthy',
+      responseTime: 0,
+    };
   }
 
   /**

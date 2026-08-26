@@ -12,6 +12,8 @@
   },
   "files": [
     "src/security/outbound-client.ts",
+    "src/security/browser-outbound.ts",
+    "src/security/runtime-authority-config.ts",
     "src/security/runtime-outbound.ts",
     "core/api/handlers/jwt-auth-test-client.ts",
     "../scripts/global-setup.fire22.ts",

@@ -4,6 +4,7 @@
  */
 
 import { DeviceDetector } from './detection/device-detector';
+import { fetchFixedFantasyApi } from '../security/runtime-outbound.ts';
 
 export * from '../../core/types/device';
 
@@ -262,7 +263,7 @@ export class DeviceManagementSystem {
     };
 
     try {
-      const response = await fetch(url, requestOptions);
+      const response = await fetchFixedFantasyApi(url, requestOptions);
       const endTime = Date.now();
       const responseTime = endTime - startTime;
 

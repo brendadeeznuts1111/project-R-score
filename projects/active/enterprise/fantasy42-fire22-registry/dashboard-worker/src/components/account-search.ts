@@ -5,6 +5,8 @@
  * Real-time search with intelligent filtering and results
  */
 
+import { fetchSameOriginPost } from '../security/browser-outbound.ts';
+
 import { EventEmitter } from 'events';
 
 export interface SearchCriteria {
@@ -207,8 +209,7 @@ export class AccountSearch extends EventEmitter {
 
   private async searchCustomers(criteria: SearchCriteria): Promise<SearchResult[]> {
     try {
-      const response = await fetch('/api/customers/search', {
-        method: 'POST',
+      const response = await fetchSameOriginPost('/api/customers/search', {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -246,8 +247,7 @@ export class AccountSearch extends EventEmitter {
 
   private async searchAgents(criteria: SearchCriteria): Promise<SearchResult[]> {
     try {
-      const response = await fetch('/api/agents/search', {
-        method: 'POST',
+      const response = await fetchSameOriginPost('/api/agents/search', {
         headers: {
           'Content-Type': 'application/json',
         },

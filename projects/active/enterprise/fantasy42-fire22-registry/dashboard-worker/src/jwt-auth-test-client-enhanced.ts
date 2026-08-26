@@ -1,5 +1,8 @@
 #!/usr/bin/env bun
 
+import { fetchServiceOrigin } from './security/outbound-client.ts';
+import { parseExactLocalAuthority } from './security/runtime-authority-config.ts';
+
 /**
  * 🔐 Enhanced JWT Authentication Test Client
  * Tests advanced security features: rate limiting, audit logging, session management, etc.
@@ -60,7 +63,7 @@ class EnhancedAuthTestClient {
   private adminToken: string | null = null;
 
   constructor(baseUrl: string = 'http://localhost:8788') {
-    this.baseUrl = baseUrl;
+    this.baseUrl = parseExactLocalAuthority(baseUrl, 'auth-test');
   }
 
   private async makeRequest(endpoint: string, options: RequestInit = {}): Promise<Response> {
@@ -73,7 +76,7 @@ class EnhancedAuthTestClient {
       defaultHeaders['Authorization'] = `Bearer ${this.authToken}`;
     }
 
-    const response = await fetch(url, {
+    const response = await fetchServiceOrigin(this.baseUrl, url, {
       ...options,
       headers: {
         ...defaultHeaders,
@@ -94,7 +97,7 @@ class EnhancedAuthTestClient {
       defaultHeaders['Authorization'] = `Bearer ${this.adminToken}`;
     }
 
-    const response = await fetch(url, {
+    const response = await fetchServiceOrigin(this.baseUrl, url, {
       ...options,
       headers: {
         ...defaultHeaders,

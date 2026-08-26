@@ -5,6 +5,8 @@
  * With real-time WebSocket updates and interactive components
  */
 
+import { fetchSameOriginGet } from '../security/browser-outbound.ts';
+
 /**
  * WebSocket Manager for Real-Time Updates
  */
@@ -694,7 +696,7 @@ export class RealTimeToolsDashboard {
 
   private async fetchBetTicker() {
     try {
-      const response = await fetch('/api/betting/ticker');
+      const response = await fetchSameOriginGet('/api/betting/ticker');
       const data = await response.json();
 
       if (data.success) {
@@ -710,7 +712,7 @@ export class RealTimeToolsDashboard {
     try {
       const sportFilter =
         (document.getElementById('sport-filter') as HTMLSelectElement)?.value || 'all';
-      const response = await fetch(`/api/lines/sportsbook?sport=${sportFilter}`);
+      const response = await fetchSameOriginGet(`/api/lines/sportsbook?sport=${sportFilter}`);
       const data = await response.json();
 
       if (data.success) {
@@ -723,7 +725,7 @@ export class RealTimeToolsDashboard {
 
   private async fetchLiveScores() {
     try {
-      const response = await fetch('/api/scores');
+      const response = await fetchSameOriginGet('/api/scores');
       const data = await response.json();
 
       if (data.success) {

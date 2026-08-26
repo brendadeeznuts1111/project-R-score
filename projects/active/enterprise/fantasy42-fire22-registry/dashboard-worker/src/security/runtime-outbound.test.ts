@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'bun:test';
 import type { OutboundFetch } from '../../../../../../../lib/http/outbound-policy.ts';
 import type { Fantasy42OutboundOptions } from './outbound-client.ts';
-import { fetchConfiguredWebhook, fetchFixedFantasyApi } from './runtime-outbound.ts';
+import {
+  fetchConfiguredWebhook,
+  fetchFixedFantasyApi,
+  fetchLanguageHub,
+} from './runtime-outbound.ts';
 
 function hermetic(response = new Response('{}')): {
   readonly options: Fantasy42OutboundOptions;
@@ -132,5 +136,30 @@ describe('Fantasy42 runtime outbound authorities', () => {
         oversized.options
       )
     ).rejects.toThrow('exceeds 1000000 bytes');
+  });
+
+  test('language hub binds credentials to the exact loopback path authority', async () => {
+    const denied = hermetic();
+    expect(() =>
+      fetchLanguageHub(
+        'http://127.0.0.1:3001/api/hub/language/codes',
+        { headers: { authorization: 'Bearer secret' } },
+        denied.options
+      )
+    ).toThrow('exact localhost:3001');
+    expect(denied.effects).toEqual({ dns: 0, fetch: 0 });
+
+    const allowed = hermetic();
+    await fetchLanguageHub(
+      'http://localhost:3001/api/hub/language/code/en',
+      {
+        method: 'PUT',
+        headers: { authorization: 'Bearer fixture', 'content-type': 'application/json' },
+        body: '{}',
+      },
+      allowed.options
+    );
+    expect(allowed.effects).toMatchObject({ dns: 0, fetch: 1 });
+    expect(allowed.effects.init?.redirect).toBe('error');
   });
 });
