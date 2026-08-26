@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "brand-keymap",
   "path": "/registry/brand-keymap.json",
-  "generatedAt": "2026-08-26T13:47:47.838Z",
+  "generatedAt": "2026-08-26T13:56:27.804Z",
   "sources": {
     "catalog": "lib/types/branded/index.ts#BRAND_CATALOG",
     "manifest": "lib/types/brand-manifest.json",
@@ -3519,7 +3519,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 3,
+        "references": 5,
         "constructors": {
           "as": 1,
           "try": 0,
@@ -3528,17 +3528,19 @@
         "guards": 0,
         "files": [
           "lib/content-store/content-contract.ts",
-          "lib/rss/feed-snapshot-manifest.ts"
+          "lib/rss/feed-snapshot-manifest.ts",
+          "lib/rss/memory-feed-snapshot-archive.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 3,
+            "references": 5,
             "constructionCalls": 3,
             "guardCalls": 0,
             "files": [
               "lib/content-store/content-contract.ts",
-              "lib/rss/feed-snapshot-manifest.ts"
+              "lib/rss/feed-snapshot-manifest.ts",
+              "lib/rss/memory-feed-snapshot-archive.ts"
             ]
           },
           "projects": {
@@ -3653,7 +3655,7 @@
       "glossaryConcepts": [],
       "coverage": {
         "status": "covered",
-        "references": 6,
+        "references": 8,
         "constructors": {
           "as": 0,
           "try": 0,
@@ -3662,17 +3664,19 @@
         "guards": 0,
         "files": [
           "lib/content-store/channel-alias-store.ts",
-          "lib/rss/feed-snapshot-manifest.ts"
+          "lib/rss/feed-snapshot-manifest.ts",
+          "lib/rss/feed-snapshot-writer.ts"
         ],
         "scopes": {
           "spine": {
             "status": "covered",
-            "references": 6,
+            "references": 8,
             "constructionCalls": 1,
             "guardCalls": 0,
             "files": [
               "lib/content-store/channel-alias-store.ts",
-              "lib/rss/feed-snapshot-manifest.ts"
+              "lib/rss/feed-snapshot-manifest.ts",
+              "lib/rss/feed-snapshot-writer.ts"
             ]
           },
           "projects": {
