@@ -586,6 +586,27 @@
       "controlSpellings": []
     },
     {
+      "id": "lib/security/preload-startup-measurement-child.ts#spawnGuardedBunChild#6bc2e800dfb1ddd2#1",
+      "file": "lib/security/preload-startup-measurement-child.ts",
+      "callee": "spawnGuardedBunChild",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "6bc2e800dfb1ddd271b6095c5095152bdcf6492b15e1f42b530ab552863d442b",
+      "controlSpellings": [],
+      "review": {
+        "owner": "runtime-tooling",
+        "executable": "verified-bun",
+        "args": "measurement-exact",
+        "cwd": "repository-bound",
+        "environment": "empty",
+        "stdio": "pipe",
+        "network": "loopback-only",
+        "offline": "denied",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "The measurement harness binds Bun, argv, cwd, empty environment, and one ephemeral loopback origin before spawn."
+      }
+    },
+    {
       "id": "lib/security/vault-health-cron-worker.ts#Bun.spawn#681a1b7550969c1a#1",
       "file": "lib/security/vault-health-cron-worker.ts",
       "callee": "Bun.spawn",

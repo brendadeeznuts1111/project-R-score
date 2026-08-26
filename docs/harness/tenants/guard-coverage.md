@@ -86,6 +86,22 @@ inventory, request-policy adoption by every outbound consumer, and the raw or
 dynamically assembled subprocess backlog remain open, so this row is not yet
 `Implemented`.
 
+The preload/startup sub-inventory keeps test-runner preload, application runtime
+preload, fetch preconnect, and browser resource hints as four separate concepts.
+Its bidirectional manifest currently owns 42 exact surfaces: 31 test-runner
+preloads, zero promoted runtime preloads, four fetch-preconnect surfaces, and
+seven browser hints. Eleven test configuration entries reference missing setup
+modules and are explicitly denied; three dynamic test runners and three public
+preconnect launchers remain `review-required`. The former Fantasy42 global
+runtime preload and four experimental `BUN_OPTIONS` runtime-preload scripts were
+removed because they had no exact owner. `bun tools/measure-preload-startup.ts`
+is the only allowed startup-preconnect harness: it uses an exact ephemeral
+loopback origin, an empty child environment, and the guarded process boundary.
+On Bun 1.4.0 revision `34cbb9a40`, one seven-pair local run measured baseline
+startup/first-request medians of 6.116/0.363 ms and preconnect medians of
+5.922/0.152 ms. This is measurement evidence only; no promotion threshold or
+general optimization claim is defined.
+
 ### `CTRL-002` Subprocess authority
 
 **State** `Contracted`
