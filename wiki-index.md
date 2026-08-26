@@ -24,7 +24,7 @@ owns the machine-artifact companion.
 | Plane           | Coverage                                | Authority                                                                                                                              | Drift check                               |
 | --------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Portal pages    | 38/38                                   | [`lib/portal/page-concepts.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/portal/page-concepts.ts)           | `bun run wiki:coverage:check`             |
-| Harness tenants | 58/58                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
+| Harness tenants | 59/59                                   | [`docs/harness/tenants/`](docs/harness/tenants/)                                                                                       | `bun run wiki:coverage:check`             |
 | Registry links  | Curated links present                   | [`public/registry/`](public/registry/)                                                                                                 | paths must exist under `public/registry/` |
 | Wiki links      | Published entrypoints                   | `_config.yml` · [`tools/wiki-link-check.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/tools/wiki-link-check.ts) | `bun run wiki:links:check`                |
 | Public plane    | Portal · registry · monitoring · lander | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                              | `bun run public:discover:check`           |
@@ -241,6 +241,7 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 | Coverage floor                | [`coverage-floor.md`](docs/harness/tenants/coverage-floor.md)                       |
 | Complexity floor              | [`complexity-floor.md`](docs/harness/tenants/complexity-floor.md)                   |
 | Docs integrity                | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md)                       |
+| Guard coverage                | [`guard-coverage.md`](docs/harness/tenants/guard-coverage.md)                       |
 | Reference discovery           | [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)             |
 | Registry integrity            | [`registry-integrity.md`](docs/harness/tenants/registry-integrity.md)               |
 | Monorepo health               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                     |
