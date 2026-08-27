@@ -89,7 +89,7 @@ pnpm create cloudflare@latest
 ## Post-Creation
 
 ```bash
-cd my-app
+cd .agents/skills/cloudflare/references/c3
 
 # Local dev with hot reload
 npm run dev
