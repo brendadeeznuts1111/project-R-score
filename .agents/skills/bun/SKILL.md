@@ -54,14 +54,18 @@ which bun         # /Users/nolarose/.bun/bin/bun
 | Command | Use |
 |---------|-----|
 | `bun run <script>` | Run a package.json script (or ./file.ts) |
-| `bun run --parallel <a> <b>` (1.4) | Run scripts concurrently; `--filter` for workspaces, `--no-exit-on-error` |
+| `bun run --parallel <a> <b>` (1.4) | Run multiple scripts concurrently (Foreman-style); `--sequential` and `--no-exit-on-error` also supported |
+| `bun run -F/--filter <pattern> <script>` | Run a script in **all workspace packages** matching the pattern — NOT script chaining (verified: a script name as filter errors "No workspace packages matched") |
+| `bun run --watch <file>` | Restart the process on file change (one entrypoint) |
+| `bun run --hot <file>` | In-process auto reload (runtime/test/bundler); `--hot` and `--watch` do not take two entrypoints |
 | `bun test` | Test runner — `--isolate`, `--grep "pat"`, `bun test <paths>` |
-| `bun test --parallel` / `--shard=1/3` (1.4) | Parallel tests; sharded CI matrix |
+| `bun test --parallel` / `--shard=1/3` (1.4) | Parallel tests (implies `--isolate`, N=cores); sharded CI matrix |
+| `bun test --coverage` (1.4) | Built-in coverage; `--coverage-reporter text|lcov`, `--coverage-dir` |
 | `bun audit fix` (1.4) | Autofix dependency vulnerabilities |
 | `bun dedupe` (1.4) | Dedupe the lockfile |
 | `bun prune` (1.4) | Remove unused dependencies |
-| `bunx <pkg>` | Execute an npm package without installing (e.g. `bunx tsc --noEmit`) |
-| `bun install` / `bun add` | Dependency management (writes bun.lock) |
+| `bunx <pkg>` / `bun x <pkg>` | Execute an **npm package** executable (auto-installs to shared cache) — NOT a local-script runner; use `bun run <script>` / `bun <file>.ts` for local code |
+| `bun install --linker isolated|hoisted` | CLI linker override; bunfig `[install] linker`; 1.4 defaults NEW monorepos to isolated (existing keep hoisted) |
 | `bun build` | Bundler — `files:` map and `metafile: true` supported (1.4) |
 | `bun build --compile` | Standalone executables |
 | `bun -e '…'` | Evaluate a one-liner (host runtime, has `Bun`) |
@@ -92,9 +96,14 @@ which bun         # /Users/nolarose/.bun/bin/bun
     ON by default
   - `ansi(md, opts?)` — **standalone** terminal renderer with color (verified);
     opts include `{ colors: false }` and `{ columns: 60 }`; `AnsiTheme`
-    interface exists for themed terminal rendering
-  - `render(md, {heading, paragraph, strong, …})` — callback renderers per
-    element (release-notes API; the way to emit custom ANSI escape codes)
+    interface exists for themed terminal rendering. **Render-style element
+    callbacks passed to `ansi()` are IGNORED** (verified — `ansi(md,
+    {heading: cb})` ignores the callback); use `render()` for callbacks
+  - `render(md, {heading, paragraph, strong, table, …})` — callback renderers
+    per element (release-notes API; the way to emit custom ANSI escape codes).
+    Verified signatures: `heading(children, {level})` (2nd arg is a state
+    object with `level`, NOT a number) — callbacks receive accumulated
+    children
   - `react(md, {h1: MyComponent, …})` — React JSX elements; swap any tag's
     component
   - **Autolinks default to `false`** (verified — explains plain bare URLs):
@@ -104,7 +113,8 @@ which bun         # /Users/nolarose/.bun/bin/bun
     `headings: { ids, autolink }`, `hardSoftBreaks`
   - Frontmatter pattern (frontmatter is NOT parsed by Bun.markdown):
     `const [meta, body] = (await Bun.file("page.md").text()).split("---\n").slice(1);`
-    then `Bun.YAML.parse(meta)` (or `Bun.JSON5.parse(meta)`)
+    then `Bun.YAML.parse(meta)` (or `Bun.JSON5.parse(meta)`); emit frontmatter
+    with `Bun.YAML.stringify(obj)` (verified exists)
 - `Bun.cron()` — OS-level scheduled job (crontab/launchd/Task Scheduler);
   `scheduled(controller)` handler, same shape as CF Workers Cron Triggers;
   5-field syntax + named days + `@daily` (https://bun.com/docs/runtime/cron)
@@ -159,3 +169,6 @@ bunx tsc --noEmit  # typecheck through the host CLI
 - `bunfig.toml` — install/test/run defaults per repo
 - Prefer Bun builtins over npm deps; zero-runtime-dep repos keep `drizzle-orm`
   + `zod` only
+- **Hooks:** package.json `gitHooks` is NOT read by Bun or git (it is the yorkie
+  convention) — wire hooks via `git config core.hooksPath` (e.g. `.githooks/`)
+  or `.husky/`; Bun runs `prepare` lifecycle scripts
