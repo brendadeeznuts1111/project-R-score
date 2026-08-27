@@ -50,6 +50,10 @@
 /feeds/v1/projects/project-r-score/bun-1.4/images.xml  /feeds/v1/images.xml  301
 /feeds/v1/projects/project-r-score/bun-1.4/videos.xml  /feeds/v1/videos.xml  301
 /feeds/v1/projects/project-r-score/bun-1.4/embeds.xml  /feeds/v1/embeds.xml  301
+# Unknown feed paths must 404 — never fall back to the SPA index (registry
+# contract: unregistered-no-fallback). A mistyped feed URL must not serve
+# HTML labeled application/rss+xml to feed readers. 404.html is committed.
+/feeds/v1/*  /404.html  404
 # legacy flat report path → directory index (ops:prediction / Pages pretty URL)
 /registry/prediction/report.html  /registry/prediction/report/  301
 # bare /health → Functions JSON (functions/health/index.ts); /health/ → portal UI redirect
