@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bun runtime and toolkit"
+  short_description: "Bun 1.4 CLI, Bun.* globals, bun:sqlite, zstd, sandbox pitfalls (release-notes grounded)"
+  default_prompt: "Use $bun for Bun runtime work: CLI commands, Bun.* globals, bun:sqlite, Bun.$, zstd, and Bun-native script/debug tasks. Grounded in the official Bun 1.4 release notes (2026-08-20); host bun is the executable contract and the agent code sandbox has no Bun global — shell out via bash."

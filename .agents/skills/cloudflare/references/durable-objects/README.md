@@ -182,3 +182,4 @@ npx wrangler deploy           # Deploy + auto-apply migrations
 
 - **[DO Storage](../do-storage/README.md)** - SQLite, KV, transactions (detailed storage guide)
 - **[Workers](../workers/README.md)** - Core Workers runtime features
+- **[WebSockets](https://developers.cloudflare.com/durable-objects/best-practices/websockets/)** - WebSocket APIs and patterns

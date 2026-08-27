@@ -39,11 +39,10 @@ In producer's `wrangler.jsonc`:
 
 ```bash
 # Deploy Tail Worker first
-cd tail-worker
+cd .agents/skills/cloudflare/references/tail-workers
 wrangler deploy
 
 # Then deploy producer Worker
-cd ../producer-worker
 wrangler deploy
 ```
 
