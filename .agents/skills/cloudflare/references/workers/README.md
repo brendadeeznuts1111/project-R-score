@@ -53,7 +53,7 @@ npx wrangler secret put API_KEY     # Set secret
 
 ```bash
 npm create cloudflare@latest my-worker -- --type hello-world
-cd my-worker
+cd .agents/skills/cloudflare/references/workers
 npx wrangler dev
 ```
 

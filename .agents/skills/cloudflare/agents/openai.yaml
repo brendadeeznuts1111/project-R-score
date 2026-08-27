@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare platform"
+  short_description: "Workers, Pages, storage, AI, networking, security, IaC decision trees"
+  default_prompt: "Use $cloudflare for any Cloudflare development task: Workers, Pages, KV/D1/R2 storage, Workers AI, networking, security, and infrastructure-as-code. Prefer retrieval from Cloudflare docs over pre-trained knowledge; references/ under the skill are starting points, not source of truth."
