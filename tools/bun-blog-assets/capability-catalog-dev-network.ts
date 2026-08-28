@@ -37,7 +37,11 @@ export const BUN_14_DEV_NETWORK_CAPABILITIES: Bun14Capability[] = [
     releaseUrl: `${BLOG}#dev-tooling`,
     docsUrl: 'https://bun.com/docs/runtime/environment-variables',
     assetIds: [],
-    contractFiles: ['tests/bun-env-loading.test.ts', 'tests/portal-cli-bun-flags.test.ts'],
+    contractFiles: [
+      'tests/bun-env-loading.test.ts',
+      'tests/bun-runtime-global-flags.test.ts',
+      'tests/portal-cli-bun-flags.test.ts',
+    ],
   },
   {
     id: asReleaseCapabilityId('bun-serve-http3-experimental'),

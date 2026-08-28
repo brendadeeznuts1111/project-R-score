@@ -796,6 +796,7 @@
       "assetIds": [],
       "contractFiles": [
         "tests/bun-env-loading.test.ts",
+        "tests/bun-runtime-global-flags.test.ts",
         "tests/portal-cli-bun-flags.test.ts"
       ],
       "chapterId": "what-s-new"

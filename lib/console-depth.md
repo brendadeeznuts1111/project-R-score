@@ -51,8 +51,10 @@ bun run - --console-depth=4     # ❌ flag is argv for the stdin script, not Bun
 ```
 
 When a runtime option is repeated, Bun uses the last value; the wrapper follows
-the same rule. `--config=<path>` / `-c <path>` also selects the bunfig read by
-the wrapper. Script arguments named `--console-depth` are deliberately ignored.
+the same rule. `--config=<path>` also selects the bunfig read by the wrapper.
+Although the wrapper can parse `-c`, pinned Bun 1.4.0 does not apply that
+advertised alias consistently; use the long equals form. Script arguments named
+`--console-depth` are deliberately ignored.
 
 This workspace’s `bunfig.toml` pins `[console] depth = 6`, so probes of the
 native flag from the repo root can look “always deep”. Contract test spawns from
