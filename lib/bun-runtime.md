@@ -239,12 +239,28 @@ executing command help shows it.
 
 #### Global configuration & context
 
-| Flag                     | Shape / values        | Description                             |
-| ------------------------ | --------------------- | --------------------------------------- |
-| `--env-file <path>`      | `string` (repeatable) | Load specific `.env` file(s)            |
-| `--no-env-file`          | boolean               | Disable automatic `.env` loading        |
-| `--cwd <path>`           | `string`              | Absolute cwd for resolution             |
-| `-c` / `--config <path>` | `string`              | Bun config (default `$cwd/bunfig.toml`) |
+| Flag                | Shape / values        | Description                                 |
+| ------------------- | --------------------- | ------------------------------------------- |
+| `--env-file <path>` | `string` (repeatable) | Load specific `.env` file(s)                |
+| `--no-env-file`     | boolean               | Disable automatic `.env` loading            |
+| `--cwd <path>`      | `string`              | Absolute cwd for resolution                 |
+| `--config=<path>`   | `string`              | Bun config (default `$cwd/bunfig.toml`)     |
+| `-c`                | advertised alias      | Avoid on pinned Bun 1.4.0; see caveat below |
+
+```bash
+bun --env-file=.env.prod -p 'process.env.KEY'
+bun --config=bunfig.custom.toml -e "console.log('custom config')"
+```
+
+Both flags belong to Bun and must appear before the evaluated script or `run`
+subcommand. `--env-file` explicitly loads the named file even when the active
+bunfig disables automatic dotenv loading. Relative `--config=<path>` values
+resolve from the effective `--cwd`.
+
+Pinned Bun 1.4.0 advertises `-c` as the `--config` alias but does not apply the
+selected bunfig for `-c=<path>` or `-c<path>`. The spaced `-c <path>` form can
+treat the TOML file as the entrypoint. Use the long equals form until a newer
+runtime is separately promoted and proved.
 
 **Harness tips**
 
