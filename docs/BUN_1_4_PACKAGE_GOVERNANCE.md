@@ -7,14 +7,14 @@ right to copy Bun blog images, videos, posters, or embeds. Media policy lives in
 
 ## Read-only review loop
 
-| Question                                             | Bun 1.4 command                 | Repository command                       | Behavior                                                                                                                    |
-| ---------------------------------------------------- | ------------------------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| Are production license labels structurally complete? | `bun pm licenses --prod --json` | `bun run dependencies:licenses`          | Normalizes counts and removes machine-specific install paths. Unknown, unlicensed, and `SEE LICENSE IN` labels fail review. |
-| Can compatible lockfile versions collapse?           | `bun dedupe --check`            | `bun run dependencies:dedupe:check`      | Exits non-zero without writing when a duplicate can be removed.                                                             |
-| Are both checks clean?                               | both commands above             | `bun run dependencies:governance:check`  | The CI-safe package-governance gate.                                                                                        |
-| What changed between package versions?               | `bun pm diff <spec...>`         | `bun run dependencies:diff -- <spec...>` | Operator review; may fetch registry packages but does not update the project.                                               |
-| What would a vulnerability repair do?                | `bun audit fix --dry-run`       | `bun run security:audit:fix:dry-run`     | Review before any install or range change.                                                                                  |
-| What is no longer represented by the lockfile?       | `bun prune --dry-run`           | `bun run dependencies:prune:dry-run`     | Reports extraneous installed files; it does not identify repository source files.                                           |
+| Question                                             | Bun 1.4 command                 | Repository command                       | Behavior                                                                                                                         |
+| ---------------------------------------------------- | ------------------------------- | ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Are production license labels structurally complete? | `bun pm licenses --prod --json` | `bun run dependencies:licenses`          | Normalizes counts and removes machine-specific install paths. Unknown, unlicensed, and `SEE LICENSE IN` labels fail review.      |
+| Can compatible lockfile versions collapse?           | `bun dedupe --check`            | `bun run dependencies:dedupe:check`      | Exits non-zero without writing when a duplicate can be removed.                                                                  |
+| Are both checks clean?                               | both commands above             | `bun run dependencies:governance:check`  | The CI-safe package-governance gate.                                                                                             |
+| What changed between package versions?               | `bun pm diff <spec...>`         | `bun run dependencies:diff -- <spec...>` | Operator review with repository-owned help and argument validation; may fetch registry packages but does not update the project. |
+| What would a vulnerability repair do?                | `bun audit fix --dry-run`       | `bun run security:audit:fix:dry-run`     | Review before any install or range change.                                                                                       |
+| What is no longer represented by the lockfile?       | `bun prune --dry-run`           | `bun run dependencies:prune:dry-run`     | Reports extraneous installed files; it does not identify repository source files.                                                |
 
 The JSON license report is available from `bun run dependencies:licenses:json`.
 It is generated on demand and is not committed because native output contains
@@ -22,6 +22,11 @@ installation paths and changes with the resolved production graph. The
 normalized report intentionally does not decide whether a known license is
 acceptable; that is a legal/product policy decision. It only fails labels that
 provide no usable license identity.
+
+`bun pm --help` in Bun 1.4.0 does not list the new `diff` subcommand even though
+the command is available. Use `bun run dependencies:diff -- --help` for the
+repository-owned examples. The wrapper forwards package and path operands as an
+argument array and preserves Bun's native summary, diff, and exit status.
 
 ## Intentional mutations
 

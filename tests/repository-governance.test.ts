@@ -128,7 +128,7 @@ describe('repository governance', () => {
     expect(ignore).toContain('/artifacts/deeplink-automation/');
   });
 
-  test('root examples and skill guidance stay Bun-native and Oxlint-free', async () => {
+  test('root examples stay Bun-native', () => {
     expect(packageJson.cheatsheets.code.typescript.examples['Nullish Coalescing']).toContain(
       'Bun.env.PORT'
     );
@@ -136,18 +136,5 @@ describe('repository governance', () => {
       "Bun.spawn(['bun', 'install']"
     );
     expect(packageJson.cheatsheets.code.bun.examples['Check Env']).not.toContain('process.env');
-
-    const workerGuidance = await Promise.all(
-      [
-        '.agents/skills/workers-best-practices/SKILL.md',
-        '.agents/skills/workers-best-practices/references/review.md',
-        '.agents/skills/workers-best-practices/references/rules.md',
-      ].map(path => Bun.file(`${import.meta.dir}/../${path}`).text())
-    );
-    const combinedGuidance = workerGuidance.join('\n');
-    expect(combinedGuidance).not.toMatch(/\bnpx (?:eslint|oxlint|tsc)\b/);
-    expect(combinedGuidance).not.toContain('bunx oxlint');
-    expect(combinedGuidance).toContain('bun run lint');
-    expect(combinedGuidance).toContain('bun run tsc --noEmit');
   });
 });

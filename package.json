@@ -2205,7 +2205,7 @@
     "dependencies:governance:check": "bun tools/bun-package-governance-cli.ts check",
     "dependencies:licenses": "bun tools/bun-package-governance-cli.ts licenses",
     "dependencies:licenses:json": "bun tools/bun-package-governance-cli.ts licenses --json",
-    "dependencies:diff": "bun pm diff",
+    "dependencies:diff": "bun tools/bun-package-governance-cli.ts diff",
     "dependencies:dedupe:check": "bun dedupe --check",
     "dependencies:dedupe:dry-run": "bun dedupe --dry-run",
     "dependencies:prune:dry-run": "bun prune --dry-run",
