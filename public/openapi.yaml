@@ -1,0 +1,44 @@
+openapi: 3.1.0
+info:
+  title: FactoryWager Public Read API
+  version: 1.0.0
+  description: Read-only public registry, operations, and health surfaces.
+servers:
+  - url: https://score.factory-wager.com
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Read service and artifact health
+      responses:
+        "200": { description: Health snapshot }
+  /api/monitoring:
+    get:
+      operationId: getMonitoring
+      summary: Read registry and integrity metrics
+      responses:
+        "200": { description: Monitoring snapshot }
+  /api/operations/summary:
+    get:
+      operationId: getOperationsSummary
+      summary: Read the current operations summary
+      responses:
+        "200": { description: Operations summary }
+  /api/toc:
+    get:
+      operationId: getToc
+      summary: Read the demo-only TOC operations fixture
+      responses:
+        "200": { description: TOC fixture }
+  /api/registry:
+    get:
+      operationId: getRegistry
+      summary: Read the package registry index
+      responses:
+        "200": { description: Registry index }
+  /api/env:
+    get:
+      operationId: getEnvironmentStatus
+      summary: Read redacted environment-variable status
+      responses:
+        "200": { description: Redacted environment status }

@@ -14,6 +14,32 @@ Disallow: /private/
 Disallow: /internal/
 Disallow: /tmp/
 
+# Search and answer discovery crawlers. GPTBot is listed separately because it
+# controls potential model-training use, while OAI-SearchBot controls ChatGPT search.
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /private/
+Disallow: /internal/
+Disallow: /tmp/
+
+User-agent: GPTBot
+Allow: /
+Disallow: /private/
+Disallow: /internal/
+Disallow: /tmp/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /private/
+Disallow: /internal/
+Disallow: /tmp/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /private/
+Disallow: /internal/
+Disallow: /tmp/
+
 # Optional: narrow crawl to canonical docs/content paths only
 # User-agent: Cloudflare-AutoRAG
 # Allow: /
@@ -26,3 +52,4 @@ Disallow: /tmp/
 Sitemap: https://wiki.factory-wager.com/sitemap.xml
 Sitemap: https://wiki.factory-wager.com/sitemap-pages.xml
 Sitemap: https://score.factory-wager.com/sitemap.xml
+Sitemap: https://score.factory-wager.com/sitemap-portal.xml
