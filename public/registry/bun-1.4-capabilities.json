@@ -94,7 +94,25 @@
       "contractFiles": [
         "tests/bun-markdown-ansi.test.ts",
         "tests/bun-1.4-cli-example.test.ts",
+        "tests/markdown-options.test.ts",
         "tests/markdown-safe-html.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-cron-scheduler",
+      "domain": "runtime",
+      "symbol": "Bun.cron",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Registers OS-persistent jobs, schedules non-overlapping in-process handlers and parses cron expressions with explicit time zones.",
+      "boundary": "OS registration is an explicit local operation; in-process jobs are disposable and must not leak from tests.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-cron",
+      "docsUrl": "https://bun.com/docs/runtime/cron",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-cron.test.ts",
+        "tests/bun-1.4.0-cron-contract.test.ts"
       ],
       "chapterId": "what-s-new"
     },
@@ -181,13 +199,31 @@
       "domain": "platform",
       "symbol": "Bun.Terminal",
       "changeKind": "release-window",
-      "adoption": "local-only",
-      "summary": "Provides a cross-platform native pseudo-terminal through Bun.spawn.",
+      "adoption": "integrated",
+      "summary": "Drives and captures cross-platform pseudo-terminals through Bun.spawn.",
       "boundary": "Interactive local tooling only; not a static portal or edge-runtime dependency.",
       "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-terminal",
       "docsUrl": "https://bun.com/docs/runtime/terminal",
       "assetIds": [],
-      "contractFiles": [],
+      "contractFiles": [
+        "tests/terminal.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "bun-ffi-native-contract",
+      "domain": "runtime",
+      "symbol": "bun:ffi CString / buffer_length",
+      "changeKind": "changed",
+      "adoption": "contract",
+      "summary": "Uses JavaScriptCore-native FFI, passes typed-array lengths with buffer_length and returns cstring values as plain strings or null.",
+      "boundary": "Native-library calls remain isolated from browser, edge, XML and feed parsing boundaries.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#3x-faster-bun-ffi",
+      "docsUrl": "https://bun.com/docs/runtime/ffi",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-1.4.0-breaking-changes-contract.test.ts"
+      ],
       "chapterId": "what-s-new"
     },
     {
@@ -490,6 +526,22 @@
       "chapterId": "bun-install"
     },
     {
+      "id": "bun-run-parallel",
+      "domain": "package-manager",
+      "symbol": "bun run --parallel / --sequential",
+      "changeKind": "release-window",
+      "adoption": "integrated",
+      "summary": "Runs explicit or glob-matched scripts concurrently or sequentially with prefixed output and workspace filters.",
+      "boundary": "Repository orchestration only; bounded test-worker scheduling remains owned by bun test --parallel.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-run-parallel",
+      "docsUrl": "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
+      "assetIds": [],
+      "contractFiles": [
+        "tests/bun-run-parallel-contract.test.ts"
+      ],
+      "chapterId": "what-s-new"
+    },
+    {
       "id": "bun-test-parallel",
       "domain": "test-runner",
       "symbol": "bun test --parallel",
@@ -614,6 +666,32 @@
       ],
       "contractFiles": [],
       "chapterId": "bun-build"
+    },
+    {
+      "id": "cpu-profile-env-claim",
+      "domain": "observability",
+      "symbol": "BUN_CPU_PROFILE",
+      "changeKind": "release-window",
+      "adoption": "upstream-claim",
+      "summary": "Bun documents BUN_CPU_PROFILE=1 for processes that cannot receive profiler flags.",
+      "boundary": "Not adopted on the pinned runtime; repository subprocesses use explicit flags or BUN_OPTIONS until an executable proof exists.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#dev-tooling",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
+    },
+    {
+      "id": "markdown-linear-time-claim",
+      "domain": "runtime",
+      "symbol": "Bun.markdown parser complexity",
+      "changeKind": "performance",
+      "adoption": "upstream-claim",
+      "summary": "Bun reports linear-time Markdown parsing on adversarial input.",
+      "boundary": "Upstream complexity claim only; repository tests cover output and security boundaries, not a timing benchmark.",
+      "releaseUrl": "https://bun.com/blog/bun-v1.4#bun-markdown",
+      "assetIds": [],
+      "contractFiles": [],
+      "chapterId": "what-s-new"
     },
     {
       "id": "ffi-performance-claim",
