@@ -9,6 +9,7 @@
 // @updated --parallel · changed v1.3.13 · 2026-04-20 · https://bun.com/blog/bun-v1.3.13
 // @updated --parallel · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
 // @updated --parallel · fixed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @see https://bun.com/docs/pm/filter#parallel-and-sequential-mode — bun run --parallel
 // Official Bun 1.4 facts only. Performance entries remain explicitly upstream-only claims.
 import type { Bun14Capability } from './types.ts';
 import { asReleaseCapabilityId } from '../../lib/types/branded.ts';
@@ -54,6 +55,21 @@ export const BUN_14_TOOLING_CAPABILITIES: Bun14Capability[] = [
     docsUrl: 'https://bun.com/docs/pm/cli/prune',
     assetIds: ['bun-1.4-bun-prune-poster', 'bun-1.4-bun-prune'],
     contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('bun-run-parallel'),
+    domain: 'package-manager',
+    symbol: 'bun run --parallel / --sequential',
+    changeKind: 'release-window',
+    adoption: 'integrated',
+    summary:
+      'Runs explicit or glob-matched scripts concurrently or sequentially with prefixed output and workspace filters.',
+    boundary:
+      'Repository orchestration only; bounded test-worker scheduling remains owned by bun test --parallel.',
+    releaseUrl: `${BLOG}#bun-run-parallel`,
+    docsUrl: 'https://bun.com/docs/pm/filter#parallel-and-sequential-mode',
+    assetIds: [],
+    contractFiles: ['tests/bun-run-parallel-contract.test.ts'],
   },
   {
     id: asReleaseCapabilityId('bun-test-parallel'),
