@@ -4,6 +4,10 @@
 import type { Bun14Capability } from './types.ts';
 import { asReleaseCapabilityId } from '../../lib/types/branded.ts';
 import { BUN_14_COLOR_CAPABILITIES } from './capability-catalog-color.ts';
+import {
+  BUN_14_CRON_CAPABILITIES,
+  BUN_14_LOCAL_RUNTIME_CAPABILITIES,
+} from './capability-catalog-runtime-local.ts';
 
 const BLOG = 'https://bun.com/blog/bun-v1.4';
 
@@ -52,9 +56,11 @@ export const BUN_14_RUNTIME_CAPABILITIES: Bun14Capability[] = [
     contractFiles: [
       'tests/bun-markdown-ansi.test.ts',
       'tests/bun-1.4-cli-example.test.ts',
+      'tests/markdown-options.test.ts',
       'tests/markdown-safe-html.test.ts',
     ],
   },
+  ...BUN_14_CRON_CAPABILITIES,
   {
     id: asReleaseCapabilityId('process-memory-pressure'),
     domain: 'observability',
@@ -108,19 +114,7 @@ export const BUN_14_RUNTIME_CAPABILITIES: Bun14Capability[] = [
     contractFiles: [],
   },
   ...BUN_14_COLOR_CAPABILITIES,
-  {
-    id: asReleaseCapabilityId('bun-terminal-local-tools'),
-    domain: 'platform',
-    symbol: 'Bun.Terminal',
-    changeKind: 'release-window',
-    adoption: 'local-only',
-    summary: 'Provides a cross-platform native pseudo-terminal through Bun.spawn.',
-    boundary: 'Interactive local tooling only; not a static portal or edge-runtime dependency.',
-    releaseUrl: `${BLOG}#bun-terminal`,
-    docsUrl: 'https://bun.com/docs/runtime/terminal',
-    assetIds: [],
-    contractFiles: [],
-  },
+  ...BUN_14_LOCAL_RUNTIME_CAPABILITIES,
   {
     id: asReleaseCapabilityId('bun-no-orphans'),
     domain: 'platform',

@@ -31,13 +31,14 @@ describe('Bun 1.4 reconciled breaking-change contracts', () => {
   });
 
   releaseTest('uses plain-string CString values without the removed wrapper fields', async () => {
-    const { CString } = await import('bun:ffi');
+    const { CString, FFIType } = await import('bun:ffi');
     const value = CString(0);
     expect(typeof value).toBe('string');
     expect(value).toBe('');
     expect(Object(value)).not.toHaveProperty('ptr');
     expect(Object(value)).not.toHaveProperty('byteLength');
     expect(Object(value)).not.toHaveProperty('arrayBuffer');
+    expect(FFIType.buffer_length).toBe(FFIType.buffer_bytelength);
   });
 
   releaseTest('uses TOML 1.1 date values and YAML 1.2 booleans', () => {

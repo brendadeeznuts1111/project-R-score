@@ -18,8 +18,17 @@ releaseTest('Bun 1.4.0 cron parsing accepts an explicit IANA time zone', () => {
   expect(next?.toISOString()).toBe('2026-06-15T13:00:00.000Z');
 });
 
-if (Bun.version === TARGET_VERSION) {
-  test.todo('Bun 1.4.0 stopped in-process cron jobs release a standalone CLI event loop');
-} else {
-  test.skip('Bun 1.4.0 stopped in-process cron jobs release a standalone CLI event loop', () => {});
-}
+releaseTest('stopped in-process cron jobs release a standalone CLI event loop', async () => {
+  const proc = Bun.spawn(
+    [
+      process.execPath,
+      '-e',
+      `const job = Bun.cron('* * * * *', () => {}); job.stop(); console.log('stopped');`,
+    ],
+    { stdout: 'pipe', stderr: 'pipe' }
+  );
+  const code = await Promise.race([proc.exited, Bun.sleep(3_000).then(() => -1)]);
+  if (code === -1) proc.kill();
+  expect(code).toBe(0);
+  expect((await new Response(proc.stdout).text()).trim()).toBe('stopped');
+});
