@@ -106,7 +106,7 @@ describe('project RSS channel registry', () => {
       await Bun.file('public/registry/project-rss-channels.json').json()
     );
     expect(actual).toEqual(expected);
-    expect(activeLeaves).toHaveLength(20);
+    expect(activeLeaves).toHaveLength(24);
     expect(expected.projects).toHaveLength(21);
     expect(expected.projects.filter(project => project.feedStatus === 'registered')).toHaveLength(1);
 
@@ -210,4 +210,22 @@ describe('project RSS channel registry', () => {
       ])
     ).toThrow('not normalized');
   });
+describe('feed no-fallback contract (404 catch)', () => {
+  test('_redirects 404s unknown /feeds/v1/* paths instead of SPA fallback', async () => {
+    const redirects = await Bun.file('public/_redirects').text();
+    expect(redirects).toMatch(/\/feeds\/v1\/\*\s+\/404\.html\s+404/);
+    const aliasIndex = redirects.indexOf('/feeds/v1/projects/project-r-score/bun-1.4/all.xml');
+    const catchIndex = redirects.indexOf('/feeds/v1/*');
+    expect(aliasIndex).toBeGreaterThan(-1);
+    expect(catchIndex).toBeGreaterThan(aliasIndex);
+  });
+
+  test('public/404.html exists and is standalone (no SPA asset deps)', async () => {
+    const page = await Bun.file('public/404.html').text();
+    expect(page).toContain('404');
+    expect(page).toContain('<!doctype html>');
+    expect(page).not.toContain('/assets/');
+  });
 });
+});
+

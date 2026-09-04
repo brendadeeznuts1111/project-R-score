@@ -111,6 +111,18 @@ async function verifyPagesRedirects(): Promise<void> {
   if (actual.join('\0') !== expected.join('\0')) {
     throw new Error(`Project RSS aliases in ${PAGES_REDIRECTS_PATH} do not match the registry`);
   }
+  // unregistered-no-fallback contract: unknown /feeds/v1/* paths must 404
+  // (a mistyped feed URL must never serve SPA HTML labeled application/rss+xml).
+  if (!/\/feeds\/v1\/\*\s+\/404\.html\s+404/.test(redirects)) {
+    throw new Error(
+      `feed 404 catch missing in ${PAGES_REDIRECTS_PATH} — add '/feeds/v1/*  /404.html  404'`
+    );
+  }
+  if (!(await Bun.file('public/404.html').exists())) {
+    throw new Error(
+      'public/404.html missing — the feed 404 catch must resolve to a committed page'
+    );
+  }
 }
 
 async function verifyPagesHeaders(): Promise<void> {
