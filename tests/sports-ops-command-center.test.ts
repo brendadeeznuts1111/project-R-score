@@ -96,5 +96,8 @@ describe('sports ops command center', () => {
     expect(html.includes("s.source!=='seed'&&rows.length>0")).toBe(true);
     expect(html.includes('if(s&&s.games)')).toBe(true);
     expect(html.includes('if(s.length<2)')).toBe(true);
+    expect(html.includes('window.__sportsOpsMcp')).toBe(true);
+    expect(html.includes('get_link_status')).toBe(true);
+    expect(html.includes('MCP · LOCAL')).toBe(true);
   });
 });

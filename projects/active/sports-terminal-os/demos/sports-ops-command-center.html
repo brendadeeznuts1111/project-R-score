@@ -266,7 +266,7 @@ footer{position:relative;overflow:hidden;border:1px solid var(--line);background
       <div class="p-body"><div class="movers" id="movers"></div></div>
     </section>
     <section class="panel">
-      <div class="p-head"><div class="p-title">SHARP DESK · 客户</div><div class="p-tag">DERIVED ONCE · SHARP.TS</div></div>
+      <div class="p-head"><div class="p-title">SHARP DESK · 客户</div><div class="p-tag" id="sharp-tag">DERIVED ONCE · SHARP.TS</div></div>
       <div class="p-body"><div class="injuries" id="sharp"></div></div>
     </section>
     <section class="panel">
@@ -361,6 +361,9 @@ function normalizeState(raw,fallbackSource){
     betfeed:Array.isArray(src.betfeed)?src.betfeed:[],
     sharp:Array.isArray(src.sharp)?src.sharp:[],
     logs:Array.isArray(src.logs)?src.logs:[],
+    links:src.links&&typeof src.links==='object'
+      ?{fourc:String(src.links.fourc||'seed'),f402:String(src.links.f402||'seed')}
+      :{fourc:'seed',f402:'seed'},
   };
 }
 function formatMoney(n){
@@ -565,6 +568,10 @@ function setPill(mode,label){
   p.innerHTML='<i></i>4C LINK · '+label;
 }
 function applyLinkPill(){
+  const fourc=STATE.links&&STATE.links.fourc;
+  if(fourc==='live'){setPill('live','LIVE');return;}
+  if(fourc==='blocked'){setPill('snapshot','BLOCKED');return;}
+  if(fourc==='signin'){setPill('snapshot','SIGN IN');return;}
   const label=linkMode==='live'?'LIVE':linkMode==='snapshot'?'SNAPSHOT':'SEED';
   setPill(linkMode==='live'||linkMode==='snapshot'?linkMode:'seed',label);
 }
@@ -680,13 +687,15 @@ function renderBetfeed(s){
       ${esc(x.legs?.[0]?.desc??'')} <small>(${(x.legs??[]).length} leg)</small> · r${esc(x.risk)} / w${esc(x.win)}</span>
     <span class="sev ${x.source==='alert'?'high':x.source==='gslive'||x.source==='gsbuild'?'watch':'info'}">${esc(String(x.source??'').toUpperCase())}</span>
   </div>`).join(''):'<div class="empty">AWAITING F402 BETFEED · 等待注单</div>';
-  document.getElementById('bf-tag').textContent='F402 · '+(s.source||'seed').toUpperCase();
+  document.getElementById('bf-tag').textContent='F402 · '+(s.links&&s.links.f402==='live'?'LIVE':(s.source||'seed').toUpperCase());
   const fp=document.getElementById('f402-pill');
-  const live=s.source!=='seed'&&rows.length>0;
+  const live=s.source!=='seed'&&rows.length>0||(s.links&&s.links.f402==='live'&&rows.length>0);
   fp.className='src-pill'+(live?' live':'');
   fp.innerHTML='<i></i>F402 · '+(live?'LIVE':'SEED');
 }
 function renderSharp(rows){
+  const tag=document.getElementById('sharp-tag');
+  if(tag) tag.textContent=STATE.links&&STATE.links.f402==='live'?'DERIVED · F402 TICKER':'DERIVED ONCE · SHARP.TS';
   const el=document.getElementById('sharp');
   el.innerHTML=(rows||[]).length?(rows||[]).map(c=>{
     const score=Number(c.sharp_score)||0;
@@ -764,12 +773,12 @@ document.addEventListener('keydown',e=>{
 });
 
 /* ================= WebMCP (W3C draft — navigator.modelContext) =================
- * Exposes dashboard state + UI actions to an MCP-capable host.
- * No-ops cleanly when navigator.modelContext is absent. */
+ * Registers the same tools with navigator.modelContext when a host provides it.
+ * Otherwise exposes window.__sportsOpsMcp.call(name, args) and paints MCP · LOCAL.
+ * The relay also answers POST /api/mcp with the read-only tool names. */
 (async()=>{
   const pill=document.getElementById('mcp-pill');
-  const mc=navigator.modelContext;
-  if(!mc||typeof mc.registerTool!=='function')return;
+  const mc=navigator.modelContext||null;
   const json=x=>({content:[{type:'text',text:JSON.stringify(x,null,2)}]});
   const games=()=>(STATE.games||[]).map(normGame);
   const alerts=()=>(STATE.feed||[]).map(normAlert);
@@ -791,7 +800,7 @@ document.addEventListener('keydown',e=>{
   }
   const _ra=renderAll;
   renderAll=function(s){const was=prevState;prevState=s;_ra(s);
-    if(was&&mc.prompt)for(const r of rules.values()){try{
+    if(was&&mc&&mc.prompt)for(const r of rules.values()){try{
       if(r.test(s)&&Date.now()-r.lastFire>r.cooldown){
         r.lastFire=Date.now();mcpLog.unshift('rule '+r.id+' fired');
         mc.prompt({message:r.message(s)});}}catch(e){}}};
@@ -924,7 +933,28 @@ document.addEventListener('keydown',e=>{
      description:'Remove an alert rule by id.',
      inputSchema:{type:'object',properties:{id:{type:'string'}},required:['id']},
      handler:async({id})=>json({ok:rules.delete(id),id})},
+    {name:'get_link_status',
+     description:'Fantasy402 and 4codds link status from the latest state document.',
+     inputSchema:{type:'object',properties:{}},
+     handler:async()=>json({source:STATE.source,links:STATE.links||{},books:STATE.books,latency:STATE.latency,updatedAt:STATE.updatedAt})},
   ];
+  window.__sportsOpsMcp={
+    tools:tools.map(t=>({name:t.name,description:t.description})),
+    call:async(name,args)=>{
+      const tool=tools.find(t=>t.name===name);
+      if(!tool) return json({error:'unknown tool',tools:tools.map(t=>t.name)});
+      const out=await tool.handler(args||{});
+      mcpLog.unshift(name+(args&&Object.keys(args).length?' '+JSON.stringify(args):''));
+      mcpLog=mcpLog.slice(0,20);
+      return out;
+    },
+  };
+  if(!mc||typeof mc.registerTool!=='function'){
+    pill.className='src-pill snapshot';
+    pill.innerHTML='<i></i>MCP · LOCAL · '+tools.length+' TOOLS';
+    console.log('[webmcp] local',tools.length,'tools');
+    return;
+  }
   try{
     for(const t of tools){
       const h=t.handler;
