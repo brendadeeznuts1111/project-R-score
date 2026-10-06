@@ -31,6 +31,7 @@ export const PUBLIC_READ_PATH_PREFIXES = [
   '/api/agent-odds',
   '/skills/',
   '/portal/',
+  '/sports-ops/',
   '/registry/',
   '/registry/storage/',
   '/icons/',

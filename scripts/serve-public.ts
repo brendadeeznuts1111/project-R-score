@@ -2547,6 +2547,8 @@ function buildPublicRoutes() {
 
     '/monitoring': () => monitoringPage(),
     '/monitoring/': () => monitoringPage(),
+    '/sports-ops': (req: Request) => Promise.resolve(canonicalSlashRedirect(req, '/sports-ops/')),
+    '/sports-ops/': portalPage('/sports-ops/index.html'),
     '/llms.txt': llmsTxt(),
     '/llms-full.txt': llmsFullTxt(),
 
@@ -2729,6 +2731,7 @@ console.log(
   `Agent odds:    ${base}/portal/agent-odds/  (APIs /api/edges · /api/partners/health · WS /ws)`
 );
 console.log(`Monitoring:    ${base}/monitoring`);
+console.log(`Sports ops:    ${base}/sports-ops/`);
 console.log(`Live API:      ${base}/api/operations/summary`);
 console.log(`Monitoring API ${base}/api/monitoring`);
 console.log(`Registry:      ${base}/api/registry`);

@@ -563,6 +563,14 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'static HTML · /api/monitoring JSON',
   },
   {
+    path: '/sports-ops/',
+    name: 'Sports ops command center',
+    category: 'portal',
+    kind: 'simd-route',
+    okStatuses: [200],
+    note: 'public/sports-ops/index.html · seed board on this host · live ticker stays on the local Bun relay',
+  },
+  {
     path: '/portal/bunfig/',
     name: 'Bunfig status board',
     category: 'portal',
