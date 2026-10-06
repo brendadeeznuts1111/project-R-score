@@ -7,6 +7,9 @@ const relay = await Bun.file(
 const browse = await Bun.file(
   new URL("../projects/active/sports-terminal-os/demos/sports-ops/browse.ts", import.meta.url),
 ).text();
+const secretsSource = await Bun.file(
+  new URL("../projects/active/sports-terminal-os/demos/sports-ops/secrets.ts", import.meta.url),
+).text();
 
 describe("sports ops secret names", () => {
   test("parses a bootstrap env file without keeping comments", () => {
@@ -23,8 +26,15 @@ describe("sports ops secret names", () => {
     expect(Object.values(SECRET_NAMES)).toEqual(["f402-user", "f402-password", "fourc-email", "fourc-password"]);
   });
 
-  test("the relay reads Bun.secrets and drives Bun.WebView", () => {
+  test("the relay uses Bun secrets, WebView, which, and write", () => {
+    expect(secretsSource.includes('import { secrets } from "bun"')).toBe(true);
+    expect(secretsSource.includes("secrets.get({")).toBe(true);
+    expect(secretsSource.includes("secrets.set({")).toBe(true);
     expect(relay.includes("loadDeskLogins")).toBe(true);
+    expect(relay.includes("Bun.which(")).toBe(true);
+    expect(relay.includes("Bun.write(")).toBe(true);
+    expect(relay.includes("node:fs")).toBe(false);
+    expect(relay.includes("node:path")).toBe(false);
     expect(relay.includes("node:child_process")).toBe(false);
     expect(browse.includes("new Bun.WebView")).toBe(true);
     expect(browse.includes("dataStore")).toBe(true);

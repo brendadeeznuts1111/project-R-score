@@ -1,8 +1,12 @@
-// @see https://bun.com/docs/runtime/secrets — Bun.secrets
+// @see https://bun.com/docs/runtime/secrets — secrets.get
+// @see https://bun.com/docs/runtime/secrets — secrets.set
 /**
- * Desk logins live in the OS credential store.
+ * Desk logins live in the OS credential store via `import { secrets } from "bun"`.
  * A gitignored session.env file is only the bootstrap when a name is still empty.
+ * Site passwords stay here because the WebView has to type them. Bun.password
+ * hashes local passwords and cannot sign in to fantasy402 or 4codds.
  */
+import { secrets } from "bun";
 
 export const SECRET_SERVICE = "com.factorywager.sports-ops";
 
@@ -65,7 +69,7 @@ async function withTimeout<T>(work: Promise<T>, ms: number): Promise<T> {
 
 /** Point libsecret at an unlocked login keyring so Bun.secrets.set does not wait on a GUI prompt. */
 export async function ensureSecretStore(): Promise<boolean> {
-  if (typeof Bun.secrets?.get !== "function") return false;
+  if (typeof secrets?.get !== "function") return false;
   if (process.platform !== "linux") return true;
   const script = `
 import os, subprocess, time
@@ -123,19 +127,26 @@ print(os.environ.get("DBUS_SESSION_BUS_ADDRESS", ""))
   }
 }
 
+function secretError(name: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : "secrets failed";
+  console.error(`[secrets] ${name}: ${message}`);
+}
+
 async function readSecret(name: string): Promise<string | null> {
   try {
-    return await withTimeout(Bun.secrets.get({ service: SECRET_SERVICE, name }), 4000);
-  } catch {
+    return await withTimeout(secrets.get({ service: SECRET_SERVICE, name }), 4000);
+  } catch (error) {
+    secretError(name, error);
     return null;
   }
 }
 
 async function writeSecret(name: string, value: string): Promise<boolean> {
   try {
-    await withTimeout(Bun.secrets.set({ service: SECRET_SERVICE, name, value }), 4000);
+    await withTimeout(secrets.set({ service: SECRET_SERVICE, name, value }), 4000);
     return true;
-  } catch {
+  } catch (error) {
+    secretError(name, error);
     return false;
   }
 }

@@ -9,9 +9,11 @@
  * demos/.sports-ops/session.env is only a bootstrap and is gitignored,
  * along with the WebView profile and sqlite database.
  */
+// @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
+// @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
+// @see https://bun.com/docs/runtime/utils#bun-fileurltopath — Bun.fileURLToPath
+import { fileURLToPath } from "bun";
 import { Database } from "bun:sqlite";
-import { mkdirSync } from "node:fs";
-import { join } from "node:path";
 import { runLiveSession } from "./browse.ts";
 import { loadDeskLogins } from "./secrets.ts";
 import {
@@ -28,14 +30,18 @@ import {
   type F402Wager,
 } from "./map.ts";
 
-const root = import.meta.dir;
-const htmlPath = join(root, "../sports-ops-command-center.html");
-const dataDir = join(root, "../.sports-ops");
+const htmlPath = fileURLToPath(new URL("../sports-ops-command-center.html", import.meta.url));
+const dataDir = fileURLToPath(new URL("../.sports-ops", import.meta.url));
 const port = Number(Bun.env.SPORTS_OPS_PORT || 8787);
-const chromeBin = Bun.env.CHROME_PATH || "/opt/google/chrome/chrome";
+const chromeBin =
+  Bun.env.CHROME_PATH ||
+  Bun.which("google-chrome") ||
+  Bun.which("google-chrome-stable") ||
+  Bun.which("chromium") ||
+  "/opt/google/chrome/chrome";
 
-mkdirSync(dataDir, { recursive: true });
-const db = new Database(join(dataDir, "desk.sqlite"));
+await Bun.write(`${dataDir}/.keep`, "");
+const db = new Database(`${dataDir}/desk.sqlite`);
 db.run(`CREATE TABLE IF NOT EXISTS wagers (
   wager_number TEXT PRIMARY KEY,
   payload TEXT NOT NULL,
@@ -272,13 +278,13 @@ Bun.serve({
 
 log("relay", `http://127.0.0.1:${port}/`);
 void (async () => {
-  const logins = await loadDeskLogins(join(dataDir, "session.env"));
+  const logins = await loadDeskLogins(`${dataDir}/session.env`);
   log(
     "secrets",
     `store ${logins.store} · f402 ${logins.f402User && logins.f402Password ? "ready" : "missing"} · 4c ${logins.fourcPassword ? "ready" : logins.fourcEmail ? "email-only" : "missing"}`,
   );
   await runLiveSession({
-    profileDir: join(dataDir, "webview"),
+    profileDir: `${dataDir}/webview`,
     chromePath: chromeBin,
     logins,
     hooks: {
