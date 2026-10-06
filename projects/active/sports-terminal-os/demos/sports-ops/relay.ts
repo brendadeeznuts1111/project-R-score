@@ -30,7 +30,7 @@ import {
   type F402Wager,
 } from "./map.ts";
 
-const htmlPath = fileURLToPath(new URL("../sports-ops-command-center.html", import.meta.url));
+const htmlPath = fileURLToPath(new URL("../../../../../public/sports-ops/index.html", import.meta.url));
 const dataDir = fileURLToPath(new URL("../.sports-ops", import.meta.url));
 const port = Number(Bun.env.SPORTS_OPS_PORT || 8787);
 const chromeBin =
@@ -253,7 +253,12 @@ Bun.serve({
       if (server.upgrade(req)) return undefined;
       return new Response("upgrade failed", { status: 400 });
     }
-    if (url.pathname === "/" || url.pathname.endsWith("sports-ops-command-center.html")) return html();
+    if (
+      url.pathname === "/" ||
+      url.pathname === "/sports-ops" ||
+      url.pathname === "/sports-ops/" ||
+      url.pathname.endsWith("index.html")
+    ) return html();
     if (url.pathname === "/api/state") return Response.json(currentState());
     if (url.pathname === "/api/logs") return Response.json(logs);
     if (url.pathname === "/api/mcp" && req.method === "POST") {

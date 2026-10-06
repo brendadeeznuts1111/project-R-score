@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 
 const html = await Bun.file(
-  'projects/active/sports-terminal-os/demos/sports-ops-command-center.html',
+  'public/sports-ops/index.html',
 ).text();
 
 function loadPure(): {

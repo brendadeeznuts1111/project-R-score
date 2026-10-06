@@ -726,40 +726,57 @@ function renderAll(s){
 }
 
 /* ================= connectivity =================
- * live     — WebSocket /ws {type:'state', state}
+ * Pages hosts this file at /sports-ops/ and keeps the seed board.
+ * live     — WebSocket /ws {type:'state', state} after the relay returns games
  * snapshot — GET /api/state once games are present
- * seed     — file:// or relay still offline
- * The page paints SNAPSHOT only after a successful state payload. */
+ * seed     — file://, Pages, or a relay that is still empty
+ * A 404 from /api/state stops the poll so the cloud host does not loop. */
 const hasRelay=location.protocol.startsWith('http');
 let wsOk=false;
 let polling=false;
+let relayGone=false;
+let wsStarted=false;
 function connectWS(){
-  if(!hasRelay) return;
+  if(!hasRelay||relayGone||wsStarted) return;
+  wsStarted=true;
   try{
     const proto=location.protocol==='https:'?'wss://':'ws://';
     const ws=new WebSocket(proto+location.host+'/ws');
-    ws.onopen=()=>{wsOk=true;linkMode='live';applyLinkPill();};
+    ws.onopen=()=>{wsOk=true;};
     ws.onmessage=e=>{
       let m; try{m=JSON.parse(e.data);}catch{return;}
-      if(m&&m.type==='state'&&m.state){STATE=normalizeState(m.state,'live');renderAll(STATE);}
+      if(m&&m.type==='state'&&m.state&&m.state.games&&m.state.games.length){
+        STATE=normalizeState(m.state,'live');
+        linkMode='live';
+        renderAll(STATE);
+      }
     };
-    ws.onclose=()=>{wsOk=false;setTimeout(connectWS,3000);};
+    ws.onclose=()=>{wsOk=false;wsStarted=false;if(!relayGone) setTimeout(connectWS,3000);};
   }catch{/* snapshot polling already owns the fallback */}
 }
 async function pollState(){
+  if(relayGone) return;
   if(!wsOk){
     try{
       const r=await fetch('/api/state');
+      if(r.status===404){relayGone=true;return;}
       if(r.ok){
         const s=await r.json();
-        if(s&&s.games){STATE=normalizeState(s,'snapshot');linkMode='snapshot';renderAll(STATE);}
+        if(s&&s.games){
+          if(s.games.length){
+            STATE=normalizeState(s,s.source==='live'?'live':'snapshot');
+            linkMode=STATE.source==='live'?'live':'snapshot';
+            renderAll(STATE);
+            connectWS();
+          }
+        }
       }
     }catch{/* seed stays until a payload arrives */}
   }
   setTimeout(pollState,5000);
 }
 function startPoll(){ if(polling) return; polling=true; pollState(); }
-if(hasRelay){connectWS();startPoll();}
+if(hasRelay) startPoll();
 renderAll(STATE);
 
 /* ================= odds screen ================= */
