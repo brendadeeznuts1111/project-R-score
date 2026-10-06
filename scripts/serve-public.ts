@@ -236,6 +236,10 @@ import {
 } from '../lib/http/bun-server.ts';
 import { PORTAL_BOARD_SLUGS } from '../lib/http/portal-board-slugs.ts';
 import { canonicalSlashRedirect } from '../lib/http/canonical-redirect.ts';
+import {
+  loadUnified,
+  type LiveOverlay,
+} from '../projects/active/sports-terminal-os/demos/sports-ops/desk-read.ts';
 import { parseNpmPackageRequestPath } from '../lib/registry/npm-package-path.ts';
 import { projectRSSAliasRoutes } from '../lib/rss/project-channel-registry.ts';
 import {
@@ -2146,6 +2150,42 @@ function portalBoardRoutes(
  * @see https://bun.com/docs/runtime/http/routing#route-precedence
  * @see https://bun.com/docs/runtime/http/routing#static-responses
  */
+const SPORTS_OPS_DB = 'projects/active/sports-terminal-os/demos/.sports-ops/desk.sqlite';
+
+/** League rollup from the desk sqlite, with live games when the local relay is up. */
+async function sportsOpsState(): Promise<Response> {
+  if (!(await Bun.file(SPORTS_OPS_DB).exists())) {
+    return json(
+      {
+        source: 'seed',
+        socket: false,
+        games: [],
+        leagues: [],
+        sources: [],
+        links: { f402: 'seed', fourc: 'seed' },
+      },
+      404
+    );
+  }
+  let live: LiveOverlay | null = null;
+  const relayPort = Bun.env.SPORTS_OPS_PORT || '8787';
+  try {
+    const res = await fetch(`http://127.0.0.1:${relayPort}/api/state`, {
+      signal: AbortSignal.timeout(800),
+    });
+    if (res.ok) live = (await res.json()) as LiveOverlay;
+  } catch {
+    live = null;
+  }
+  const db = new Database(SPORTS_OPS_DB, { readonly: true });
+  try {
+    db.exec('PRAGMA busy_timeout=1000');
+    return json(loadUnified(db, live));
+  } finally {
+    db.close();
+  }
+}
+
 function buildPublicRoutes() {
   /** Static ready probe — zero-allocation cloneable response (docs pattern). */
   const ready = new Response('Ready', {
@@ -2547,6 +2587,9 @@ function buildPublicRoutes() {
 
     '/monitoring': () => monitoringPage(),
     '/monitoring/': () => monitoringPage(),
+    '/sports-ops': (req: Request) => Promise.resolve(canonicalSlashRedirect(req, '/sports-ops/')),
+    '/sports-ops/': portalPage('/sports-ops/index.html'),
+    '/api/sports-ops/state': () => sportsOpsState(),
     '/llms.txt': llmsTxt(),
     '/llms-full.txt': llmsFullTxt(),
 
@@ -2729,6 +2772,7 @@ console.log(
   `Agent odds:    ${base}/portal/agent-odds/  (APIs /api/edges · /api/partners/health · WS /ws)`
 );
 console.log(`Monitoring:    ${base}/monitoring`);
+console.log(`Sports ops:    ${base}/sports-ops/`);
 console.log(`Live API:      ${base}/api/operations/summary`);
 console.log(`Monitoring API ${base}/api/monitoring`);
 console.log(`Registry:      ${base}/api/registry`);

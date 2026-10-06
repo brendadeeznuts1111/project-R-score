@@ -1,12 +1,18 @@
 import { describe, expect, test } from "bun:test";
+import { Database } from "bun:sqlite";
+import { dedupeWagers, loadUnified } from "../projects/active/sports-terminal-os/demos/sports-ops/desk-read.ts";
 import {
+  baseRotation,
   deriveAlerts,
   deriveMovers,
   deriveSharp,
   historyFromPoints,
+  leagueFor,
   mapScore,
   mapWager,
   moneyFromCents,
+  rollupLeagues,
+  ticketOf,
 } from "../projects/active/sports-terminal-os/demos/sports-ops/map.ts";
 
 describe("fantasy402 desk mapping", () => {
@@ -70,7 +76,19 @@ describe("fantasy402 desk mapping", () => {
     expect(sharp[0]?.tickets).toBe(1);
     expect(sharp[0]?.type).toBeUndefined();
     const alerts = deriveAlerts([wager!]);
-    expect(alerts[0]?.title).toBe("FOOTBALL");
+    expect(alerts[0]?.title).toBe("NCAAF");
+    expect(alerts[0]?.msg.startsWith("parlay r35")).toBe(true);
+    expect(ticketOf(wager!).league).toBe("NCAAF");
+    expect(leagueFor("FOOTBALL", 463, "S.Football #463 Giants")).toBe("NFL");
+    expect(leagueFor("HOCKEY", 16, "M.Hockey #16 Rangers")).toBe("NHL");
+    expect(leagueFor("BASEBALL", 936, "M.Baseball #936 Braves")).toBe("MLB");
+    expect(leagueFor("BASEBALL", 304669, "P.Baseball #304669 Hanwha")).toBe("KBO");
+    expect(ticketOf({ id: "1", ts: "", customer: "", agent: "", type: "straight", source: "internet", sport: "OTHER", risk: 10, win: 8, legs: [{ desc: "P.Martial Arts #24170 N Ariano -640 - For Game" }] }).league).toBe("UFC");
+    expect(baseRotation("FOOTBALL", 1130101)).toBe(301);
+    expect(leagueFor("FOOTBALL", 1130101, "S.Football #1130101 Southern Miss")).toBe("NCAAF");
+    const board = rollupLeagues([wager!], []);
+    expect(board[0]?.league).toBe("NCAAF");
+    expect(board[0]?.tickets).toBe(1);
     expect(alerts[0]?.sev).toBe("info");
     const history = historyFromPoints(
       [
@@ -81,5 +99,40 @@ describe("fantasy402 desk mapping", () => {
     );
     expect(history["NFL · Chiefs @ Ravens"]?.open).toBe(-2.5);
     expect(history["NFL · Chiefs @ Ravens"]?.now).toBe(-4.5);
+  });
+
+  test("sqlite rollup joins fantasy402 tickets with 4codds status", () => {
+    const db = new Database(":memory:");
+    db.run("CREATE TABLE wagers (wager_number TEXT PRIMARY KEY, payload TEXT NOT NULL, seen_at TEXT NOT NULL)");
+    db.run("CREATE TABLE fourc_status (id INTEGER PRIMARY KEY AUTOINCREMENT, seen_at TEXT NOT NULL, status TEXT NOT NULL, title TEXT NOT NULL)");
+    db.run("CREATE TABLE link_log (id INTEGER PRIMARY KEY AUTOINCREMENT, t TEXT NOT NULL, src TEXT NOT NULL, detail TEXT NOT NULL)");
+    const wager = mapWager({
+      WagerNumber: 42,
+      Login: "GOLF74613",
+      AgentLogin: "CMASS",
+      AmountWagered: 139000,
+      ToWinAmount: 100000,
+      InsertDateTime: "2026-10-06 18:53:41",
+      TicketWriter: "alert",
+      ShortDesc: "S Baseball #936 Padres -139 - For Game",
+    });
+    db.run("INSERT INTO wagers (wager_number, payload, seen_at) VALUES (?, ?, ?)", ["42", JSON.stringify(wager), "2026-10-06T18:53:41Z"]);
+    db.run("INSERT INTO fourc_status (seen_at, status, title) VALUES (?, ?, ?)", ["2026-10-06T18:53:41Z", "blocked", "cloudflare"]);
+    const desk = loadUnified(db, {
+      source: "live",
+      games: [{ sport: "Baseball", away: "Los Angeles Dodgers", as: 1, bs: 0, home: "Atlanta Braves", status: "Game", line: "-1.5", live: true, spread: -1.5 }],
+      links: { f402: "live", fourc: "blocked" },
+    });
+    db.close();
+    expect(desk.socket).toBe(false);
+    expect(desk.books).toBe("F402 1 · 4C BLOCKED");
+    expect(desk.games[0]?.league).toBe("MLB");
+    expect(desk.leagues.find((row) => row.league === "MLB")).toMatchObject({ tickets: 1, games: 1 });
+    expect(desk.betfeed[0]?.league).toBe("MLB");
+    expect(desk.betfeed[0]?.selection).toContain("Padres");
+    expect(desk.sources.map((row) => row.id)).toEqual(["f402", "4c", "sqlite"]);
+    expect(desk.links).toEqual({ f402: "live", fourc: "blocked" });
+    const twin = { ...wager!, id: "43", legs: [{ desc: "S:Baseball #936 Padres -139 - For Game" }] };
+    expect(dedupeWagers([wager!, twin]).length).toBe(1);
   });
 });

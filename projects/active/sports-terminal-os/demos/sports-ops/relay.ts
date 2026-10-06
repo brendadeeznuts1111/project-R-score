@@ -15,11 +15,10 @@
 import { fileURLToPath } from "bun";
 import { Database } from "bun:sqlite";
 import { runLiveSession } from "./browse.ts";
+import { loadUnified } from "./desk-read.ts";
 import { loadDeskLogins } from "./secrets.ts";
 import {
-  deriveAlerts,
   deriveMovers,
-  deriveSharp,
   gameKey,
   historyFromPoints,
   mapScore,
@@ -30,7 +29,7 @@ import {
   type F402Wager,
 } from "./map.ts";
 
-const htmlPath = fileURLToPath(new URL("../sports-ops-command-center.html", import.meta.url));
+const htmlPath = fileURLToPath(new URL("../../../../../public/sports-ops/index.html", import.meta.url));
 const dataDir = fileURLToPath(new URL("../.sports-ops", import.meta.url));
 const port = Number(Bun.env.SPORTS_OPS_PORT || 8787);
 const chromeBin =
@@ -69,7 +68,6 @@ type Links = { f402: string; fourc: string };
 type LogLine = { t: string; src: string; detail: string };
 
 const logs: LogLine[] = [];
-let wagers: DeskWager[] = [];
 let games: DeskGame[] = [];
 let previousGames: DeskGame[] = [];
 let movers = deriveMovers([], []);
@@ -91,23 +89,20 @@ function currentState() {
     db.query("SELECT game, spread FROM spreads ORDER BY seen_at ASC").all() as { game: string; spread: number }[],
     games,
   );
-  const feed = wagers.length ? deriveAlerts(wagers) : [];
-  const sharp = deriveSharp(wagers);
   return {
-    source,
-    updatedAt: new Date().toISOString(),
-    books: null,
-    latency,
-    noise: 0,
-    events: movers.filter((row) => row.hot).map((row) => ({ score: row.hot ? 0.8 : 0.4, what: row.what })),
-    feed,
-    games,
-    movers,
-    history,
-    betfeed: wagers.slice(0, 40),
-    sharp,
-    logs,
-    links,
+    ...loadUnified(db, {
+      source,
+      updatedAt: new Date().toISOString(),
+      games,
+      movers,
+      logs,
+      links,
+      latency,
+      noise: 0,
+      history,
+      events: movers.filter((row) => row.hot).map((row) => ({ score: row.hot ? 0.8 : 0.4, what: row.what })),
+    }),
+    socket: true,
   };
 }
 
@@ -132,7 +127,6 @@ function rememberWagers(rows: F402Wager[]) {
     for (const wager of list) insert.run(wager.id, JSON.stringify(wager), now);
   });
   tx(mapped);
-  wagers = mapped;
 }
 
 function rememberScores(rows: F402Score[]) {
@@ -253,7 +247,12 @@ Bun.serve({
       if (server.upgrade(req)) return undefined;
       return new Response("upgrade failed", { status: 400 });
     }
-    if (url.pathname === "/" || url.pathname.endsWith("sports-ops-command-center.html")) return html();
+    if (
+      url.pathname === "/" ||
+      url.pathname === "/sports-ops" ||
+      url.pathname === "/sports-ops/" ||
+      url.pathname.endsWith("index.html")
+    ) return html();
     if (url.pathname === "/api/state") return Response.json(currentState());
     if (url.pathname === "/api/logs") return Response.json(logs);
     if (url.pathname === "/api/mcp" && req.method === "POST") {
