@@ -141,6 +141,8 @@ describe('portal route wiring', () => {
     const source = await Bun.file('scripts/serve-public.ts').text();
     expect(source).toContain("'/sports-ops': (req: Request) => Promise.resolve(canonicalSlashRedirect(req, '/sports-ops/'))");
     expect(source).toContain("'/sports-ops/': portalPage('/sports-ops/index.html')");
+    expect(source).toContain("'/api/sports-ops/state': () => sportsOpsState()");
+    expect(isPublicReadPath('/api/sports-ops/state')).toBe(true);
     expect(await Bun.file('public/sports-ops/index.html').exists()).toBe(true);
     expect(isPublicReadPath('/sports-ops/')).toBe(true);
   });

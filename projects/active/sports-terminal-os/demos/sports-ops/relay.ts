@@ -15,11 +15,10 @@
 import { fileURLToPath } from "bun";
 import { Database } from "bun:sqlite";
 import { runLiveSession } from "./browse.ts";
+import { loadUnified } from "./desk-read.ts";
 import { loadDeskLogins } from "./secrets.ts";
 import {
-  deriveAlerts,
   deriveMovers,
-  deriveSharp,
   gameKey,
   historyFromPoints,
   mapScore,
@@ -69,7 +68,6 @@ type Links = { f402: string; fourc: string };
 type LogLine = { t: string; src: string; detail: string };
 
 const logs: LogLine[] = [];
-let wagers: DeskWager[] = [];
 let games: DeskGame[] = [];
 let previousGames: DeskGame[] = [];
 let movers = deriveMovers([], []);
@@ -91,23 +89,20 @@ function currentState() {
     db.query("SELECT game, spread FROM spreads ORDER BY seen_at ASC").all() as { game: string; spread: number }[],
     games,
   );
-  const feed = wagers.length ? deriveAlerts(wagers) : [];
-  const sharp = deriveSharp(wagers);
   return {
-    source,
-    updatedAt: new Date().toISOString(),
-    books: null,
-    latency,
-    noise: 0,
-    events: movers.filter((row) => row.hot).map((row) => ({ score: row.hot ? 0.8 : 0.4, what: row.what })),
-    feed,
-    games,
-    movers,
-    history,
-    betfeed: wagers.slice(0, 40),
-    sharp,
-    logs,
-    links,
+    ...loadUnified(db, {
+      source,
+      updatedAt: new Date().toISOString(),
+      games,
+      movers,
+      logs,
+      links,
+      latency,
+      noise: 0,
+      history,
+      events: movers.filter((row) => row.hot).map((row) => ({ score: row.hot ? 0.8 : 0.4, what: row.what })),
+    }),
+    socket: true,
   };
 }
 
@@ -132,7 +127,6 @@ function rememberWagers(rows: F402Wager[]) {
     for (const wager of list) insert.run(wager.id, JSON.stringify(wager), now);
   });
   tx(mapped);
-  wagers = mapped;
 }
 
 function rememberScores(rows: F402Score[]) {

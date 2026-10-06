@@ -32,6 +32,7 @@ export const PUBLIC_READ_PATH_PREFIXES = [
   '/skills/',
   '/portal/',
   '/sports-ops/',
+  '/api/sports-ops/',
   '/registry/',
   '/registry/storage/',
   '/icons/',

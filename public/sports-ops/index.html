@@ -83,9 +83,9 @@ main{display:grid;grid-template-columns:400px minmax(0,1fr) 400px;gap:10px;min-h
 .feed{animation:scroll 34s linear infinite}
 .feed:hover{animation-play-state:paused}
 @keyframes scroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
-.alert{display:flex;gap:10px;align-items:baseline;padding:7px 4px;border-bottom:1px dashed rgba(100,116,139,.18);font-size:11.5px}
+.alert{display:grid;grid-template-columns:52px 72px minmax(0,1fr) auto;gap:8px;align-items:baseline;padding:7px 4px;border-bottom:1px dashed rgba(100,116,139,.18);font-size:11.5px}
 .alert .t{color:var(--cyan-dim);flex:none;font-size:11px}
-.alert .msg{color:#cbd5e1;line-height:1.45;flex:1}
+.alert .msg{color:#cbd5e1;line-height:1.45;min-width:0}
 .alert .msg b{color:#eaf6ff;font-weight:600}
 .sev{flex:none;font-size:9px;letter-spacing:.12em;padding:1px 7px;border:1px solid;transform:skewX(-12deg)}
 .sev.high{color:var(--hi);border-color:rgba(255,77,94,.6);background:rgba(255,77,94,.08);box-shadow:0 0 10px rgba(255,77,94,.25)}
@@ -95,7 +95,7 @@ main{display:grid;grid-template-columns:400px minmax(0,1fr) 400px;gap:10px;min-h
 .legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
 
 .games{display:flex;flex-direction:column;gap:6px}
-.game{display:grid;grid-template-columns:56px 1fr auto 86px;gap:8px;align-items:center;
+.game{display:grid;grid-template-columns:72px minmax(0,1fr) auto 78px;gap:8px;align-items:center;
   background:rgba(7,18,40,.55);border:1px solid rgba(100,116,139,.14);padding:6px 10px;font-size:11.5px}
 .game .sport{font-size:9px;letter-spacing:.1em;color:var(--cyan);border:1px solid rgba(0,229,255,.3);padding:2px 0;text-align:center;background:rgba(0,229,255,.06)}
 .game .teams{color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -106,6 +106,23 @@ main{display:grid;grid-template-columns:400px minmax(0,1fr) 400px;gap:10px;min-h
 .line{text-align:right;font-size:10px;color:var(--txt-dim)}
 .line b{color:var(--watch);font-weight:600}
 .empty{color:var(--txt-dim);font-size:11px;padding:18px 8px;text-align:center;letter-spacing:.12em}
+.sources{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.src-card{background:var(--panel);border:1px solid var(--line);padding:8px 12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;min-height:52px}
+.src-card .name{font-size:10px;letter-spacing:.16em;color:var(--cyan)}
+.src-card .stat{font-size:13px;color:#eaf6ff;text-align:right}
+.src-card .meta{font-size:10px;color:var(--txt-dim);letter-spacing:.06em}
+.src-card .st{font-size:10px;letter-spacing:.14em;text-align:right}
+.src-card .st.live,.src-card .st.snapshot{color:var(--green)}
+.src-card .st.blocked,.src-card .st.signin{color:var(--watch)}
+.league{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.league-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:10px;letter-spacing:.16em;color:var(--cyan);padding:2px 2px 4px;border-bottom:1px solid var(--line)}
+.league-h span:last-child{color:var(--txt-dim);letter-spacing:.08em}
+table.desk{width:100%;border-collapse:collapse;font-size:11px}
+table.desk th{text-align:left;font-size:9px;letter-spacing:.12em;color:var(--txt-dim);font-weight:500;padding:3px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.desk td{padding:4px 6px;border-bottom:1px dashed rgba(100,116,139,.16);vertical-align:baseline}
+table.desk td.num,table.desk th.num{text-align:right;font-variant-numeric:tabular-nums}
+table.desk tr:hover td{background:rgba(0,229,255,.04)}
+.sel{color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;display:block}
 
 .charts{display:grid;grid-template-columns:1.5fr 1fr;gap:0;height:100%;min-height:120px}
 .chart-box{position:relative;padding:4px 6px;min-width:0}
@@ -169,6 +186,7 @@ footer{position:relative;overflow:hidden;border:1px solid var(--line);background
   .col.left,.col.mid,.col.right{grid-template-rows:none}
   .panel{min-height:240px}
   .kpis{grid-template-columns:repeat(2,1fr)}
+  .sources{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion: reduce){
   body::after{display:none}
@@ -207,6 +225,8 @@ footer{position:relative;overflow:hidden;border:1px solid var(--line);background
   <div class="kpi" id="kpi-alerts"><div class="lbl">ALERTS</div><div class="val" id="k-alerts">18</div><div class="delta flat" id="d-alerts">24H feed</div><div class="spark-slot" id="spark-alerts"></div></div>
   <div class="kpi" id="kpi-high"><div class="lbl">HIGH SEVERITY</div><div class="val" id="k-high">5</div><div class="delta flat" id="d-high">of 18 alerts</div><div class="spark-slot" id="spark-high"></div></div>
 </section>
+
+<section class="sources" id="sources" aria-label="Book sources"></section>
 
 <main>
   <div class="col left">
@@ -252,9 +272,8 @@ footer{position:relative;overflow:hidden;border:1px solid var(--line);background
         <div class="chart-box"><h4>LINE-MOVEMENT INTENSITY</h4>
           <svg id="area" viewBox="0 0 460 170" preserveAspectRatio="none" width="100%" height="86%"></svg>
         </div>
-        <div class="chart-box"><h4>RISK BY SPORT</h4>
-          <svg id="donut" viewBox="0 0 120 120" width="100%" height="100%"></svg>
-          <div class="donut-center"><div class="big" id="donut-total">$1,830</div><div class="sm">SESSION</div></div>
+        <div class="chart-box"><h4>RISK BY LEAGUE</h4>
+          <div id="leagues"></div>
         </div>
       </div>
     </section>
@@ -322,10 +341,10 @@ function normSev(s){
 }
 function normGame(g){
   if(Array.isArray(g)){
-    return {sport:String(g[0]??'?'),away:String(g[1]??'?'),as:g[2]??0,bs:g[3]??0,home:String(g[4]??'?'),status:String(g[5]??''),line:String(g[6]??'—'),live:!!g[7]};
+    return {sport:String(g[0]??'?'),away:String(g[1]??'?'),as:g[2]??0,bs:g[3]??0,home:String(g[4]??'?'),status:String(g[5]??''),line:String(g[6]??'—'),live:!!g[7],league:''};
   }
   const o=g||{};
-  return {sport:String(o.sport??'?'),away:String(o.away??'?'),as:o.as??0,bs:o.bs??0,home:String(o.home??'?'),status:String(o.status??''),line:String(o.line??'—'),live:!!o.live};
+  return {sport:String(o.sport??'?'),away:String(o.away??'?'),as:o.as??0,bs:o.bs??0,home:String(o.home??'?'),status:String(o.status??''),line:String(o.line??'—'),live:!!o.live,league:String(o.league||'')};
 }
 function normAlert(a){
   if(Array.isArray(a)){
@@ -361,6 +380,9 @@ function normalizeState(raw,fallbackSource){
     betfeed:Array.isArray(src.betfeed)?src.betfeed:[],
     sharp:Array.isArray(src.sharp)?src.sharp:[],
     logs:Array.isArray(src.logs)?src.logs:[],
+    leagues:Array.isArray(src.leagues)?src.leagues:[],
+    sources:Array.isArray(src.sources)?src.sources:[],
+    socket:src.socket===true,
     links:src.links&&typeof src.links==='object'
       ?{fourc:String(src.links.fourc||'seed'),f402:String(src.links.f402||'seed')}
       :{fourc:'seed',f402:'seed'},
@@ -501,9 +523,57 @@ function setSpark(id,values,color){
   const slot=document.getElementById(id);
   if(slot) slot.innerHTML=sparkline(values,color);
 }
+function ticketLeague(w){
+  if(w&&w.league) return String(w.league);
+  const desc=String(w&&w.legs&&w.legs[0]&&w.legs[0].desc||'');
+  const rot=desc.match(/#(\d+)/);
+  const n=rot?Number(rot[1]):null;
+  const sport=String(w&&w.sport||'').toUpperCase();
+  if(sport==='BASEBALL'||/baseball/i.test(desc)){
+    if(n!=null&&n>=300000&&n<400000) return 'KBO';
+    return 'MLB';
+  }
+  if(sport==='FOOTBALL'||/football/i.test(desc)){
+    if(n!=null&&n>=451&&n<=499) return 'NFL';
+    return 'NCAAF';
+  }
+  if(sport==='HOCKEY'||/hockey/i.test(desc)) return 'NHL';
+  if(sport==='BASKETBALL') return n!=null&&n>=600&&n<700?'WNBA':'NBA';
+  if(sport==='SOCCER') return 'SOCCER';
+  if(sport==='MARTIAL ARTS'||/martial arts/i.test(desc)) return 'UFC';
+  if(sport==='NFL'||sport==='MLB'||sport==='NBA'||sport==='NHL'||sport==='NCAAF'||sport==='EPL') return sport;
+  return sport||'OTHER';
+}
+function ticketSelection(w){
+  if(w&&w.selection) return String(w.selection);
+  const desc=String(w&&w.legs&&w.legs[0]&&w.legs[0].desc||'').replace(/&#189;|&frac12;/gi,'½').replace(/\s+/g,' ').trim();
+  const m=desc.match(/^[A-Za-z][.:]\s*[A-Za-z]+\s+#\d+\s*(.*)$/);
+  const text=(m&&m[1])||desc;
+  return text.length>78?text.slice(0,75)+'…':text;
+}
+function leagueRows(s){
+  if(s.leagues&&s.leagues.length) return s.leagues;
+  const by=new Map();
+  const touch=league=>{
+    const row=by.get(league)||{league,tickets:0,risk:0,win:0,straight:0,parlay:0,games:0};
+    by.set(league,row);
+    return row;
+  };
+  for(const w of s.betfeed||[]){
+    const row=touch(ticketLeague(w));
+    row.tickets++;
+    row.risk+=Number(w.risk)||0;
+    row.win+=Number(w.win)||0;
+    if(w.type==='parlay'||w.market==='parlay') row.parlay++; else row.straight++;
+  }
+  for(const g of s.games||[]) touch(g.league||g.sport||'OTHER').games++;
+  return [...by.values()].sort((a,b)=>b.risk-a.risk||b.tickets-a.tickets||String(a.league).localeCompare(String(b.league)));
+}
 function renderKpis(s){
   const live=s.games.filter(g=>g.live).length;
-  const risk=s.betfeed.reduce((sum,w)=>sum+(Number(w.risk)||0),0);
+  const leagues=leagueRows(s);
+  const risk=leagues.length?leagues.reduce((sum,row)=>sum+(Number(row.risk)||0),0):s.betfeed.reduce((sum,w)=>sum+(Number(w.risk)||0),0);
+  const tickets=leagues.length?leagues.reduce((sum,row)=>sum+(Number(row.tickets)||0),0):s.betfeed.length;
   const hot=s.movers.filter(m=>m.hot).length;
   const sharp=s.sharp||[];
   const mean=sharp.length?sharp.reduce((sum,c)=>sum+(Number(c.sharp_score)||0),0)/sharp.length:0;
@@ -515,7 +585,7 @@ function renderKpis(s){
   document.getElementById('k-alerts').textContent=String(s.feed.length);
   document.getElementById('k-high').textContent=String(high);
   document.getElementById('d-live').textContent=s.games.length+' on board';
-  document.getElementById('d-risk').textContent=s.betfeed.length+' tickets';
+  document.getElementById('d-risk').textContent=tickets+' tickets';
   document.getElementById('d-steam').textContent=(s.noise||0)+' noise filtered';
   document.getElementById('d-sharp').textContent=sharp.length+' profiles';
   document.getElementById('d-alerts').textContent='24H feed';
@@ -535,22 +605,29 @@ function renderKpis(s){
 function renderFeed(feed){
   const el=document.getElementById('feed');
   if(!feed.length){el.innerHTML='<div class="empty">NO ALERTS · 无告警</div>';document.getElementById('feed-count').textContent='0 events';return;}
-  const row=a=>`<div class="alert"><span class="t">${esc(a.t)}</span><span class="msg">${a.title?`<b>${esc(a.title)}</b> `:''}${esc(a.msg)}</span><span class="sev ${esc(a.sev)}">${esc(a.sev).toUpperCase()}</span></div>`;
+  const row=a=>`<div class="alert"><span class="t">${esc(a.t)}</span><b>${esc(a.title||'')}</b><span class="msg">${esc(a.msg)}</span><span class="sev ${esc(a.sev)}">${esc(a.sev).toUpperCase()}</span></div>`;
   el.innerHTML=[...feed,...feed].map(row).join('');
   document.getElementById('feed-count').textContent=feed.length+' events / 24H';
 }
 function renderGames(games){
   const el=document.getElementById('games');
   if(!games.length){el.innerHTML='<div class="empty">NO GAMES ON BOARD · 等待 relay /ingest</div>';document.getElementById('board-count').textContent='AWAITING DATA';return;}
-  el.innerHTML=games.map(g=>{
+  const groups=new Map();
+  for(const g of games){
+    const key=g.league||g.sport||'OTHER';
+    const list=groups.get(key)||[];
+    list.push(g);
+    groups.set(key,list);
+  }
+  el.innerHTML=[...groups.entries()].map(([league,rows])=>`<div class="league"><div class="league-h"><span>${esc(league)}</span><span>${rows.length} GAMES</span></div>${rows.map(g=>{
     const live=!!g.live;
     return `<div class="game">
       <div class="sport">${esc(g.sport)}</div>
       <div class="teams">${esc(g.away)} <small>vs</small> ${esc(g.home)}</div>
       <div class="score">${live?'<span class="live-dot"></span>':''}${esc(g.as)} – ${esc(g.bs)}<small>${esc(g.status)}</small></div>
       <div class="line">LINE <b>${esc(g.line)}</b></div></div>`;
-  }).join('');
-  document.getElementById('board-count').textContent=games.length+' GAMES · '+(STATE.source||'seed').toUpperCase();
+  }).join('')}</div>`).join('');
+  document.getElementById('board-count').textContent=games.length+' GAMES · '+groups.size+' LEAGUES';
 }
 function renderMovers(movers,noise){
   document.getElementById('noise-count').textContent=noise??0;
@@ -590,9 +667,18 @@ function renderHistory(h){
     lhSel.value=names.includes(prev)?prev:(names[0]||'');
     lhKeySig=sig;
   }
-  const g=hist[lhSel.value]||hist[names[0]];
+  const g=names.length?(hist[lhSel.value]||hist[names[0]]):null;
   const svg=document.getElementById('lh-chart');
-  if(!g){svg.innerHTML='';return;}
+  if(!g){
+    svg.innerHTML='';
+    document.getElementById('lh-sig').textContent='SIGNAL —';
+    document.getElementById('lh-open').textContent='—';
+    document.getElementById('lh-now').textContent='—';
+    document.getElementById('lh-delta').textContent='—';
+    document.getElementById('lh-books').textContent='F402 LINE';
+    document.getElementById('lh-cascade').textContent='CASCADE · —';
+    return;
+  }
   const sigEl=document.getElementById('lh-sig');
   sigEl.className='lh-sig '+(g.severity==='high'||g.severity==='watch'||g.severity==='info'?g.severity:'info');
   sigEl.textContent='SIGNAL '+(Number(g.signal)||0).toFixed(2);
@@ -644,28 +730,6 @@ function renderArea(history){
    <path d="${line}" fill="none" stroke="#00e5ff" stroke-width="1.6"/>
    <circle cx="${xy[xy.length-1][0]}" cy="${xy[xy.length-1][1]}" r="3.2" fill="#00e5ff"/>`;
 }
-function renderDonut(betfeed){
-  const svg=document.getElementById('donut');
-  const buckets=new Map();
-  for(const w of betfeed||[]){
-    const k=String(w.sport||'OTHER').toUpperCase();
-    buckets.set(k,(buckets.get(k)||0)+(Number(w.risk)||0));
-  }
-  const entries=[...buckets.entries()].filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0]));
-  const total=entries.reduce((sum,[,v])=>sum+v,0);
-  document.getElementById('donut-total').textContent=formatMoney(total);
-  const ring='<circle cx="60" cy="60" r="44" fill="none" stroke="rgba(100,116,139,.15)" stroke-width="13"/>';
-  if(!total){svg.innerHTML=ring;return;}
-  const colors=['#00e5ff','#3b82f6','#22d3ee','#ffb020','#34d399','#a78bfa','#f472b6'];
-  const C=2*Math.PI*44;
-  let off=0,segs='';
-  entries.forEach(([,v],i)=>{
-    const len=C*v/total;
-    segs+=`<circle cx="60" cy="60" r="44" fill="none" stroke="${colors[i%colors.length]}" stroke-width="13" stroke-dasharray="${Math.max(len-2,0)} ${C-len+2}" stroke-dashoffset="${-off}" opacity=".9"/>`;
-    off+=len;
-  });
-  svg.innerHTML=ring+segs;
-}
 function renderTicker(s){
   const parts=[];
   for(const g of s.games){
@@ -681,12 +745,15 @@ function renderTicker(s){
 function renderBetfeed(s){
   const el=document.getElementById('betfeed');
   const rows=s.betfeed||[];
-  el.innerHTML=rows.length?rows.map(x=>`<div class="alert">
-    <span class="t">${esc(String(x.ts??'').slice(11,16))}</span>
-    <span class="msg"><b>${esc(x.customer)}</b> · ${esc(x.agent??'')} · ${esc(x.type)} ·
-      ${esc(x.legs?.[0]?.desc??'')} <small>(${(x.legs??[]).length} leg)</small> · r${esc(x.risk)} / w${esc(x.win)}</span>
-    <span class="sev ${x.source==='alert'?'high':x.source==='gslive'||x.source==='gsbuild'?'watch':'info'}">${esc(String(x.source??'').toUpperCase())}</span>
-  </div>`).join(''):'<div class="empty">AWAITING F402 BETFEED · 等待注单</div>';
+  el.innerHTML=rows.length?`<table class="desk"><thead><tr><th>TIME</th><th>LEAGUE</th><th>MKT</th><th>SELECTION</th><th class="num">RISK</th><th class="num">WIN</th><th>BOOK</th></tr></thead><tbody>${rows.map(x=>`<tr>
+    <td>${esc(String(x.ts??'').slice(11,16))}</td>
+    <td>${esc(ticketLeague(x))}</td>
+    <td>${esc(x.market||x.type||'')}</td>
+    <td><span class="sel" title="${esc(ticketSelection(x))}">${esc(ticketSelection(x))}</span></td>
+    <td class="num">${esc(formatMoney(x.risk))}</td>
+    <td class="num">${esc(formatMoney(x.win))}</td>
+    <td>F402</td>
+  </tr>`).join('')}</tbody></table>`:'<div class="empty">AWAITING F402 BETFEED · 等待注单</div>';
   document.getElementById('bf-tag').textContent='F402 · '+(s.links&&s.links.f402==='live'?'LIVE':(s.source||'seed').toUpperCase());
   const fp=document.getElementById('f402-pill');
   const live=s.source!=='seed'&&rows.length>0||(s.links&&s.links.f402==='live'&&rows.length>0);
@@ -697,13 +764,38 @@ function renderSharp(rows){
   const tag=document.getElementById('sharp-tag');
   if(tag) tag.textContent=STATE.links&&STATE.links.f402==='live'?'DERIVED · F402 TICKER':'DERIVED ONCE · SHARP.TS';
   const el=document.getElementById('sharp');
-  el.innerHTML=(rows||[]).length?(rows||[]).map(c=>{
+  el.innerHTML=(rows||[]).length?`<table class="desk"><thead><tr><th>CUSTOMER</th><th>AGENT</th><th class="num">TK</th><th class="num">RISK</th><th class="num">HOLD</th><th class="num">IDX</th></tr></thead><tbody>${(rows||[]).map(c=>{
     const score=Number(c.sharp_score)||0;
-    const tone=score>=0.5?'out':score>=0.25?'gtd':'q';
-    return `<div class="inj"><span class="p">${esc(c.customer)}</span>
-     <span class="d">${esc(c.agent??'')} · ${esc(c.tickets)}tk · r${esc(c.risk)} · ${esc(c.hold_pct)}% hold · ${esc(c.alerts)} alert</span>
-     <span class="tag ${tone}">${score.toFixed(2)}</span></div>`;
-  }).join(''):'<div class="empty">NO CUSTOMERS YET · 等待 wager 数据</div>';
+    return `<tr><td>${esc(c.customer)}</td><td>${esc(c.agent??'')}</td><td class="num">${esc(c.tickets)}</td><td class="num">${esc(formatMoney(c.risk))}</td><td class="num">${esc(c.hold_pct)}%</td><td class="num">${score.toFixed(2)}</td></tr>`;
+  }).join('')}</tbody></table>`:'<div class="empty">NO CUSTOMERS YET · 等待 wager 数据</div>';
+}
+function renderSources(s){
+  const el=document.getElementById('sources');
+  if(!el) return;
+  const rows=(s.sources&&s.sources.length)?s.sources:[
+    {name:'FANTASY402',status:(s.links&&s.links.f402)||'seed',tickets:(s.betfeed||[]).length,risk:0},
+    {name:'4CODDS',status:(s.links&&s.links.fourc)||'seed',tickets:0,risk:0},
+    {name:'DESK DB',status:'seed',tickets:0,risk:0},
+  ];
+  el.innerHTML=rows.map(row=>{
+    const status=String(row.status||'seed').toLowerCase();
+    const tone=status==='live'||status==='snapshot'?'live':status==='blocked'||status==='signin'?status:'';
+    return `<div class="src-card"><div class="name">${esc(row.name||row.id||'')}</div><div class="st ${tone}">${esc(status.toUpperCase())}</div><div class="meta">${esc(row.tickets??0)} tickets</div><div class="stat">${esc(formatMoney(row.risk||0))}</div></div>`;
+  }).join('');
+}
+function renderLeagues(s){
+  const el=document.getElementById('leagues');
+  if(!el) return;
+  const rows=leagueRows(s);
+  el.innerHTML=rows.length?`<table class="desk"><thead><tr><th>LEAGUE</th><th class="num">TK</th><th class="num">RISK</th><th class="num">WIN</th><th class="num">STRAIGHT</th><th class="num">PARLAY</th><th class="num">GAMES</th></tr></thead><tbody>${rows.map(row=>`<tr>
+    <td>${esc(row.league)}</td>
+    <td class="num">${esc(row.tickets)}</td>
+    <td class="num">${esc(formatMoney(row.risk))}</td>
+    <td class="num">${esc(formatMoney(row.win))}</td>
+    <td class="num">${esc(row.straight)}</td>
+    <td class="num">${esc(row.parlay)}</td>
+    <td class="num">${esc(row.games)}</td>
+  </tr>`).join('')}</tbody></table>`:'<div class="empty">NO LEAGUE ROWS</div>';
 }
 function renderLogs(l){
   document.getElementById('logs').innerHTML=(l||[]).length?(l||[]).map(x=>
@@ -720,7 +812,8 @@ function renderAll(s){
   renderSharp(s.sharp);
   renderLogs(s.logs);
   renderArea(s.history);
-  renderDonut(s.betfeed);
+  renderLeagues(s);
+  renderSources(s);
   renderTicker(s);
   applyLinkPill();
 }
@@ -758,19 +851,23 @@ async function pollState(){
   if(relayGone) return;
   if(!wsOk){
     try{
-      const r=await fetch('/api/state');
-      if(r.status===404){relayGone=true;return;}
-      if(r.ok){
+      let saw=false;
+      for(const path of ['/api/state','/api/sports-ops/state']){
+        const r=await fetch(path);
+        if(r.status!==404) saw=true;
+        if(!r.ok) continue;
         const s=await r.json();
         if(s&&s.games){
-          if(s.games.length){
+          if(s.games.length||(s.leagues&&s.leagues.length)){
             STATE=normalizeState(s,s.source==='live'?'live':'snapshot');
             linkMode=STATE.source==='live'?'live':'snapshot';
             renderAll(STATE);
-            connectWS();
+            if(s.socket===true||(path==='/api/state'&&s.socket!==false&&s.source==='live')) connectWS();
+            break;
           }
         }
       }
+      if(!saw){relayGone=true;return;}
     }catch{/* seed stays until a payload arrives */}
   }
   setTimeout(pollState,5000);
