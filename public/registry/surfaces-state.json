@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-10-07T01:40:07.180Z",
+  "generatedAt": "2026-10-07T01:46:54.569Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-08-04)",
   "surfaces": [
     {
@@ -163,7 +163,7 @@
       "status": "retired",
       "protocol": "—",
       "access": "none",
-      "note": "CNAME removed 2026-07-28. Tunnel 293ba37a (st-production) was still connected from another host on 2026-10-07. Do not delete it from this Mac.",
+      "note": "CNAME removed 2026-07-28. st-production still ingresses this host to http://proxy:3000 from the bet-ticker VPS. Do not delete the tunnel while that connector is up.",
       "dnsTarget": ""
     },
     {
