@@ -3,7 +3,7 @@
 > Execution outline for agents. Every task carries: owner, prerequisites, exact steps, verification, and the SSOT to update on completion.
 > State verified 2026-10-06 (dig + curl + Access list + tunnel list). SSOTs: `config/surfaces.toml`, `public/registry/surfaces-state.json`, `public/registry/bunfig-state.json`, `docs/harness/tenants/tunnel-inventory.md`, `.cloudflare-access.yml`, ADR-0002 (`docs/adr/0002-registry-index-ssot.md`).
 >
-> Open work is A1 (identify the live `st-production` connector; do not delete it), A2, A5, B2, and deferred C2. Everything else in this file is done or explicitly skipped.
+> Open work is A1 (stop the VPS connector before any delete), A2, A5, B2, and deferred C2. Everything else in this file is done or explicitly skipped.
 
 ## Domain map (who owns what)
 
@@ -21,13 +21,14 @@
 
 ## Track A — External / human credentials (agents CANNOT complete from repo)
 
-### A1. Tunnel `293ba37a-844f-413d-8b40-b9a9f8ae1c2a` (`st-production`) — do not delete
-- **Owner:** human who can see the Linux host that owns the connector.
-- **Re-checked 2026-10-07 UTC** with the local origin cert (`cloudflared tunnel list` and `tunnel info`). The FactoryWager API token still cannot see this account: tunnel list is 0 and GET returns 401.
-- The tunnel is named `st-production`. One connector is up: `9dc88505-8e3e-45c8-bbcc-3ca492600d80`, linux_amd64, cloudflared 2026.5.0, origin `2.24.96.9`, edges `1xewr01`, `1xewr07`, `1xewr13`, `1xewr16`.
-- `factory-wager.com` has 17 DNS records and none target this tunnel. No WARP IP routes. `terminal.factory-wager.com` still does not resolve.
-- **Do not delete the tunnel.** That would cut the live connector. Next step is to identify what that host still publishes.
-- `accounting-ledger` (`2029fc06-…`) had no active connector on the same check.
+### A1. Tunnel `293ba37a-844f-413d-8b40-b9a9f8ae1c2a` (`st-production`) — identified, do not delete yet
+- **Owner:** human with access to the Hostinger VPS that runs the connector.
+- **Re-checked 2026-10-07 UTC.** The tunnel is in FactoryWager account `7a470541…`. Pages and Access tokens cannot read tunnels there (list 0, GET 401). The local origin cert can.
+- Remote ingress is `terminal.factory-wager.com` → `http://proxy:3000`, plus a 404 catch-all. No WARP routes.
+- One connector is up: `9dc88505-8e3e-45c8-bbcc-3ca492600d80`, linux_amd64, cloudflared 2026.5.0, origin `2.24.96.9` (`srv1666710.hstgr.cloud`). That address is the bet-ticker VPS. Public DNS for `terminal.factory-wager.com` does not resolve.
+- A second tunnel, `kimiremote` (`e353b933-…`), has the same hostname pointed at `http://localhost:3000` and had no connector.
+- **Do not delete `st-production` while the VPS connector is up.** Stopping the VPS `st-cloudflared` container comes before a tunnel delete.
+- `accounting-ledger` (`2029fc06-…`) remote ingress is `ledger.factory-wager.com` → `http://127.0.0.1:3000`. It had no active connector.
 
 ### A2. Remove orphan credential file — leave it
 - **Owner:** human (machine-local). The remote connector is still up, so this is not an orphan delete.
@@ -110,7 +111,7 @@
 
 ## Execution order
 
-1. **A1:** identify what the live `st-production` connector publishes. Do not delete it.
+1. **A1:** on the bet-ticker VPS, stop `st-cloudflared` only when that container is ready to go. Then delete tunnel `st-production`. Do not delete it first.
 2. **A2:** leave the local credential while that connector is up.
 3. **B2**, with an Access browser session.
 4. **A5** and **C2** only when a human asks for HelpScout or a non-interactive authenticated probe.
