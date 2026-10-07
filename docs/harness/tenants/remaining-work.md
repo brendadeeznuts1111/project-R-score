@@ -3,7 +3,7 @@
 > Execution outline for agents. Every task carries: owner, prerequisites, exact steps, verification, and the SSOT to update on completion.
 > State verified 2026-10-06 (dig + curl + Access list + tunnel list). SSOTs: `config/surfaces.toml`, `public/registry/surfaces-state.json`, `public/registry/bunfig-state.json`, `docs/harness/tenants/tunnel-inventory.md`, `.cloudflare-access.yml`, ADR-0002 (`docs/adr/0002-registry-index-ssot.md`).
 >
-> Open work is A1, A2, A5, B2, and deferred C2. Everything else in this file is done or explicitly skipped.
+> Open work is A1 (identify the live `st-production` connector; do not delete it), A2, A5, B2, and deferred C2. Everything else in this file is done or explicitly skipped.
 
 ## Domain map (who owns what)
 
@@ -21,18 +21,17 @@
 
 ## Track A — External / human credentials (agents CANNOT complete from repo)
 
-### A1. Delete dead tunnel `293ba37a-844f-413d-8b40-b9a9f8ae1c2a` — blocked
-- **Owner:** human with access to the *other* Cloudflare account (not FactoryWager `7a470541…`).
-- **Re-checked 2026-10-06:** that account's tunnel list returns 200 with 0 tunnels for both the Pages token and the Access token. GET of this id with the Pages token returns **401 Not authorized**, not 404.
-- **Steps:** in the owning account, dashboard → Zero Trust → Networks → Tunnels → delete `293ba37a-…`.
-- **Verify:** the same GET returns 404 in the owning account.
-- **Update:** `docs/harness/tenants/tunnel-inventory.md` credentials table (remove row).
+### A1. Tunnel `293ba37a-844f-413d-8b40-b9a9f8ae1c2a` (`st-production`) — do not delete
+- **Owner:** human who can see the Linux host that owns the connector.
+- **Re-checked 2026-10-07 UTC** with the local origin cert (`cloudflared tunnel list` and `tunnel info`). The FactoryWager API token still cannot see this account: tunnel list is 0 and GET returns 401.
+- The tunnel is named `st-production`. One connector is up: `9dc88505-8e3e-45c8-bbcc-3ca492600d80`, linux_amd64, cloudflared 2026.5.0, origin `2.24.96.9`, edges `1xewr01`, `1xewr07`, `1xewr13`, `1xewr16`.
+- `factory-wager.com` has 17 DNS records and none target this tunnel. No WARP IP routes. `terminal.factory-wager.com` still does not resolve.
+- **Do not delete the tunnel.** That would cut the live connector. Next step is to identify what that host still publishes.
+- `accounting-ledger` (`2029fc06-…`) had no active connector on the same check.
 
-### A2. Remove orphan credential file — blocked on A1
-- **Owner:** human (machine-local, destructive). Prereq: A1 done (tunnel gone).
-- **Re-checked 2026-10-06:** `~/.cloudflared/293ba37a-844f-413d-8b40-b9a9f8ae1c2a.json` is still present (`-r--------`, 175 bytes). Leave it until A1 is done in the owning account.
-- **Steps:** `rm ~/.cloudflared/293ba37a-844f-413d-8b40-b9a9f8ae1c2a.json`
-- **Update:** `tunnel-inventory.md` credentials table.
+### A2. Remove orphan credential file — leave it
+- **Owner:** human (machine-local). The remote connector is still up, so this is not an orphan delete.
+- **Re-checked 2026-10-07 UTC:** `~/.cloudflared/293ba37a-844f-413d-8b40-b9a9f8ae1c2a.json` is present (`-r--------`, 175 bytes). No local ingress file references it. Leave it. Removing the local file would not stop the Linux connector, and it is the only copy on this Mac.
 
 ### A3. reasonix decision (install OR decommission) — ✅ DONE 2026-07-28 (branch 2: decommissioned)
 - **Owner:** human decision; agent executes either branch.
@@ -64,7 +63,7 @@
 
 ### B2. Verify bunfig board renders post-Access — needs a browser session
 - **Owner:** human or agent with an Access browser login. Do not mint a service token for this.
-- **Re-checked 2026-10-06 (anonymous):** `https://score.factory-wager.com/portal/bunfig/` returns 302 to the Access login. `https://score.factory-wager.com/registry/bunfig-state.json` returns 200. `.env` has no Access service-token client id, so the logged-in board was not opened.
+- **Re-checked 2026-10-07 UTC (anonymous):** `https://score.factory-wager.com/portal/bunfig/` returns 302 to the Access login. Live `/registry/bunfig-state.json` is `kind=bunfig-state`, schema 2, `healthy=true`, 7 tracked keys (4 machine, 3 project), 0 drift keys, 0 gate fails, provenance fields present. The logged-in HTML was not opened. `.env` has no Access service-token client id.
 - **Steps:** open `https://score.factory-wager.com/portal/bunfig/` after Access auth; confirm stat cards + provenance table render from `/registry/bunfig-state.json`.
 
 ### B3. Vanity CNAMEs decision (health., telegram.) — ✅ DONE 2026-10-06 (option a: leave)
@@ -111,9 +110,10 @@
 
 ## Execution order
 
-1. **A1**, then **A2**, in the other Cloudflare account.
-2. **B2**, with an Access browser session.
-3. **A5** and **C2** only when a human asks for HelpScout or a non-interactive authenticated probe.
+1. **A1:** identify what the live `st-production` connector publishes. Do not delete it.
+2. **A2:** leave the local credential while that connector is up.
+3. **B2**, with an Access browser session.
+4. **A5** and **C2** only when a human asks for HelpScout or a non-interactive authenticated probe.
 
 ## Done already (for reference — do not redo)
 
