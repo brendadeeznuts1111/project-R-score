@@ -49,7 +49,7 @@ Credential files were **left in place**; deletion is a human decision.
 - `accounting-ledger` → `ledger.factory-wager.com` → `http://127.0.0.1:3000`. No connector.
 - `dsh-web` → `dsh.misson-control.com` → `http://127.0.0.1:3080`.
 
-`factory-wager.com` has no DNS record for `293ba37a`, and `terminal.factory-wager.com` does not resolve. Do not delete `st-production` or its local credential while the VPS connector is up. The ledger LaunchAgent stays unloaded while `:3000` is down.
+`factory-wager.com` has no DNS record for `293ba37a`, and `terminal.factory-wager.com` does not resolve. Do not delete `st-production` or its local credential while the VPS connector is up. On 2026-10-07 the connector was still up. SSH to `bet-ticker-vps` timed out because Tailscale on this Mac was disconnected and the app was stuck on Renew. The tunnel was not deleted. The ledger LaunchAgent stays unloaded while `:3000` is down.
 
 ## Repo-side template
 
@@ -59,7 +59,7 @@ Credential files were **left in place**; deletion is a human decision.
 
 1. ~~**Access policy in front of `ledger.factory-wager.com`**~~ — **DONE 2026-07-28** (Access app live; verified 302 to Access login). Also applied same day: `score…/portal` + `project-r-score.pages.dev/portal` (302 verified). All staged apps resolved (reasonix decommissioned — see 4).
 2. ~~**launchd service for HA**~~ — plist installed 2026-07-28. **Not loaded on 2026-10-06**, and the origin was down. Do not boot it until `:3000` is serving.
-3. **`st-production` (`293ba37a-…`)** — ingress is the retired `terminal.factory-wager.com` hostname to `http://proxy:3000`. The connector is the bet-ticker VPS. Stop that VPS cloudflared before deleting the tunnel. The local credential stays until then.
+3. **`st-production` (`293ba37a-…`)** — ingress is the retired `terminal.factory-wager.com` hostname to `http://proxy:3000`. The connector is the bet-ticker VPS and was still up on 2026-10-07. Renew Tailscale on this Mac, then stop that VPS cloudflared before deleting the tunnel. The local credential stays until then.
 4. ~~**`reasonix-serve`: install or decommission**~~ — **DECOMMISSIONED 2026-07-28** (template deleted, Access app dropped, `surfaces.reasonix` retired).
 5. ~~**`tunnel:init` generator missing**~~ — **RESOLVED 2026-10-06**: the two ledger comments no longer claim a generator. The script was not added.
 6. ~~**`terminal.factory-wager.com` dangling (502)**~~ — **RESOLVED 2026-07-28**: zone CNAME removed; host does not resolve. Not Sports Terminal. Full domain map: [`docs/brand-alignment.md`](../../brand-alignment.md).

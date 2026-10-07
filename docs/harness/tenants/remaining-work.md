@@ -3,7 +3,7 @@
 > Execution outline for agents. Every task carries: owner, prerequisites, exact steps, verification, and the SSOT to update on completion.
 > State verified 2026-10-06 (dig + curl + Access list + tunnel list). SSOTs: `config/surfaces.toml`, `public/registry/surfaces-state.json`, `public/registry/bunfig-state.json`, `docs/harness/tenants/tunnel-inventory.md`, `.cloudflare-access.yml`, ADR-0002 (`docs/adr/0002-registry-index-ssot.md`).
 >
-> Open work is A1 (stop the VPS connector before any delete), A2, A5, B2, and deferred C2. Everything else in this file is done or explicitly skipped.
+> Open work is A1 and A5. A1 is still blocked: the VPS connector is up, and Tailscale on this Mac needs Renew before SSH. A5 stays blocked until HelpScout SSL exists. A2 waits on the A1 delete. B2 and C2 are done.
 
 ## Domain map (who owns what)
 
@@ -28,6 +28,7 @@
 - One connector is up: `9dc88505-8e3e-45c8-bbcc-3ca492600d80`, linux_amd64, cloudflared 2026.5.0, origin `2.24.96.9` (`srv1666710.hstgr.cloud`). That address is the bet-ticker VPS. Public DNS for `terminal.factory-wager.com` does not resolve.
 - A second tunnel, `kimiremote` (`e353b933-…`), has the same hostname pointed at `http://localhost:3000` and had no connector.
 - **Do not delete `st-production` while the VPS connector is up.** Stopping the VPS `st-cloudflared` container comes before a tunnel delete.
+- **Re-checked 2026-10-07 ~02:11 UTC.** Connector `9dc88505-…` was still up from `2.24.96.9`. `reasonix remote test bet-ticker-vps` timed out. Tailscale on this Mac had no `100.x` address. The Tailscale app is signed in, the network extension is enabled, and the window was stuck on Disconnecting with **Renew**. The tunnel was not deleted.
 - `accounting-ledger` (`2029fc06-…`) remote ingress is `ledger.factory-wager.com` → `http://127.0.0.1:3000`. It had no active connector.
 
 ### A2. Remove orphan credential file — leave it
@@ -48,7 +49,7 @@
 
 ### A5. support.factory-wager.com re-add (optional) — not started
 - **Owner:** human (HelpScout admin). Prereq: custom-domain SSL configured in HelpScout FIRST.
-- **Re-checked 2026-10-06:** `support.factory-wager.com` does not resolve. Do not recreate the CNAME until HelpScout SSL exists.
+- **Re-checked 2026-10-07:** `support.factory-wager.com` still does not resolve. The factorywager vault has no HelpScout item. The CNAME was not recreated.
 - **Steps:** re-create CNAME `support → helpscout.com` via DNS token; verify not-525.
 - **Update:** `config/surfaces.toml` (retired → live/external), rebake.
 
@@ -62,10 +63,10 @@
 - **Steps (owners):** finish/revert the dirty bakes (`public/registry/channel-meta-bake.json`, `install-platform.json`, `release-features.json`), then `bun test --changed --bail=1` must be green.
 - **Verify:** `bun test --pass-with-no-tests --changed --parallel --bail=1` → 0 fail; then stop using `SKIP_TEST_CHANGED` for commits.
 
-### B2. Verify bunfig board renders post-Access — needs a browser session
-- **Owner:** human or agent with an Access browser login. Do not mint a service token for this.
-- **Re-checked 2026-10-07 UTC (anonymous):** `https://score.factory-wager.com/portal/bunfig/` returns 302 to the Access login. Live `/registry/bunfig-state.json` is `kind=bunfig-state`, schema 2, `healthy=true`, 7 tracked keys (4 machine, 3 project), 0 drift keys, 0 gate fails, provenance fields present. The logged-in HTML was not opened. `.env` has no Access service-token client id.
-- **Steps:** open `https://score.factory-wager.com/portal/bunfig/` after Access auth; confirm stat cards + provenance table render from `/registry/bunfig-state.json`.
+### B2. Verify bunfig board renders post-Access — ✅ DONE 2026-10-07
+- **Owner:** done in the Chrome profile that already had a portal session.
+- Anonymous requests still return 302. The signed-in page title is `Bunfig · FactoryWager`. Stat buttons: HEALTHY yes, TRACKED KEYS 7, DRIFT KEYS 0, MACHINE 4, PROJECT 3, GATE FAILS 0. The install-key table rendered (linker isolated/machine, frozenLockfile true/project, and the other tracked keys). Gates doctor and audit are ok with exit 0. Registry scopes include `registry.factory-wager.com`.
+- A different Chrome profile still stops on the Access login. That login was not completed, and the Gmail verification-code tab was not read.
 
 ### B3. Vanity CNAMEs decision (health., telegram.) — ✅ DONE 2026-10-06 (option a: leave)
 - **Owner:** human decision; recorded here as leave.
@@ -100,8 +101,10 @@
 - Steps: add `--probe` flag → per surface, DNS resolve + HTTPS status → compare with TOML status → report drift (fail on mismatch with `--check`).
 - Tests: mock fetch; assert drift detection on a stale status.
 
-### C2. Access service token for non-interactive probes — deferred
-- Not minted on 2026-10-06. Anonymous checks already prove the Access 302 and the public registry 200. Mint a vaulted service token only when someone asks for a non-interactive authenticated portal probe.
+### C2. Access service token for non-interactive probes — ✅ DONE 2026-10-07
+- Minted `portal-bunfig-probe`, expires `2027-10-07T02:08:41Z`. The secret is only in Proton vault `factorywager`, item `Cloudflare Access service token portal-bunfig-probe` (username is the client id, password is the secret). Do not print it.
+- FactoryWager Portal has a Service Auth policy (`non_identity`) named `portal-bunfig-probe service auth`. The email Allow policy stays email-only. An Allow policy that only includes the token still redirects to login.
+- A request with the token to `https://score.factory-wager.com/portal/bunfig/` returned 200 and the board shell. The same URL without the token returned 302. The same token against `https://ledger.factory-wager.com/` returned 302. It is not on the ledger app or the pages.dev portal.
 
 ### C3. launchd for ledger dev variant (only if used) — skipped 2026-10-06
 - `~/.cloudflared/config-ledger-dev.yml` exists. Nothing accepted connections on `127.0.0.1:5173` or `:3000`. There is no dev LaunchAgent.
@@ -111,11 +114,10 @@
 
 ## Execution order
 
-1. **A1:** on the bet-ticker VPS, stop `st-cloudflared` only when that container is ready to go. Then delete tunnel `st-production`. Do not delete it first.
-2. **A2:** leave the local credential while that connector is up.
-3. **B2**, with an Access browser session.
-4. **A5** and **C2** only when a human asks for HelpScout or a non-interactive authenticated probe.
+1. **A1:** Renew Tailscale on this Mac, then on the bet-ticker VPS stop `st-cloudflared`. Confirm the connector is gone, then delete tunnel `st-production`. Do not delete it first.
+2. **A2:** remove the local credential only after that delete.
+3. **A5** only after HelpScout custom-domain SSL exists. Do not add a CNAME that returns 525.
 
 ## Done already (for reference — do not redo)
 
-bunfig machine SSOT + excludes + `frozenLockfile` drift · workspace bunfig dedupe · env-inventory TOML plane (v4) · `bake:all` + `portal-cli badge|bunfig|dashboard --list` · `/portal/bunfig/` board · surfaces.toml SSOT + `surfaces:bake` + cross-checks + `/portal/surfaces/` board + doctor check · Access applied (ledger, score/portal, pages.dev/portal) · scoped Access name, domain, 4h session, and email allowlist re-matched live 2026-10-06 (`bun run cloudflare:access:drift` exit 0) · B3 vanity CNAMEs left in place · C3 dev launchd skipped · terminal.+support. CNAMEs retired · 12 edge handlers GET-guarded (405 in prod) · R2 artifact plane activated with verified Tennis HQ SSOT 1.5.0 · DNS zone fully mapped · factory-wager `misson-control` zone removed (`dsh.misson-control.com` is a separate host and still returns Access 302) · registry docs placeholder/bucket-reality notes.
+bunfig machine SSOT + excludes + `frozenLockfile` drift · workspace bunfig dedupe · env-inventory TOML plane (v4) · `bake:all` + `portal-cli badge|bunfig|dashboard --list` · `/portal/bunfig/` board · surfaces.toml SSOT + `surfaces:bake` + cross-checks + `/portal/surfaces/` board + doctor check · Access applied (ledger, score/portal, pages.dev/portal) · scoped Access name, domain, 4h session, and email allowlist re-matched live 2026-10-06 (`bun run cloudflare:access:drift` exit 0) · B2 bunfig board rendered signed-in 2026-10-07 · C2 portal service token vaulted 2026-10-07 · B3 vanity CNAMEs left in place · C3 dev launchd skipped · terminal.+support. CNAMEs retired · 12 edge handlers GET-guarded (405 in prod) · R2 artifact plane activated with verified Tennis HQ SSOT 1.5.0 · DNS zone fully mapped · factory-wager `misson-control` zone removed (`dsh.misson-control.com` is a separate host and still returns Access 302) · registry docs placeholder/bucket-reality notes.

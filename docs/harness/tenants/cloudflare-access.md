@@ -104,6 +104,15 @@ persisting the credential outside the vault-derived `.env`/Reasonix cache.
 5. Keep Pages preview protection in the Pages project setting; it does not
    require widening the Access token with Pages Edit.
 
+On 2026-10-07 a portal-only service token, `portal-bunfig-probe`, was minted.
+It expires 2027-10-07. The secret is the Proton item
+`Cloudflare Access service token portal-bunfig-probe` in vault `factorywager`.
+Its policy action is Service Auth (`non_identity`) on FactoryWager Portal.
+The email Allow policy does not include it. Ledger and the pages.dev portal
+do not accept it. A token request to `/portal/bunfig/` returned 200. The same
+request without the token, and the same token against the ledger host,
+returned 302.
+
 ## Doctor probes (live edge)
 
 `portal-cli doctor` group **`infra`** observes edge behavior (no Access API token required):
