@@ -8,7 +8,7 @@
  * Required domains use AccessDomainId (surfaces brand) — host vs host/path stay
  * separated from HostId.
  *
- * Human SSO contract (aligned live 2026-08-02): explicit `email:` allowlist
+ * Human SSO contract (aligned live 2026-10-06): explicit `email:` allowlist
  * (Google / One-time PIN IdPs). Domain-wide `email_domain` OTP is rejected.
  *
  * @see https://developers.cloudflare.com/cloudflare-one/access-controls/policies/
