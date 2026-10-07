@@ -1715,6 +1715,9 @@ export const BAKE_ALL_ALLOWED_LONG = ['bake', 'dry-run', 'list'] as const;
 /** § — cloudflare:access:token:validate (`tools/cloudflare-access-token-validate.ts`) — auto team plan */
 export const CLOUDFLARE_ACCESS_TOKEN_VALIDATE_ALLOWED_LONG = ['json'] as const;
 
+/** § — cloudflare:access:drift (`tools/cloudflare-access-drift.ts`) — auto team plan */
+export const CLOUDFLARE_ACCESS_DRIFT_ALLOWED_LONG = ['json'] as const;
+
 /** § — portal:probe (`tools/portal-probe.ts`) — auto team plan */
 export const PORTAL_PROBE_ALLOWED_LONG = ['dry-run', 'frozen-lockfile', 'json'] as const;
 
@@ -2720,6 +2723,7 @@ export type AllowedLongCliName =
   | 'brand:manifest'
   | 'bake:all'
   | 'cloudflare:access:token:validate'
+  | 'cloudflare:access:drift'
   | 'portal:probe'
   | 'verify:cloudflare-token'
   | 'cloudflare:deploy'
@@ -3054,6 +3058,7 @@ export const ALLOWED_LONG_REGISTRY = {
   'brand:manifest': BRAND_MANIFEST_ALLOWED_LONG,
   'bake:all': BAKE_ALL_ALLOWED_LONG,
   'cloudflare:access:token:validate': CLOUDFLARE_ACCESS_TOKEN_VALIDATE_ALLOWED_LONG,
+  'cloudflare:access:drift': CLOUDFLARE_ACCESS_DRIFT_ALLOWED_LONG,
   'portal:probe': PORTAL_PROBE_ALLOWED_LONG,
   'verify:cloudflare-token': VERIFY_CLOUDFLARE_TOKEN_ALLOWED_LONG,
   'cloudflare:deploy': CLOUDFLARE_DEPLOY_ALLOWED_LONG,

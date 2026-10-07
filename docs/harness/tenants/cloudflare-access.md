@@ -96,9 +96,12 @@ persisting the credential outside the vault-derived `.env`/Reasonix cache.
 1. Inject with `bun run proton:inject:factorywager:reasonix`.
 2. Run `bun run cloudflare:access:token:validate`; the read-only probe checks
    application/service-token health and expiry.
-3. Map `CLOUDFLARE_ACCESS_API_TOKEN` to the policy CLI only for an inspected
+3. Run `bun run cloudflare:access:drift`; it compares scoped app name, domain,
+   and session duration to the live list and exits 1 on mismatch. Unlisted live
+   apps stay ignored. It does not change policy.
+4. Map `CLOUDFLARE_ACCESS_API_TOKEN` to the policy CLI only for an inspected
    plan. Never substitute the Pages or DNS token.
-4. Keep Pages preview protection in the Pages project setting; it does not
+5. Keep Pages preview protection in the Pages project setting; it does not
    require widening the Access token with Pages Edit.
 
 ## Doctor probes (live edge)
@@ -168,6 +171,7 @@ explicit email allowlist (`utahj4754@gmail.com`, `brendawill2233@gmail.com`,
 ```bash
 bun run cloudflare:access:verify
 bun run cloudflare:access:token:validate # read health; write scope was proved by plan
+bun run cloudflare:access:drift          # scoped name, domain, and session vs live
 bun run cloudflare:access:edge:validate
 bun run proton:check
 kimi-cloudflare-access plan   # production apps only; inspect, do not use for Pages previews

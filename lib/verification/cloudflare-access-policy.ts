@@ -2,7 +2,8 @@
  * Static safety contract for `.cloudflare-access.yml`.
  *
  * This verifier intentionally owns repository policy, not Cloudflare's whole
- * API schema. Live IDs and provider state remain a plan-time concern.
+ * API schema. Live name, domain, and session length are compared by
+ * cloudflare-access-drift.ts. This verifier still owns the repository file only.
  *
  * Required domains use AccessDomainId (surfaces brand) — host vs host/path stay
  * separated from HostId.
@@ -285,4 +286,28 @@ export function verifyCloudflareAccessPolicyText(text: string): CloudflareAccess
   }
 
   return { ok: issues.length === 0, appCount: apps.length, issues };
+}
+
+export type ScopedAccessApp = {
+  name: string;
+  domain: string;
+  sessionDuration: string;
+};
+
+/** Scoped apps from `.cloudflare-access.yml`. Invalid YAML throws; call the verifier first. */
+export function readScopedAccessApps(text: string): ScopedAccessApp[] {
+  const config = parse(text) as AccessConfig;
+  const apps = Array.isArray(config.apps) ? config.apps : [];
+  return apps.flatMap(app => {
+    const name = app.name?.trim() ?? '';
+    const domain = app.domain?.trim() ?? '';
+    if (!name && !domain) return [];
+    return [
+      {
+        name,
+        domain,
+        sessionDuration: app.session_duration?.trim() ?? '',
+      },
+    ];
+  });
 }
