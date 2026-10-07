@@ -87,3 +87,23 @@ Task commands and domain owners live in [`docs/AGENTS.md`](docs/AGENTS.md).
 Shared staged-gate mechanics live in
 `.agents/skills/references/agent-tooling.md`; skills link there instead of
 copying the loop.
+
+## Cursor Cloud specific instructions
+
+Cloud Agent login shells skip `~/.bashrc`. Keep Bun **1.4.0** on the default
+PATH as both `/usr/local/bin/bun` and `/usr/local/bin/bunx`. The root `prepare`
+script calls `bunx husky`.
+
+Seed `~/.bunfig.toml` from `config/machine.bunfig.toml.template`, replacing
+`{{CACHE_DIR}}` with `$HOME/.bun/install/cache`, then
+`bun install --frozen-lockfile`. Confirm with `bun run machine:bunfig:check`.
+
+`data/` is gitignored. Create `data/` and `public/evidence/` before the portal
+so SQLite can open `data/operations.db`.
+
+The local product is the portal: `bun run dev:portal` (port 3000). Readiness is
+`GET /ready`. Live check is `bun run verify:portal`. `bun run dev` starts
+`server/server-enhanced.ts`, which binds the same default port.
+
+`bun run type-check` checks `tsconfig.check.json`. Day-loop tests are
+`bun test` under `tests/`. `bun run bun:ci` reads `~/.reasonix/.env`.
