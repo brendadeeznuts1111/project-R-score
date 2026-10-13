@@ -153,6 +153,8 @@ yarn-error.log*
 .env
 .env.*
 !/.env.example
+# Sports ops relay session, cookies, and sqlite. Never commit.
+projects/active/sports-terminal-os/demos/.sports-ops/
 !/.env.registry.example
 !/.env.test.example
 .dev.vars
