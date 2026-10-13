@@ -27,6 +27,107 @@ function fixture(headers: HeadersInit = {}, status = 200, chunks: Uint8Array[] =
 }
 
 describe('release feed network boundaries', () => {
+  for (const host of ['localhost.', 'feeds.localhost.', 'printer.local.']) {
+    test(`rejects initial local DNS hostname ${host} before fetching`, async () => {
+      const requests: string[] = [];
+      await expect(
+        fetchReleaseFeed({
+          url: `https://${host}/feed`,
+          fetchImpl: fetcher(async input => {
+            requests.push(String(input));
+            return new Response(xml, { headers: { 'content-type': 'text/xml' } });
+          }),
+        })
+      ).rejects.toThrow('prohibited host');
+      expect(requests).toEqual([]);
+    });
+
+    test(`rejects redirect to local DNS hostname ${host} before fetching it`, async () => {
+      const stream = fixture({ location: `https://${host}/feed` }, 302);
+      const requests: string[] = [];
+      await expect(
+        fetchReleaseFeed({
+          url,
+          fetchImpl: fetcher(async input => {
+            requests.push(String(input));
+            return stream.response;
+          }),
+        })
+      ).rejects.toThrow('prohibited host');
+      expect(requests).toEqual([url]);
+      expect(stream.cancelled()).toBe(true);
+    });
+  }
+
+  test('allows public DNS trailing dots on initial and redirected URLs', async () => {
+    const requests: string[] = [];
+    const entries = await fetchReleaseFeed({
+      url: 'https://bun.com./rss.xml',
+      fetchImpl: fetcher(async input => {
+        requests.push(String(input));
+        return requests.length === 1
+          ? new Response(null, { status: 302, headers: { location: 'https://example.com./feed' } })
+          : new Response(xml, { headers: { 'content-type': 'text/xml' } });
+      }),
+    });
+    expect(entries[0]?.version).toBe('1.4.3');
+    expect(requests).toEqual(['https://bun.com./rss.xml', 'https://example.com./feed']);
+  });
+
+  for (const cancellation of ['pending', 'rejected'] as const) {
+    test(`continues approved redirects when body cancellation is ${cancellation}`, async () => {
+      let cancelled = false;
+      const redirect = new Response(
+        new ReadableStream<Uint8Array>({
+          cancel() {
+            cancelled = true;
+            return cancellation === 'pending'
+              ? new Promise<void>(() => {})
+              : Promise.reject(new Error('custom cancellation failure'));
+          },
+        }),
+        { status: 302, headers: { location: '/release.xml' } }
+      );
+      const requests: string[] = [];
+      const entries = await fetchReleaseFeed({
+        url,
+        timeoutMs: 100,
+        fetchImpl: fetcher(async input => {
+          requests.push(String(input));
+          return requests.length === 1
+            ? redirect
+            : new Response(xml, { headers: { 'content-type': 'text/xml' } });
+        }),
+      });
+      expect(entries[0]?.version).toBe('1.4.3');
+      expect(requests).toEqual([url, 'https://bun.com/release.xml']);
+      expect(cancelled).toBe(true);
+    }, 1000);
+  }
+
+  test('keeps the shared deadline when redirect cancellation never settles', async () => {
+    const signals: Array<AbortSignal | null | undefined> = [];
+    const redirect = new Response(
+      new ReadableStream<Uint8Array>({ cancel: () => new Promise<void>(() => {}) }),
+      { status: 302, headers: { location: '/release.xml' } }
+    );
+    const stalled = fixture();
+    await expect(
+      fetchReleaseFeed({
+        url,
+        timeoutMs: 10,
+        fetchImpl: fetcher(async (_input, init) => {
+          signals.push(init?.signal);
+          return signals.length === 1 ? redirect : stalled.response;
+        }),
+      })
+    ).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(signals).toHaveLength(2);
+    expect(signals[0]).toBe(signals[1]);
+    expect(stalled.cancelled()).toBe(true);
+    expect(stalled.response.body?.locked).toBe(false);
+  }, 1000);
+
   test('preserves custom fetch, request headers, XML MIME parameters and parsed releases', async () => {
     const requests: Array<{ input: string; init?: RequestInit }> = [];
     const entries = await fetchReleaseFeed({

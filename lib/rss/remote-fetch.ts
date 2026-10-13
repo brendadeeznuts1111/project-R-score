@@ -72,7 +72,10 @@ function blockedIpv6(host: string): boolean {
 }
 
 function blockedHost(hostname: string): boolean {
-  const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  const host = hostname
+    .toLowerCase()
+    .replace(/^\[|\]$/g, '')
+    .replace(/\.+$/, '');
   if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return true;
   if (blockedIpv4(host)) return true;
   return blockedIpv6(host);
@@ -113,7 +116,8 @@ export async function fetchWithRedirectPolicy(
       signal: deadline,
     });
     if (!REDIRECT_STATUSES.has(response.status)) return { response, finalUrl: current };
-    await response.body?.cancel().catch(() => {});
+    // A response stream's cancellation hook can stall; cleanup must not block redirects or deadlines.
+    void response.body?.cancel().catch(() => {});
     if (hop === policy.maxRedirects) throw new Error(`${policy.label} exceeded redirect limit`);
     const location = response.headers.get('location');
     if (!location) throw new Error(`${policy.label} redirect is missing Location`);
