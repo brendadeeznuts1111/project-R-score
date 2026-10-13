@@ -64,6 +64,13 @@
       "headers": {
         "Authorization": "Bearer ${input:cloudflare-api-token}"
       }
+    },
+    "sports-leader": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "${workspaceFolder}/vendor/sports-leader-mcp/dist/index.js"
+      ]
     }
   }
 }

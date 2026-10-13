@@ -1,7 +1,7 @@
 {
   "_meta": {
-    "version": "2.4.0",
-    "updated": "2026-08-06",
+    "version": "2.5.0",
+    "updated": "2026-10-07",
     "syncWith": ".cursor/mcp.json (symlink to this file)",
     "docs": "https://cursor.com/docs/context/mcp",
     "notes": "SSOT for workspace MCP servers. Paths use ${workspaceFolder} (portable). Bun-native launch: command bun + script path (no run). Essential: bun-docs + cloudflare-docs. Cursor Cloudflare HTTP MCPs: Authorization Bearer ${CLOUDFLARE_API_TOKEN} + envFile (.env). VS Code: bun run mcp:sync → .vscode/mcp.json with ${input:cloudflare-api-token} (HTTP has no envFile). Pre-commit regenerates .vscode/mcp.json when this file is staged. Cloudflare agent skills: bunx skills add https://github.com/cloudflare/skills → .agents/skills/cloudflare*",
@@ -13,7 +13,7 @@
         "cloudflare-bindings",
         "cloudflare-observability"
       ],
-      "optional": ["ast-grep", "github"],
+      "optional": ["ast-grep", "github", "sports-leader"],
       "requiresEnv": {
         "cascade-mover": ["projects/active/enterprise/cascade-mover-v3/.env"],
         "cloudflare": [".env (CLOUDFLARE_API_TOKEN)"],
@@ -104,6 +104,12 @@
         "Authorization": "Bearer ${CLOUDFLARE_API_TOKEN}"
       },
       "envFile": "${workspaceFolder}/.env"
+    },
+    "sports-leader": {
+      "type": "stdio",
+      "description": "WalrusQuant sports-leader-mcp — ESPN scoreboard, odds, slate, and athletes over stdio (Node 20+, no API key, no PORT)",
+      "command": "node",
+      "args": ["${workspaceFolder}/vendor/sports-leader-mcp/dist/index.js"]
     }
   }
 }
