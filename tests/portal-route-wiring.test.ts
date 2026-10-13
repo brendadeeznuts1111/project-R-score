@@ -5,6 +5,7 @@ import {
   PORTAL_MARKDOWN_SLUGS,
   PORTAL_TRAILING_SLASH_SOURCES,
 } from '../lib/http/portal-route-manifest.ts';
+import { isPublicReadPath } from '../lib/http/public-read-path.ts';
 import { publicRouteCatalog } from '../lib/http/public-routes.ts';
 
 describe('portal route wiring', () => {
@@ -42,6 +43,7 @@ describe('portal route wiring', () => {
     expect(paths.has('/api/compliance')).toBe(true);
     expect(paths.has('/portal/skills/')).toBe(true);
     expect(paths.has('/monitoring/')).toBe(true);
+    expect(paths.has('/sports-ops/')).toBe(true);
   });
 
   test('compliance portal is first-class in route SSOT', () => {
@@ -133,5 +135,15 @@ describe('portal route wiring', () => {
     const source = await Bun.file('scripts/serve-public.ts').text();
     expect(source).toContain("'/monitoring': () => monitoringPage()");
     expect(source).toContain("'/monitoring/': () => monitoringPage()");
+  });
+
+  test('sports ops desk is a route on the public host', async () => {
+    const source = await Bun.file('scripts/serve-public.ts').text();
+    expect(source).toContain("'/sports-ops': (req: Request) => Promise.resolve(canonicalSlashRedirect(req, '/sports-ops/'))");
+    expect(source).toContain("'/sports-ops/': portalPage('/sports-ops/index.html')");
+    expect(source).toContain("'/api/sports-ops/state': () => sportsOpsState()");
+    expect(isPublicReadPath('/api/sports-ops/state')).toBe(true);
+    expect(await Bun.file('public/sports-ops/index.html').exists()).toBe(true);
+    expect(isPublicReadPath('/sports-ops/')).toBe(true);
   });
 });

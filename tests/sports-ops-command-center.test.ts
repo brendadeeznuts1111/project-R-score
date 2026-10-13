@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 
 const html = await Bun.file(
-  'projects/active/sports-terminal-os/demos/sports-ops-command-center.html',
+  'public/sports-ops/index.html',
 ).text();
 
 function loadPure(): {
@@ -95,6 +95,9 @@ describe('sports ops command center', () => {
     expect(html.includes('function gauge')).toBe(false);
     expect(html.includes("s.source!=='seed'&&rows.length>0")).toBe(true);
     expect(html.includes('if(s&&s.games)')).toBe(true);
+    expect(html.includes('/api/sports-ops/state')).toBe(true);
+    expect(html.includes('id="leagues"')).toBe(true);
+    expect(html.includes('id="sources"')).toBe(true);
     expect(html.includes('if(s.length<2)')).toBe(true);
     expect(html.includes('window.__sportsOpsMcp')).toBe(true);
     expect(html.includes('get_link_status')).toBe(true);
