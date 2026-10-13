@@ -24,6 +24,10 @@ export function fetchImageResponse(
   return fetchWithRedirectPolicy(initialUrl, headers, { ...policy, label: 'Feed image' });
 }
 
-export function readBoundedImageBytes(response: Response, maxBytes: number): Promise<Uint8Array> {
-  return readBoundedBody(response, maxBytes, 'Feed image');
+export function readBoundedImageBytes(
+  response: Response,
+  maxBytes: number,
+  signal?: AbortSignal
+): Promise<Uint8Array> {
+  return readBoundedBody(response, maxBytes, 'Feed image', signal);
 }
