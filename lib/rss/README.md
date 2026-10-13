@@ -38,10 +38,15 @@ the feed; the original `imageUrl` remains available as fallback metadata.
 Remote URLs are HTTPS-only, manually redirected, bounded while streaming, and
 reject credentials plus literal local/private targets. The native transport
 resolves each redirect destination, rejects the complete answer set if any
-address is nonpublic, and connects to one validated numeric IP. HTTP Host and
-TLS certificate identity remain the original hostname; ambient proxies and
-connection reuse are disabled. This avoids a second hostname resolution between
-validation and connection. DNS lookup and body reads share the request deadline.
+address is nonpublic, and connects only to validated numeric IPs. Failed
+connections fall back immediately within the captured answer set; pending
+connections start the next attempt after 50 ms. The first HTTP response wins
+regardless of status, and losing attempts are aborted with late bodies
+cancelled. No fallback performs another DNS lookup or extends the deadline. HTTP
+Host and TLS certificate identity remain the original hostname; ambient proxies
+and connection reuse are disabled. This avoids a second hostname resolution
+between validation and connection. DNS lookup and body reads share the request
+deadline.
 
 Explicit custom fetchers are trusted transport overrides: their owner must
 enforce DNS and egress policy. Origin allowlists remain an additional

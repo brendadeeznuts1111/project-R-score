@@ -8,6 +8,145 @@ const fetcher = (handler: (url: string, init?: BunFetchRequestInit) => Promise<R
   Object.assign(handler, { preconnect() {} }) as typeof fetch;
 
 describe('RSS pinned remote transport', () => {
+  for (const first of [
+    { address: '2606:4700:4700::1111', family: 6 },
+    { address: '8.8.8.8', family: 4 },
+  ]) {
+    test(`falls back from failed IPv${first.family} without resolving again or weakening transport options`, async () => {
+      let resolutions = 0;
+      const requests: Array<{ url: string; init?: BunFetchRequestInit }> = [];
+      const response = await fetchPinnedHttps(
+        new URL('https://feed.example/feed?q=1'),
+        new Headers({ 'X-Fixture': 'preserved' }),
+        signal(),
+        async () => {
+          resolutions++;
+          return resolutions === 1
+            ? [first, { address: '1.1.1.1', family: 4 }]
+            : [{ address: '127.0.0.1', family: 4 }];
+        },
+        fetcher(async (url, init) => {
+          requests.push({ url, init });
+          if (requests.length === 1) throw new Error('first address unreachable');
+          return new Response('healthy');
+        })
+      );
+      expect(await response.text()).toBe('healthy');
+      expect(resolutions).toBe(1);
+      expect(requests.map(request => request.url)).toEqual([
+        `https://${first.family === 6 ? `[${first.address}]` : first.address}/feed?q=1`,
+        'https://1.1.1.1/feed?q=1',
+      ]);
+      for (const request of requests) {
+        expect(new Headers(request.init?.headers).get('host')).toBe('feed.example');
+        expect(new Headers(request.init?.headers).get('x-fixture')).toBe('preserved');
+        expect(request.init?.signal).toBeInstanceOf(AbortSignal);
+        expect(request.init).toMatchObject({
+          redirect: 'manual',
+          proxy: false,
+          keepalive: false,
+          tls: { serverName: 'feed.example', servername: 'feed.example', rejectUnauthorized: true },
+        });
+      }
+    });
+  }
+
+  test('rejects when every approved address fails', async () => {
+    const requests: string[] = [];
+    await expect(
+      fetchPinnedHttps(
+        new URL('https://feed.example/feed'),
+        new Headers(),
+        signal(),
+        async () => [{ address: '8.8.8.8', family: 4 }, { address: '1.1.1.1', family: 4 }],
+        fetcher(async url => {
+          requests.push(url);
+          throw new Error('endpoint unreachable');
+        })
+      )
+    ).rejects.toThrow();
+    expect(requests).toEqual(['https://8.8.8.8/feed', 'https://1.1.1.1/feed']);
+  });
+
+  test('returns an HTTP failure response without trying another address', async () => {
+    let requests = 0;
+    const response = await fetchPinnedHttps(
+      new URL('https://feed.example/feed'),
+      new Headers(),
+      signal(),
+      async () => [{ address: '8.8.8.8', family: 4 }, { address: '1.1.1.1', family: 4 }],
+      fetcher(async () => {
+        requests++;
+        return new Response('unavailable', { status: 503 });
+      })
+    );
+    expect(response.status).toBe(503);
+    expect(requests).toBe(1);
+    await response.body?.cancel();
+  });
+
+  test('falls back from a stalled first address and cancels a late losing response', async () => {
+    let releaseFirst: (response: Response) => void = () => {
+      throw new Error('first request was not started');
+    };
+    let cancelled = false;
+    let requests = 0;
+    const response = await fetchPinnedHttps(
+      new URL('https://feed.example/feed'),
+      new Headers(),
+      AbortSignal.timeout(1000),
+      async () => [{ address: '2606:4700:4700::1111', family: 6 }, { address: '1.1.1.1', family: 4 }],
+      fetcher(async () => {
+        requests++;
+        return requests === 1
+          ? new Promise<Response>(resolve => { releaseFirst = resolve; })
+          : new Response('healthy');
+      })
+    );
+    expect(await response.text()).toBe('healthy');
+    expect(requests).toBe(2);
+    releaseFirst(new Response(new ReadableStream({ cancel() { cancelled = true; } })));
+    await new Promise<void>(resolve => setTimeout(resolve, 0));
+    expect(cancelled).toBe(true);
+  }, 1500);
+
+  test('aborting a stalled address ends the whole operation without extending its deadline', async () => {
+    const controller = new AbortController();
+    const reason = new DOMException('audit deadline', 'TimeoutError');
+    let requests = 0;
+    const operation = fetchPinnedHttps(
+      new URL('https://feed.example/feed'),
+      new Headers(),
+      controller.signal,
+      async () => [{ address: '8.8.8.8', family: 4 }, { address: '1.1.1.1', family: 4 }],
+      fetcher(async () => {
+        requests++;
+        controller.abort(reason);
+        return new Promise<Response>(() => {});
+      })
+    );
+    await expect(operation).rejects.toBe(reason);
+    expect(requests).toBe(1);
+  }, 1000);
+
+  test('the original deadline aborts every active fallback attempt', async () => {
+    const attemptSignals: AbortSignal[] = [];
+    await expect(
+      fetchPinnedHttps(
+        new URL('https://feed.example/feed'),
+        new Headers(),
+        AbortSignal.timeout(150),
+        async () => [{ address: '8.8.8.8', family: 4 }, { address: '1.1.1.1', family: 4 }],
+        fetcher(async (_url, init) => {
+          if (init?.signal) attemptSignals.push(init.signal);
+          return new Promise<Response>(() => {});
+        })
+      )
+    ).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(attemptSignals).toHaveLength(2);
+    expect(attemptSignals.every(attempt => attempt.aborted)).toBe(true);
+  }, 1000);
+
   test.skipIf(!Bun.which('openssl'))(
     'Bun 1.4.3 verifies TLS identity on an IP URL and bypasses ambient proxies',
     async () => {
