@@ -7,6 +7,7 @@ export type RemoteFetchPolicy = {
   timeoutMs: number;
   label: string;
   allowedOrigins?: ReadonlySet<string>;
+  signal?: AbortSignal;
 };
 
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
@@ -102,7 +103,7 @@ export async function fetchWithRedirectPolicy(
 ): Promise<{ response: Response; finalUrl: URL }> {
   let current = validateRemoteHttpsUrl(initialUrl, policy.allowedOrigins, policy.label);
   const visited = new Set<string>();
-  const deadline = AbortSignal.timeout(policy.timeoutMs);
+  const deadline = policy.signal ?? AbortSignal.timeout(policy.timeoutMs);
   for (let hop = 0; hop <= policy.maxRedirects; hop++) {
     if (visited.has(current.href)) throw new Error(`${policy.label} redirect loop`);
     visited.add(current.href);
@@ -133,33 +134,60 @@ export async function fetchWithRedirectPolicy(
 export async function readBoundedBody(
   response: Response,
   maxBytes: number,
-  label: string
+  label: string,
+  signal?: AbortSignal
 ): Promise<Uint8Array> {
-  const encoding = response.headers.get('content-encoding');
-  if (encoding && encoding.toLowerCase() !== 'identity') {
-    throw new Error(`${label} content encoding is not allowed: ${encoding}`);
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined;
+  let complete = false;
+  let onAbort: (() => void) | undefined;
+  try {
+    if (!Number.isSafeInteger(maxBytes) || maxBytes <= 0)
+      throw new Error(`Invalid ${label} byte limit`);
+    signal?.throwIfAborted();
+    const encoding = response.headers.get('content-encoding');
+    if (encoding && encoding.toLowerCase() !== 'identity') {
+      throw new Error(`${label} content encoding is not allowed: ${encoding}`);
+    }
+    const declared = response.headers.get('content-length');
+    if (declared) {
+      const length = Number(declared);
+      if (!Number.isSafeInteger(length) || length < 0)
+        throw new Error(`Invalid ${label} Content-Length`);
+      if (length > maxBytes) throw new Error(`${label} exceeds ${maxBytes} bytes`);
+    }
+    if (!response.body) throw new Error(`${label} response has no body`);
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    reader = response.body.getReader();
+    onAbort = () => {
+      void reader?.cancel().catch(() => {});
+    };
+    signal?.addEventListener('abort', onAbort, { once: true });
+    while (true) {
+      const next = await reader.read();
+      signal?.throwIfAborted();
+      if (next.done) break;
+      const chunk = next.value;
+      size += chunk.byteLength;
+      if (size > maxBytes) throw new Error(`${label} exceeds ${maxBytes} bytes`);
+      chunks.push(chunk);
+    }
+    if (size === 0) throw new Error(`${label} response is empty`);
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) {
+      bytes.set(chunk, offset);
+      offset += chunk.byteLength;
+    }
+    complete = true;
+    return bytes;
+  } finally {
+    if (onAbort) signal?.removeEventListener('abort', onAbort);
+    if (reader) {
+      if (!complete) void reader.cancel().catch(() => {});
+      reader.releaseLock();
+    } else if (!complete) {
+      void response.body?.cancel().catch(() => {});
+    }
   }
-  const declared = response.headers.get('content-length');
-  if (declared) {
-    const length = Number(declared);
-    if (!Number.isSafeInteger(length) || length < 0)
-      throw new Error(`Invalid ${label} Content-Length`);
-    if (length > maxBytes) throw new Error(`${label} exceeds ${maxBytes} bytes`);
-  }
-  if (!response.body) throw new Error(`${label} response has no body`);
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  for await (const chunk of response.body) {
-    size += chunk.byteLength;
-    if (size > maxBytes) throw new Error(`${label} exceeds ${maxBytes} bytes`);
-    chunks.push(chunk);
-  }
-  if (size === 0) throw new Error(`${label} response is empty`);
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return bytes;
 }

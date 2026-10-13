@@ -1,7 +1,22 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
+// @updated --port · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @verified --port · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/http/server#configuring-a-default-port
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-gunzipsync — Bun.gunzipSync
+// @verified Bun.gunzipSync · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-gunzipsync
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/networking/fetch#canceling-a-request — AbortController
 // @see https://bun.com/docs/runtime/s3 — S3Client
+import {
+  rssBrowserRendererSource,
+  rssBrowserUrlParserSource,
+} from '../lib/rss/rss-browser-renderer.ts';
 import { fileExistsSync, readText, resolvePath } from './lib/fs-bun';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 // @see https://bun.com/docs/runtime/file-io — Bun.file
@@ -378,7 +393,7 @@ async function resolveBuildMeta(): Promise<BuildMeta> {
   };
 }
 
-function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState): string {
+export function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState): string {
   const hasR2Credentials = Boolean(resolveR2ReadOptions());
   const r2Label =
     options.r2Base || (hasR2Credentials ? 'credentialed (R2_* env)' : '(not configured)');
@@ -4093,14 +4108,14 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<button onclick="openComparisonModal(window.currentProfiles)" style="display:flex;align-items:center;gap:6px">' +
             '<span>📊</span> Compare All Profiles' +
           '</button>' +
-          '<button onclick="exportData(\'json\')" style="display:flex;align-items:center;gap:6px">' +
+          '<button onclick="exportData(\\'json\\')" style="display:flex;align-items:center;gap:6px">' +
             '<span>📥</span> Export JSON' +
           '</button>' +
           '<button onclick="window.print()" style="display:flex;align-items:center;gap:6px">' +
             '<span>🖨️</span> Print Report' +
           '</button>' +
         '</div>' +
-        '<div class="table-scroll"><table id="profilesTable"><thead><tr><th class="sortable" onclick="sortTable(0, \'#profilesTable\')">Rank</th><th class="sortable" onclick="sortTable(1, \'#profilesTable\')">Profile</th><th class="sortable" onclick="sortTable(2, \'#profilesTable\')">Quality</th><th class="sortable" onclick="sortTable(3, \'#profilesTable\')">P95</th><th class="sortable" onclick="sortTable(4, \'#profilesTable\')">Signal</th><th class="sortable" onclick="sortTable(5, \'#profilesTable\')">Unique</th><th class="sortable" onclick="sortTable(6, \'#profilesTable\')">Slop</th><th class="sortable" onclick="sortTable(7, \'#profilesTable\')">Density</th><th class="sortable" onclick="sortTable(8, \'#profilesTable\')">Noise</th><th class="sortable" onclick="sortTable(9, \'#profilesTable\')">Reliability</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+        '<div class="table-scroll"><table id="profilesTable"><thead><tr><th class="sortable" onclick="sortTable(0, \\'#profilesTable\\')">Rank</th><th class="sortable" onclick="sortTable(1, \\'#profilesTable\\')">Profile</th><th class="sortable" onclick="sortTable(2, \\'#profilesTable\\')">Quality</th><th class="sortable" onclick="sortTable(3, \\'#profilesTable\\')">P95</th><th class="sortable" onclick="sortTable(4, \\'#profilesTable\\')">Signal</th><th class="sortable" onclick="sortTable(5, \\'#profilesTable\\')">Unique</th><th class="sortable" onclick="sortTable(6, \\'#profilesTable\\')">Slop</th><th class="sortable" onclick="sortTable(7, \\'#profilesTable\\')">Density</th><th class="sortable" onclick="sortTable(8, \\'#profilesTable\\')">Noise</th><th class="sortable" onclick="sortTable(9, \\'#profilesTable\\')">Reliability</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
 
       // Render chart after DOM update
       setTimeout(() => {
@@ -4119,7 +4134,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="modal" style="max-width:600px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">⌨️ Keyboard Shortcuts</h2>' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div style="display:grid;gap:12px">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:rgba(10,22,43,0.4);border-radius:8px">' +
@@ -4176,7 +4191,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="modal" style="max-width:700px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">📚 API Documentation</h2>' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div style="max-height:60vh;overflow:auto">' +
             '<div class="info-box" style="margin-bottom:16px">' +
@@ -4300,7 +4315,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="modal" style="max-width:500px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">🔔 Alert Configuration</h2>' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div class="alert-config">' +
             '<div class="alert-row">' +
@@ -4330,7 +4345,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
             '</div>' +
           '</div>' +
           '<div style="display:flex;gap:12px;margin-top:20px;justify-content:flex-end">' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()">Cancel</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()">Cancel</button>' +
             '<button id="saveAlertConfig" style="background:var(--accent);color:var(--bg);border-color:var(--accent)">Save</button>' +
           '</div>' +
         '</div>';
@@ -4376,7 +4391,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="modal" style="background:var(--panel);backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:16px;max-width:800px;width:90%;max-height:80vh;overflow:auto;padding:24px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;box-shadow:0 25px 50px rgba(0,0,0,0.5)">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">Profile Comparison</h2>' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div class="comparison-content">' +
             profiles.map((p, i) =>
@@ -4704,7 +4719,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
           '<td>' + s.topProfile + '</td>' +
           '<td style="color:' + (s.topScore >= 80 ? 'var(--success)' : s.topScore >= 60 ? 'var(--warning)' : 'var(--error)') + '">' + Number(s.topScore || 0).toFixed(2) + '</td>' +
           '<td>' +
-            '<button class="copy-btn" onclick="copyToClipboard(\'' + s.id + '\', this)" style="margin-right:4px">ID</button>' +
+            '<button class="copy-btn" onclick="copyToClipboard(\\'' + s.id + '\\', this)" style="margin-right:4px">ID</button>' +
             (idx < slice.length - 1 ? '<button class="copy-btn" onclick="showDiffView(window.lastHistory.snapshots[' + idx + '], window.lastHistory.snapshots[' + (idx + 1) + '])">Compare</button>' : '') +
           '</td>' +
         '</tr>'
@@ -5098,65 +5113,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="meta">' + tokenState + '</div>' +
         '<table><thead><tr><th>Domain</th><th>Token Env</th><th>Token</th><th>Source</th><th>Bucket</th><th>Header</th></tr></thead><tbody>' + (rows || '<tr><td colspan="6">No domain registry entries.</td></tr>') + '</tbody></table>';
     };
+    const renderRssDom = ${rssBrowserRendererSource()};
+    const parseRssLink = ${rssBrowserUrlParserSource()};
     const renderRss = (xmlText, source, meta) => {
-      if (!xmlText || typeof xmlText !== 'string') {
-        rssEl.innerHTML = '<div class="empty-state"><span class="empty-icon">📡</span><div><strong>RSS Feed Unavailable</strong></div><div style="margin-top:4px">No feed data or source not configured</div></div>';
-        return;
-      }
-      try {
-        const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
-        const items = Array.from(doc.querySelectorAll('item')).slice(0, 10);
-        const latestGuid = items[0]?.querySelector('guid')?.textContent || items[0]?.querySelector('link')?.textContent || null;
-        if (latestGuid && !currentRssGuid) currentRssGuid = latestGuid;
-        if (latestGuid && !knownRssGuid) knownRssGuid = latestGuid;
-
-        const rows = items.map((item, idx) => {
-          const title = item.querySelector('title')?.textContent || 'untitled';
-          const pubDate = item.querySelector('pubDate')?.textContent || 'n/a';
-          const link = item.querySelector('link')?.textContent || '#';
-          const pubDateObj = new Date(pubDate);
-          const timeAgoText = isNaN(pubDateObj) ? 'unknown' : timeAgo(pubDateObj);
-          const isLatest = idx === 0;
-
-          return '<tr style="' + (isLatest ? 'background:rgba(79,209,197,0.05)' : '') + '">' +
-            '<td><span style="font-weight:' + (isLatest ? '600' : '400') + '">' + title + '</span>' + (isLatest ? ' <span class="badge status-good">latest</span>' : '') + '</td>' +
-            '<td><span data-tooltip="' + pubDate + '">' + timeAgoText + '</span></td>' +
-            '<td>' +
-              '<a href="' + link + '" target="_blank" rel="noreferrer" style="margin-right:8px">open ↗</a>' +
-              '<button class="copy-btn" onclick="copyToClipboard(\'' + link + '\', this)">copy</button>' +
-            '</td>' +
-          '</tr>';
-        }).join('');
-
-        const itemCount = items.length;
-        const feedTitle = doc.querySelector('channel > title')?.textContent || 'RSS Feed';
-
-        const rssHeader =
-          '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">' +
-            '<div>' +
-              '<div style="font-size:16px;font-weight:600;margin-bottom:4px">' + feedTitle + '</div>' +
-              '<div class="meta">' + itemCount + ' items · source: <code>' + source + '</code></div>' +
-            '</div>' +
-            '<div class="pill-row" style="margin:0">' +
-              '<button class="copy-btn" onclick="copyToClipboard(\'' + (meta?.rssUrl || '') + '\', this)">' +
-                '<span>📋</span> Copy Feed URL' +
-              '</button>' +
-              '<a href="/api/rss?source=' + source + '" target="_blank" class="badge status-neutral" style="text-decoration:none">View Raw ↗</a>' +
-            '</div>' +
-          '</div>';
-
-        const rssMeta = meta && !meta.error
-          ? '<div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:12px;color:var(--muted)">' +
-              '<span data-tooltip="Storage bucket">📦 ' + (meta.bucket || 'n/a') + '</span>' +
-              '<span data-tooltip="RSS file path">📄 ' + (meta.rssKey || 'n/a').split('/').pop() + '</span>' +
-            '</div>'
-          : '';
-
-        rssEl.innerHTML = rssHeader + rssMeta +
-          '<div class="table-scroll"><table><thead><tr><th>Title</th><th>When</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
-      } catch (err) {
-        rssEl.innerHTML = '<div class="info-box error"><div class="info-box-title">❌ RSS Parse Error</div><div style="font-size:12px">' + (err?.message || 'Invalid feed content') + '</div></div>';
-      }
+      const latestGuid = renderRssDom(rssEl, xmlText, source, meta, timeAgo, copyToClipboard, parseRssLink);
+      if (latestGuid && !currentRssGuid) currentRssGuid = latestGuid;
+      if (latestGuid && !knownRssGuid) knownRssGuid = latestGuid;
     };
     const setRssBadge = (label, mode = 'neutral') => {
       const cls = mode === 'new' ? 'status-warn' : mode === 'ok' ? 'status-good' : 'status-neutral';
@@ -5171,6 +5133,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     const parseLatestRssGuid = (xmlText) => {
       try {
         const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+        if (doc.querySelector('parsererror')) return null;
         const first = doc.querySelector('item');
         if (!first) return null;
         const raw = first.querySelector('guid')?.textContent || first.querySelector('link')?.textContent || null;
@@ -5347,7 +5310,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="modal" style="max-width:700px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">📊 Snapshot Comparison</h2>' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div style="margin-bottom:16px;font-size:12px;color:var(--muted)">' +
             'Comparing: <code>' + current.id + '</code> vs <code>' + previous.id + '</code>' +
@@ -5699,7 +5662,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
       if (idx < 0) return snapshots.length;
       return idx;
     };
-    const checkForNewReports = async () => {
+    let checkForNewReports = async () => {
       try {
         const res = await fetch('/api/index?source=' + activeSource);
         const idx = await res.json();
@@ -5836,7 +5799,7 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         '<div class="modal" style="max-width:500px">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">' +
             '<h2 style="margin:0">📊 Performance Metrics</h2>' +
-            '<button onclick="this.closest(\'.modal-overlay\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
+            '<button onclick="this.closest(\\'.modal-overlay\\').remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>' +
           '</div>' +
           '<div class="stats-grid" style="margin-bottom:16px">' +
             '<div class="stat-item">' +
@@ -6207,12 +6170,12 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         URL.revokeObjectURL(url);
         showToast('Exported as JSON', 'success');
       } else if (format === 'csv') {
-        let csv = 'Metric,Value,Unit\n';
-        csv += 'Snapshot,' + currentLatestId + ',\n';
-        csv += 'Timestamp,' + data.timestamp + ',\n';
-        csv += 'Source,' + activeSource + ',\n';
-        csv += 'Quality Score,' + (latestData?.topScore || 0) + ',\n';
-        csv += 'Query Pack,' + (latestData?.queryPack || 'core_delivery') + ',\n';
+        let csv = 'Metric,Value,Unit\\n';
+        csv += 'Snapshot,' + currentLatestId + ',\\n';
+        csv += 'Timestamp,' + data.timestamp + ',\\n';
+        csv += 'Source,' + activeSource + ',\\n';
+        csv += 'Quality Score,' + (latestData?.topScore || 0) + ',\\n';
+        csv += 'Query Pack,' + (latestData?.queryPack || 'core_delivery') + ',\\n';
 
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -6223,18 +6186,18 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
         URL.revokeObjectURL(url);
         showToast('Exported as CSV', 'success');
       } else if (format === 'markdown') {
-        let md = '# Benchmark Report\n\n';
-        md += '**Snapshot:** ' + currentLatestId + '\n\n';
-        md += '**Generated:** ' + new Date().toLocaleString() + '\n\n';
-        md += '**Source:** ' + activeSource + '\n\n';
-        md += '## Overview\n\n';
-        md += '| Metric | Value |\n';
-        md += '|--------|-------|\n';
-        md += '| Snapshot | ' + overviewState.snapshotId + ' |\n';
-        md += '| Loop Status | ' + overviewState.loop + ' |\n';
-        md += '| Token Coverage | ' + overviewState.tokenCoverage + ' |\n';
-        md += '| Domain Health | ' + overviewState.domainHealth + ' |\n';
-        md += '| RSS Status | ' + overviewState.rss + ' |\n\n';
+        let md = '# Benchmark Report\\n\\n';
+        md += '**Snapshot:** ' + currentLatestId + '\\n\\n';
+        md += '**Generated:** ' + new Date().toLocaleString() + '\\n\\n';
+        md += '**Source:** ' + activeSource + '\\n\\n';
+        md += '## Overview\\n\\n';
+        md += '| Metric | Value |\\n';
+        md += '|--------|-------|\\n';
+        md += '| Snapshot | ' + overviewState.snapshotId + ' |\\n';
+        md += '| Loop Status | ' + overviewState.loop + ' |\\n';
+        md += '| Token Coverage | ' + overviewState.tokenCoverage + ' |\\n';
+        md += '| Domain Health | ' + overviewState.domainHealth + ' |\\n';
+        md += '| RSS Status | ' + overviewState.rss + ' |\\n\\n';
 
         const blob = new Blob([md], { type: 'text/markdown' });
         const url = URL.createObjectURL(blob);

@@ -10,6 +10,7 @@ import {
   versionFromBunBlogUrl,
 } from '../../../lib/docs/bun-blog-url.ts';
 import { parseRssChannelItems } from '../../../lib/docs/bun-rss.ts';
+import { fetchFeedXml } from '../../../lib/rss/fetch-feed-xml.ts';
 import { normalizeVersion } from './generator';
 
 export type ReleaseFeedEntry = {
@@ -24,6 +25,7 @@ export type FetchReleaseFeedOptions = {
   url: string;
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
+  maxBytes?: number;
 };
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
@@ -60,15 +62,15 @@ export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
 export async function fetchReleaseFeed(
   options: FetchReleaseFeedOptions
 ): Promise<ReleaseFeedEntry[]> {
-  const response = await (options.fetchImpl ?? fetch)(options.url, {
+  const xml = await fetchFeedXml(options.fetchImpl ?? fetch, options.url, {
     headers: {
       accept: 'application/rss+xml, application/xml, text/xml',
       'user-agent': 'factorywager-bun-release-inventory/0.2',
     },
-    signal: AbortSignal.timeout(options.timeoutMs ?? 20_000),
+    timeoutMs: options.timeoutMs ?? 20_000,
+    maxBytes: options.maxBytes,
   });
-  if (!response.ok) throw new Error(`Failed to fetch ${options.url}: HTTP ${response.status}`);
-  return parseReleaseFeed(await response.text());
+  return parseReleaseFeed(xml);
 }
 
 export function compareReleaseVersions(left: string, right: string): number {

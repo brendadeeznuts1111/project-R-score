@@ -11,6 +11,7 @@ export type FeedFetchOptions = {
   maxRedirects?: number;
   timeoutMs?: number;
   allowedOrigins?: ReadonlySet<string>;
+  headers?: HeadersInit;
 };
 
 const XML_TYPES = new Set([
@@ -32,6 +33,9 @@ export async function fetchFeedXml(
     'Accept-Encoding': 'identity',
     'User-Agent': 'Bun-Docs-RSS/1.0',
   });
+  new Headers(options.headers).forEach((value, name) => headers.set(name, value));
+  headers.set('Accept-Encoding', 'identity');
+  const signal = AbortSignal.timeout(options.timeoutMs ?? 15_000);
   const { response } = await fetchWithRedirectPolicy(initialUrl, headers, {
     fetcher,
     maxBytes,
@@ -39,13 +43,18 @@ export async function fetchFeedXml(
     timeoutMs: options.timeoutMs ?? 15_000,
     label: 'RSS feed',
     allowedOrigins: options.allowedOrigins,
+    signal,
   });
-  if (!response.ok) throw new Error(`RSS feed request failed: HTTP ${response.status}`);
-  const contentType = response.headers.get('content-type') ?? '';
-  const type = contentType.split(';', 1)[0]?.trim().toLowerCase() ?? '';
-  if (!XML_TYPES.has(type) && !type.endsWith('+xml')) {
-    throw new Error(`RSS feed is not XML: ${contentType || 'missing content-type'}`);
+  try {
+    if (!response.ok) throw new Error(`RSS feed request failed: HTTP ${response.status}`);
+    const contentType = response.headers.get('content-type') ?? '';
+    const type = contentType.split(';', 1)[0]?.trim().toLowerCase() ?? '';
+    if (!XML_TYPES.has(type) && !type.endsWith('+xml')) {
+      throw new Error(`RSS feed is not XML: ${contentType || 'missing content-type'}`);
+    }
+    const bytes = await readBoundedBody(response, maxBytes, 'RSS feed', signal);
+    return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } finally {
+    if (!response.body?.locked) void response.body?.cancel().catch(() => {});
   }
-  const bytes = await readBoundedBody(response, maxBytes, 'RSS feed');
-  return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
 }
