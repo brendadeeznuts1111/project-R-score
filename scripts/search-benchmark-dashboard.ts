@@ -1,4 +1,12 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+// @updated Bun.escapeHTML · fixed v1.0.36 · 2024-03-29 · https://bun.com/blog/bun-v1.0.36
+// @updated Bun.escapeHTML · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated Bun.escapeHTML · fixed v1.1.18 · 2024-07-03 · https://bun.com/blog/bun-v1.1.18
+// @updated Bun.escapeHTML · fixed v1.1.19 · 2024-07-12 · https://bun.com/blog/bun-v1.1.19
+// @updated Bun.escapeHTML · fixed v1.1.21 · 2024-07-27 · https://bun.com/blog/bun-v1.1.21
+// @updated Bun.escapeHTML · fixed v1.1.27 · 2024-09-07 · https://bun.com/blog/bun-v1.1.27
+// @verified Bun.escapeHTML · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-escapehtml
 // @see https://bun.com/docs/runtime/http/server#configuring-a-default-port — --port
 // @updated --port · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
 // @verified --port · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/http/server#configuring-a-default-port
@@ -2921,14 +2929,14 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       </div>
       <div class="meta">
         <span class="status-orb neutral" aria-hidden="true"></span>
-        Local reports + optional R2: <code>${r2Label}</code>
+        Local reports + optional R2: <code>${Bun.escapeHTML(r2Label)}</code>
         <span id="strictP95Badge" class="badge status-neutral rss-badge">Strict p95 n/a</span>
         <span id="rssBadge" class="badge status-neutral rss-badge">RSS idle</span>
         <span id="connectionStatus" class="badge status-neutral">●</span>
       </div>
       <div class="meta">
-        repo=<a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">${buildMeta.repoBranchUrl}</a>
-        commit=<a href="${commitUrl}" target="_blank" rel="noreferrer"><code>${buildMeta.commitShort}</code></a>
+        repo=<a href="${Bun.escapeHTML(buildMeta.repoBranchUrl)}" target="_blank" rel="noreferrer">${Bun.escapeHTML(buildMeta.repoBranchUrl)}</a>
+        commit=<a href="${Bun.escapeHTML(commitUrl)}" target="_blank" rel="noreferrer"><code>${Bun.escapeHTML(buildMeta.commitShort)}</code></a>
       </div>
       <div id="reportNotice" class="meta" style="margin-top:8px"></div>
       <nav class="buttons" aria-label="Dashboard actions">
@@ -3215,12 +3223,12 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-links">
-          <a href="${buildMeta.repoBranchUrl}" target="_blank" rel="noreferrer">
+          <a href="${Bun.escapeHTML(buildMeta.repoBranchUrl)}" target="_blank" rel="noreferrer">
             <span aria-hidden="true">🔗</span> Repository
           </a>
           <span class="footer-separator">·</span>
-          <a href="${commitUrl}" target="_blank" rel="noreferrer">
-            <span aria-hidden="true">🔖</span> Commit <code>${buildMeta.commitShort}</code>
+          <a href="${Bun.escapeHTML(commitUrl)}" target="_blank" rel="noreferrer">
+            <span aria-hidden="true">🔖</span> Commit <code>${Bun.escapeHTML(buildMeta.commitShort)}</code>
           </a>
           <span class="footer-separator">·</span>
           <a href="#color-ref-heading">
@@ -3245,12 +3253,12 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
     if (typeof window === 'undefined' || typeof document === 'undefined') {
       // Non-browser context: skip dashboard boot logic.
     } else {
-    const STATUS_LABELS = ${JSON.stringify(statusLabels)};
-    const WARNING_STATUS_LEVELS = ${JSON.stringify(warningStatusLevels)};
+    const STATUS_LABELS = ${JSON.stringify(statusLabels).replaceAll('<', '\\u003c')};
+    const WARNING_STATUS_LEVELS = ${JSON.stringify(warningStatusLevels).replaceAll('<', '\\u003c')};
     const HOT_RELOAD_ENABLED = ${hotReloadEnabled ? 'true' : 'false'};
-    const R2_LABEL = ${JSON.stringify(r2Label)};
-    const INITIAL_SOURCE = ${JSON.stringify(initialSource)};
-    const DEFAULT_DOMAIN = ${JSON.stringify(options.domain || 'factory-wager.com')};
+    const R2_LABEL = ${JSON.stringify(r2Label).replaceAll('<', '\\u003c')};
+    const INITIAL_SOURCE = ${JSON.stringify(initialSource).replaceAll('<', '\\u003c')};
+    const DEFAULT_DOMAIN = ${JSON.stringify(options.domain || 'factory-wager.com').replaceAll('<', '\\u003c')};
     const STORAGE_SOURCE_KEY = 'searchBenchActiveSource';
     const readStoredSource = () => {
       try {
@@ -3495,16 +3503,16 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       if (level === 'fail') return 'status-bad';
       return 'status-neutral';
     };
-    const warningBadge = (code) => '<span class="badge ' + warningBadgeClass(code) + '">' + code + '</span>';
+    const warningBadge = (code) => '<span class="badge ' + warningBadgeClass(code) + '">' + attrEscape(code) + '</span>';
     const stageStatusBadge = (status) => {
       const s = String(status || '').toLowerCase();
       const cls = s === 'pass' ? 'status-good' : s === 'warn' ? 'status-warn' : s === 'fail' ? 'status-bad' : 'status-neutral';
-      return '<span class="badge ' + cls + '">' + s + '</span>';
+      return '<span class="badge ' + cls + '">' + attrEscape(s) + '</span>';
     };
     const sourceBadge = (source) => {
       const s = String(source || 'local').toLowerCase();
       const cls = s === 'r2' ? 'status-good' : 'status-neutral';
-      return '<span class="badge ' + cls + '">' + s + '</span>';
+      return '<span class="badge ' + cls + '">' + attrEscape(s) + '</span>';
     };
     const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
     const healthTone = (ratio) => Math.round(clamp01(ratio) * 120);
@@ -3525,7 +3533,7 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       const bg = 'hsl(' + hue + ' 70% 18% / 0.85)';
       const border = 'hsl(' + hue + ' 90% 46% / 0.75)';
       return '<span class="badge" style="color:' + fg + ';background:' + bg + ';border-color:' + border + '">' +
-        healthIcon(bounded) + ' ' + text +
+        healthIcon(bounded) + ' ' + attrEscape(text) +
       '</span>';
     };
     const healthRatioByState = (state) => {
@@ -3764,11 +3772,12 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       return '<span class="trend-delta ' + cls + pulse + '" title="' + attrEscape(tip) + '">' + valueText + ' ' + arrow + '</span>';
     };
     const attrEscape = (text) =>
-      String(text || '')
+      String(text ?? '')
         .replace(/&/g, '&amp;')
         .replace(/"/g, '&quot;')
         .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+        .replace(/>/g, '&gt;')
+        .replace(/'/g, '&#39;');
     const emptyState = (title, detail, icon = '📭') =>
       '<div class="empty-state" role="status" aria-live="polite"><span class="empty-icon" aria-hidden="true">' + icon + '</span><div><strong>' + title + '</strong></div><div style="margin-top:4px">' + detail + '</div></div>';
     const qualityRing = (score) => {
@@ -4810,34 +4819,34 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
         : 'freshness unavailable';
       const rows = stages.map((stage) =>
         '<tr>' +
-          '<td><code>' + stage.id + '</code></td>' +
+          '<td><code>' + attrEscape(stage.id) + '</code></td>' +
           '<td>' + stageStatusBadge(String(stage.status || 'neutral')) + '</td>' +
-          '<td>' + (stage.reason || '-') + '</td>' +
-          '<td>' + ((stage.evidence || []).map((e) => '<code>' + e + '</code>').join('<br/>') || '-') + '</td>' +
+          '<td>' + attrEscape((stage.reason || '-')) + '</td>' +
+          '<td>' + ((stage.evidence || []).map((e) => '<code>' + attrEscape(e) + '</code>').join('<br/>') || '-') + '</td>' +
         '</tr>'
       ).join('');
 
       loopStatusEl.innerHTML =
         '<div class="meta">loopClosed=' + (closed ? 'yes' : 'no') +
         ' ' + loopBadge +
-        ' snapshot=' + (data.latestSnapshotId || 'n/a') +
-        ' queryPack=' + (data.queryPack || 'n/a') +
+        ' snapshot=' + attrEscape((data.latestSnapshotId || 'n/a')) +
+        ' queryPack=' + attrEscape((data.queryPack || 'n/a')) +
         ' coverageLOC=' + (statusCoverageLines || 'n/a') +
         ' warnings=' + ((data.warnings || []).length || 0) +
         '</div>' +
-        '<div class="meta">' + freshnessBadge + ' ' + freshnessText + '</div>' +
-        '<div class="meta">loopClosedReason=' + (data.loopClosedReason || 'n/a') + '</div>' +
+        '<div class="meta">' + freshnessBadge + ' ' + attrEscape(freshnessText) + '</div>' +
+        '<div class="meta">loopClosedReason=' + attrEscape((data.loopClosedReason || 'n/a')) + '</div>' +
         '<table><thead><tr><th>Stage</th><th>Status</th><th>Reason</th><th>Evidence</th></tr></thead><tbody>' + rows + '</tbody></table>';
 
       const freshnessStage = stages.find((stage) => stage.id === 'status_freshness');
       if (freshnessStage?.status === 'fail') {
         setReportNotice(
-          '<span class="badge status-bad">Loop freshness drift</span> <code>' + (freshnessStage.reason || 'status_freshness failed') + '</code>',
+          '<span class="badge status-bad">Loop freshness drift</span> <code>' + attrEscape((freshnessStage.reason || 'status_freshness failed')) + '</code>',
           'freshness'
         );
       } else if (freshnessStage?.status === 'warn') {
         setReportNotice(
-          '<span class="badge status-warn">Loop freshness stale</span> <code>' + (freshnessStage.reason || 'status_freshness warning') + '</code>',
+          '<span class="badge status-warn">Loop freshness stale</span> <code>' + attrEscape((freshnessStage.reason || 'status_freshness warning')) + '</code>',
           'freshness'
         );
       } else {
@@ -4853,27 +4862,27 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
         .slice(0, 12)
         .map((u) =>
           '<tr>' +
-            '<td><code>' + u.key + '</code></td>' +
+            '<td><code>' + attrEscape(u.key) + '</code></td>' +
             '<td>' + Number(u.elapsedMs || 0).toFixed(2) + '</td>' +
             '<td>' + Number(u.attempts || 0) + '</td>' +
           '</tr>'
         )
         .join('');
       publishEl.innerHTML =
-        '<div class="meta">snapshot=' + (data.id || 'n/a') +
-        ' queryPack=' + (data.queryPack || 'core_delivery') +
-        ' runClass=' + (data.runClass || 'n/a') +
-        ' concurrency=' + (data.concurrency ?? 'n/a') +
-        ' deltaBasis=' + (data.deltaBasis || 'n/a') +
-        ' baseline=' + (data.baselineSnapshotId || 'none') +
-        ' uploadedObjects=' + (data.uploadedObjects || 0) +
-        ' retries=' + (data.uploadRetries ?? 'n/a') +
-        ' gzip=' + (data.gzip ? 'true' : 'false') +
-        ' mode=' + (data.mode || 'n/a') +
-        ' bucket=' + (data.bucket || 'n/a') +
+        '<div class="meta">snapshot=' + attrEscape((data.id || 'n/a')) +
+        ' queryPack=' + attrEscape((data.queryPack || 'core_delivery')) +
+        ' runClass=' + attrEscape((data.runClass || 'n/a')) +
+        ' concurrency=' + attrEscape((data.concurrency ?? 'n/a')) +
+        ' deltaBasis=' + attrEscape((data.deltaBasis || 'n/a')) +
+        ' baseline=' + attrEscape((data.baselineSnapshotId || 'none')) +
+        ' uploadedObjects=' + attrEscape((data.uploadedObjects || 0)) +
+        ' retries=' + attrEscape((data.uploadRetries ?? 'n/a')) +
+        ' gzip=' + attrEscape((data.gzip ? 'true' : 'false')) +
+        ' mode=' + attrEscape((data.mode || 'n/a')) +
+        ' bucket=' + attrEscape((data.bucket || 'n/a')) +
         '</div>' +
         '<div class="meta">warnings=' + ((Array.isArray(data.warnings) && data.warnings.length > 0) ? data.warnings.map(warningBadge).join(' ') : 'none') + '</div>' +
-        '<div class="meta">delta=' + JSON.stringify(data.delta || {}) + '</div>' +
+        '<div class="meta">delta=' + attrEscape(JSON.stringify(data.delta || {})) + '</div>' +
         '<table><thead><tr><th>Key</th><th>Elapsed (ms)</th><th>Attempts</th></tr></thead><tbody>' + rows + '</tbody></table>';
     };
     const findPreviousSamePack = (snapshots, current) => {
@@ -4911,22 +4920,22 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       const healthPresent = healthItems.filter((item) => item.exists).length;
       const rows = data.items.map((item) =>
         '<tr>' +
-          '<td>' + (item.category || 'snapshot') + '</td>' +
-          '<td><code>' + item.name + '</code></td>' +
-          '<td>' + (item.exists ? 'yes' : 'no') + '</td>' +
-          '<td>' + (item.size ?? 'n/a') + '</td>' +
-          '<td>' + (item.lastModified || 'n/a') + '</td>' +
+          '<td>' + attrEscape((item.category || 'snapshot')) + '</td>' +
+          '<td><code>' + attrEscape(item.name) + '</code></td>' +
+          '<td>' + attrEscape((item.exists ? 'yes' : 'no')) + '</td>' +
+          '<td>' + attrEscape((item.size ?? 'n/a')) + '</td>' +
+          '<td>' + attrEscape((item.lastModified || 'n/a')) + '</td>' +
         '</tr>'
       ).join('');
       inventoryEl.innerHTML =
-        '<div class="meta">snapshot=' + (data.snapshotId || 'n/a') + ' source=' + (data.source || 'local') + ' freshnessSec=' + (data.freshnessSec ?? 'n/a') + '</div>' +
+        '<div class="meta">snapshot=' + attrEscape((data.snapshotId || 'n/a')) + ' source=' + attrEscape((data.source || 'local')) + ' freshnessSec=' + attrEscape((data.freshnessSec ?? 'n/a')) + '</div>' +
         '<div class="meta">objects=' + present + '/' + total + ' cookies=' + cookiePresent + '/' + cookieItems.length + ' domainHealth=' + healthPresent + '/' + healthItems.length + '</div>' +
         '<div class="meta">cookieTelemetry=' + cookieFreshness + ' age=' + (cookieAgeMin === null ? 'n/a' : (cookieAgeMin + 'm')) + '</div>' +
         '<table><thead><tr><th>Category</th><th>Object</th><th>Exists</th><th>Size</th><th>Last Modified</th></tr></thead><tbody>' + rows + '</tbody></table>';
     };
     const renderDomainHealth = (data) => {
       if (!data || data.error) {
-        domainHealthEl.innerHTML = '<pre>' + (data?.error || 'No domain health data.') + '</pre>';
+        domainHealthEl.innerHTML = '<pre>' + attrEscape((data?.error || 'No domain health data.')) + '</pre>';
         return;
       }
       const dnsChecked = Number(data.dnsPrefetch?.checked || 0);
@@ -4949,7 +4958,8 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       const cookieResolved = Number(data.health?.cookie?.resolved);
       const cookieSyncDelta = Number(data.health?.cookie?.syncDelta);
       const cookieScoreValue = Number(data.health?.cookie?.cookieScore);
-      const cookieHexBadge = String(data.health?.cookie?.hexBadge || '#666666');
+      const rawCookieHexBadge = String(data.health?.cookie?.hexBadge || '#666666');
+      const cookieHexBadge = /^#[0-9a-f]{6}$/i.test(rawCookieHexBadge) ? rawCookieHexBadge : '#666666';
       const cookieUnicodeBar = String(data.health?.cookie?.unicodeBar || '░░░░░░░░░░').normalize('NFC');
       const cookieUnresolvedSet = new Set(
         Array.isArray(data.health?.cookie?.unresolved)
@@ -4980,10 +4990,10 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
           : 'R2 mode reflects bucket-backed health objects.';
       const latestRows = (data.latest || []).map((item) =>
         '<tr>' +
-          '<td><code>' + item.type + '</code></td>' +
-          '<td><code>' + item.key + '</code></td>' +
+          '<td><code>' + attrEscape(item.type) + '</code></td>' +
+          '<td><code>' + attrEscape(item.key) + '</code></td>' +
           '<td>' + healthBadge(item.exists ? 1 : 0, item.exists ? '✓ present' : '✗ missing') + '</td>' +
-          '<td>' + (item.lastModified || 'n/a') + '</td>' +
+          '<td>' + attrEscape((item.lastModified || 'n/a')) + '</td>' +
         '</tr>'
       ).join('');
       const latestMissing = Math.max(0, latestCount - latestPresent);
@@ -5024,14 +5034,14 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
                 : 'cookie-chip-ok';
         return (
         '<tr>' +
-          '<td><code class="mono">' + item.subdomain + '</code></td>' +
-          '<td><code class="mono">' + (item.urlFragment || item.subdomain || 'n/a') + '</code></td>' +
-          '<td><code class="mono">' + (item.path || '/') + '</code></td>' +
-          '<td><span class="mono truncate-domain" title="' + attrEscape(fullDomain) + '">' + fullDomainDisplay + '</span></td>' +
+          '<td><code class="mono">' + attrEscape(item.subdomain) + '</code></td>' +
+          '<td><code class="mono">' + attrEscape((item.urlFragment || item.subdomain || 'n/a')) + '</code></td>' +
+          '<td><code class="mono">' + attrEscape((item.path || '/')) + '</code></td>' +
+          '<td><span class="mono truncate-domain" title="' + attrEscape(fullDomain) + '">' + attrEscape(fullDomainDisplay) + '</span></td>' +
           '<td>' + dnsChar + '</td>' +
-          '<td><span class="mono truncate-domain" title="' + attrEscape(((item.dnsRecords || []).join(', ') || 'n/a')) + '">' + (((item.dnsRecords || []).slice(0, 2).join(', ')) || 'n/a') + '</span></td>' +
-          '<td><span class="mono">' + (item.dnsSource || 'live') + '</span></td>' +
-          '<td>' + (item.lastCheckedAt || 'n/a') + '</td>' +
+          '<td><span class="mono truncate-domain" title="' + attrEscape(((item.dnsRecords || []).join(', ') || 'n/a')) + '">' + attrEscape(((item.dnsRecords || []).slice(0, 2).join(', ')) || 'n/a') + '</span></td>' +
+          '<td><span class="mono">' + attrEscape((item.dnsSource || 'live')) + '</span></td>' +
+          '<td>' + attrEscape((item.lastCheckedAt || 'n/a')) + '</td>' +
           '<td><span class="cookie-chip ' + cookieClass + '" title="Cookie telemetry">' + cookieSymbol + '</span></td>' +
         '</tr>'
       );
@@ -5054,7 +5064,7 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
           '<td>' + (subCookieFlagged > 0 ? '🍪⚠️' : '🍪🟢') + '</td>' +
         '</tr>';
       domainHealthEl.innerHTML =
-        '<div class="meta">domain=' + (data.domain || 'factory-wager.com') + ' zone=' + (data.zone || 'n/a') + ' account=' + (data.accountId || 'n/a') + ' knownSubdomains=' + (data.knownSubdomains ?? 'n/a') + ' source=' + sourceBadge(data.source || 'n/a') + '</div>' +
+        '<div class="meta">domain=' + attrEscape((data.domain || 'factory-wager.com')) + ' zone=' + attrEscape((data.zone || 'n/a')) + ' account=' + attrEscape((data.accountId || 'n/a')) + ' knownSubdomains=' + attrEscape((data.knownSubdomains ?? 'n/a')) + ' source=' + sourceBadge(data.source || 'n/a') + '</div>' +
         '<div class="meta">' +
           healthBadge(healthRatioByState(overallStatus), overallStatusText) + ' ' +
           healthBadge(Number.isFinite(overallScore) ? overallScore : healthRatioByState(overallStatus), 'Health score ' + overallScoreText) + ' ' +
@@ -5063,20 +5073,20 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
           healthBadge(healthRatioByState(cookieStatus), cookieStatusText) +
         '</div>' +
         '<div class="meta">' + modeHint + '</div>' +
-        '<div class="meta">base_url=<code>' + baseUrl + '</code> url_fragment=<code>{subdomain}</code> path=<code>{path}</code> full_domain=<code>{url_fragment}.{base_url}</code></div>' +
-        '<div class="meta">storage bucket=' + (data.storage?.bucket || 'n/a') + ' endpoint=' + (data.storage?.endpoint || 'n/a') + ' prefix=<code>' + (data.storage?.domainPrefix || 'n/a') + '</code></div>' +
-        '<div class="meta">registry source=' + registrySource + ' match=<code>' + registryMatch + '</code> version=' + registryVersion + ' requiredHeader=<code>' + requiredHeader + '</code> tokenEnv=<code>' + tokenEnvVar + '</code> token=' + tokenState + '</div>' +
-        '<div class="meta">storageKey health=<code>' + (data.storage?.sampleKeys?.health || 'n/a') + '</code></div>' +
-        '<div class="meta">dnsChecked=' + (data.dnsPrefetch?.checked ?? 0) + ' dnsResolved=' + (data.dnsPrefetch?.resolved ?? 0) + ' cacheTtlSec=' + (data.dnsPrefetch?.cacheTtlSec ?? 'n/a') + '</div>' +
-        '<div class="meta">cookieTelemetry=' + (data.health?.cookie?.detail || 'n/a') + ' domainMatch=' + (data.health?.cookie?.domainMatchesRequested ?? 'n/a') + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + cookieUnicodeBar + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
-        '<div class="meta">cookieTelemetryWrite=' + (data.cookieTelemetryWrite?.written ? 'ok' : 'skipped') + (data.cookieTelemetryWrite?.reason ? ' reason=<code>' + data.cookieTelemetryWrite.reason + '</code>' : '') + '</div>' +
+        '<div class="meta">base_url=<code>' + attrEscape(baseUrl) + '</code> url_fragment=<code>{subdomain}</code> path=<code>{path}</code> full_domain=<code>{url_fragment}.{base_url}</code></div>' +
+        '<div class="meta">storage bucket=' + attrEscape((data.storage?.bucket || 'n/a')) + ' endpoint=' + attrEscape((data.storage?.endpoint || 'n/a')) + ' prefix=<code>' + attrEscape((data.storage?.domainPrefix || 'n/a')) + '</code></div>' +
+        '<div class="meta">registry source=' + attrEscape(registrySource) + ' match=<code>' + attrEscape(registryMatch) + '</code> version=' + attrEscape(registryVersion) + ' requiredHeader=<code>' + attrEscape(requiredHeader) + '</code> tokenEnv=<code>' + attrEscape(tokenEnvVar) + '</code> token=' + tokenState + '</div>' +
+        '<div class="meta">storageKey health=<code>' + attrEscape((data.storage?.sampleKeys?.health || 'n/a')) + '</code></div>' +
+        '<div class="meta">dnsChecked=' + attrEscape((data.dnsPrefetch?.checked ?? 0)) + ' dnsResolved=' + attrEscape((data.dnsPrefetch?.resolved ?? 0)) + ' cacheTtlSec=' + attrEscape((data.dnsPrefetch?.cacheTtlSec ?? 'n/a')) + '</div>' +
+        '<div class="meta">cookieTelemetry=' + attrEscape((data.health?.cookie?.detail || 'n/a')) + ' domainMatch=' + attrEscape((data.health?.cookie?.domainMatchesRequested ?? 'n/a')) + ' cookieScore=' + (Number.isFinite(cookieScoreValue) ? cookieScoreValue : 'n/a') + ' hex=' + cookieHexBadge + ' bar=' + attrEscape(cookieUnicodeBar) + ' <span class="badge" style="background:' + cookieHexBadge + ';border-color:' + cookieHexBadge + ';color:#0b0d12">■</span></div>' +
+        '<div class="meta">cookieTelemetryWrite=' + attrEscape((data.cookieTelemetryWrite?.written ? 'ok' : 'skipped')) + (data.cookieTelemetryWrite?.reason ? ' reason=<code>' + attrEscape(data.cookieTelemetryWrite.reason) + '</code>' : '') + '</div>' +
         '<table><thead><tr><th>Type</th><th>Key</th><th>Exists</th><th>Last Modified</th></tr></thead><tbody>' + latestRows + '</tbody><tfoot>' + latestFooter + '</tfoot></table>' +
         '<div class="table-scroll"><table class="subdomain-table"><thead><tr><th>Subdomain</th><th>URL Fragment</th><th>Path</th><th>Full Domain</th><th>DNS</th><th>Records</th><th>Source</th><th>Last Checked</th><th>Cookie</th></tr></thead><tbody>' + (subRows || '<tr><td colspan="9">No subdomain data.</td></tr>') + '</tbody><tfoot>' + subFooter + '</tfoot></table></div>';
     };
     const renderDomainRegistryStatus = (data) => {
       if (!domainRegistryStatusEl) return;
       if (!data || data.error || !data.registry) {
-        domainRegistryStatusEl.innerHTML = '<pre>' + (data?.error || 'No domain registry status data.') + '</pre>';
+        domainRegistryStatusEl.innerHTML = '<pre>' + attrEscape((data?.error || 'No domain registry status data.')) + '</pre>';
         return;
       }
       const total = Number(data.registry.totalDomains || 0);
@@ -5093,18 +5103,18 @@ export function htmlShell(options: Options, buildMeta: BuildMeta, state: Dashboa
       const rows = Array.isArray(data.registry.domains)
         ? data.registry.domains.map((row) =>
           '<tr>' +
-            '<td><code>' + (row.domain || 'n/a') + '</code></td>' +
-            '<td><code>' + (row.tokenEnvVar || 'n/a') + '</code></td>' +
+            '<td><code>' + attrEscape((row.domain || 'n/a')) + '</code></td>' +
+            '<td><code>' + attrEscape((row.tokenEnvVar || 'n/a')) + '</code></td>' +
             '<td>' + (row.tokenPresent === true ? '<span class="badge status-good">present</span>' : '<span class="badge status-bad">missing</span>') + '</td>' +
-            '<td>' + (row.tokenSource || 'n/a') + '</td>' +
-            '<td><code>' + (row.bucket || 'n/a') + '</code></td>' +
-            '<td><code>' + (row.requiredHeader || 'n/a') + '</code></td>' +
+            '<td>' + attrEscape((row.tokenSource || 'n/a')) + '</td>' +
+            '<td><code>' + attrEscape((row.bucket || 'n/a')) + '</code></td>' +
+            '<td><code>' + attrEscape((row.requiredHeader || 'n/a')) + '</code></td>' +
           '</tr>'
         ).join('')
         : '';
       domainRegistryStatusEl.innerHTML =
-        '<div class="meta">generatedAt=' + (data.generatedAt || 'n/a') + ' registry=<code>' + (data.registry.path || 'n/a') + '</code> version=' + (data.registry.version || 'n/a') + '</div>' +
-        '<div class="meta">domains=' + total + ' projects=' + (data.search?.projectCount ?? 'n/a') + ' latestSnapshot=' + (data.search?.latestSnapshotId || 'n/a') + ' queryPack=' + (data.search?.queryPack || 'n/a') + '</div>' +
+        '<div class="meta">generatedAt=' + attrEscape((data.generatedAt || 'n/a')) + ' registry=<code>' + attrEscape((data.registry.path || 'n/a')) + '</code> version=' + attrEscape((data.registry.version || 'n/a')) + '</div>' +
+        '<div class="meta">domains=' + total + ' projects=' + attrEscape((data.search?.projectCount ?? 'n/a')) + ' latestSnapshot=' + attrEscape((data.search?.latestSnapshotId || 'n/a')) + ' queryPack=' + attrEscape((data.search?.queryPack || 'n/a')) + '</div>' +
         '<div class="meta">' +
           healthBadge(total > 0 ? bucketMapped / total : 0, 'bucket mapping ' + bucketMapped + '/' + total) + ' ' +
           healthBadge(total > 0 ? headerConfigured / total : 0, 'header mapping ' + headerConfigured + '/' + total) + ' ' +

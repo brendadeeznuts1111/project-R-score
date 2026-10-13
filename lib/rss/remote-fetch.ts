@@ -1,5 +1,8 @@
 // @see https://bun.com/docs/runtime/networking/fetch — fetch, redirect, timeout
 
+import { blockedRemoteHost } from './remote-address.ts';
+import { fetchPinnedHttps } from './remote-transport.ts';
+
 export type RemoteFetchPolicy = {
   fetcher: typeof fetch;
   maxBytes: number;
@@ -12,75 +15,6 @@ export type RemoteFetchPolicy = {
 
 const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
 
-function blockedIpv4(host: string): boolean {
-  const parts = host.split('.').map(Number);
-  if (parts.length !== 4 || parts.some(part => !Number.isInteger(part) || part < 0 || part > 255)) {
-    return false;
-  }
-  const [a = 0, b = 0] = parts;
-  return (
-    a === 0 ||
-    a === 10 ||
-    a === 127 ||
-    (a === 100 && b >= 64 && b <= 127) ||
-    (a === 169 && b === 254) ||
-    (a === 172 && b >= 16 && b <= 31) ||
-    (a === 192 && b === 0) ||
-    (a === 192 && b === 168) ||
-    (a === 198 && (b === 18 || b === 19 || b === 51)) ||
-    (a === 203 && b === 0) ||
-    a >= 224
-  );
-}
-
-function ipv6Bytes(host: string): number[] | null {
-  if (!host.includes(':')) return null;
-  const [left = '', right = ''] = host.split('::');
-  if (host.split('::').length > 2) return null;
-  const parseSide = (side: string): number[] | null => {
-    if (!side) return [];
-    const words: number[] = [];
-    for (const part of side.split(':')) {
-      if (!/^[0-9a-f]{1,4}$/i.test(part)) return null;
-      words.push(Number.parseInt(part, 16));
-    }
-    return words;
-  };
-  const before = parseSide(left);
-  const after = parseSide(right);
-  if (!before || !after) return null;
-  const omitted = 8 - before.length - after.length;
-  if ((host.includes('::') && omitted < 1) || (!host.includes('::') && omitted !== 0)) return null;
-  const words = [...before, ...Array.from({ length: omitted }, () => 0), ...after];
-  return words.flatMap(word => [word >> 8, word & 0xff]);
-}
-
-function blockedIpv6(host: string): boolean {
-  const bytes = ipv6Bytes(host);
-  if (!bytes) return false;
-  if (
-    bytes.every(byte => byte === 0) ||
-    (bytes.slice(0, 15).every(byte => byte === 0) && bytes[15] === 1)
-  )
-    return true;
-  if ((bytes[0]! & 0xfe) === 0xfc || bytes[0] === 0xff) return true;
-  if (bytes[0] === 0xfe && (bytes[1]! & 0xc0) === 0x80) return true;
-  if (bytes[0] === 0x20 && bytes[1] === 0x01 && bytes[2] === 0x0d && bytes[3] === 0xb8) return true;
-  const mapped =
-    bytes.slice(0, 10).every(byte => byte === 0) && bytes[10] === 0xff && bytes[11] === 0xff;
-  return mapped && blockedIpv4(bytes.slice(12).join('.'));
-}
-
-function blockedHost(hostname: string): boolean {
-  const host = hostname
-    .toLowerCase()
-    .replace(/^\[|\]$/g, '')
-    .replace(/\.+$/, '');
-  if (host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.local')) return true;
-  if (blockedIpv4(host)) return true;
-  return blockedIpv6(host);
-}
-
 export function validateRemoteHttpsUrl(
   input: string | URL,
   allowedOrigins?: ReadonlySet<string>,
@@ -91,7 +25,7 @@ export function validateRemoteHttpsUrl(
     throw new Error(`${label} protocol is not allowed: ${url.protocol}`);
   if (url.username || url.password) throw new Error(`${label} URL must not contain credentials`);
   if (url.port && url.port !== '443') throw new Error(`${label} URL uses an unsupported port`);
-  if (blockedHost(url.hostname)) throw new Error(`${label} URL targets a prohibited host`);
+  if (blockedRemoteHost(url.hostname)) throw new Error(`${label} URL targets a prohibited host`);
   url.hash = '';
   if (allowedOrigins && !allowedOrigins.has(url.origin)) {
     throw new Error(`${label} origin is not allowed: ${url.origin}`);
@@ -110,11 +44,12 @@ export async function fetchWithRedirectPolicy(
   for (let hop = 0; hop <= policy.maxRedirects; hop++) {
     if (visited.has(current.href)) throw new Error(`${policy.label} redirect loop`);
     visited.add(current.href);
-    const response = await policy.fetcher(current.href, {
-      headers,
-      redirect: 'manual',
-      signal: deadline,
-    });
+    deadline.throwIfAborted();
+    // Custom fetchers are trusted transports: their owner must enforce DNS/egress restrictions.
+    const response =
+      policy.fetcher === fetch
+        ? await fetchPinnedHttps(current, headers, deadline)
+        : await policy.fetcher(current.href, { headers, redirect: 'manual', signal: deadline });
     if (!REDIRECT_STATUSES.has(response.status)) return { response, finalUrl: current };
     // A response stream's cancellation hook can stall; cleanup must not block redirects or deadlines.
     void response.body?.cancel().catch(() => {});
@@ -129,6 +64,9 @@ export async function fetchWithRedirectPolicy(
     if (next.origin !== current.origin) {
       headers.delete('if-none-match');
       headers.delete('if-modified-since');
+      for (const name of ['authorization', 'cookie', 'proxy-authorization', 'host']) {
+        headers.delete(name);
+      }
     }
     current = next;
   }

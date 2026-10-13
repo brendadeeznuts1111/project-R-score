@@ -97,7 +97,7 @@ export async function resolveAuthorityAddresses(
   const host = normalizeAuthorityHost(hostInput);
   const literalFamily = isIP(host);
   const family = options.family ?? 0;
-  if (literalFamily) {
+  if (literalFamily === 4 || literalFamily === 6) {
     if (family !== 0 && family !== literalFamily) return [];
     return [{ address: host, family: literalFamily, ttl: 0, source: 'literal' }];
   }
@@ -143,7 +143,8 @@ export function buildPinnedHttpsPlan(input: {
   }
   const address = normalizeAuthorityHost(input.address);
   const family = isIP(address);
-  if (!family) throw new TypeError(`address must be an IPv4 or IPv6 literal: ${input.address}`);
+  if (family !== 4 && family !== 6)
+    throw new TypeError(`address must be an IPv4 or IPv6 literal: ${input.address}`);
   const port = input.port ?? 443;
   assertPort(port);
   const path = normalizeRequestPath(input.path);

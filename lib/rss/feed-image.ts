@@ -114,65 +114,71 @@ export class FeedImageEnricher {
 
     if (cached && !cached.etag && !cached.lastModified) return cached.metadata;
 
+    const signal = AbortSignal.timeout(this.timeoutMs);
     const { response, finalUrl } = await fetchImageResponse(initialUrl, headers, {
       fetcher: this.fetcher,
       maxBytes: this.maxBytes,
       maxRedirects: this.maxRedirects,
       timeoutMs: this.timeoutMs,
       allowedOrigins: this.allowedOrigins,
+      signal,
     });
-    if (response.status === 304 && cached) return cached.metadata;
-    if (!response.ok) throw new Error(`Feed image request failed: HTTP ${response.status}`);
+    try {
+      if (response.status === 304 && cached) return cached.metadata;
+      if (!response.ok) throw new Error(`Feed image request failed: HTTP ${response.status}`);
 
-    const mimeType = response.headers.get('content-type')?.split(';', 1)[0]?.trim() ?? '';
-    if (!mimeType.startsWith('image/')) {
-      throw new Error(`Feed enclosure is not an image: ${mimeType || 'missing content-type'}`);
+      const mimeType = response.headers.get('content-type')?.split(';', 1)[0]?.trim() ?? '';
+      if (!mimeType.startsWith('image/')) {
+        throw new Error(`Feed enclosure is not an image: ${mimeType || 'missing content-type'}`);
+      }
+
+      const bytes = await readBoundedImageBytes(response, this.maxBytes, signal);
+
+      const original = await extractImageEvidenceMeta(bytes, {
+        image: { maxPixels: this.maxPixels },
+      });
+      const detectedMimeType = mimeForImageFormat(original.format);
+      if (mimeType !== detectedMimeType) {
+        throw new Error(
+          `Feed image MIME mismatch: declared ${mimeType}, detected ${detectedMimeType}`
+        );
+      }
+      const thumbnailBytes = await new Bun.Image(bytes, { maxPixels: this.maxPixels })
+        .resize(this.thumbnailWidth, this.thumbnailHeight, {
+          fit: 'inside',
+          withoutEnlargement: true,
+        })
+        .webp({ quality: 80 })
+        .bytes();
+      const thumbnail = await extractImageEvidenceMeta(thumbnailBytes);
+      const metadata: FeedImageMetadata = {
+        sourceUrl: finalUrl.href,
+        source: candidate.source,
+        mimeType,
+        width: original.width,
+        height: original.height,
+        format: original.format,
+        byteSize: original.size,
+        sha256: original.digest,
+        dominantColor: await averageImageColor(bytes, this.maxPixels),
+        thumbnail: {
+          dataUrl: `data:image/webp;base64,${Buffer.from(thumbnailBytes).toString('base64')}`,
+          mimeType: 'image/webp',
+          width: thumbnail.width,
+          height: thumbnail.height,
+          byteSize: thumbnail.size,
+          sha256: thumbnail.digest,
+        },
+      };
+
+      this.cache.set(url, {
+        metadata,
+        etag: response.headers.get('etag') ?? undefined,
+        lastModified: response.headers.get('last-modified') ?? undefined,
+      });
+      return metadata;
+    } finally {
+      if (!response.body?.locked) void response.body?.cancel().catch(() => {});
     }
-
-    const bytes = await readBoundedImageBytes(response, this.maxBytes);
-
-    const original = await extractImageEvidenceMeta(bytes, {
-      image: { maxPixels: this.maxPixels },
-    });
-    const detectedMimeType = mimeForImageFormat(original.format);
-    if (mimeType !== detectedMimeType) {
-      throw new Error(
-        `Feed image MIME mismatch: declared ${mimeType}, detected ${detectedMimeType}`
-      );
-    }
-    const thumbnailBytes = await new Bun.Image(bytes, { maxPixels: this.maxPixels })
-      .resize(this.thumbnailWidth, this.thumbnailHeight, {
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .webp({ quality: 80 })
-      .bytes();
-    const thumbnail = await extractImageEvidenceMeta(thumbnailBytes);
-    const metadata: FeedImageMetadata = {
-      sourceUrl: finalUrl.href,
-      source: candidate.source,
-      mimeType,
-      width: original.width,
-      height: original.height,
-      format: original.format,
-      byteSize: original.size,
-      sha256: original.digest,
-      dominantColor: await averageImageColor(bytes, this.maxPixels),
-      thumbnail: {
-        dataUrl: `data:image/webp;base64,${Buffer.from(thumbnailBytes).toString('base64')}`,
-        mimeType: 'image/webp',
-        width: thumbnail.width,
-        height: thumbnail.height,
-        byteSize: thumbnail.size,
-        sha256: thumbnail.digest,
-      },
-    };
-
-    this.cache.set(url, {
-      metadata,
-      etag: response.headers.get('etag') ?? undefined,
-      lastModified: response.headers.get('last-modified') ?? undefined,
-    });
-    return metadata;
   }
 }

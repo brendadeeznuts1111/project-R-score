@@ -68,6 +68,79 @@ describe('RSS image candidate parsing', () => {
 });
 
 describe('FeedImageEnricher', () => {
+  for (const rejection of ['HTTP status', 'MIME type'] as const) {
+    for (const cleanup of ['pending', 'rejected'] as const) {
+      test(`cancels ${rejection} rejection without waiting for ${cleanup} cleanup`, async () => {
+        let cancelled = false;
+        const response = new Response(
+          new ReadableStream<Uint8Array>({
+            cancel() {
+              cancelled = true;
+              return cleanup === 'pending'
+                ? new Promise<void>(() => {})
+                : Promise.reject(new Error('custom cancellation failed'));
+            },
+          }),
+          {
+            status: rejection === 'HTTP status' ? 503 : 200,
+            headers: { 'content-type': 'text/plain' },
+          }
+        );
+        await expect(
+          new FeedImageEnricher({ fetcher: testFetcher(async () => response) }).enrich({
+            url: 'https://example.com/image.png',
+            source: 'enclosure',
+          })
+        ).rejects.toThrow(rejection === 'HTTP status' ? 'HTTP 503' : 'not an image');
+        expect(cancelled).toBe(true);
+        expect(response.body?.locked).toBe(false);
+      }, 1000);
+    }
+  }
+
+  test('shares the redirect deadline with custom image body reads and nonblocking cancellation', async () => {
+    let cancelled = false;
+    const signals: Array<AbortSignal | null | undefined> = [];
+    const stalled = new Response(
+      new ReadableStream<Uint8Array>({
+        cancel() {
+          cancelled = true;
+          return new Promise<void>(() => {});
+        },
+      }),
+      { headers: { 'content-type': 'image/png' } }
+    );
+    const fetcher = testFetcher(async (_input, init) => {
+      signals.push(init?.signal);
+      return signals.length === 1
+        ? new Response(null, { status: 302, headers: { location: '/final.png' } })
+        : stalled;
+    });
+    await expect(
+      new FeedImageEnricher({ fetcher, timeoutMs: 10 }).enrich({
+        url: 'https://example.com/image.png',
+        source: 'enclosure',
+      })
+    ).rejects.toMatchObject({ name: 'TimeoutError' });
+    expect(signals).toHaveLength(2);
+    expect(signals[0]).toBe(signals[1]);
+    expect(cancelled).toBe(true);
+    expect(stalled.body?.locked).toBe(false);
+  }, 1000);
+
+  test('releases the body reader when an image fails decoding', async () => {
+    const response = new Response(new Uint8Array([1, 2, 3]), {
+      headers: { 'content-type': 'image/png' },
+    });
+    await expect(
+      new FeedImageEnricher({ fetcher: testFetcher(async () => response) }).enrich({
+        url: 'https://example.com/invalid.png',
+        source: 'enclosure',
+      })
+    ).rejects.toThrow();
+    expect(response.body?.locked).toBe(false);
+  });
+
   test('creates metadata, a WebP thumbnail, a color, and conditionally revalidates', async () => {
     const png = BLUE_PNG;
     const requests: Headers[] = [];

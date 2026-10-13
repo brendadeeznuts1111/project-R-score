@@ -36,9 +36,19 @@ bounded to 12 items with three workers by default. A failed image never fails
 the feed; the original `imageUrl` remains available as fallback metadata.
 
 Remote URLs are HTTPS-only, manually redirected, bounded while streaming, and
-reject credentials plus literal local/private targets. Production ingestion
-still requires an SSRF-aware egress layer or trusted-origin allowlist because
-Bun fetch does not expose a connection-bound DNS pinning contract.
+reject credentials plus literal local/private targets. The native transport
+resolves each redirect destination, rejects the complete answer set if any
+address is nonpublic, and connects to one validated numeric IP. HTTP Host and
+TLS certificate identity remain the original hostname; ambient proxies and
+connection reuse are disabled. This avoids a second hostname resolution between
+validation and connection. DNS lookup and body reads share the request deadline.
+
+Explicit custom fetchers are trusted transport overrides: their owner must
+enforce DNS and egress policy. Origin allowlists remain an additional
+restriction; they are not a substitute for address checks. Cross-origin
+redirects discard authorization, cookies, proxy credentials, explicit Host, and
+cache validators. Image status/MIME failures and cached responses release bodies
+without awaiting potentially stalled cancellation hooks.
 
 The integrated documentation server exposes the fixed `RSS_FEED_URL` (default
 `https://bun.com/rss.xml`) at `/api/feed`. It does not accept arbitrary feed
