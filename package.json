@@ -1,7 +1,7 @@
 {
   "name": "factorywager-enterprise",
   "version": "5.2.0+build.20260723",
-  "packageManager": "bun@1.4.0",
+  "packageManager": "bun@1.4.3",
   "engines": {
     "bun": ">=1.4.0"
   },
@@ -30,7 +30,7 @@
     "@factorywager/proton-pass": "workspace:*",
     "@factorywager/registry-client": "workspace:*",
     "@factorywager/rip": "workspace:*",
-    "@modelcontextprotocol/sdk": "1.30.0",
+    "@modelcontextprotocol/sdk": "1.31.0",
     "@simplewebauthn/server": "13.3.2",
     "yaml": "2.9.0",
     "zod": "catalog:"
@@ -2577,7 +2577,8 @@
     "cli:allowlist:coverage": "bun scripts/cli-allowlist-coverage.ts",
     "cli:allowlist:plan": "bun scripts/cli-allowlist-team-plan.ts --write",
     "cli:allowlist:apply-registry": "bun scripts/cli-allowlist-apply-registry.ts --write",
-    "cli:allowlist:wire": "bun scripts/cli-allowlist-wire-batch.ts"
+    "cli:allowlist:wire": "bun scripts/cli-allowlist-wire-batch.ts",
+    "verify": "bun run ci:harness:fast"
   },
   "private": true,
   "files": [
@@ -2594,13 +2595,14 @@
     "@hono/node-server": "2.0.12",
     "axios": "1.18.1",
     "body-parser": "2.3.0",
-    "brace-expansion": "1.1.18",
+    "brace-expansion@^1": "1.1.21",
+    "brace-expansion@^5": "5.0.12",
     "bun-types": "file:tools/vendor/bun-types/bun-types-1.4.0-tip.23d233b2.tgz",
-    "fast-uri": "3.1.5",
+    "fast-uri": "3.1.8",
     "form-data": "4.0.6",
-    "hono": "4.12.34",
-    "ip-address": "10.4.0",
-    "js-yaml": "4.3.1",
+    "hono": "4.13.7",
+    "ip-address": "10.7.1",
+    "js-yaml": "4.3.2",
     "postcss": "8.5.23"
   }
 }

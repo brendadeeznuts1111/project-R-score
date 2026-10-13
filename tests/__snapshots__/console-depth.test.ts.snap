@@ -39,7 +39,7 @@ exports[`snapshots depth truncation is stable 1`] = `
   zebra: 1,
   alpha: {
     delta: 2,
-    bravo: [ 1, 2, 3 ],
+    bravo: [Array ...],
   },
   mango: {
     ripe: true,

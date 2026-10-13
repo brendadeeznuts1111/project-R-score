@@ -50,8 +50,8 @@ exports[`partner CLI Bun.spawn snapshot contract captures stable validator outpu
     },
   ],
   "runtime": {
-    "revision": "34cbb9a40b4bd1bd767d134a7065e66c2432a676",
-    "version": "1.4.0",
+    "revision": "c6da4a4d3010e5553438c60f6bd76d981976867c",
+    "version": "1.4.3",
   },
 }
 `;
