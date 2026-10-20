@@ -9,7 +9,20 @@
 
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import { parseStringPromise } from 'xml2js';
+
+function rssXmlText(value: unknown): string {
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value) && value.length > 0) return rssXmlText(value[0]);
+  if (value && typeof value === 'object' && '#text' in value) {
+    return String((value as { '#text': unknown })['#text'] ?? '');
+  }
+  return '';
+}
+
+function asArray<T>(value: T | T[] | undefined): T[] {
+  if (value === undefined) return [];
+  return Array.isArray(value) ? value : [value];
+}
 
 interface ValidationResult {
   feed: string;
@@ -87,7 +100,10 @@ class FeedValidator {
       }
 
       // Parse XML
-      const parsed = await parseStringPromise(content);
+      const parsed = Bun.XML.parse(content, {
+        ignoreAttributes: false,
+        attributeNamePrefix: '@',
+      }) as Record<string, unknown>;
 
       if (filename.includes('rss')) {
         this.validateRSSFeed(parsed, result);
@@ -118,7 +134,7 @@ class FeedValidator {
       return;
     }
 
-    const channel = parsed.rss.channel?.[0];
+    const channel = (parsed.rss as { channel?: Record<string, unknown> } | undefined)?.channel;
     if (!channel) {
       result.errors.push('Missing RSS channel');
       result.valid = false;
@@ -126,16 +142,16 @@ class FeedValidator {
     }
 
     // Required RSS fields
-    const requiredFields = ['title', 'description', 'link'];
+    const requiredFields = ['title', 'description', 'link'] as const;
     for (const field of requiredFields) {
-      if (!channel[field]) {
+      if (!rssXmlText(channel[field])) {
         result.errors.push(`Missing required field: ${field}`);
         result.valid = false;
       }
     }
 
     // Count items
-    const items = channel.item || [];
+    const items = asArray(channel.item);
     result.stats.itemCount = items.length;
 
     if (items.length === 0) {
@@ -149,20 +165,21 @@ class FeedValidator {
 
     // Get last build date
     if (channel.lastBuildDate) {
-      result.stats.lastBuildDate = channel.lastBuildDate[0];
+      result.stats.lastBuildDate = rssXmlText(channel.lastBuildDate);
     }
 
     // Validate each item
-    items.forEach((item: any, index: number) => {
-      if (!item.title) {
+    items.forEach((item: unknown, index: number) => {
+      const row = item as Record<string, unknown>;
+      if (!rssXmlText(row.title)) {
         result.errors.push(`Item ${index + 1}: Missing title`);
         result.valid = false;
       }
-      if (!item.description) {
+      if (!rssXmlText(row.description)) {
         result.errors.push(`Item ${index + 1}: Missing description`);
         result.valid = false;
       }
-      if (!item.link) {
+      if (!rssXmlText(row.link)) {
         result.warnings.push(`Item ${index + 1}: Missing link`);
       }
     });
@@ -175,19 +192,19 @@ class FeedValidator {
       return;
     }
 
-    const feed = parsed.feed;
+    const feed = parsed.feed as Record<string, unknown>;
 
     // Required Atom fields
-    const requiredFields = ['title', 'id', 'updated'];
+    const requiredFields = ['title', 'id', 'updated'] as const;
     for (const field of requiredFields) {
-      if (!feed[field]) {
+      if (!rssXmlText(feed[field])) {
         result.errors.push(`Missing required field: ${field}`);
         result.valid = false;
       }
     }
 
     // Count entries
-    const entries = feed.entry || [];
+    const entries = asArray(feed.entry);
     result.stats.itemCount = entries.length;
 
     if (entries.length === 0) {
@@ -196,20 +213,21 @@ class FeedValidator {
 
     // Get updated date
     if (feed.updated) {
-      result.stats.lastBuildDate = feed.updated[0];
+      result.stats.lastBuildDate = rssXmlText(feed.updated);
     }
 
     // Validate each entry
-    entries.forEach((entry: any, index: number) => {
-      if (!entry.title) {
+    entries.forEach((entry: unknown, index: number) => {
+      const row = entry as Record<string, unknown>;
+      if (!rssXmlText(row.title)) {
         result.errors.push(`Entry ${index + 1}: Missing title`);
         result.valid = false;
       }
-      if (!entry.id) {
+      if (!rssXmlText(row.id)) {
         result.errors.push(`Entry ${index + 1}: Missing id`);
         result.valid = false;
       }
-      if (!entry.updated) {
+      if (!rssXmlText(row.updated)) {
         result.warnings.push(`Entry ${index + 1}: Missing updated date`);
       }
     });

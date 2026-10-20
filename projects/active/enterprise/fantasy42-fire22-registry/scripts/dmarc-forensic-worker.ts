@@ -4,7 +4,6 @@
  * Handles detailed email authentication failures and security incidents
  */
 
-import { XMLParser } from 'fast-xml-parser';
 
 interface DMARCForensicReport {
   version: string;
@@ -151,12 +150,10 @@ async function extractReportContent(message: any): Promise<string | null> {
 
 async function parseForensicReport(xmlContent: string): Promise<DMARCForensicReport | null> {
   try {
-    const parser = new XMLParser({
+    const parsed = Bun.XML.parse(xmlContent, {
       ignoreAttributes: false,
-      attributeNamePrefix: '@_',
-    });
-
-    const parsed = parser.parse(xmlContent);
+      attributeNamePrefix: '@',
+    }) as { feedback?: DMARCForensicReport };
 
     // Validate it's a DMARC forensic report
     if (!parsed.feedback || !parsed.feedback.record) {

@@ -87,15 +87,12 @@ export class RSSFetcherOptimized {
 
 	// v1.3.7: Parse feed from buffer with optimized string conversion
 	private async parseFeedBuffer(buffer: Buffer) {
-		const { XMLParser } = await import("fast-xml-parser");
-		const parser = new XMLParser({
+		const xml = buffer.toString("utf-8");
+		return Bun.XML.parse(xml, {
 			ignoreAttributes: false,
 			parseAttributeValue: true,
+			attributeNamePrefix: "@",
 		});
-
-		// Convert buffer to string efficiently
-		const xml = buffer.toString("utf-8");
-		return parser.parse(xml);
 	}
 
 	// Batch fetch with v1.3.7 optimizations

@@ -56,14 +56,11 @@ export class RSSFetcher {
 	}
 
 	private async parseFeed(xml: string) {
-		// Use fast-xml-parser or native FFI
-		const { XMLParser } = await import("fast-xml-parser");
-		const parser = new XMLParser({
+		return Bun.XML.parse(xml, {
 			ignoreAttributes: false,
 			parseAttributeValue: true,
+			attributeNamePrefix: "@",
 		});
-
-		return parser.parse(xml);
 	}
 
 	// Get fetcher statistics

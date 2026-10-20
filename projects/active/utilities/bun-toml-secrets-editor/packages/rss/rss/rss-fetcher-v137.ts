@@ -196,13 +196,11 @@ export class RSSFetcherV137 {
 	 * Parse RSS/Atom feed XML
 	 */
 	private async parseFeed(xml: string): Promise<RSSFeed> {
-		const { XMLParser } = await import("fast-xml-parser");
-		const parser = new XMLParser({
+		const parsed = Bun.XML.parse(xml, {
 			ignoreAttributes: false,
 			parseAttributeValue: true,
-		});
-
-		const parsed = parser.parse(xml);
+			attributeNamePrefix: "@",
+		}) as Record<string, any>;
 
 		// Handle RSS 2.0
 		if (parsed.rss?.channel) {

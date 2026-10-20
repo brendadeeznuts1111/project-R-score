@@ -1,10 +1,12 @@
 // src/server-simple.ts - Working RSS Optimizer with v1.3.7 features
-import { XMLParser } from "fast-xml-parser";
 
-const parser = new XMLParser({
-	ignoreAttributes: false,
-	parseAttributeValue: true,
-});
+function parseFeedXml(xml: string) {
+	return Bun.XML.parse(xml, {
+		ignoreAttributes: false,
+		parseAttributeValue: true,
+		attributeNamePrefix: "@",
+	});
+}
 
 Bun.serve({
 	port: 3000,
@@ -33,7 +35,7 @@ Bun.serve({
 				const xml = await response.text();
 				const parseStart = performance.now();
 
-				const feed = parser.parse(xml);
+				const feed = parseFeedXml(xml);
 				const fetchTime = performance.now() - startTime;
 				const parseTime = performance.now() - parseStart;
 
@@ -98,7 +100,7 @@ Bun Version: ${Bun.version}
 			try {
 				const response = await fetch(feedUrl);
 				const xml = await response.text();
-				const feed = parser.parse(xml);
+				const feed = parseFeedXml(xml);
 
 				const title =
 					feed.rss?.channel?.title || feed.feed?.title || "Untitled";
