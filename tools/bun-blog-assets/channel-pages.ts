@@ -74,6 +74,19 @@ function escapeHtml(value: string): string {
   return value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
 }
 
+const XML_ENTITIES: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&apos;',
+};
+
+/** Escape all five XML special characters for text or attribute values. */
+export function escapeXml(value: string): string {
+  return value.replace(/[&<>"']/g, char => XML_ENTITIES[char] ?? char);
+}
+
 function posterFor(asset: AssetRecord, manifest: AssetManifest): AssetRecord {
   const poster = manifest.assets.find(candidate => candidate.id === asset.posterId);
   if (!poster) throw new Error(`video ${asset.id} is missing its manifest poster`);
@@ -98,7 +111,7 @@ export function buildBun14VideoSitemap(manifest: AssetManifest): string {
   const urls = manifest.assets
     .filter(asset => asset.kind === 'video')
     .map(asset => `${ORIGIN}/channels/bun-1.4/videos/${asset.id}/`);
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(url => `  <url><loc>${url}</loc></url>`).join('\n')}\n</urlset>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map(url => `  <url><loc>${escapeXml(url)}</loc></url>`).join('\n')}\n</urlset>\n`;
 }
 
 export async function syncBun14VideoSharePages(
