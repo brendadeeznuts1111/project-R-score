@@ -34,13 +34,15 @@ async function run() {
       console.error("drift detected");
       process.exit(1);
     }
-    console.log(JSON_OUT ? JSON.stringify({ ok: true, hash }) : "OK: no drift");
+    const timestamp = new Date().toISOString();
+  console.log(JSON_OUT ? JSON.stringify({ ok: true, hash, ts: timestamp }) : `[${timestamp}] OK: no drift`);
     return;
   }
 
   await writeAtomic(CSS_OUT, css);
   await writeAtomic(TS_OUT, ts);
-  console.log(JSON_OUT ? JSON.stringify({ ok: true, hash, files: [CSS_OUT, TS_OUT] }) : `wrote ${CSS_OUT} (sha256 ${hash.slice(0, 12)})`);
+  const timestamp = new Date().toISOString();
+  console.log(JSON_OUT ? JSON.stringify({ ok: true, hash, ts: timestamp, files: [CSS_OUT, TS_OUT] }) : `[${timestamp}] wrote ${CSS_OUT} (sha256 ${hash.slice(0, 12)})`);
 }
 
 run().catch((err) => {
