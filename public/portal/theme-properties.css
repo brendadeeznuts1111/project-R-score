@@ -13,4 +13,9 @@
 @property --maroon { syntax: "<color>"; inherits: true; initial-value: #f38ba8; }
 @property --primary { syntax: "<color>"; inherits: true; initial-value: #58a6ff; }
 @property --background { syntax: "<color>"; inherits: true; initial-value: #0d1117; }
+@property --foreground { syntax: "<color>"; inherits: true; initial-value: #e6edf3; }@property --surface-hover { syntax: "<color>"; inherits: true; initial-value: #1c2333; }
+@property --text-muted { syntax: "<color>"; inherits: true; initial-value: #8b949e; }
+@property --surface-default { syntax: "<color>"; inherits: true; initial-value: #161b22; }
+@property --border-default { syntax: "<color>"; inherits: true; initial-value: #30363d; }
+@property --background { syntax: "<color>"; inherits: true; initial-value: #0d1117; }
 @property --foreground { syntax: "<color>"; inherits: true; initial-value: #e6edf3; }
