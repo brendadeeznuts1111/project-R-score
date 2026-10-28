@@ -32,8 +32,7 @@ export async function tokenMatches(provided: string, expected: string): Promise<
 }
 
 export type PublishAuthDecision =
-  | { ok: true }
-  | { ok: false; status: 401 | 503; error: string; hint?: string };
+  { ok: true } | { ok: false; status: 401 | 503; error: string; hint?: string };
 
 /** Pure decision — wire layer maps to Response. */
 export async function decidePublishAuth(

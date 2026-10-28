@@ -40,8 +40,7 @@ export function applyProposalToOverrides(
   if (overrides.appliedChangeIds.includes(proposal.id)) return false;
 
   const icon = proposal.suggestedChange?.suggestedIcon as
-    | { iconColor: number; emoji: string }
-    | undefined;
+    { iconColor: number; emoji: string } | undefined;
 
   switch (proposal.action) {
     case 'addTopicIconMetadata':

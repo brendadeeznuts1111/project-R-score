@@ -66,11 +66,7 @@ export type TocEnforcementSlice = {
 export type TocPartnerStatus = 'Ready' | 'Limited' | 'Inactive' | 'Onboarding';
 export type TocAccountStatus = 'New' | 'Funded' | 'Warming' | 'WARMED' | 'Limited' | 'Inactive';
 export type TocCapitalLocation =
-  | 'HouseFloat'
-  | 'WithPartner'
-  | 'InSportsbook'
-  | 'InRail'
-  | 'Pending';
+  'HouseFloat' | 'WithPartner' | 'InSportsbook' | 'InRail' | 'Pending';
 export type TocRailType = 'Venmo' | 'CashApp' | 'PayPal' | 'House' | 'Other';
 export type TocTaskType = 'ONB' | 'FUND' | 'LIMIT' | 'WARM' | 'PLAY' | 'WD';
 export type TocTaskStatus =
@@ -84,12 +80,7 @@ export type TocTaskStatus =
 export type TocBallInCourt = 'Partner' | 'Ops' | 'System' | 'Expert';
 export type TocWdMode = 'warmup_capital_return' | 'principal_recovery' | 'profit_split';
 export type TocSoftEntryType =
-  | 'CapitalDeployment'
-  | 'CapitalReturn'
-  | 'ProfitSplit'
-  | 'Loss'
-  | 'CostOfPriming'
-  | 'Adjustment';
+  'CapitalDeployment' | 'CapitalReturn' | 'ProfitSplit' | 'Loss' | 'CostOfPriming' | 'Adjustment';
 export type TocBottleneckSeverity = 'info' | 'warn' | 'critical';
 export type TocPlayStatus = 'instruction' | 'placed' | 'settled' | 'blocked';
 export type TocPlayResult = 'pending' | 'win' | 'loss' | 'push' | 'void' | 'blocked';

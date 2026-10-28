@@ -99,15 +99,13 @@ function marketSeeAlso(...ids: string[]): string[] {
 }
 
 export function sportsBettingGlossaryConcepts(): SportsBettingGlossaryConcept[] {
-  const scrapeWire = scrapeWireGlossaryConcepts().map(
-    (c): SportsBettingGlossaryConcept => ({
-      ...c,
-      category: c.category,
-      kind: c.kind === 'jurisdiction' ? 'region' : c.kind === 'league' ? 'league' : c.kind,
-      parentId: null,
-      scope: 'scrape-wire',
-    })
-  );
+  const scrapeWire = scrapeWireGlossaryConcepts().map((c): SportsBettingGlossaryConcept => ({
+    ...c,
+    category: c.category,
+    kind: c.kind === 'jurisdiction' ? 'region' : c.kind === 'league' ? 'league' : c.kind,
+    parentId: null,
+    scope: 'scrape-wire',
+  }));
 
   const hierarchyRoots: SportsBettingGlossaryConcept[] = [
     {
@@ -179,38 +177,34 @@ export function sportsBettingGlossaryConcepts(): SportsBettingGlossaryConcept[] 
   ];
 
   const sports: SportsBettingGlossaryConcept[] = [
-    ...REGULATION_SPORT_KEYS.map(
-      (key): SportsBettingGlossaryConcept => ({
-        id: `sport.${key}`,
-        label: SPORT_LABELS[key],
-        description: `${SPORT_LABELS[key]} hierarchy root used by jurisdiction policies, limit observations, and market filters.`,
-        category: 'tournament',
-        kind: 'sport',
-        synonyms: [...SPORT_SYNONYMS[key], key],
-        values: null,
-        seeAlso: ['sport', 'competition', 'event', 'market.match_winner'],
-        status: 'active',
-        source: SOURCE,
-        semanticType: 'classification',
-        uiRole: 'chip',
-      })
-    ),
-    ...EXTRA_SPORTS.map(
-      (row): SportsBettingGlossaryConcept => ({
-        id: row.id,
-        label: row.label,
-        description: row.description,
-        category: 'tournament',
-        kind: 'sport',
-        synonyms: [...row.synonyms],
-        values: null,
-        seeAlso: ['sport', 'competition', 'event'],
-        status: 'active',
-        source: SOURCE,
-        semanticType: 'classification',
-        uiRole: 'chip',
-      })
-    ),
+    ...REGULATION_SPORT_KEYS.map((key): SportsBettingGlossaryConcept => ({
+      id: `sport.${key}`,
+      label: SPORT_LABELS[key],
+      description: `${SPORT_LABELS[key]} hierarchy root used by jurisdiction policies, limit observations, and market filters.`,
+      category: 'tournament',
+      kind: 'sport',
+      synonyms: [...SPORT_SYNONYMS[key], key],
+      values: null,
+      seeAlso: ['sport', 'competition', 'event', 'market.match_winner'],
+      status: 'active',
+      source: SOURCE,
+      semanticType: 'classification',
+      uiRole: 'chip',
+    })),
+    ...EXTRA_SPORTS.map((row): SportsBettingGlossaryConcept => ({
+      id: row.id,
+      label: row.label,
+      description: row.description,
+      category: 'tournament',
+      kind: 'sport',
+      synonyms: [...row.synonyms],
+      values: null,
+      seeAlso: ['sport', 'competition', 'event'],
+      status: 'active',
+      source: SOURCE,
+      semanticType: 'classification',
+      uiRole: 'chip',
+    })),
   ];
 
   const taxonomy = sportsTaxonomyGlossaryConcepts();

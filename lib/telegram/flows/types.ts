@@ -5,14 +5,7 @@
 import type { TreeNodeId } from '../../types/branded/operations.ts';
 
 export type FlowId =
-  | 'menu'
-  | 'status'
-  | 'balances'
-  | 'accounts'
-  | 'plays'
-  | 'tree'
-  | 'welcome'
-  | 'play_ack';
+  'menu' | 'status' | 'balances' | 'accounts' | 'plays' | 'tree' | 'welcome' | 'play_ack';
 
 export type FlowLocale = 'en' | 'es';
 

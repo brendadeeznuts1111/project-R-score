@@ -137,8 +137,7 @@ export async function fetchPackumentJson(
 }
 
 export type BunInfoFieldResult =
-  | { ok: true; value: string; source: 'native' | 'json-fallback' }
-  | { ok: false; error: string };
+  { ok: true; value: string; source: 'native' | 'json-fallback' } | { ok: false; error: string };
 
 /** Like `bun info pkg property`, but null deps → `{}`. */
 export async function bunInfoField(

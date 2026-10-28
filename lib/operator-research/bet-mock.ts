@@ -32,26 +32,20 @@ const LEDGER: MockBetOrder[] = [];
 const MAX_LEDGER = 200;
 
 /** Soft books that should not accept mock bets. */
-export function bookmakerEligibleForMockBet(
-  edge: EdgeOpportunity,
-  bookmaker: string,
-): boolean {
+export function bookmakerEligibleForMockBet(edge: EdgeOpportunity, bookmaker: string): boolean {
   const key = bookmaker.trim().toLowerCase();
   if (!key) return false;
   const idx = edge.bookmakers.findIndex(
-    b => b.toLowerCase() === key || edge.bookmaker_ids.some(id => String(id).toLowerCase() === key),
+    b => b.toLowerCase() === key || edge.bookmaker_ids.some(id => String(id).toLowerCase() === key)
   );
   if (idx < 0) {
     // allow match on bookmaker_ids only
     const idHit = edge.bookmaker_ids.some(
-      id => String(id).toLowerCase() === key || String(id).toLowerCase().includes(key),
+      id => String(id).toLowerCase() === key || String(id).toLowerCase().includes(key)
     );
     if (!idHit && !edge.bookmakers.some(b => b.toLowerCase().includes(key))) return false;
   }
-  const tier =
-    edge.liquidity_tiers[idx >= 0 ? idx : 0] ||
-    edge.liquidity_tiers[0] ||
-    'unknown';
+  const tier = edge.liquidity_tiers[idx >= 0 ? idx : 0] || edge.liquidity_tiers[0] || 'unknown';
   if (tier === 'illiquid') return false;
   return true;
 }
@@ -63,7 +57,7 @@ export function bookmakerEligibleForMockBet(
 export function placeMockBet(
   edge: EdgeOpportunity | undefined,
   req: MockBetRequest,
-  opts?: { successRate?: number; now?: () => number },
+  opts?: { successRate?: number; now?: () => number }
 ): { ok: boolean; status: number; order: MockBetOrder | null; error?: string } {
   const stake = Number(req.stake);
   if (!Number.isFinite(stake) || stake <= 0) {

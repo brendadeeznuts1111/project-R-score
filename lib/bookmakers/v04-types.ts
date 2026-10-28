@@ -38,15 +38,7 @@ export interface BookContact {
 
 /** Desk / agent payment rails (public-safe labels). */
 export type PaymentMethod =
-  | 'crypto'
-  | 'credit_card'
-  | 'debit_card'
-  | 'bank_wire'
-  | 'ach'
-  | 'p2p'
-  | 'cash'
-  | 'seat'
-  | string;
+  'crypto' | 'credit_card' | 'debit_card' | 'bank_wire' | 'ach' | 'p2p' | 'cash' | 'seat' | string;
 
 /** High-level provider lane for filters / partner details. */
 export type ProviderType = 'crypto' | 'pph' | 'fiat' | 'hybrid' | 'unknown' | string;

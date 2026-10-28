@@ -1,14 +1,23 @@
 #!/usr/bin/env bash
-# Launch official GitHub MCP over stdio; PAT from `gh auth` (git remotes stay SSH).
+# Launch official GitHub MCP over stdio.
+#
+# Keychain access is blocked. This script never runs `gh` or `security`.
+# A token has to already be in the environment. Remove
+# ~/.local/share/keychain-block before restoring `gh auth token`.
 #
 # Logs go to a file — the Go server writes INFO to stderr, and Cursor's MCP host
 # labels every stderr line as [error], which looks like a failure even when
 # connect_success / session initialized already happened.
 set -euo pipefail
 
-TOKEN="$(gh auth token 2>/dev/null || true)"
+if [[ -f "${HOME}/.local/share/keychain-block" ]]; then
+  echo "github-mcp-stdio: keychain access is blocked. Not calling gh." >&2
+  exit 1
+fi
+
+TOKEN="${GITHUB_PERSONAL_ACCESS_TOKEN:-${GITHUB_TOKEN:-${GH_TOKEN:-}}}"
 if [[ -z "${TOKEN}" ]]; then
-  echo "github-mcp-stdio: no token from \`gh auth token\`" >&2
+  echo "github-mcp-stdio: no GITHUB_PERSONAL_ACCESS_TOKEN, GITHUB_TOKEN, or GH_TOKEN in the environment. Not calling gh." >&2
   exit 1
 fi
 

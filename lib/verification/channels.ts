@@ -1,3 +1,24 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
+// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
+// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.revision · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-revision
+// @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
+// @updated Bun.spawnSync · changed v0.3.0 · 2022-12-07 · https://bun.com/blog/bun-v0.3.0
+// @updated Bun.spawnSync · changed v1.0.19 · 2023-12-22 · https://bun.com/blog/bun-v1.0.19
+// @updated Bun.spawnSync · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.spawnSync · changed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated Bun.spawnSync · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @updated Bun.spawnSync · fixed v1.3.10 · 2026-02-26 · https://bun.com/blog/bun-v1.3.10
+// @verified Bun.spawnSync · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync
+// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
+// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
+// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/file-io#writing-files-bun-write — Bun.write
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
@@ -17,18 +38,10 @@ import type { ReleaseChannel, SemanticTags, VerificationSnapshotIndex } from './
 import { VERIFICATION_SNAPSHOT_INDEX_PATH } from './types.ts';
 
 export type ChannelResolveSource =
-  | 'github-updater'
-  | 'github-oven'
-  | 'github-canary'
-  | 'runtime'
-  | 'pinned';
+  'github-updater' | 'github-oven' | 'github-canary' | 'runtime' | 'pinned';
 
 export type GithubAuthSource =
-  | 'GITHUB_TOKEN'
-  | 'GITHUB_ACCESS_TOKEN'
-  | 'GH_TOKEN'
-  | 'gh-cli'
-  | 'none';
+  'GITHUB_TOKEN' | 'GITHUB_ACCESS_TOKEN' | 'GH_TOKEN' | 'gh-cli' | 'none';
 
 export type ChannelResolution = {
   channel: ReleaseChannel;

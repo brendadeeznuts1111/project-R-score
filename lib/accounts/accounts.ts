@@ -367,10 +367,9 @@ export class AccountSystem {
     expertId: string // brand-ok — opaque expert reference
   ): TreeNode[] {
     const rows = this.db
-      .query<
-        Record<string, unknown>,
-        { $e: string }
-      >("SELECT * FROM tree_nodes WHERE expert_id = $e AND status IN ('active', 'partner')")
+      .query<Record<string, unknown>, { $e: string }>(
+        "SELECT * FROM tree_nodes WHERE expert_id = $e AND status IN ('active', 'partner')"
+      )
       .all({ $e: expertId });
     return rows.map(row => this.parseTreeNodeRow(row));
   }

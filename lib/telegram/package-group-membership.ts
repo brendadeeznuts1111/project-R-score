@@ -22,11 +22,7 @@ export const PACKAGE_GROUP_MEMBERS_HOUSE_ONLY = 2;
 export const PACKAGE_GROUP_MEMBERS_WITH_PARTNER = 3;
 
 export type PackageGroupMembershipStatus =
-  | 'unknown'
-  | 'understaffed'
-  | 'house_only'
-  | 'partner_present'
-  | 'extended';
+  'unknown' | 'understaffed' | 'house_only' | 'partner_present' | 'extended';
 
 export type PackageGroupMembershipTell = {
   memberCount: number | null;

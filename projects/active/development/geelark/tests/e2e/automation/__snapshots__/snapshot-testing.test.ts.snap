@@ -1,0 +1,162 @@
+// Bun Snapshot v1, https://bun.sh/docs/test/snapshots
+
+exports[`Snapshot Testing for Feature Elimination should snapshot premium service structure 1`] = `
+{
+  "config": {
+    "apiCalls": 1000,
+    "maxUsers": 10,
+    "storage": "100MB",
+  },
+  "features": {
+    "basic": {
+      "track": [Function],
+    },
+  },
+  "version": "1.0.0",
+}
+`;
+
+exports[`Snapshot Testing for Feature Elimination should snapshot bundle analysis results 1`] = `
+{
+  "bundles": [
+    {
+      "eliminated": [
+        "analytics",
+        "monitoring",
+        "security",
+      ],
+      "features": [],
+      "name": "free",
+      "size": 183,
+    },
+    {
+      "eliminated": [],
+      "features": [
+        "FEAT_PREMIUM",
+      ],
+      "name": "premium",
+      "size": 418,
+    },
+    {
+      "eliminated": [],
+      "features": [
+        "FEAT_PREMIUM",
+        "FEAT_ENTERPRISE",
+      ],
+      "name": "enterprise",
+      "size": 525,
+    },
+  ],
+  "metrics": {
+    "averageSizePerFeature": "117B",
+    "bestElimination": "free vs premium (128%)",
+    "totalReduction": "65%",
+  },
+  "timestamp": "2024-01-01T00:00:00.000Z",
+}
+`;
+
+exports[`Snapshot Testing for Feature Elimination should snapshot feature flag configurations 1`] = `
+[
+  {
+    "bundleImpact": "+200B",
+    "description": "Premium analytics and monitoring",
+    "enabled": false,
+    "flag": "FEAT_PREMIUM",
+  },
+  {
+    "bundleImpact": "+150B",
+    "description": "Advanced monitoring and alerts",
+    "enabled": false,
+    "flag": "FEAT_ADVANCED_MONITORING",
+  },
+  {
+    "bundleImpact": "+100B",
+    "description": "Batch processing capabilities",
+    "enabled": false,
+    "flag": "FEAT_BATCH_PROCESSING",
+  },
+]
+`;
+
+exports[`Snapshot Testing for Feature Elimination should snapshot error handling scenarios 1`] = `
+[
+  {
+    "input": {
+      "feature": "analytics",
+      "tier": "free",
+    },
+    "output": {
+      "code": "FEATURE_NOT_AVAILABLE",
+      "error": "Feature not available in free tier",
+      "requiredTier": "premium",
+      "tier": "free",
+    },
+    "scenario": "missing_premium_feature",
+  },
+  {
+    "input": {
+      "features": [
+        "ADVANCED_MONITORING",
+      ],
+      "tier": "free",
+    },
+    "output": {
+      "code": "INVALID_COMBINATION",
+      "error": "Advanced monitoring requires premium tier",
+      "missing": [
+        "FEAT_PREMIUM",
+      ],
+      "provided": [
+        "FEAT_ADVANCED_MONITORING",
+      ],
+    },
+    "scenario": "invalid_feature_combination",
+  },
+  {
+    "input": {
+      "limit": 300000,
+      "size": 500000,
+    },
+    "output": {
+      "actual": "500KB",
+      "code": "BUNDLE_TOO_LARGE",
+      "error": "Bundle size exceeds limit",
+      "limit": "300KB",
+      "suggestion": "Enable feature elimination",
+    },
+    "scenario": "bundle_size_exceeded",
+  },
+]
+`;
+
+exports[`Snapshot Testing for Feature Elimination should snapshot type elimination results 1`] = `
+[
+  {
+    "eliminatedTypes": [
+      "PremiumAnalytics",
+      "AdvancedMonitoring",
+      "ExportReports",
+      "SecurityAudit",
+    ],
+    "feature": "FEAT_PREMIUM",
+    "retainedTypes": [
+      "CoreService",
+      "BasicAnalytics",
+    ],
+    "sizeImpact": "-235B",
+  },
+  {
+    "eliminatedTypes": [
+      "RealTimeMetrics",
+      "AlertSystem",
+      "PerformanceDashboard",
+    ],
+    "feature": "FEAT_ADVANCED_MONITORING",
+    "retainedTypes": [
+      "BasicMetrics",
+    ],
+    "sizeImpact": "-180B",
+  },
+]
+`;

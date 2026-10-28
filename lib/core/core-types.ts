@@ -175,8 +175,7 @@ export interface CryptoConfiguration {
  * Standardized result type for operations
  */
 export type EnterpriseResult<T, E = EnterpriseError> =
-  | { success: true; data: T; error?: never }
-  | { success: false; data?: never; error: E };
+  { success: true; data: T; error?: never } | { success: false; data?: never; error: E };
 
 /**
  * Async enterprise result type

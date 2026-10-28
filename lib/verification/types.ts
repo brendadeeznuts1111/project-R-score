@@ -13,12 +13,7 @@ export type ReleaseChannel = 'canary' | 'latest' | 'stable' | 'runtime' | 'pinne
  * Aligns with docs catalog DocSection (runtime / pm / bundler / test).
  */
 export type VerificationSubsystem =
-  | 'runtime'
-  | 'package-manager'
-  | 'networking'
-  | 'bundler'
-  | 'test'
-  | 'other';
+  'runtime' | 'package-manager' | 'networking' | 'bundler' | 'test' | 'other';
 
 /** Living docs vs versioned blog ship notes (cadence / reliability). */
 export type CanonicalSourceKind = 'docs' | 'blog' | 'reference' | 'other';

@@ -25,10 +25,7 @@ export const LIMIT_FORECAST_SUPPORT_GATES = {
 } as const;
 
 export type LimitForecastInputClass =
-  | 'partner-observation'
-  | 'tier-4-observation'
-  | 'fixture-seed'
-  | 'unclassified';
+  'partner-observation' | 'tier-4-observation' | 'fixture-seed' | 'unclassified';
 
 export type LimitSnapshotSample = {
   nodeId: TreeNodeId;
@@ -199,7 +196,7 @@ export function scoreWalkForward(
   const history: LimitTransition[] = [];
   const scored: Array<{ probability: number; actual: number }> = [];
 
-  for (let cursor = 0; cursor < ordered.length; ) {
+  for (let cursor = 0; cursor < ordered.length;) {
     const recordedAt = ordered[cursor]!.recordedAt;
     const sameOrigin: LimitTransition[] = [];
     while (cursor < ordered.length && ordered[cursor]!.recordedAt === recordedAt) {

@@ -1177,10 +1177,7 @@ export async function dispatchScanner(
     const { readGlobalBunfigLayers, readProjectBunfig, resolveEffectiveInstallPolicy } =
       await import('../../scripts/lib/machine-bunfig.ts');
     const lockMeta = await readLockfileInstallMeta(cwd);
-    const [project, layers] = await Promise.all([
-      readProjectBunfig(cwd),
-      readGlobalBunfigLayers(),
-    ]);
+    const [project, layers] = await Promise.all([readProjectBunfig(cwd), readGlobalBunfigLayers()]);
     const eff = resolveEffectiveInstallPolicy(project, layers.effective);
     const policy = buildPackageMgmtPolicy(status, {
       packageCountEstimate,

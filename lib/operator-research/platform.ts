@@ -43,9 +43,9 @@ export function isConfigWatchingActive(): boolean {
 function authKeysExist(): boolean {
   return Boolean(
     Bun.env.PARTNER_API_TOKEN ||
-      Bun.env.OPERATOR_API_TOKEN ||
-      Bun.env.OPERATOR_RESEARCH_API_KEY ||
-      Bun.env.FACTORYWAGER_API_KEY
+    Bun.env.OPERATOR_API_TOKEN ||
+    Bun.env.OPERATOR_RESEARCH_API_KEY ||
+    Bun.env.FACTORYWAGER_API_KEY
   );
 }
 

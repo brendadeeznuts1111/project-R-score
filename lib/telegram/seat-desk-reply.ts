@@ -24,8 +24,7 @@ import {
 } from './seat-desk-pending.ts';
 
 export type SeatDeskReplyResult =
-  | { handled: false }
-  | { handled: true; ok: boolean; message: string; callSign?: string };
+  { handled: false } | { handled: true; ok: boolean; message: string; callSign?: string };
 
 const SEND_TO_MAX_LEN = 64;
 const BOOK_LOGIN_MAX_LEN = 48;

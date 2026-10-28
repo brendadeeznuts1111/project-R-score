@@ -19,12 +19,7 @@ import { bookmakerHost, type BookmakerRegistryEntry } from './resolve.ts';
 export type LiquidityTier = 'high' | 'medium' | 'low' | 'illiquid' | 'unknown';
 
 export type PartnerHealthStatus =
-  | 'active'
-  | 'low_balance'
-  | 'critical'
-  | 'degraded'
-  | 'offline'
-  | 'deferred';
+  'active' | 'low_balance' | 'critical' | 'degraded' | 'offline' | 'deferred';
 
 export type MergedPartnerHealth = {
   id: SportsbookId;

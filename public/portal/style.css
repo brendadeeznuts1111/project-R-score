@@ -582,9 +582,9 @@ body {
   height: 12px;
   background: linear-gradient(
     90deg,
-    var(--skeleton-bg) 25%,
-    var(--skeleton-shine) 50%,
-    var(--skeleton-bg) 75%
+    var(--portal-skeleton-bg) 25%,
+    var(--neutral-100) 50%,
+    var(--portal-skeleton-bg) 75%
   );
   background-size: 200% 100%;
   border-radius: 4px;
@@ -623,7 +623,7 @@ body {
 .skeleton-row.header .skeleton-cell {
   height: 14px;
   animation: none;
-  background: var(--skeleton-bg);
+  background: var(--portal-skeleton-bg);
 }
 
 @keyframes skeleton-shine {
@@ -1441,7 +1441,7 @@ a.chip {
   color: inherit;
   background: linear-gradient(
     145deg,
-    color-mix(in srgb, var(--stat-accent) 9%, var(--surface)),
+    color-mix(in srgb, var(--accent) 9%, var(--surface)),
     var(--surface) 62%
   );
   text-align: left;
@@ -1457,21 +1457,21 @@ a.chip {
   position: absolute;
   inset: 0 0 auto;
   height: 3px;
-  background: var(--stat-accent);
+  background: var(--accent);
   content: "";
 }
 
 .portal-stat:hover,
 .portal-stat:focus-visible,
 .portal-stat.active {
-  border-color: color-mix(in srgb, var(--stat-accent) 70%, var(--border));
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--border));
   box-shadow: 0 10px 28px color-mix(in srgb, var(--bg) 18%, transparent);
   transform: translateY(-2px);
   outline: none;
 }
 
 .portal-stat.active {
-  background: color-mix(in srgb, var(--stat-accent) 14%, var(--surface));
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
 }
 
 .portal-stat:disabled {
@@ -1484,7 +1484,7 @@ a.chip {
 .portal-stat .k,
 .portal-stat .kicker,
 .portal-stat-label {
-  color: color-mix(in srgb, var(--stat-accent) 80%, white);
+  color: color-mix(in srgb, var(--accent) 80%, white);
   font: 600 10px/1.3 var(--font-mono, ui-monospace, monospace);
   letter-spacing: 0.07em;
   text-transform: uppercase;

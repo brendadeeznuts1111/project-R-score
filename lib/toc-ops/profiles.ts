@@ -1238,9 +1238,7 @@ export function deepenAgentProfile(expertId: string, base: TocAgentProfile): Toc
     {
       id: `pay-${expertId}-cut-w30-pending`,
       method: (expertId === 'elena' ? 'paypal' : expertId === 'kai' ? 'crypto' : 'ach') as
-        | 'paypal'
-        | 'crypto'
-        | 'ach',
+        'paypal' | 'crypto' | 'ach',
       direction: 'out' as const,
       amount: base.accounting.pendingCut,
       currency: expertId === 'kai' ? 'USDC' : 'USD',

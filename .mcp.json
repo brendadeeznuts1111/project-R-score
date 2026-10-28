@@ -64,11 +64,6 @@
         "AST_GREP_REPO_ROOT": "${workspaceFolder}"
       }
     },
-    "github": {
-      "type": "stdio",
-      "description": "Official GitHub MCP (local binary; PAT via gh auth token; git remotes remain SSH)",
-      "command": "${workspaceFolder}/scripts/github-mcp-stdio.sh"
-    },
     "cloudflare": {
       "type": "http",
       "description": "Cloudflare Code Mode MCP — full account/API surface (Workers, Pages, R2, DNS, …)",

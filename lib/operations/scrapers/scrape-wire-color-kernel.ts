@@ -180,10 +180,7 @@ for (const [group, leaves] of Object.entries(SCRAPE_WIRE_COLOR_ROLES)) {
 }
 
 export type ScrapeWireColorRolePath =
-  | `book.${ScrapeWireBookColorKey}`
-  | `sport.${SportKey}`
-  | `league.${LeagueKey}`
-  | 'status.unknown';
+  `book.${ScrapeWireBookColorKey}` | `sport.${SportKey}` | `league.${LeagueKey}` | 'status.unknown';
 
 export function roleColor(path: ScrapeWireColorRolePath): ScrapeWireColorKey {
   const [group, leaf] = path.split('.') as [keyof typeof SCRAPE_WIRE_COLOR_ROLES, string];

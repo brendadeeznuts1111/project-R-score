@@ -6,11 +6,7 @@ import { sha256HexAsync } from './sha256.ts';
 import { CANONICAL_REMOTES } from '../docs/repo-docs.ts';
 
 export type VerificationScriptId =
-  | 'defaults'
-  | 'bun-defaults'
-  | 'networking'
-  | 'release'
-  | 'doc-index';
+  'defaults' | 'bun-defaults' | 'networking' | 'release' | 'doc-index';
 
 const GITHUB_RAW_BRANCH = 'main';
 

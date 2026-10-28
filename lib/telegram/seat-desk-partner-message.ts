@@ -260,19 +260,10 @@ export function summarizeSeatDeskPartnerView(record: SeatIntakeRecord): SeatDesk
 }
 
 export type SeatDeskPartnerMessageTemplate =
-  | 'confirm-active'
-  | 'todo'
-  | 'reply-hint'
-  | 'topic-intake'
-  | 'topic-rails'
-  | 'topic-accounting';
+  'confirm-active' | 'todo' | 'reply-hint' | 'topic-intake' | 'topic-rails' | 'topic-accounting';
 
 export type SeatDeskPartnerMessageThread =
-  | 'dm-paste'
-  | 'desk-copy'
-  | 'liquidity/outs'
-  | 'accounting'
-  | 'all-accounting';
+  'dm-paste' | 'desk-copy' | 'liquidity/outs' | 'accounting' | 'all-accounting';
 
 export type SeatDeskPartnerMessageTemplateSpec = {
   id: SeatDeskPartnerMessageTemplate;

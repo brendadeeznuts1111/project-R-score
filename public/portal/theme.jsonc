@@ -180,13 +180,79 @@
       "packageManager": "#a371f7",
       "networking": "#39c5cf",
       "bundler": "#f0883e",
+      "sqlite": "var(--green)",
+      "serve": "var(--accent)",
+      "ffi": "var(--orange)",
+      "streams": "var(--tone-info)",
+      "xml": "var(--yellow)",
+      "redis": "var(--red)",
+      "s3": "var(--maroon)",
+      "sql": "var(--green)",
+      "test": "var(--yellow)",
+      "build": "var(--orange)",
+      "bundle": "var(--accent)",
+      "spawn": "var(--tone-info)",
+      "listen": "var(--green)",
+      "udp": "var(--maroon)",
+      "cron": "var(--yellow)",
+      "terminal": "var(--text-dim)",
+      "webview": "var(--accent)",
+      "image": "var(--green)",
+      "markdown": "var(--orange)",
     },
   },
 
   // Product/release surfaces receive namespaced role aliases only. Values must
   // resolve through the shared FactoryWager palette and semantic kernel; never
   // place a second palette or product-owned hex values in this section.
+  // Semantic color aliases — improved naming layer (additive, backward-compat).
+  "colors": {
+    "background": {
+      "canvas": "var(--bg-canvas)",
+      "card": "var(--bg-card)",
+      "elevated": "var(--bg-elevated)",
+      "inverse": "var(--bg-inverse)"
+    },
+    "text": {
+      "primary": "var(--text)",
+      "muted": "var(--text-dim)",
+      "onStrong": "var(--tone-on-strong)"
+    },
+    "border": {
+      "default": "var(--layer-border)"
+    },
+    "accent": {
+      "default": "var(--tone-info)",
+      "hover": "var(--link-hover)",
+      "soft": "var(--accent-glow)"
+    },
+    "status": {
+      "success": "var(--tone-ok)",
+      "warning": "var(--tone-warn)",
+      "danger": "var(--tone-bad)",
+      "info": "var(--tone-info)"
+    }
+  },
+
   "namespaces": {
+    "bun": {
+      "canvas": "var(--bg-canvas)",
+      "surface": "var(--bg-card)",
+      "surfaceHover": "var(--bg-elevated)",
+      "surfaceActive": "var(--badge-active)",
+      "border": "var(--layer-border)",
+      "text": "var(--text)",
+      "textMuted": "var(--text-dim)",
+      "textOnStrong": "var(--tone-on-strong)",
+      "accent": "var(--tone-info)",
+      "accentHover": "var(--link-hover)",
+      "accentSoft": "var(--accent-glow)",
+      "success": "var(--tone-ok)",
+      "warning": "var(--tone-warn)",
+      "danger": "var(--tone-bad)",
+      "info": "var(--tone-info)",
+      "focusRing": "var(--accent)",
+    },
     "bun14": {
       "canvas": "var(--bg-canvas)",
       "surface": "var(--bg-card)",

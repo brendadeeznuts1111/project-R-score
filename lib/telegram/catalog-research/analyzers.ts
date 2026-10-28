@@ -259,8 +259,7 @@ export function analyzeHouseGroupDescriptions(
   const proposals: CatalogEnhancementProposal[] = [];
   for (const surface of TOC_OPS_SURFACES) {
     const live = catalog.houseForumTopics.surfaces[surface.slug] as
-      | { groupDescription?: string }
-      | undefined;
+      { groupDescription?: string } | undefined;
     if (live?.groupDescription?.trim()) continue;
     push(proposals, {
       id: proposalId(['house', 'description', surface.slug]),

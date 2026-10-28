@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme name="FactoryWager" scheme="dark">
+  <color name="canvas" value="#0d1117" />
+  <color name="surface" value="#161b22" />
+  <color name="accent" value="#58a6ff" />
+  <color name="success" value="#3fb950" />
+  <color name="warning" value="#d29922" />
+  <color name="danger" value="#f85149" />
+</theme>

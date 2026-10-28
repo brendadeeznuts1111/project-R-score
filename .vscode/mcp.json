@@ -32,11 +32,6 @@
         "AST_GREP_REPO_ROOT": "${workspaceFolder}"
       }
     },
-    "github": {
-      "type": "stdio",
-      "command": "${workspaceFolder}/scripts/github-mcp-stdio.sh",
-      "args": []
-    },
     "cloudflare": {
       "type": "http",
       "url": "https://mcp.cloudflare.com/mcp",

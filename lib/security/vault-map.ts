@@ -19,15 +19,7 @@ import { joinPath } from '../path-bun.ts';
 import { parseEnvTemplate } from '../../scripts/lib/env-defaults-scan.ts';
 
 export type VaultSecretType =
-  | 'token'
-  | 'secret'
-  | 'hmac'
-  | 'key'
-  | 'ssh'
-  | 'url'
-  | 'note'
-  | 'pat'
-  | string;
+  'token' | 'secret' | 'hmac' | 'key' | 'ssh' | 'url' | 'note' | 'pat' | string;
 
 /** Optional display fields in config/vault-map.toml envMap entries. */
 export type VaultMapDisplay = {

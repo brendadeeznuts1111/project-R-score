@@ -21,13 +21,7 @@
 import type { PartnerOpsColorKey } from '../telegram/partner-ops-color-kernel.ts';
 
 export type PartnerColumnKind =
-  | 'string'
-  | 'enum'
-  | 'composite'
-  | 'count'
-  | 'timestamp'
-  | 'boolean'
-  | 'ratio';
+  'string' | 'enum' | 'composite' | 'count' | 'timestamp' | 'boolean' | 'ratio';
 
 export type PartnerColumnFilter = 'exact' | 'prefix' | 'fuzzy' | 'range' | 'date' | 'none';
 

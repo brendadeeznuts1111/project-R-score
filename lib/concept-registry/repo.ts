@@ -120,9 +120,7 @@ export function upsertConcept(
 ): boolean {
   const now = new Date().toISOString();
   const existing = db.query('SELECT * FROM concepts WHERE id = ?').get(input.id) as
-    | Record<string, unknown>
-    | null
-    | undefined;
+    Record<string, unknown> | null | undefined;
 
   const seeAlso = encodeJson([...(input.seeAlso ?? [])]);
   const synonyms = encodeJson([...(input.synonyms ?? [])]);
@@ -230,9 +228,7 @@ export function patchConcept(
   }
 ): boolean {
   const existing = db.query('SELECT * FROM concepts WHERE id = ?').get(id) as
-    | Record<string, unknown>
-    | null
-    | undefined;
+    Record<string, unknown> | null | undefined;
   if (!existing) {
     throw new ConceptRegistryError('not-found', `concept not found: ${id}`);
   }

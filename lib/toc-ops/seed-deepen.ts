@@ -446,9 +446,7 @@ function deepenPartnerDesk(p: TocPartner): TocPartner {
         (t.proofRefs ?? []).map(ref => ({
           ref,
           kind: (t.taskType === 'ONB' ? 'kyc' : t.taskType === 'FUND' ? 'receipt' : 'other') as
-            | 'kyc'
-            | 'receipt'
-            | 'other',
+            'kyc' | 'receipt' | 'other',
           callSign: t.callSign,
           at: t.createdAt ?? dayIso(12),
         }))

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<theme name="FactoryWager" version="1.4.0" scheme="light">
+  <color name="bg" value="#ffffff" kind="palette" />
+  <color name="surface" value="#f6f8fa" kind="palette" />
+  <color name="surfaceHover" value="#eaeef2" kind="palette" />
+  <color name="border" value="#d0d7de" kind="palette" />
+  <color name="text" value="#1f2328" kind="palette" />
+  <color name="textDim" value="#656d76" kind="palette" />
+  <color name="accent" value="#0969da" kind="palette" />
+  <color name="accentGlow" value="rgba(9, 105, 218, 0.12)" kind="palette" />
+  <color name="green" value="#1a7f37" kind="palette" />
+  <color name="yellow" value="#9a6700" kind="palette" />
+  <color name="orange" value="#bc4c00" kind="palette" />
+  <color name="red" value="#cf222e" kind="palette" />
+  <color name="maroon" value="#e64553" kind="palette" />
+  <color name="gradientSubtle" value="radial-gradient(ellipse at top, #eef2f7 0%, var(--bg) 55%)" kind="palette" />
+  <color group="neutral" name="50" value="#f6f8fa" kind="neutral" />
+  <color group="neutral" name="100" value="#eaeef2" kind="neutral" />
+  <color group="neutral" name="200" value="#d0d7de" kind="neutral" />
+  <color group="neutral" name="300" value="#afb8c1" kind="neutral" />
+  <color group="neutral" name="500" value="#656d76" kind="neutral" />
+  <color group="neutral" name="700" value="#424a53" kind="neutral" />
+  <color group="neutral" name="900" value="#1f2328" kind="neutral" />
+</theme>

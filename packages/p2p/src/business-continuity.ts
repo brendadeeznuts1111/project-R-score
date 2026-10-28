@@ -21,14 +21,7 @@ export interface BrandingConfig {
 
 export interface BusinessSpecialty {
   type:
-    | 'barbershop'
-    | 'coffee'
-    | 'gym'
-    | 'restaurant'
-    | 'bookstore'
-    | 'retail'
-    | 'service'
-    | 'other';
+    'barbershop' | 'coffee' | 'gym' | 'restaurant' | 'bookstore' | 'retail' | 'service' | 'other';
   services?: string[]; // For barbershop/service businesses
   menuItems?: string[]; // For restaurants/coffee shops
   membershipTiers?: { name: string; price: string }[]; // For gyms/membership businesses

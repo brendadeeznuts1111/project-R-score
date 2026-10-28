@@ -27,10 +27,7 @@ export const PORTAL_HTML_SKIP = new Set([`${PORTAL_ROOT_REL}/_page-template.html
 const TS_LEAK_RE = /:\s*(?:Array<|[A-Z][A-Za-z0-9_<>,\s|&]*\s*(?:=>|\)))/;
 
 export type PortalStaticRule =
-  | 'inline-health'
-  | 'process-env'
-  | 'chrome-missing'
-  | 'typescript-leak';
+  'inline-health' | 'process-env' | 'chrome-missing' | 'typescript-leak';
 
 export type PortalStaticViolation = {
   rule: PortalStaticRule;

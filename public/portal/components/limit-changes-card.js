@@ -54,7 +54,7 @@ const STYLE = `
     .lcc-toolbar button,
     .lcc-toolbar a {
       padding: 4px 10px;
-      border: 1px solid var(--lcc-border);
+      border: 1px solid var(--border);
       border-radius: 6px;
       background: var(--lcc-surface);
       cursor: pointer;
@@ -81,12 +81,12 @@ const STYLE = `
       font-style: italic;
       padding: 1.5em;
       text-align: center;
-      border: 1px dashed var(--lcc-border);
+      border: 1px dashed var(--border);
       border-radius: 8px;
     }
     #lcc-table-wrap {
       overflow: auto;
-      border: 1px solid var(--lcc-border);
+      border: 1px solid var(--border);
       border-radius: 8px;
       background: var(--lcc-surface);
       max-height: min(70vh, 720px);
@@ -122,7 +122,7 @@ const STYLE = `
       text-transform: uppercase;
       color: var(--lcc-muted);
       background: var(--lcc-surface);
-      border-bottom: 1px solid var(--lcc-border);
+      border-bottom: 1px solid var(--border);
       white-space: nowrap;
     }
     .lcc-table tbody tr:hover td { background: color-mix(in srgb, var(--text) 2.5%, transparent); }
@@ -202,7 +202,7 @@ const STYLE = `
     .lcc-factor {
       display: inline-block;
       padding: 1px 6px;
-      border: 1px solid var(--lcc-border);
+      border: 1px solid var(--border);
       border-radius: 999px;
       color: var(--lcc-muted);
       font-size: 0.72em;

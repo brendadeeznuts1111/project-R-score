@@ -46,7 +46,7 @@ async function gitText(cwd: string, args: string[]): Promise<{ ok: boolean; text
  * Sparse-fetch oven-sh/bun packages/bun-types into `.cache/bun-types-tip`.
  */
 export async function fetchUpstreamBunTypes(
-  cacheRoot: string = BUN_TYPES_TIP_CACHE,
+  cacheRoot: string = BUN_TYPES_TIP_CACHE
 ): Promise<{ root: string; revision: string }> {
   const typesPath = joinPath(cacheRoot, 'packages', 'bun-types');
 
@@ -56,24 +56,24 @@ export async function fetchUpstreamBunTypes(
     console.info(`tip-fetch: cloning ${UPSTREAM} (sparse packages/bun-types) → ${cacheRoot}`);
     const clone = Bun.spawn(
       ['git', 'clone', '--depth', '1', '--filter=blob:none', '--sparse', UPSTREAM, cacheRoot],
-      { stdout: 'inherit', stderr: 'inherit' },
+      { stdout: 'inherit', stderr: 'inherit' }
     );
     if ((await clone.exited) !== 0) {
       throw new Error('git clone oven-sh/bun failed (network or git required)');
     }
     const sparse = Bun.spawn(
       ['git', '-C', cacheRoot, 'sparse-checkout', 'set', 'packages/bun-types'],
-      { stdout: 'inherit', stderr: 'inherit' },
+      { stdout: 'inherit', stderr: 'inherit' }
     );
     if ((await sparse.exited) !== 0) {
       throw new Error('git sparse-checkout set packages/bun-types failed');
     }
   } else {
     console.info(`tip-fetch: updating ${cacheRoot}`);
-    const fetch = Bun.spawn(
-      ['git', '-C', cacheRoot, 'fetch', '--depth', '1', 'origin', 'main'],
-      { stdout: 'inherit', stderr: 'inherit' },
-    );
+    const fetch = Bun.spawn(['git', '-C', cacheRoot, 'fetch', '--depth', '1', 'origin', 'main'], {
+      stdout: 'inherit',
+      stderr: 'inherit',
+    });
     if ((await fetch.exited) !== 0) {
       throw new Error('git fetch origin main failed');
     }

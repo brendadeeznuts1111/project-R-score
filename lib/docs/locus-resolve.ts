@@ -213,13 +213,7 @@ export function isPoorLocus(
  * | unresolved   | no usable page/fragment story yet |
  */
 export type LocusStatus =
-  | 'fragment'
-  | 'page'
-  | 'inherited'
-  | 'dump'
-  | 'reference'
-  | 'coincidence'
-  | 'unresolved';
+  'fragment' | 'page' | 'inherited' | 'dump' | 'reference' | 'coincidence' | 'unresolved';
 
 export function isDumpDocPage(page: string, pageAnchors: PageAnchorIndex): boolean {
   const p = page.replace(/\.md$/, '').split('#')[0]!;

@@ -45,14 +45,14 @@ const STYLE = `
     }
 
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--card-radius);
+      background: var(--portal-card-bg);
+      border: 1px solid var(--portal-card-border);
+      border-radius: var(--radius-md);
       padding: 14px 16px;
       font-family: system-ui, -apple-system, sans-serif;
       font-size: 13px;
       line-height: 1.5;
-      color: var(--text-main);
+      color: var(--portal-text-main);
       box-sizing: border-box;
     }
 
@@ -75,8 +75,8 @@ const STYLE = `
       display: inline-block;
       font-size: 10px;
       font-weight: 600;
-      color: var(--text-inv);
-      background: var(--health-ok);
+      color: var(--portal-text-inv);
+      background: var(--portal-health-ok);
       border-radius: 3px;
       padding: 1px 5px;
       line-height: 1.4;
@@ -100,7 +100,7 @@ const STYLE = `
       flex: 1;
       height: 6px;
       border-radius: 3px;
-      background: var(--skeleton-bg);
+      background: var(--portal-skeleton-bg);
       overflow: hidden;
     }
     .health-fill {
@@ -109,24 +109,24 @@ const STYLE = `
       border-radius: 3px;
       transition: width 0.3s ease;
     }
-    .health-fill.ok { background: var(--health-ok); }
-    .health-fill.warn { background: var(--health-warn); }
-    .health-fill.bad { background: var(--health-bad); }
+    .health-fill.ok { background: var(--portal-health-ok); }
+    .health-fill.warn { background: var(--portal-health-warn); }
+    .health-fill.bad { background: var(--portal-health-bad); }
     .health-label {
       font-size: 11px;
       font-weight: 500;
       white-space: nowrap;
     }
-    .health-label.ok { color: var(--health-ok); }
-    .health-label.warn { color: var(--health-warn); }
-    .health-label.bad { color: var(--health-bad); }
+    .health-label.ok { color: var(--portal-health-ok); }
+    .health-label.warn { color: var(--portal-health-warn); }
+    .health-label.bad { color: var(--portal-health-bad); }
 
     /* ── Type ── */
     .type {
       display: inline-block;
       font-size: 11px;
       color: var(--text-dim);
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--portal-card-border);
       border-radius: 3px;
       padding: 1px 6px;
       margin-bottom: 6px;
@@ -177,10 +177,10 @@ const STYLE = `
     }
     .btn {
       padding: 4px 10px;
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--portal-card-border);
       border-radius: 4px;
       background: transparent;
-      color: var(--text-main);
+      color: var(--portal-text-main);
       font-size: 12px;
       cursor: pointer;
       transition: background 0.15s, border-color 0.15s;
@@ -188,7 +188,7 @@ const STYLE = `
     .btn:hover, .btn:focus-visible {
       background: var(--accent);
       border-color: var(--accent);
-      color: var(--text-inv);
+      color: var(--portal-text-inv);
       outline: none;
     }
     .btn:focus-visible {
@@ -200,7 +200,7 @@ const STYLE = `
     .skeleton .bar {
       height: 12px;
       border-radius: 4px;
-      background: var(--skeleton-bg);
+      background: var(--portal-skeleton-bg);
       margin-bottom: 8px;
       animation: pulse 1.5s infinite ease-in-out;
     }
@@ -210,7 +210,7 @@ const STYLE = `
     .skeleton .line {
       height: 8px;
       border-radius: 4px;
-      background: var(--skeleton-bg);
+      background: var(--portal-skeleton-bg);
       margin-bottom: 6px;
       animation: pulse 1.5s infinite ease-in-out;
     }
@@ -225,13 +225,13 @@ const STYLE = `
 
     /* ── Error state ── */
     .error-state {
-      background: var(--error-bg);
-      border: 1px solid var(--error-border);
-      border-radius: var(--card-radius);
+      background: var(--portal-error-bg);
+      border: 1px solid var(--portal-error-border);
+      border-radius: var(--radius-md);
       padding: 14px 16px;
       text-align: center;
       font-size: 13px;
-      color: var(--health-bad);
+      color: var(--portal-health-bad);
     }
     .error-state .retry-btn {
       margin-top: 8px;

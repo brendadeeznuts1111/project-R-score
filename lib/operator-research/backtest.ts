@@ -53,7 +53,7 @@ function parseDay(iso: string): number | null {
  */
 export function runBacktest(
   rules: AlertRule[],
-  req: BacktestRequest,
+  req: BacktestRequest
 ): { ok: true; result: BacktestResult } | { ok: false; error: string; status: number } {
   const start = parseDay(req.startDate);
   const end = parseDay(req.endDate);
@@ -70,7 +70,7 @@ export function runBacktest(
   }
 
   const days = Math.max(1, Math.round((end - start) / 86_400_000) + 1);
-  const rand = mulberry32(req.seed ?? (start ^ end ^ String(rule.id).length * 9973));
+  const rand = mulberry32(req.seed ?? start ^ end ^ (String(rule.id).length * 9973));
 
   const edgeMin = rule.edge?.min ?? 0.02;
   // base hit rate from pattern

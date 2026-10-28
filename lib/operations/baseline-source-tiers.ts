@@ -14,11 +14,7 @@ export type BaselineSourceTier = 1 | 2 | 3 | 4 | 5;
 export type BaselineConfidence = 'highest' | 'very_high' | 'high' | 'medium' | 'moderate';
 
 export type BaselineSourceType =
-  | 'regulatory'
-  | 'published_policy'
-  | 'partner_api'
-  | 'public_scrape'
-  | 'ops_override';
+  'regulatory' | 'published_policy' | 'partner_api' | 'public_scrape' | 'ops_override';
 
 export type BaselineSourceRecord = {
   tier: BaselineSourceTier;

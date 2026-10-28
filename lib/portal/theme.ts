@@ -113,7 +113,31 @@ export type PortalThemeIdentity = {
     'polymarket' | 'pinnacle' | 'betfair' | 'kalshi' | 'unknown',
     PortalThemeIdentityColor
   >;
-  subsystem: Record<'packageManager' | 'networking' | 'bundler', string>;
+  subsystem: Record<
+    | 'packageManager'
+    | 'networking'
+    | 'bundler'
+    | 'sqlite'
+    | 'serve'
+    | 'ffi'
+    | 'streams'
+    | 'xml'
+    | 'redis'
+    | 's3'
+    | 'sql'
+    | 'test'
+    | 'build'
+    | 'bundle'
+    | 'spawn'
+    | 'listen'
+    | 'udp'
+    | 'cron'
+    | 'terminal'
+    | 'webview'
+    | 'image'
+    | 'markdown',
+    string
+  >;
 };
 
 /**
@@ -141,6 +165,7 @@ export type PortalThemeBun14Namespace = {
 
 export type PortalThemeNamespaces = {
   bun14: PortalThemeBun14Namespace;
+  bun?: PortalThemeBun14Namespace;
 };
 
 export type PortalThemeTypography = {
@@ -234,6 +259,30 @@ export type PortalCardPalette = {
   errorBorder: string;
 };
 
+export type PortalThemeColors = {
+  background: { canvas: string; card: string; elevated: string; inverse: string };
+  text: { primary: string; muted: string; onStrong: string };
+  border: { default: string };
+  accent: { default: string; hover: string; soft: string };
+  status: { success: string; warning: string; danger: string; info: string };
+};
+
+export type ThemeSourceType = 'jsonc' | 'css' | 'utilities' | 'xml' | 'rss' | 'integrated';
+
+export type ThemeSource = {
+  type: ThemeSourceType;
+  path: string;
+};
+
+export type ThemeArtifactType =
+  'tokens' | 'utilities' | 'xml' | 'rss' | 'demo' | 'scan' | 'integrated';
+
+export type ThemeArtifact = {
+  type: ThemeArtifactType;
+  path: string;
+  generated: boolean;
+};
+
 export type PortalTheme = {
   version: string;
   colorSchemeDefault: 'dark' | 'light';
@@ -254,6 +303,7 @@ export type PortalTheme = {
   semantic: PortalThemeSemantic;
   layers: PortalThemeLayers;
   identity: PortalThemeIdentity;
+  colors?: PortalThemeColors;
   namespaces: PortalThemeNamespaces;
   typography: PortalThemeTypography;
   layout: PortalThemeLayout;
@@ -366,6 +416,25 @@ const SUBSYSTEM_CSS_NAME: Record<keyof PortalThemeIdentity['subsystem'], string>
   packageManager: 'package-manager',
   networking: 'networking',
   bundler: 'bundler',
+  sqlite: 'sqlite',
+  serve: 'serve',
+  ffi: 'ffi',
+  streams: 'streams',
+  xml: 'xml',
+  redis: 'redis',
+  s3: 's3',
+  sql: 'sql',
+  test: 'test',
+  build: 'build',
+  bundle: 'bundle',
+  spawn: 'spawn',
+  listen: 'listen',
+  udp: 'udp',
+  cron: 'cron',
+  terminal: 'terminal',
+  webview: 'webview',
+  image: 'image',
+  markdown: 'markdown',
 };
 
 function identityBlock(identity: PortalThemeIdentity, indent = '  '): string {

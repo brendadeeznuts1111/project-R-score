@@ -1,0 +1,20 @@
+{
+  "name": "Bun official sources",
+  "blog": "https://bun.com/blog",
+  "releases": "https://bun.com/blog/bun-v1.4",
+  "docs": "https://bun.com/docs",
+  "reference": "https://bun.com/reference",
+  "rss": null,
+  "note": "Bun has no official RSS feed; track blog/release notes via the URLs above.",
+  "channels": {
+    "stable": "bun upgrade",
+    "canary": "bun upgrade --canary",
+    "preview": "bun upgrade --preview"
+  },
+  "releases_url": "https://github.com/oven-sh/bun/releases",
+  "github": {
+    "repo": "https://github.com/oven-sh/bun",
+    "releases_atom": "https://github.com/oven-sh/bun/releases.atom",
+    "issues": "https://github.com/oven-sh/bun/issues"
+  }
+}

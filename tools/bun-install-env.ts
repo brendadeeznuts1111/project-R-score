@@ -1,3 +1,10 @@
+// @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
+// @updated --dry-run · fixed v1.3.4 · 2025-12-06 · https://bun.com/blog/bun-v1.3.4
+// @updated --dry-run · fixed v1.3.7 · 2026-01-27 · https://bun.com/blog/bun-v1.3.7
+// @verified --dry-run · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/pm/cli/install#dry-run
+// @see https://bun.com/reference/bun/argv — Bun.argv
+// @updated Bun.argv · changed v0.6.10 · 2023-06-26 · https://bun.com/blog/bun-v0.6.10
+// @verified Bun.argv · Bun v1.4.0 · 2026-08-25 · https://bun.com/reference/bun/argv
 // @see https://bun.com/docs/runtime/bunfig#install-linker — --linker
 /**
  * bun install page SSOT — env vars, mechanism, strategies, age gate, CI.
@@ -258,13 +265,7 @@ export const FACTORY_INSTALL_ENV_POLICY =
   'BUN_CONFIG_* may override bunfig for registry/token/lockfile skips. Cache/store/age: machine ~/.bunfig.toml only — never shell/IDE (docs/UNIFIED.md).';
 
 export type InstallEnvSection =
-  | 'env'
-  | 'mechanism'
-  | 'strategies'
-  | 'age'
-  | 'config'
-  | 'factory'
-  | 'all';
+  'env' | 'mechanism' | 'strategies' | 'age' | 'config' | 'factory' | 'all';
 
 function norm(q: string): string {
   return q.trim().toLowerCase();
@@ -516,8 +517,7 @@ if (import.meta.main) {
     process.exit(0);
   }
   const arg = args.find(a => a.startsWith('--section='))?.slice('--section='.length) as
-    | InstallEnvSection
-    | undefined;
+    InstallEnvSection | undefined;
   if (json) console.info(JSON.stringify(installEnvSnapshot(), null, 2));
   else console.info(formatInstallEnvBlock(arg ?? 'all').trimEnd());
 }

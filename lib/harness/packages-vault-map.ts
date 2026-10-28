@@ -47,10 +47,7 @@ export type PackageVaultEnvHit = {
 };
 
 export type PackageVaultAction =
-  | 'wire-env-template'
-  | 'vault-gap-open'
-  | 'mintable-unresolved'
-  | 'ok';
+  'wire-env-template' | 'vault-gap-open' | 'mintable-unresolved' | 'ok';
 
 export type PackageVaultMap = {
   generatedAt: string;

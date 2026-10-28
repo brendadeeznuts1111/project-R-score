@@ -1,3 +1,9 @@
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
@@ -73,13 +79,7 @@ export function durationMsBetween(
 }
 
 type OutcomeKind =
-  | 'failure'
-  | 'success'
-  | 'pending'
-  | 'cancelled'
-  | 'skipped'
-  | 'neutral'
-  | 'unknown';
+  'failure' | 'success' | 'pending' | 'cancelled' | 'skipped' | 'neutral' | 'unknown';
 
 function lower(raw: string | null | undefined): string {
   return (raw ?? '').trim().toLowerCase();

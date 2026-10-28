@@ -1,0 +1,13 @@
+{
+  "name": "FactoryWager theme system",
+  "version": "1.4.0",
+  "sources": {
+    "jsonc": "public/portal/theme.jsonc",
+    "tokens": "public/portal/theme-tokens.css",
+    "utilities": "public/portal/theme-utilities.css",
+    "xml_dark": "public/portal/theme-dark.xml",
+    "xml_light": "public/portal/theme-light.xml",
+    "rss": "public/feeds/v1/theme.xml"
+  },
+  "integrated": "public/portal/theme.css"
+}

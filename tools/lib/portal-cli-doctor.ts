@@ -496,140 +496,140 @@ export async function runPortalDoctor(opts: PortalDoctorOpts = {}): Promise<Port
 
   // 2) Offline artifact presence (vault / capabilities / bunfig bake)
   if (wants('bakes')) {
-  const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
-  const vaultOk = await fileExists(vaultHealth);
-  const vaultAt = vaultOk ? await readBakeGeneratedAt(vaultHealth) : undefined;
-  const vaultStale = vaultOk && isBakeStale(vaultAt, VAULT_HEALTH_STALE_MS, nowMs);
-  const vaultCheckOk = vaultOk && !vaultStale;
-  checks.push(
-    withMeta(
-      {
-        id: 'vault-health-bake',
-        level: 'warn',
-        group: 'bakes',
-        ok: vaultCheckOk,
-        message: !vaultOk
-          ? 'vault-health bake missing — bun run vault:health:bake (needs pass session)'
-          : vaultStale
-            ? `public/registry/vault-health.json stale${vaultAt ? ` · ${formatAgeFromIso(vaultAt, nowMs)}` : ''} (>48h) — re-bake`
-            : `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt, nowMs)}` : ''}`,
-        freshness: vaultAt ? formatAgeFromIso(vaultAt, nowMs) : undefined,
-      },
-      {
-        fixCommand: vaultCheckOk ? undefined : 'bun run vault:health:bake',
-        impact: 'Portal /portal/vault/ board and nav badges need a fresh bake artifact',
-        autoFixable: true,
-        timeToFix: vaultCheckOk ? undefined : '1–3 min',
-        envScope: 'dev',
-      }
-    )
-  );
+    const vaultHealth = joinPath(cwd, 'public/registry/vault-health.json');
+    const vaultOk = await fileExists(vaultHealth);
+    const vaultAt = vaultOk ? await readBakeGeneratedAt(vaultHealth) : undefined;
+    const vaultStale = vaultOk && isBakeStale(vaultAt, VAULT_HEALTH_STALE_MS, nowMs);
+    const vaultCheckOk = vaultOk && !vaultStale;
+    checks.push(
+      withMeta(
+        {
+          id: 'vault-health-bake',
+          level: 'warn',
+          group: 'bakes',
+          ok: vaultCheckOk,
+          message: !vaultOk
+            ? 'vault-health bake missing — bun run vault:health:bake (needs pass session)'
+            : vaultStale
+              ? `public/registry/vault-health.json stale${vaultAt ? ` · ${formatAgeFromIso(vaultAt, nowMs)}` : ''} (>48h) — re-bake`
+              : `public/registry/vault-health.json present${vaultAt ? ` · ${formatAgeFromIso(vaultAt, nowMs)}` : ''}`,
+          freshness: vaultAt ? formatAgeFromIso(vaultAt, nowMs) : undefined,
+        },
+        {
+          fixCommand: vaultCheckOk ? undefined : 'bun run vault:health:bake',
+          impact: 'Portal /portal/vault/ board and nav badges need a fresh bake artifact',
+          autoFixable: true,
+          timeToFix: vaultCheckOk ? undefined : '1–3 min',
+          envScope: 'dev',
+        }
+      )
+    );
 
-  // Pass CLI binary + session-dir hygiene (offline; no vault login required).
-  // @see https://protonpass.github.io/pass-cli/get-started/configuration/
-  const passCliPath = Bun.which('pass-cli');
-  checks.push(
-    withMeta(
-      {
-        id: 'pass-cli-on-path',
-        level: 'warn',
-        group: 'bakes',
-        ok: Boolean(passCliPath),
-        message: passCliPath
-          ? `pass-cli on PATH · ${passCliPath}`
-          : 'pass-cli missing from PATH — install from protonpass.github.io/pass-cli',
-        source: 'https://protonpass.github.io/pass-cli/',
-      },
-      {
-        fixCommand: passCliPath ? undefined : 'https://protonpass.github.io/pass-cli/',
-        impact: 'Vault inject/run/bake require the official Pass CLI binary',
-        autoFixable: false,
-        timeToFix: passCliPath ? undefined : '5–15 min',
-        envScope: 'dev',
-      }
-    )
-  );
-  const home = Bun.env.HOME ?? '';
-  const stableSessionRoot = home ? joinPath(home, '.factorywager/pass-sessions') : '';
-  const legacyTmpSession = await fileExists('/tmp/pass-agent-factorywager');
-  const stablePresent = stableSessionRoot ? await fileExists(stableSessionRoot) : false;
-  // Always ok (info): migration hint must not fail offline doctor / CI.
-  checks.push(
-    withMeta(
-      {
-        id: 'pass-session-dir-stable',
-        level: 'info',
-        group: 'bakes',
-        ok: true,
-        message:
-          legacyTmpSession && !stablePresent
-            ? 'legacy /tmp/pass-agent-* session present — migrate: source scripts/agent-env.sh factorywager (uses ~/.factorywager/pass-sessions)'
-            : stablePresent
-              ? 'stable Pass session root · ~/.factorywager/pass-sessions'
-              : 'Pass session root not created yet (ok until first agent-env)',
-        source: 'https://protonpass.github.io/pass-cli/get-started/configuration/',
-      },
-      {
-        fixCommand:
-          legacyTmpSession && !stablePresent
-            ? 'source scripts/agent-env.sh factorywager && rm -rf /tmp/pass-agent-factorywager'
-            : undefined,
-        impact: '/tmp sessions vanish on reboot and break inject until re-login',
-        autoFixable: false,
-        envScope: 'dev',
-      }
-    )
-  );
+    // Pass CLI binary + session-dir hygiene (offline; no vault login required).
+    // @see https://protonpass.github.io/pass-cli/get-started/configuration/
+    const passCliPath = Bun.which('pass-cli');
+    checks.push(
+      withMeta(
+        {
+          id: 'pass-cli-on-path',
+          level: 'warn',
+          group: 'bakes',
+          ok: Boolean(passCliPath),
+          message: passCliPath
+            ? `pass-cli on PATH · ${passCliPath}`
+            : 'pass-cli missing from PATH — install from protonpass.github.io/pass-cli',
+          source: 'https://protonpass.github.io/pass-cli/',
+        },
+        {
+          fixCommand: passCliPath ? undefined : 'https://protonpass.github.io/pass-cli/',
+          impact: 'Vault inject/run/bake require the official Pass CLI binary',
+          autoFixable: false,
+          timeToFix: passCliPath ? undefined : '5–15 min',
+          envScope: 'dev',
+        }
+      )
+    );
+    const home = Bun.env.HOME ?? '';
+    const stableSessionRoot = home ? joinPath(home, '.factorywager/pass-sessions') : '';
+    const legacyTmpSession = await fileExists('/tmp/pass-agent-factorywager');
+    const stablePresent = stableSessionRoot ? await fileExists(stableSessionRoot) : false;
+    // Always ok (info): migration hint must not fail offline doctor / CI.
+    checks.push(
+      withMeta(
+        {
+          id: 'pass-session-dir-stable',
+          level: 'info',
+          group: 'bakes',
+          ok: true,
+          message:
+            legacyTmpSession && !stablePresent
+              ? 'legacy /tmp/pass-agent-* session present — migrate: source scripts/agent-env.sh factorywager (uses ~/.factorywager/pass-sessions)'
+              : stablePresent
+                ? 'stable Pass session root · ~/.factorywager/pass-sessions'
+                : 'Pass session root not created yet (ok until first agent-env)',
+          source: 'https://protonpass.github.io/pass-cli/get-started/configuration/',
+        },
+        {
+          fixCommand:
+            legacyTmpSession && !stablePresent
+              ? 'source scripts/agent-env.sh factorywager && rm -rf /tmp/pass-agent-factorywager'
+              : undefined,
+          impact: '/tmp sessions vanish on reboot and break inject until re-login',
+          autoFixable: false,
+          envScope: 'dev',
+        }
+      )
+    );
 
-  const capSubset = joinPath(cwd, 'public/registry/capability-map-subset.json');
-  const capOk = await fileExists(capSubset);
-  const capAt = capOk ? await readBakeGeneratedAt(capSubset) : undefined;
-  checks.push(
-    withMeta(
-      {
-        id: 'capability-map-subset',
-        level: 'warn',
-        group: 'bakes',
-        ok: capOk,
-        message: capOk
-          ? `public/registry/capability-map-subset.json present${capAt ? ` · ${formatAgeFromIso(capAt, nowMs)}` : ''}`
-          : 'capability-map-subset missing — bun run bake:capabilities',
-        freshness: capAt ? formatAgeFromIso(capAt, nowMs) : undefined,
-      },
-      {
-        fixCommand: capOk ? undefined : 'bun run bake:capabilities',
-        impact: 'Tools hub capabilities table and doctor/capability gates need the bake',
-        autoFixable: true,
-        timeToFix: capOk ? undefined : '1 min',
-        envScope: 'all',
-      }
-    )
-  );
+    const capSubset = joinPath(cwd, 'public/registry/capability-map-subset.json');
+    const capOk = await fileExists(capSubset);
+    const capAt = capOk ? await readBakeGeneratedAt(capSubset) : undefined;
+    checks.push(
+      withMeta(
+        {
+          id: 'capability-map-subset',
+          level: 'warn',
+          group: 'bakes',
+          ok: capOk,
+          message: capOk
+            ? `public/registry/capability-map-subset.json present${capAt ? ` · ${formatAgeFromIso(capAt, nowMs)}` : ''}`
+            : 'capability-map-subset missing — bun run bake:capabilities',
+          freshness: capAt ? formatAgeFromIso(capAt, nowMs) : undefined,
+        },
+        {
+          fixCommand: capOk ? undefined : 'bun run bake:capabilities',
+          impact: 'Tools hub capabilities table and doctor/capability gates need the bake',
+          autoFixable: true,
+          timeToFix: capOk ? undefined : '1 min',
+          envScope: 'all',
+        }
+      )
+    );
 
-  const bunfigState = joinPath(cwd, 'public/registry/bunfig-state.json');
-  const bunfigOk = await fileExists(bunfigState);
-  const bunfigAt = bunfigOk ? await readBakeGeneratedAt(bunfigState) : undefined;
-  checks.push(
-    withMeta(
-      {
-        id: 'bunfig-state-bake',
-        level: 'info',
-        group: 'bakes',
-        ok: bunfigOk,
-        message: bunfigOk
-          ? `public/registry/bunfig-state.json present${bunfigAt ? ` · ${formatAgeFromIso(bunfigAt, nowMs)}` : ''}`
-          : 'bunfig-state bake missing — bun run bunfig:bake (optional)',
-        freshness: bunfigAt ? formatAgeFromIso(bunfigAt, nowMs) : undefined,
-      },
-      {
-        fixCommand: bunfigOk ? undefined : 'bun run bunfig:bake',
-        impact: 'Offline bunfig provenance board for portal tooling',
-        autoFixable: true,
-        timeToFix: bunfigOk ? undefined : '1 min',
-        envScope: 'dev',
-      }
-    )
-  );
+    const bunfigState = joinPath(cwd, 'public/registry/bunfig-state.json');
+    const bunfigOk = await fileExists(bunfigState);
+    const bunfigAt = bunfigOk ? await readBakeGeneratedAt(bunfigState) : undefined;
+    checks.push(
+      withMeta(
+        {
+          id: 'bunfig-state-bake',
+          level: 'info',
+          group: 'bakes',
+          ok: bunfigOk,
+          message: bunfigOk
+            ? `public/registry/bunfig-state.json present${bunfigAt ? ` · ${formatAgeFromIso(bunfigAt, nowMs)}` : ''}`
+            : 'bunfig-state bake missing — bun run bunfig:bake (optional)',
+          freshness: bunfigAt ? formatAgeFromIso(bunfigAt, nowMs) : undefined,
+        },
+        {
+          fixCommand: bunfigOk ? undefined : 'bun run bunfig:bake',
+          impact: 'Offline bunfig provenance board for portal tooling',
+          autoFixable: true,
+          timeToFix: bunfigOk ? undefined : '1 min',
+          envScope: 'dev',
+        }
+      )
+    );
   }
 
   // 3) Catalog SSOT health (runtime flags — pure, no network)

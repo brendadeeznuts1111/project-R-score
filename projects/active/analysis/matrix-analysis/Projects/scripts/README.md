@@ -58,19 +58,9 @@ scripts/
 
 ---
 
-## 1Password Setup
+## 1Password
 
-| Script | Type | Description | Properties | Patterns |
-|--------|------|-------------|------------|----------|
-| `1password/setup-1password.ts` | Installer | Complete 1Password CLI setup guide with status checks | `async` `auth-required` `interactive` | Wizard, State Machine |
-| `1password/setup-1password-plugins.ts` | Configurator | Configure shell plugins for auto credential injection | `async` `auth-required` `shell` | Registry, Builder |
-| `1password/setup-1password-vault.ts` | Provisioner | Create Development vault with API credential items | `async` `auth-required` `destructive` | Factory, Template |
-
-| Script | Interfaces | Constants | Flags |
-|--------|------------|-----------|-------|
-| `1password/setup-1password.ts` | `SetupStatus` `StepResult` | `STEPS` | `--check` `--plugins` `--step=<n>` |
-| `1password/setup-1password-plugins.ts` | `PluginConfig` | `RECOMMENDED_PLUGINS` | `--list` `--all` `<plugin-name>` |
-| `1password/setup-1password-vault.ts` | `VaultItem` `FieldDef` | `VAULT_NAME` `ITEMS` | `--dry-run` `--force` |
+Machine setup lives in dotfiles: `~/dotfiles/shell/config/onepassword.sh`, `op-health`, and `onepassword/*.env.example`. Not in this scripts tree.
 
 ---
 
@@ -171,9 +161,8 @@ bun cli/deep-app-cli.ts --projects --hyper
 bun cli/pm.ts add zod
 bun cli/pm.ts outdated
 
-# 1Password setup
-bun 1password/setup-1password.ts --check
-bun 1password/setup-1password-plugins.ts --list
+# 1Password (dotfiles)
+op-health && op-plugin-bootstrap
 
 # Config management
 bun generators/config-manager.ts sync
@@ -378,7 +367,7 @@ bun/bunpm-preinstall-gate.ts
 | List projects | `bun cli/projects.ts` |
 | Scan outdated | `bun cli/deep-app-cli.ts --scan=outdated` |
 | Check secrets | `bun secrets/check-secrets.ts` |
-| Setup 1Password | `bun 1password/setup-1password.ts` |
+| Setup 1Password | `scaffold-1password-env` — see `~/dotfiles/cursor/templates/FINISH-1PASSWORD.md` |
 | Generate TOC | `bun generators/generate-toc.ts` |
 | Sync config | `bun generators/config-manager.ts sync` |
 | Project matrix | `bun terminal/hyper-matrix.ts` |
