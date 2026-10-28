@@ -2,8 +2,9 @@
 name: project-r-ops-management
 description: >
   Operate Project R runtime channels, CI gates, TypeScript health, security,
-  release hygiene, and recovery. Use for readiness checks, CI failures, Bun
-  drift, branch hygiene, dependency hardening, or emergency recovery.
+  structured-data capability proof, release hygiene, and recovery. Use for
+  readiness checks, CI failures, Bun drift, XML/JSON5/JSONL operations, branch
+  hygiene, dependency hardening, or emergency recovery.
 ---
 
 # Project R Ops Management
@@ -43,6 +44,55 @@ description: >
   requires explicit approval and policy-changelog evidence.
 - Shared commit and loop mechanics live in
   [`agent-tooling.md`](../references/agent-tooling.md).
+
+## Structured-data capability operations
+
+Use the [`structured-data-runbook.md`](references/structured-data-runbook.md)
+for the operation matrix, JSONL completeness protocol, XML shape/security
+boundary, evidence model, promotion state machine, and rollback procedure.
+
+- Treat [`data-format-lab.json`](../../../config/data-format-lab.json) as the
+  format manifest and `bun run data-formats:check` as its read-only proof. Use
+  `bun run data-formats:bake` only for an intentional artifact refresh.
+- Gate each format by the active `bun --version`, `bun --revision`, API object,
+  and required operations. A documentation page does not promote the runtime. In
+  particular, `Bun.XML` requires Bun 1.4 or later and remains `runtime-gated` on
+  Project R's pinned Bun 1.3.14.
+- Prove behavior, not namespace presence. JSON5 requires positive parse,
+  stringify, semantic parse/stringify/reparse equivalence, and malformed-input
+  rejection. XML requires the same operations after its runtime gate passes;
+  keep fixtures bounded, text-only, and free of DOCTYPE or entity declarations.
+- JSONL is asymmetric: prove complete-input `parse` and incremental
+  `parseChunk`. Invalid complete input may throw; `parseChunk` reports failures
+  in its `error` result. Preserve `read`, `done`, and the unconsumed remainder
+  when testing streaming behavior; do not invent a JSONL stringify contract.
+- Record bounded output metadata and hashes, not raw fixture results. Measure
+  operation duration with monotonic `Bun.nanoseconds()` as `durationNs`; derive
+  display-only `durationMs` by dividing by `1_000_000`. Never label a raw
+  nanosecond value as milliseconds.
+- Exposure is fail-closed: `off` disables the surface, `preview` may report
+  gated capabilities, and `enabled` requires all operations, negative proofs,
+  round trips where applicable, and live Cloudflare Access proof. Keep the
+  static lab and artifact routes protected, including unprotected aliases.
+
+## Bun enhancement lifecycle
+
+For feature flags, guarded Bun-native replacements, or the public experiment
+inventory, read
+[`bun-enhancement-pipeline.md`](../../../docs/design/bun-enhancement-pipeline.md)
+and run `bun run enhancements -- check`. Treat runtime availability, Project R
+lifecycle, and current enablement as separate facts. An environment override
+cannot enable a proposal or an incompatible runtime. Use
+`/.well-known/experiments` as the agent-facing discovery surface; do not invent
+or mutate a `desk.json` contract that this repository does not own.
+
+Runtime targets in that inventory are compatibility observations, not upgrade
+authority. Test canaries through an explicit temporary binary, preserve the
+stable pin, and stop promotion on a worker panic even when focused contracts
+pass. Keep npm SHA-256 SRI and Project R SHA3-256 verification metadata as
+separate declared algorithms. Compare gzip and source-map behavior with
+`bun run bench:bun-upgrade`; its raw clock is nanoseconds and milliseconds are
+derived display values only.
 
 ## Test and CI rules
 

@@ -8,18 +8,11 @@ Prefer retrieval over pre-training. Types, config schemas, and APIs change with 
 
 ### Workers types
 
-Fetch the latest `@cloudflare/workers-types` before reviewing. The project may have an older version installed.
-
-```bash
-mkdir -p /tmp/workers-types-latest && \
-  npm pack @cloudflare/workers-types --pack-destination /tmp/workers-types-latest && \
-  tar -xzf /tmp/workers-types-latest/cloudflare-workers-types-*.tgz -C /tmp/workers-types-latest
-# Types are at /tmp/workers-types-latest/package/index.d.ts
-```
+Inspect the repository's installed types first. When current upstream comparison is needed, retrieve the exact source from the official package or repository without mutating the application's dependency graph. If a dependency update is in scope, use the owning repository's package manager and lockfile policy.
 
 Search this file for the specific type, class, or interface under review. Do not guess type names.
 
-Alternative: `npx wrangler types` generates a typed `Env` interface from the local wrangler config.
+Alternative: `bun x wrangler types` generates a typed `Env` interface from the local Wrangler config in a Bun-owned repository. Prefer an existing repository script when one exists.
 
 Fallback: read `node_modules/@cloudflare/workers-types/index.d.ts`. Note the installed version.
 

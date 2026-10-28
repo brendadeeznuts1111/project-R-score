@@ -236,7 +236,7 @@ Cross-market / tennis desk venues use a **separate identity palette** (brand bor
 | CSS | [`public/portal/venues.css`](../public/portal/venues.css) |
 | Portal JS | [`public/portal/components/venue-badge.js`](../public/portal/components/venue-badge.js) |
 | TS SSOT + ANSI | [`lib/venues/venue-brand.ts`](../lib/venues/venue-brand.ts) (`fmtVenueBadge` · `fmtVenueLegend`) |
-| Kalshi desk ANSI | [`Kalshi-bot/src/institutions/venue-badge.ts`](../Kalshi-bot/src/institutions/venue-badge.ts) |
+| Kalshi desk ANSI | `Kalshi-bot/src/institutions/venue-badge.ts` in the optional sibling checkout |
 | Board demo | [`/portal/tennis/`](../public/portal/tennis/) |
 
 ```bash

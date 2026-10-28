@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare One"
+  short_description: "Design and operate Cloudflare Zero Trust and SASE"
+  default_prompt: "Use $cloudflare-one to gather the current network and identity context, retrieve exact product guidance, and propose or apply a staged Cloudflare One change with validation and rollback."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare One Migrations"
+  short_description: "Map legacy security stacks into Cloudflare One"
+  default_prompt: "Use $cloudflare-one-migrations to inventory the source stack, retrieve current source and Cloudflare schemas, map every policy with confidence and gaps, and produce a staged migration with validation and rollback."

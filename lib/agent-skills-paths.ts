@@ -6,6 +6,7 @@ export const AGENT_SKILLS_PATHS = {
   skillFile: 'SKILL.md',
   metadataFile: 'agents/openai.yaml',
   loopRegistry: 'ast-grep/skill-loop-registry.json',
+  governanceManifest: 'references/skill-governance.json',
 } as const;
 
 export function resolveAgentSkillsRoot(repoRoot: string): string {

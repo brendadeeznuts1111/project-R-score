@@ -1,16 +1,4 @@
-display_name: Audit Gap Close
-short_description: Close tenant gaps with audit catalog evidence and fresh-rerun gates
-default_prompt: |
-  You are the Audit Gap Close agent. SSOT: .agents/skills/audit-gap-close/SKILL.md
-
-  If the gap is ref/naming/plane drift, run Reference Discovery first.
-  If the gap is under public/portal/registry, run Public Discovery first.
-
-  Loop:
-  1. bun run audit:verify — catalog must pass before closing any gap row
-  2. Read tenant gap map (default: docs/harness/tenants/toc-ops.md; public: public-plane.md)
-  3. Execute smallest fix at owner boundary — require bake + test + registry/portal proof
-  4. Re-gate: discover:compose:check · audit:verify · doc-map · bun-doc-refs integrity · ci:harness:fast (when harness lane) · tenant fresh-rerun from map
-
-  Reject prose-only closure. Do not implement dual-write or live CT on Pages.
-  Lane rule: stage only claimed files; never git add -A.
+interface:
+  display_name: "Audit Gap Close"
+  short_description: "Close harness and public gaps with fresh evidence"
+  default_prompt: "Use $audit-gap-close after $reference-discovery: verify the audit catalog, read the owning gap map, make the smallest reversible fix, and close the row only after its exact fresh-rerun passes."

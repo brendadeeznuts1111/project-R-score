@@ -424,6 +424,19 @@ async function main() {
         }
       })
     ),
+    check('well-known/experiments', 'core', () =>
+      expectJson('/.well-known/experiments', j => {
+        if (typeof j.version !== 'string') throw new Error('missing version');
+        if (!Array.isArray(j.items) || j.items.length === 0) throw new Error('missing items[]');
+        const invalid = (j.items as Array<Record<string, unknown>>).find(
+          item =>
+            typeof item.id !== 'string' ||
+            typeof item.available !== 'boolean' ||
+            typeof item.enabled !== 'boolean'
+        );
+        if (invalid) throw new Error(`invalid item: ${JSON.stringify(invalid)}`);
+      })
+    ),
     check('cloudflare-pages-preflight.json', 'core', () =>
       expectJson('/registry/cloudflare-pages-preflight.json', j => {
         if (j.type !== 'CloudflarePagesPreflightReport') throw new Error(`type=${j.type}`);

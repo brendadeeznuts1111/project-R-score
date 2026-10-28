@@ -1,4 +1,4 @@
-# Monorepo map — `/Users/nolarose/Projects`
+# Project R monorepo map
 
 Curated ast-grep targets for this workspace. Run via helper `map` or one-off `outline`/`search`.
 

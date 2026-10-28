@@ -7,7 +7,7 @@
  *   bun tools/discovery-compose.ts --json
  *   bun tools/discovery-compose.ts --check
  *
- * Agent skills: reference-discovery · public-discovery · audit-gap-close · public-audit-gap-close
+ * Agent skills: reference-discovery · audit-gap-close
  * @see docs/harness/tenants/public-plane.md
  */
 import {

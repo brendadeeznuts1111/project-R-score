@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wrangler Operations"
+  short_description: "Use the repository-owned Wrangler CLI safely"
+  default_prompt: "Use $wrangler to inspect the repository's installed Wrangler version and configuration, retrieve the exact current command surface, and apply the smallest authorized local or remote operation with matching proof."

@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/portal/style.css" />
 </head>
 <body>
+  <a class="portal-skip-link" href="#main-content">Skip to main content</a>
   <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
   <header class="topbar">
     <div class="topbar-inner">
@@ -92,7 +93,7 @@
   </header>
 
   <!-- Board shell: portal-page + portal-hero · see docs/portal-foundation.md#board-primitives -->
-  <main class="main portal-page">
+  <main id="main-content" class="main portal-page" tabindex="-1">
     <header class="portal-hero hero">
       <h2 class="portal-hero__title">New Page</h2>
       <p class="hero-sub">Describe this surface. Prefer shared primitives over per-board CSS forks.</p>

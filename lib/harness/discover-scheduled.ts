@@ -69,6 +69,12 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     reason: 'Multi-tenant daemon; schedules SPINE_TENANTS, not a tenant itself',
   },
   {
+    id: 'skill-health-scheduler-wrapper',
+    source: 'code-cron',
+    match: 'lib/harness/skill-health-runner.ts',
+    reason: 'Manifest-driven scheduler embedded by the spine daemon; not an independent tenant',
+  },
+  {
     id: 'proof-catalog-prose',
     source: 'code-cron',
     match: 'lib/harness/proof.ts',
@@ -85,6 +91,36 @@ export const SCHEDULED_JOB_EXEMPTIONS: readonly ScheduledJobExemption[] = [
     source: 'package-script',
     match: 'spine:schedule:once',
     reason: 'One-shot entrypoint for SPINE_TENANTS',
+  },
+  {
+    id: 'pkg-skill-schedule',
+    source: 'package-script',
+    match: 'skills:schedule',
+    reason: 'Focused operator/debug alternative to the spine-owned skill-health scheduler',
+  },
+  {
+    id: 'pkg-skill-schedule-watch',
+    source: 'package-script',
+    match: 'skills:schedule:watch',
+    reason: 'Development-only reactive skill watcher; not a continuous-maintenance tenant',
+  },
+  {
+    id: 'pkg-skill-schedule-once',
+    source: 'package-script',
+    match: 'skills:schedule:once',
+    reason: 'One-shot manifest job runner; production schedules are embedded by spine',
+  },
+  {
+    id: 'pkg-skill-schedule-check',
+    source: 'package-script',
+    match: 'skills:schedule:check',
+    reason: 'Read-only manifest and next-fire validation',
+  },
+  {
+    id: 'pkg-skill-schedule-status',
+    source: 'package-script',
+    match: 'skills:schedule:status',
+    reason: 'Read-only local scheduler state inspection',
   },
   {
     id: 'pkg-docs-cron',

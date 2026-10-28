@@ -43,7 +43,7 @@ workspace filter).
 
 ## Context fan-out (cold start)
 
-Re-measured **2026-08-14** with Bun 1.3.14 via
+Re-measured **2026-08-15** with Bun 1.3.14 via
 `bun run velocity:cold-start -- --json` (`Bun.file().text()` +
 `Bun.nanoseconds()`; lines = split on newlines). Do not hand-edit without
 re-running that tool.
@@ -57,15 +57,18 @@ ownership in `docs/AGENTS.md`, and source conventions in
 
 | File                    |   Lines |     Bytes | Read ns (sample) |
 | ----------------------- | ------: | --------: | ---------------: |
-| AGENTS.md               |     174 |     10176 |         ~0.34 ms |
-| docs/AGENTS.md          |      92 |      4222 |         ~1.01 ms |
-| .custom-instructions.md |     155 |      6872 |         ~0.45 ms |
-| docs/WIRE_BOUNDARY.md   |      57 |      2783 |         ~0.35 ms |
-| **Total**               | **478** | **24053** |     **~2.14 ms** |
+| AGENTS.md               |     151 |      9027 |         ~0.05 ms |
+| docs/AGENTS.md          |      92 |      4222 |         ~0.20 ms |
+| .custom-instructions.md |     155 |      6872 |         ~0.24 ms |
+| docs/WIRE_BOUNDARY.md   |      57 |      2779 |         ~0.03 ms |
+| **Total**               | **455** | **22900** |     **~0.52 ms** |
 
 Compared with the prior four-file measurement, this removes 322 lines and 35,868
 bytes (59.9%) from cold-start context. Read timing is a single filesystem
 sample; bytes and ownership fan-out are the durable measures.
+
+The 2026-08-15 guidance consolidation removes another 23 lines and 1,153 bytes
+by routing command detail out of the always-loaded root entrypoint.
 
 Capability matrix lives at
 [`docs/harness/capability-map.md`](../harness/capability-map.md) (not counted in
@@ -107,8 +110,7 @@ Bun test (1.3.13+ / live on 1.4.0): day-loop adds `test:changed` (import graph),
 
 ## Timing artifact
 
-Gate timings append to
-[`reports/harness-gate-timing.json`](../../reports/harness-gate-timing.json) ·
+Gate timings append to generated `reports/harness-gate-timing.json` ·
 [`reports/ci-harness-timing.json`](../../reports/ci-harness-timing.json) ·
 [`reports/ci-core-timing.json`](../../reports/ci-core-timing.json). Discover:
 `bun run harness:status`.

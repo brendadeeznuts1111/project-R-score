@@ -83,6 +83,17 @@ and
 [`portal-weave.ts`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/http/portal-weave.ts).
 Additions must update those owners and pass the static portal gates.
 
+## Bun enhancement pipeline
+
+Project R keeps experimental Bun adoption in
+`config/enhancements/registry.jsonc` and publishes the resolved production view
+at
+[`/.well-known/experiments`](https://score.factory-wager.com/.well-known/experiments).
+Agents should inspect that endpoint before choosing a guarded native path. Use
+`bun run enhancements -- show|check|agent-test`; lifecycle, reload, promotion,
+and rollback semantics live in the
+[`Bun enhancement pipeline`](docs/design/bun-enhancement-pipeline.md).
+
 ## Live surfaces
 
 | Surface               | URL                                                                                      | Role                                                                     |
@@ -234,38 +245,38 @@ load):
 
 ## Key Commands
 
-| Command                                    | Description                                                           |
-| ------------------------------------------ | --------------------------------------------------------------------- |
-| `bun run help`                             | Interactive categorized commands (`--verbose` for all)                |
-| `bun run cli:docs`                         | Regenerate [`docs/CLI.md`](docs/CLI.md)                               |
-| `bun run type-check`                       | Day-loop typecheck (`tsconfig.check.json`)                            |
-| `bun run build:affected` / `test:affected` | Changed packages only ([`--filter`](https://bun.com/docs/pm/filter))  |
-| `bun run packages:list`                    | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`)   |
-| `bun run validate:workspaces`              | Validate workspace coverage                                           |
-| `bun run lint`                             | ESLint on changed harness TypeScript                                  |
-| `bun run lint:all`                         | ESLint on the complete root harness scope                             |
-| `bun run format`                           | Prettier across root harness TypeScript and tests                     |
-| `bun run check:brands:all`                 | Branded ID gates (manifest + smart + types)                           |
-| `bun run fix:console-log`                  | Bulk replace console.log → console.info                               |
-| `bun run dev`                              | Start platform server                                                 |
-| `bun run deployment:readiness`             | Deployment readiness matrix                                           |
-| `bun run dev:portal`                       | Hot local static portal with exact board routes                       |
-| `bun run lane:status`                      | Primary/worktree drift, dirty areas, stale lanes, and bake drift      |
-| `bun run ops:snapshot`                     | Rebake `public/registry/*` + portal embeds                            |
-| `bun run compliance:bake`                  | Compliance board (MA/NJ shadow matrix)                                |
-| `bun run compliance:verify`                | Compliance bake + portal tests                                        |
-| `bun run telegram:handshake:readiness`     | Package-group handshake gates (`--deep`)                              |
-| `bun run test:seat-desk`                   | Seat capital desk + handshake snapshot tests                          |
-| `bun run harness:status`                   | Day-loop ratchets + proof status                                      |
-| `bun run test:inspect`                     | Bun TestReporter / LifecycleReporter stream (orthogonal to JUnit)     |
-| `bun run test:inspect:smoke`               | Quiet JSON smoke of inspect helpers                                   |
-| `bun run ops:limits:check`                 | Partner limit freshness / CLV alerts                                  |
-| `bun run public:audit:verify`              | Public plane discovery + portal static gate                           |
-| `bun run docs:native:check`                | Verify native-capability documentation evidence is synchronized       |
-| `bun run test:colors`                      | Validate theme aliases and component color-kernel alignment           |
-| `bun run sweep:domain`                     | Full cross-plane live sweep (`:fast`, `:cron`)                        |
-| `bun run bun:ci`                           | Canonical local merge proof                                           |
-| `bun run proton:deploy:pages`              | Cloudflare Pages deploy (after Proton inject)                         |
+| Command                                    | Description                                                          |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| `bun run help`                             | Interactive categorized commands (`--verbose` for all)               |
+| `bun run cli:docs`                         | Regenerate [`docs/CLI.md`](docs/CLI.md)                              |
+| `bun run type-check`                       | Day-loop typecheck (`tsconfig.check.json`)                           |
+| `bun run build:affected` / `test:affected` | Changed packages only ([`--filter`](https://bun.com/docs/pm/filter)) |
+| `bun run packages:list`                    | List packages (scaffolds hidden; `--include-scaffolds` / `--paths`)  |
+| `bun run validate:workspaces`              | Validate workspace coverage                                          |
+| `bun run lint`                             | ESLint on changed harness TypeScript                                 |
+| `bun run lint:all`                         | ESLint on the complete root harness scope                            |
+| `bun run format`                           | Prettier across root harness TypeScript and tests                    |
+| `bun run check:brands:all`                 | Branded ID gates (manifest + smart + types)                          |
+| `bun run fix:console-log`                  | Bulk replace console.log → console.info                              |
+| `bun run dev`                              | Start platform server                                                |
+| `bun run deployment:readiness`             | Deployment readiness matrix                                          |
+| `bun run dev:portal`                       | Hot local static portal with exact board routes                      |
+| `bun run lane:status`                      | Primary/worktree drift, dirty areas, stale lanes, and bake drift     |
+| `bun run ops:snapshot`                     | Rebake `public/registry/*` + portal embeds                           |
+| `bun run compliance:bake`                  | Compliance board (MA/NJ shadow matrix)                               |
+| `bun run compliance:verify`                | Compliance bake + portal tests                                       |
+| `bun run telegram:handshake:readiness`     | Package-group handshake gates (`--deep`)                             |
+| `bun run test:seat-desk`                   | Seat capital desk + handshake snapshot tests                         |
+| `bun run harness:status`                   | Day-loop ratchets + proof status                                     |
+| `bun run test:inspect`                     | Bun TestReporter / LifecycleReporter stream (orthogonal to JUnit)    |
+| `bun run test:inspect:smoke`               | Quiet JSON smoke of inspect helpers                                  |
+| `bun run ops:limits:check`                 | Partner limit freshness / CLV alerts                                 |
+| `bun run public:audit:verify`              | Public plane discovery + portal static gate                          |
+| `bun run docs:native:check`                | Verify native-capability documentation evidence is synchronized      |
+| `bun run test:colors`                      | Validate theme aliases and component color-kernel alignment          |
+| `bun run sweep:domain`                     | Full cross-plane live sweep (`:fast`, `:cron`)                       |
+| `bun run bun:ci`                           | Canonical local merge proof                                          |
+| `bun run proton:deploy:pages`              | Cloudflare Pages deploy (after Proton inject)                        |
 
 **Delivery loop** (`main` is PR-only, squash-merged):
 

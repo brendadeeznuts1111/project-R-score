@@ -6,6 +6,7 @@ import {
   formString,
   isFormBlob,
   requireFormBlob,
+  sha3Blob,
   sha256Blob,
   writeFormBlob,
 } from '../lib/http/form-upload.ts';
@@ -43,6 +44,8 @@ describe('form-upload (Bun file-uploads guide)', () => {
     const got = new Uint8Array(await Bun.file(path).bytes());
     expect([...got]).toEqual([9, 8, 7]);
     expect(await sha256Blob(blob)).toMatch(/^[a-f0-9]{64}$/);
+    expect(await sha3Blob(blob)).toMatch(/^[a-f0-9]{64}$/);
+    expect(await sha3Blob(blob)).not.toBe(await sha256Blob(blob));
   });
 
   test('client FormData sets multipart without manual Content-Type', () => {

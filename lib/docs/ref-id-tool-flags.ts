@@ -1401,14 +1401,11 @@ export const SECRETS_MIGRATE_ALLOWED_LONG = ['dry-run'] as const;
 
 /** § — ci:core (`scripts/ci-core.ts`) — auto team plan */
 export const CI_CORE_ALLOWED_LONG = [
+  ...CI_HARNESS_ALLOWED_LONG,
   'check',
   'no-history',
   'no-write',
   'output',
-  'quiet',
-  'smart',
-  'strict',
-  'verbose',
 ] as const;
 
 /** § — build:defines (`scripts/build-with-defines.ts`) — auto team plan */

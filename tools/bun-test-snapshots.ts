@@ -13,7 +13,6 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  *   bun tools/bun-test-snapshots.ts --list
  *   bun tools/bun-test-snapshots.ts --check
  *   bun tools/bun-test-snapshots.ts --test                # check + run catalog suites
- *   bun tools/bun-test-snapshots.ts --update              # all catalog suites, file-scoped
  *   bun tools/bun-test-snapshots.ts --update --id capability-map
  *   bun tools/bun-test-snapshots.ts --prune-orphans       # delete uncatalogued .snap files
  *   bun tools/bun-test-snapshots.ts --prune-orphans --dry-run
@@ -43,8 +42,8 @@ function usage(): void {
   --list                 Catalog of bun:test snapshot suites (SSOT)
   --check                Orphan / missing / header / entry-count gate
   --test                 Check, then run every catalogued snapshot suite
-  --update               File-scoped bun test … -u
-  --id <suite>           Limit --test / --update (capability-map · vault-health · …)
+  --update --id <suite>  Update one reviewed suite with file-scoped bun test … -u
+  --id <suite>           Limit --test, and required for --update
   --prune-orphans        Delete uncatalogued tests/__snapshots__/*.snap
   --dry-run              With --prune-orphans: print only
   --json                 Machine JSON for --check / --list
@@ -98,7 +97,9 @@ async function main(): Promise<void> {
       ];
       for (const s of TEST_SNAPSHOT_SUITES) {
         body.push(`${padDisplay(cliTone.accent(s.id), idW + 2)} ${s.testRel}`);
-        body.push(`${''.padStart(idW + 2)} ${cliTone.dim(s.snapRel)}`);
+        body.push(
+          `${''.padStart(idW + 2)} ${cliTone.dim(`${s.snapRel} · ${s.invariantClass} · ${s.acceptance}`)}`
+        );
         if (s.cli || s.updateScript) {
           body.push(
             `${''.padStart(idW + 2)} ${cliTone.dim(`update · ${s.cli ?? `bun run ${s.updateScript}`}`)}`
@@ -179,6 +180,12 @@ async function main(): Promise<void> {
   }
 
   if (update) {
+    if (!idArg) {
+      console.error(
+        `--update requires --id; review one suite at a time (${TEST_SNAPSHOT_SUITES.map(s => s.id).join(', ')})`
+      );
+      process.exit(1);
+    }
     const suites = selectedSuites();
     const args = bunTestArgsForSuites(suites, true);
     console.log(`  → bun ${args.join(' ')}`);

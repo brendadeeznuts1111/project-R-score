@@ -47,7 +47,7 @@ Fuse code search relevance from `search-smart` with domain-health telemetry for 
     - `cookies/<domain>/secure_domain_ctx`
     - `cookies/<domain>/secure_subdomain_state`
     - `cookies/<domain>/latest_payload`
-  - To emit the new payload shape during session ops, use `/Users/nolarose/Projects/scripts/lib/cookie-telemetry.ts` (`storeCookieTelemetry`).
+  - To emit the new payload shape during session ops, use [`scripts/lib/cookie-telemetry.ts`](../../scripts/lib/cookie-telemetry.ts) (`storeCookieTelemetry`).
 - Unexpected fusion ordering:
   - Lower `--fusion-weight` to reduce domain influence.
 

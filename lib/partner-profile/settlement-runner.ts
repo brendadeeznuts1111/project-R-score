@@ -36,6 +36,33 @@ import { PARTNER_CODE_RE } from './schema';
 
 export const SETTLEMENT_CRON_SCHEDULE = '0 0 * * 0'; // Sunday midnight UTC
 
+export type SettlementAmounts = {
+  gross: number;
+  commissionPct: number;
+  commission: number;
+  adjustment: number;
+  net: number;
+};
+
+/** Pure settlement algebra; persistence and policy status remain outside it. */
+export function calculateSettlementAmounts(
+  gross: number,
+  commissionPct: number
+): SettlementAmounts {
+  if (!Number.isFinite(gross)) throw new TypeError('settlement gross must be finite');
+  if (!Number.isFinite(commissionPct) || commissionPct <= 0) {
+    throw new TypeError('settlement commissionPct must be finite and greater than zero');
+  }
+  const commission = (gross * commissionPct) / 100;
+  return {
+    gross,
+    commissionPct,
+    commission,
+    adjustment: -commission,
+    net: gross - commission,
+  };
+}
+
 /** Monday 00:00 UTC of the current ISO week. */
 export function startOfWeek(now = new Date()): Date {
   const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
@@ -123,15 +150,16 @@ export async function runSettlementForPartner(
 
     const reference = `period-${input.periodStart.toISOString().slice(0, 10)}`;
     const periodEntries = listLedgerEntriesSince(db, code, input.periodStart).filter(
-      e => e.type === 'settlement' && !(e.reference ?? '').startsWith('period-')
+      e =>
+        e.createdAt <= periodEnd.toISOString() &&
+        e.type === 'settlement' &&
+        !(e.reference ?? '').startsWith('period-')
     );
     const gross = periodEntries.reduce((sum, e) => sum + e.amount, 0);
+    const amounts = calculateSettlementAmounts(gross, commissionPct);
 
     if (input.dryRun) {
-      const commission = (gross * commissionPct) / 100;
-      const net = gross - commission;
-      const adjustment = -commission;
-      const balanceAfter = ledgerBalance(db, code) + adjustment;
+      const balanceAfter = ledgerBalance(db, code) + amounts.adjustment;
       const thresholdBalance =
         (Number(balance.initialCapitalRequirement ?? 0) || 0) *
         (Number(balance.marginCallThreshold ?? 0) || 0);
@@ -146,8 +174,8 @@ export async function runSettlementForPartner(
         periodStart: input.periodStart.toISOString().slice(0, 10),
         gross,
         commissionPct,
-        commission,
-        net,
+        commission: amounts.commission,
+        net: amounts.net,
         ...(fundStatus ? { fundStatus } : {}),
         row: null,
         skipped: gross === 0 || ledgerEntryExists(db, code, reference),
@@ -172,26 +200,23 @@ export async function runSettlementForPartner(
         periodStart: input.periodStart.toISOString().slice(0, 10),
         gross,
         commissionPct,
-        commission: (gross * commissionPct) / 100,
-        net: gross - (gross * commissionPct) / 100,
+        commission: amounts.commission,
+        net: amounts.net,
         row: null,
         skipped: true,
       };
     }
 
-    const commission = (gross * commissionPct) / 100;
-    const adjustment = -commission;
-    const net = gross - commission;
     let row: PartnerLedgerRow;
     try {
       row = insertLedgerEntry(db, {
         partnerCode: code,
         type: 'settlement',
-        amount: adjustment,
+        amount: amounts.adjustment,
         currency: String(settlement.currency ?? 'USD'),
         reference,
         trackingId: `weekly-${input.periodStart.toISOString().slice(0, 10)}`,
-        description: `Weekly settlement (gross ${gross}, commission ${commission}, net ${net})`,
+        description: `Weekly settlement (gross ${gross}, commission ${amounts.commission}, net ${amounts.net})`,
       });
     } catch (e) {
       // A concurrent run won the period reference race.
@@ -201,8 +226,8 @@ export async function runSettlementForPartner(
           periodStart: input.periodStart.toISOString().slice(0, 10),
           gross,
           commissionPct,
-          commission,
-          net,
+          commission: amounts.commission,
+          net: amounts.net,
           row: null,
           skipped: true,
         };
@@ -226,8 +251,8 @@ export async function runSettlementForPartner(
       periodStart: input.periodStart.toISOString().slice(0, 10),
       gross,
       commissionPct,
-      commission,
-      net,
+      commission: amounts.commission,
+      net: amounts.net,
       ...(fundStatus ? { fundStatus } : {}),
       row,
       skipped: false,

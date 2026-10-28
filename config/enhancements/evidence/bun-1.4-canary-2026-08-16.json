@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-08-16",
+  "stable": {
+    "version": "1.3.14",
+    "revision": "0d9b296af",
+    "rootOwnedTests": {
+      "files": 678,
+      "passed": 5059,
+      "skipped": 26,
+      "todo": 1,
+      "failed": 24,
+      "panicked": false
+    }
+  },
+  "candidate": {
+    "version": "1.4.0-canary.1",
+    "revision": "8326d1bd3",
+    "rootOwnedTests": {
+      "files": 678,
+      "passed": 5043,
+      "skipped": 32,
+      "todo": 2,
+      "failed": 33,
+      "panicked": false
+    }
+  },
+  "comparison": {
+    "sharedFailures": 23,
+    "deterministicCandidateDeltas": 8,
+    "candidateDeltaAreas": [
+      "XML and data-format availability expectations",
+      "baked data-format runtime provenance",
+      "temporary-runtime subprocess resolution",
+      "stable-channel rejection",
+      "partner provenance snapshot"
+    ]
+  },
+  "nestedCrash": {
+    "candidateRegression": false,
+    "stableExitCode": 133,
+    "candidateExitCode": 139,
+    "trigger": "Two tests dynamically import malformed nested-project TypeScript together",
+    "source": "projects/active/development/kal-poly-bot/surgical-precision-mcp/history-cli-manager.ts:76"
+  },
+  "verdict": "no-go",
+  "reasons": [
+    "The stable baseline has 23 shared failures",
+    "Eight deterministic candidate compatibility deltas remain",
+    "Temporary-runtime subprocess and provenance isolation is incomplete",
+    "The bare tests pattern crosses into nested projects"
+  ]
+}

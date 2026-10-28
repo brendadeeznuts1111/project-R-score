@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/data-format-lab.schema.json",
+  "title": "Project R data-format lab",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["$schema", "schemaVersion", "mode", "surface", "security", "formats"],
+  "properties": {
+    "$schema": { "const": "./schemas/data-format-lab.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "mode": { "enum": ["off", "preview", "enabled"] },
+    "surface": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "access", "execution"],
+      "properties": {
+        "path": { "const": "/portal/labs/data-formats/" },
+        "access": { "const": "cloudflare-access" },
+        "execution": { "const": "build-time-static" }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxFixtureBytes", "maxOutputBytes", "externalEntities", "rendering"],
+      "properties": {
+        "maxFixtureBytes": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+        "maxOutputBytes": { "type": "integer", "minimum": 1, "maximum": 1048576 },
+        "externalEntities": { "const": "forbidden" },
+        "rendering": { "const": "text-only" }
+      }
+    },
+    "formats": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "api", "minimumBunVersion", "requiredOperations", "fixture", "negativeFixture"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "label": { "type": "string", "minLength": 1 },
+          "api": { "type": "string", "pattern": "^(JSON|Bun\\.[A-Za-z0-9]+)$" },
+          "minimumBunVersion": {
+            "oneOf": [{ "type": "null" }, { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" }]
+          },
+          "requiredOperations": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "enum": ["parse", "parseChunk", "stringify"] }
+          },
+          "fixture": { "type": "string", "minLength": 1 },
+          "negativeFixture": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

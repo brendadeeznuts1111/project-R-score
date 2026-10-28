@@ -338,7 +338,7 @@ def require_binary(*, require_outline: bool = False) -> Path:
     err("")
     err("Install via one of:")
     err(f"  bash {skill_root()}/scripts/install.sh    # skill pin (0.44)")
-    err("  npm install -g @ast-grep/cli@0.44.0         # global")
+    err("  bun add --global @ast-grep/cli@0.44.0       # global")
     err("")
     err("Or manually:")
     err("  brew install ast-grep                      # may be <0.44 (no outline)")
@@ -4295,7 +4295,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
                 print("  installed skill pin via scripts/install.sh")
                 issues = [i for i in issues if i not in ("skill-pin", "outline", "binary", "binary-version")]
             if getattr(args, "global_fix", False) and "outline" in issues:
-                err("global install not attempted; use: npm install -g @ast-grep/cli@0.44.0 --force")
+                err("global install not attempted; use: bun add --global @ast-grep/cli@0.44.0 --force")
         else:
             print()
             print("No environment fixes needed.")
@@ -4306,7 +4306,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         if "outline" in issues or "binary" in issues or "skill-pin" in issues:
             print(f"  python3 {Path(__file__).name} doctor --fix")
             print(f"  bash {skill_root()}/scripts/install.sh")
-            print("  npm install -g @ast-grep/cli@0.44.0 --force")
+            print("  bun add --global @ast-grep/cli@0.44.0 --force")
         return 1
     return 0
 

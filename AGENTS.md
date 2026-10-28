@@ -1,8 +1,16 @@
 # AGENTS.md
 
 AI agent entrypoint for the FactoryWager monorepo (`~/Projects`). Keep this file
-to always-loaded policy. Load domain detail just in time from
-[`docs/AGENTS.md`](docs/AGENTS.md), the repository routing table.
+to invariants that must always be loaded. For unfamiliar work, start with the
+repository's executable discovery path:
+
+```bash
+bun run ai -- discover "<task>" --path <target>
+```
+
+Its output is an index, not authority: inspect the returned source and the
+owning command's `--help` before acting. [`docs/AGENTS.md`](docs/AGENTS.md) is a
+searchable fallback routing corpus, not a required sequential read.
 
 Project R's portable agent-alignment contract is
 `config/project-r-agent-contract.json`. `bun run agents:contract:check`
@@ -28,19 +36,15 @@ machine to compare complete packages under `~/.codex/skills`.
 
 ## Canonical entrypoints
 
-| Concern                            | Owner                                                                                                                                                   |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Human and documentation navigation | [`README.md`](/) · [`wiki-index.md`](wiki-index.md)                                                                                                     |
-| Agent task routing                 | [`docs/AGENTS.md`](docs/AGENTS.md)                                                                                                                      |
-| Harness authority and merge proof  | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci`                                                                             |
-| Harness just-in-time guide         | [`docs/harness/README.md`](docs/harness/)                                                                                                               |
-| Paths and repository structure     | `lib/docs/repo-docs.ts` · [`STRUCTURE.md`](STRUCTURE.md)                                                                                                |
-| Coding and domain standards        | `.custom-instructions.md`                                                                                                                               |
-| Install and Bun configuration      | [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                                    |
-| Wire boundary                      | [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)                                                                                                        |
-| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md)                                                                                          |
-| Bun API documentation workflow     | [`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md)                                                                                                  |
-| Markdown contract                  | [`docs/markdown/API_REFERENCE.md`](docs/markdown/API_REFERENCE.md) · [`docs/markdown/CONTRIBUTING_MARKDOWN.md`](docs/markdown/CONTRIBUTING_MARKDOWN.md) |
+| Concern                            | Owner                                                                                                                       |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Task and tool discovery            | `bun run ai -- discover "<task>" --path <target>`                                                                           |
+| Executable command inventory       | `bun run help` · `package.json`                                                                                             |
+| Harness authority and merge proof  | [`docs/harness/AUTHORITY.md`](docs/harness/AUTHORITY.md) · `bun run bun:ci`                                                 |
+| Human navigation                   | [`README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/README.md) · [`wiki-index.md`](wiki-index.md) |
+| Fallback domain routing            | [`docs/AGENTS.md`](docs/AGENTS.md)                                                                                          |
+| Agent-path design                  | [`docs/design/ai-native-agent-path.md`](docs/design/ai-native-agent-path.md)                                                |
+| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](docs/DOMAIN_CONCEPT_SHAPE.md)                                                              |
 
 ## Communication precision
 
@@ -54,24 +58,16 @@ brands after the boundary.
 
 ## Branded IDs are mandatory (agents)
 
-Do not declare domain IDs as bare `string`. Use the brand and its approved
-constructor from `lib/types/branded.ts` and `lib/types/branded/README.md`. An
-intentionally opaque primary key requires `// brand-ok` on that line; an empty
-cast such as `'' as AccountId` is never valid.
-
-```bash
-bun tools/brand-catalog.ts SessionId
-bun run check:brands
-bun tools/branded-id-check.ts --staged --strict
-```
+Domain IDs use the approved brand and constructor; intentionally opaque primary
+keys require `// brand-ok`, and empty casts are invalid. Source rules and proof
+live in
+[`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md#domain-values-and-brands).
 
 ### Wire boundary (parse once)
 
-Parse external `unknown` values once at an allowlisted boundary. Interior code
-receives trusted domain types and must not re-decode them. The complete path and
-name policy is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md); ESLint enforces
-`harness/no-decode-unknown-outside-boundary` and
-`harness/no-unknown-function-param`.
+Parse external `unknown` values once at an allowlisted boundary; interior code
+receives trusted domain types. [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md)
+owns paths, names, suppressions, and enforcement.
 
 ## Operating rules
 
@@ -95,8 +91,9 @@ name policy is [`docs/WIRE_BOUNDARY.md`](docs/WIRE_BOUNDARY.md); ESLint enforces
 - **Use Bun's test lanes.** Development uses `bun run test:watch`; pre-commit
   uses staged gates; push and merge proof use the full suites. Do not replace
   this with `bun-git-hooks` or invent Node-only flags such as `--runInBand`.
-- **Deliver through a PR.** Close a verified batch with a conventional commit
-  and push. `main` is squash-only and branch-protected. Start PR bodies from
+- **Deliver through a PR when requested.** When the user requests delivery,
+  close a verified batch with a conventional commit and push. `main` is
+  squash-only and branch-protected. Start PR bodies from
   [`.github/pull_request_template.md`](.github/pull_request_template.md), keep
   every required heading, and run `bun run bun:ci` before merge. Hosted GitHub
   Actions are not merge authority.
@@ -112,62 +109,65 @@ Detailed task commands and owners live only in
 `.agents/skills/references/agent-tooling.md`; skills should link there instead
 of copying the loop.
 
+## Friction feedback
+
+When a repository tool or route causes the same avoidable failure, record the
+stable tool and failure code without credentials or raw logs:
+
+```bash
+bun run ai -- friction record --tool <entrypoint> --code <stable-code> --path <target>
+bun run ai -- friction report
+```
+
+Three matching observations are a promotion signal, not an automatic edit. Fix
+the owning tool, route, or contract; then record the durable owner and
+prevention in `config/ai-friction.json`. Do not add a rule or skill when an
+executable default, clearer error, or discoverable command removes the friction.
+
 ## Machine Bun policy (summary)
 
-Machine defaults: `~/.bunfig.toml`; repository overrides: `./bunfig.toml`.
-[`docs/UNIFIED.md`](docs/UNIFIED.md) owns the full table. Verify with
-`bun run install:verify` and `bun run portal:doctor --group bunfig`.
+[`docs/UNIFIED.md`](docs/UNIFIED.md) owns machine and repository Bun
+configuration plus its proof commands.
 
 ## Portal doctor + bunfig control plane
 
-Run `bun run portal:doctor`; see
+See
 [`docs/harness/tenants/portal-doctor.md`](docs/harness/tenants/portal-doctor.md).
 
 ## Bun API references (required for agents)
 
-Before using an unfamiliar `Bun.*` API, run
-`bun tools/bun-doc-refs.ts suggest "<api>"` and use its canonical `@see` URL.
-For release claims, run `bun tools/bun-doc-refs.ts history <api> --json` and
-`bun run docs:provenance:check`. Every event needs the exact official version,
-publication timestamp, and Bun post URL. Preserve `release-unknown` when dated
-official evidence is absent.
+[`docs/BUN_DOCS_OPERATE.md`](docs/BUN_DOCS_OPERATE.md) owns unfamiliar API
+lookup, canonical `@see` links, release-history evidence, and provenance proof.
 
 ## Branded ID types (harness)
 
-See [Branded IDs](#branded-ids-are-mandatory-agents) and the `branded-ids` skill
-at `.agents/skills/branded-ids/SKILL.md`.
+See [Branded IDs](#branded-ids-are-mandatory-agents) and the routed
+`branded-ids` skill.
 
 ## `bun create` (templating / scaffold)
 
-The repository template is `.bun-create/factory-library`; use
-`bun run factory:create` and `bun run factory:templates`. Ownership and flags:
+Ownership, supported inputs, and proof are in
 [`docs/design/bun-create-alignment.md`](docs/design/bun-create-alignment.md).
-Upstream: [templating/create](https://bun.com/docs/runtime/templating/create) ·
-[empty project init](https://bun.com/docs/runtime/templating/init).
 
 ## `bun publish` and Factory artifacts
 
-Native package release and Factory archive publication are separate routes. Use
-`bun publish --dry-run` for the native route; use `bun pm pack` then
-`bun run factory:publish -- <archive>` for Factory. Ownership and lifecycle:
-[`docs/design/bun-publish-alignment.md`](docs/design/bun-publish-alignment.md).
+Native package release and Factory archive publication are separate routes;
+[`docs/design/bun-publish-alignment.md`](docs/design/bun-publish-alignment.md)
+owns their commands and lifecycle.
 
 ## Unknown long options (`BUN_STRIP_UNKNOWN`)
 
-`lib/docs/ref-id-tool-flags.ts` owns allowed long flags. Unknown flags fail by
-default; `BUN_STRIP_UNKNOWN=true` is a local prototype escape. Prove the
-registry with `bun run cli:flags:check`.
+[`docs/harness/cli-constants-flags.md`](docs/harness/cli-constants-flags.md)
+owns the fail-closed registry and the explicit local prototype escape.
 
 ## Console depth (output verbosity)
 
-The default is `bunfig.toml [console] depth = 6`. Use the `lib/console/` domain
-for human and machine output. Runtime flags precede `run`:
-`bun --console-depth=N run -`. Verify with `bun run check:console-format` and
-benchmark with `bun run bench:console-depth`.
+Use the `lib/console/` domain for human and machine output. The full source
+contract and proof live in
+[`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md#console-output).
 
 ## Grounded capability map
 
 [`docs/harness/capability-map.md`](docs/harness/capability-map.md#grounded-capability-map)
-is the Bun and platform capability source of truth. Refresh it with
-`bun run bake:capabilities`. Bun test flag and Inspector reporter ownership is
-routed from [`docs/AGENTS.md`](docs/AGENTS.md).
+is the Bun and platform capability source of truth. Refresh and task ownership
+are routed from [`docs/AGENTS.md`](docs/AGENTS.md).

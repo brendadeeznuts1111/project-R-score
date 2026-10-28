@@ -7,6 +7,8 @@ description: Create and review Cloudflare Durable Objects. Use when building sta
 
 Build stateful, coordinated applications on Cloudflare's edge using Durable Objects.
 
+Upstream npm/npx examples are compatibility references. In a Bun-owned repository, use the owning repository's scripts and package manager; translate ordinary execution to `bun x` and dependency changes to `bun add` unless the target tool explicitly requires npm compatibility.
+
 ## Retrieval Sources
 
 Your knowledge of Durable Objects APIs and configuration may be outdated. **Prefer retrieval over pre-training** for any Durable Objects task.

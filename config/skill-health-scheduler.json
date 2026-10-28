@@ -1,0 +1,57 @@
+{
+  "$schema": "./schemas/skill-health-scheduler.schema.json",
+  "schemaVersion": 1,
+  "minimumBunVersion": "1.3.12",
+  "timezone": "UTC",
+  "statePath": ".cache/project-r/skill-health-state.json",
+  "lockPath": ".cache/project-r/skill-health.lock",
+  "lockStaleMs": 1500000,
+  "jobs": [
+    {
+      "id": "skill-quick-lint",
+      "enabled": true,
+      "trigger": {
+        "kind": "watch",
+        "paths": [".agents/skills"],
+        "debounceMs": 75
+      },
+      "command": ["bun", "run", "skills:validate"],
+      "timeoutMs": 30000,
+      "terminateGraceMs": 1000,
+      "retries": 0,
+      "retryOn": [],
+      "retryBackoffMs": 0,
+      "outputLimitBytes": 262144
+    },
+    {
+      "id": "skill-deep-score",
+      "enabled": true,
+      "trigger": {
+        "kind": "cron",
+        "schedule": "0 */6 * * *"
+      },
+      "command": ["bun", "run", "skills:rate", "--", "--dynamic", "--json"],
+      "timeoutMs": 600000,
+      "terminateGraceMs": 5000,
+      "retries": 1,
+      "retryOn": ["spawn-error", "timeout"],
+      "retryBackoffMs": 5000,
+      "outputLimitBytes": 1048576
+    },
+    {
+      "id": "bun-runtime-freshness",
+      "enabled": true,
+      "trigger": {
+        "kind": "cron",
+        "schedule": "0 2 * * *"
+      },
+      "command": ["bun", "run", "bun:channel:check"],
+      "timeoutMs": 120000,
+      "terminateGraceMs": 5000,
+      "retries": 2,
+      "retryOn": ["exit", "spawn-error", "timeout"],
+      "retryBackoffMs": 5000,
+      "outputLimitBytes": 1048576
+    }
+  ]
+}

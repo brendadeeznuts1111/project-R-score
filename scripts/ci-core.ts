@@ -45,9 +45,27 @@ const CORE_STEPS: CoreStep[] = [
     cmd: ['bun', 'run', 'skills:validate'],
   },
   {
+    name: 'agent-skill-rating',
+    cmd: ['bun', 'run', 'skills:rate'],
+  },
+  {
+    name: 'managed-process',
+    cmd: ['bun', 'test', 'tests/managed-process.test.ts', 'tests/skill-health-scheduler.test.ts'],
+  },
+  {
     name: 'agent-contract',
     cmd: ['bun', 'run', 'agents:contract:check'],
   },
+  {
+    name: 'agent-guidance',
+    cmd: ['bun', 'run', 'agents:guidance:check'],
+  },
+  {
+    name: 'ai-path',
+    cmd: ['bun', 'test', 'tests/ai-path.test.ts'],
+  },
+  { name: 'data-format-lab', cmd: ['bun', 'run', 'data-formats:check'] },
+  { name: 'enhancements', cmd: ['bun', 'run', 'enhancements', '--', 'check'] },
   {
     name: 'native-docs',
     cmd: ['bun', 'run', 'docs:native:check'],

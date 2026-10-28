@@ -30,6 +30,8 @@ export const HARNESS_COVERAGE_PROBE = [
   'tests/harness-coverage-probe.test.ts',
   'tests/spine-tenants.test.ts',
   'tests/harness-cron-contract.test.ts',
+  'tests/managed-process.test.ts',
+  'tests/skill-health-scheduler.test.ts',
   // Keeps proof.ts catalog + ProofPathView above the line floor when claims grow.
   'tests/harness-fresh-rerun-contract.test.ts',
 ] as const;

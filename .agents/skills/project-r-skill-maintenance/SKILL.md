@@ -12,24 +12,53 @@ description: >
 
 1. Update an existing repository skill when it owns the request; create a new
    skill only when no current owner fits.
-2. Treat `/Users/nolarose/Projects/.agents/skills` as Project R authority.
-   Compare any `/Users/nolarose/.codex/skills` copy, but synchronize it only
-   after the repository version validates. Treat `~/.codex/AGENTS.md` as
-   optional machine routing, not the Project R SSOT: it must not copy generated
-   release data or override repository policy.
+2. Treat `.agents/skills` in the owning Project R checkout as authority. Compare
+   any `~/.codex/skills` copy, but synchronize it only after the repository
+   version validates. Treat `~/.codex/AGENTS.md` as optional machine routing,
+   not the Project R SSOT: it must not copy generated release data or override
+   repository policy.
 3. Keep frontmatter to supported keys and make `description` state capability
    plus trigger. Put runnable detail in the body or a focused reference.
 4. Keep the body operational: start condition, ownership boundary, ordered
    workflow, proof, and guardrails. Remove repeated background prose and stale
-   examples.
+   examples. A skill is a focused trigger and decision boundary, not a generic
+   controller. Name at most three primary executable entrypoints and link to
+   shared authority instead of copying command catalogs or orchestration loops.
 5. Align `agents/openai.yaml` with a short display name, one-line description,
    and action-oriented default prompt.
-6. Register a new skill in `.agents/skills/ast-grep/skill-loop-registry.json`
-   with enabled `doctor` and `rate` phases. Add `precommit` only when the skill
-   owns that command.
+6. Record every active, deprecated, vendored, forked, and retired package in
+   `.agents/skills/references/skill-governance.json`. Register a skill in
+   `.agents/skills/ast-grep/skill-loop-registry.json` only when it owns a real
+   executable phase; directory existence plus a computed rating is not proof.
+   For every external package, pin the checked upstream revision and paths,
+   verification date, and whether the local package is exact or adapted. Run the
+   bounded remote provenance check when an external skill changes; do not put
+   that network check in ordinary CI.
 7. Run installed parity only on the operator machine. The repository contract
    remains portable; `--installed` compares every package file and rejects
    missing, changed, or stale files under `~/.codex/skills`.
+8. Run `bun run skills:rate` for Bun-first static compliance findings and
+   `bun run skills:rate:dynamic` for bounded live evidence. Never call a static
+   compliance value a quality score or credit portfolio proof to an individual
+   skill. The evidence registry is `config/skill-rating-evidence.json`; every
+   runtime or contract proof must name its owning active skills. The scoring
+   model, rules, and contextual exceptions live in
+   `.agents/skills/references/bun-skill-rating.md`; do not turn a Node
+   compatibility import into a penalty when no equivalent Bun API exists.
+9. When the rating scheduler or its manifest changes, run
+   `bun run skills:schedule:check` and the managed-process/skill-health tests.
+   The spine daemon owns production in-process scheduling; do not register an
+   additional OS job or run the standalone scheduler beside the spine.
+10. When a skill changes XML, JSON5, JSONL, or other structured-data guidance,
+    run `bun run data-formats:check`. Describe only operations proved by the
+    active runtime and manifest; a namespace name or current docs page is not
+    sufficient evidence. Update the ops skill's focused structured-data runbook
+    and behavioral tests together when failure or promotion semantics change.
+11. When skill use repeatedly requires manual searching, a hidden prerequisite,
+    or the same workaround, record the stable failure with
+    `bun run ai -- friction record`. Promote repeated observations by fixing the
+    owning tool, route, or error contract; add skill prose only when judgment is
+    the missing capability.
 
 ## Thread-portfolio boundary
 
@@ -56,7 +85,18 @@ clarity but must not be added to that catalog.
 - Preserve fail-closed validation for committed feeds, catalogs, overlays, and
   scrape state. Recovery is an explicit artifact repair or documented forced
   rebuild, not a silent default or synthesized metadata.
+- Keep structured-data guidance operation-specific. JSON5 owns `parse` and
+  `stringify`; JSONL owns complete-input `parse` plus streaming `parseChunk` and
+  has no stringify contract. JSONL negative proof must accept both thrown
+  complete-input errors and the structured `parseChunk().error` result.
+- Gate `Bun.XML` on Bun 1.4 or later and actual `parse`/`stringify`
+  availability. Below that gate, a justified third-party parser is valid; never
+  present a future native API as executable on the pinned runtime. Where a skill
+  records performance, preserve raw `durationNs` from `Bun.nanoseconds()` and
+  derive `durationMs = durationNs / 1_000_000` only for display.
 - Repository scripts and the owning command map outrank copied command snippets.
+- Let `bun run ai -- discover` find candidate skills and tools. It does not
+  replace their source, grant authorization, or prove capability.
 - Keep shell examples executable. `bun run <name>` must resolve in the package
   selected by the example's explicit `cd`; cross-skill paths must start at
   `.agents/skills/`.
@@ -66,6 +106,10 @@ clarity but must not be added to that catalog.
   standalone nested product with its own explicit pin.
 - Link shared staged-gate or loop behavior through
   [`agent-tooling.md`](../references/agent-tooling.md) instead of copying it.
+- Deprecate before deleting: name the replacement and reason in the governance
+  manifest, migrate direct consumers, remove the loop entry, then retire the
+  package. Preserve a fork until its repository-specific behavior has an owned
+  destination.
 
 ## Proof
 
@@ -73,6 +117,11 @@ Run:
 
 ```bash
 bun run skills:validate
+bun run skills:provenance:check
+bun run skills:rate
+bun run skills:rate:dynamic
+bun run skills:schedule:check
+bun run data-formats:check
 bun run agents:contract:check
 bun run agents:contract:check -- --installed
 ```
@@ -81,6 +130,7 @@ When validation or hook behavior changes, also run:
 
 ```bash
 bun test tests/agent-skills-validation.test.ts tests/pre-commit-runner.test.ts
+bun test tests/managed-process.test.ts tests/skill-health-scheduler.test.ts
 ```
 
 Report the authoritative files changed, wording or behavior removed, focused

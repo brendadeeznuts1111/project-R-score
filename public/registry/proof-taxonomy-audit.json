@@ -1,7 +1,7 @@
 {
   "type": "ProofTaxonomyAuditReport",
   "version": "1.0.0",
-  "timestamp": "2026-08-04T01:11:18.484Z",
+  "timestamp": "2026-08-16T23:47:06.500Z",
   "ok": true,
   "reportPath": "/registry/proof-taxonomy-audit.json",
   "audits": [
@@ -128,7 +128,7 @@
     {
       "path": "public/registry/cloudflare-token-scope-proof.json",
       "ok": true,
-      "rows": 5,
+      "rows": 4,
       "missingSubsystem": 0,
       "missingIntroducedIn": 0,
       "missingCanonicalKind": 0,
@@ -140,7 +140,7 @@
     {
       "path": "public/.well-known/mcp.json",
       "ok": true,
-      "rows": 5,
+      "rows": 4,
       "missingSubsystem": 0,
       "missingIntroducedIn": 0,
       "missingCanonicalKind": 0,
@@ -264,5 +264,5 @@
       "notes": []
     }
   ],
-  "proofHash": "7b76ff135ae9681da1fab0aebce4d0b488a44717f52208a78ffa8f8beb95e316"
+  "proofHash": "3fc716c7bd466df959fa65f2f413a1e3cc2ed5bf8e4801ed70e90b27d5fc21ce"
 }

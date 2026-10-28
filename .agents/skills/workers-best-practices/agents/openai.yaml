@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workers Best Practices"
+  short_description: "Review Cloudflare Workers with current evidence"
+  default_prompt: "Use $workers-best-practices to retrieve current Cloudflare guidance and installed types, review the complete Worker and configuration for production risks, and report evidence-backed fixes with focused validation."

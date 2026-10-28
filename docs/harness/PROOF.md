@@ -237,7 +237,7 @@ Markdown here is only a pointer. Enforcement is lint (**error**),
   `/registry/` refs and portal anti-patterns before deploy (`unit` + `boundary`)
   _Ratchet_ → `bun run public:audit:verify` ·
   [`tenants/public-plane.md`](tenants/public-plane.md) · skills
-  `public-discovery` · `public-audit-gap-close`
+  `reference-discovery` public mode · `audit-gap-close`
 - **`reference-discovery-v1`** — Harness perimeter reference discovery catches
   plane mismatch and stale naming in lib/tools/docs (`unit` + `boundary`)
   _Ratchet_ → `bun run discover:compose:check` ·

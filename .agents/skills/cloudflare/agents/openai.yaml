@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare Platform"
+  short_description: "Route Cloudflare work to current product guidance"
+  default_prompt: "Use $cloudflare to identify the exact Cloudflare product and runtime, retrieve current official behavior, load only the focused references needed, and apply the owning repository's package, shell, secret, and deployment boundaries."

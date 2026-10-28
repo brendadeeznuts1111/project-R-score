@@ -20,7 +20,7 @@ free-text URLs, and credentials split between intake JSON and the vault.
 | Partners-ops         | `lib/telegram/partner-ops-registry.ts`                                                      | CODE, call-sign, phase, telegram chat+topics, rail taxonomy, ledger                      |
 | Seat intake          | `lib/telegram/seat-intake.ts`                                                               | password (secret), balance, withdrawPath, desk thread                                    |
 | Account dossier      | `/portal/account/`                                                                          | pure join view (no own fields)                                                           |
-| Sports Terminal      | `.agents/skills/partner-profile-os/` · `projects/active/sports-terminal-os/profiles/*.toml` | jurisdiction, sources, cultivation, settlement, balance, compliance, graduated lifecycle |
+| Sports Terminal      | `projects/active/sports-terminal-os/AGENTS.md` · `projects/active/sports-terminal-os/profiles/*.toml` | jurisdiction, sources, cultivation, settlement, balance, compliance, graduated lifecycle |
 | Vault / limit-raises | `lib/security/partner-vault.ts` · `/registry/limit-raises.json`                             | node-scoped AES-GCM secrets; raise history + multi-factor scores                         |
 
 ## Unified model (v0)

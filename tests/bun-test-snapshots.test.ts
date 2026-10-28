@@ -27,6 +27,11 @@ describe('test-snapshots SSOT', () => {
     expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'capability-map')).toBe(true);
     expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'partner-cli')).toBe(true);
     expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'vault-health')).toBe(true);
+    expect(TEST_SNAPSHOT_SUITES.some(s => s.id === 'focused-coverage')).toBe(true);
+    for (const suite of TEST_SNAPSHOT_SUITES) {
+      if (suite.invariantClass === 'technical') continue;
+      expect(suite.acceptance).toBe('manual-only');
+    }
   });
 
   test('parseSnapExportKeys reads Bun Snapshot v1 exports', () => {
@@ -55,6 +60,16 @@ exports[\`other 1\`] = \`"x"\`;
     const runArgs = bunTestArgsForSuites(suites, false);
     expect(runArgs).toEqual(['test', 'tests/capability-map-subset.test.ts']);
     expect(runArgs).not.toContain('-u');
+  });
+
+  test('snapshot updater requires one explicit catalog id', () => {
+    const proc = Bun.spawnSync(['bun', 'tools/bun-test-snapshots.ts', '--update'], {
+      cwd: ROOT,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    expect(proc.exitCode).not.toBe(0);
+    expect(proc.stderr.toString()).toContain('--update requires --id');
   });
 
   test('countMatchSnapshotCalls counts matchers', () => {

@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/bun-enhancement-registry.schema.json",
+  "title": "Project R Bun enhancement registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "items"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "string", "format": "date" },
+    "items": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/item" }
+    }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "status",
+        "featureFlag",
+        "minimumBunVersion",
+        "bunVersionRange",
+        "introducedIn",
+        "docs",
+        "intro",
+        "release",
+        "replaces",
+        "target",
+        "evidence",
+        "promotionCriteria"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "guarded-feature",
+            "runtime-capability",
+            "cli-capability",
+            "compatibility-lane"
+          ]
+        },
+        "status": {
+          "enum": [
+            "proposed",
+            "experimental",
+            "beta",
+            "stable",
+            "deprecated",
+            "removed"
+          ]
+        },
+        "featureFlag": {
+          "type": ["string", "null"],
+          "pattern": "^[A-Z][A-Z0-9_]+$"
+        },
+        "minimumBunVersion": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "bunVersionRange": { "type": ["string", "null"] },
+        "introducedIn": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "docs": { "type": "string", "pattern": "^https://bun\\.com/" },
+        "intro": {
+          "type": ["string", "null"],
+          "pattern": "^https://bun\\.com/blog/"
+        },
+        "release": {
+          "type": ["string", "null"],
+          "pattern": "^https://github\\.com/oven-sh/bun/releases/tag/"
+        },
+        "replaces": { "type": ["string", "null"] },
+        "target": { "type": "string", "minLength": 1 },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "promotionCriteria": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "minimumDays",
+                "noCriticalErrors",
+                "minimumPerformanceRatio"
+              ],
+              "properties": {
+                "minimumDays": { "type": "integer", "minimum": 0 },
+                "noCriticalErrors": { "const": true },
+                "minimumPerformanceRatio": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

@@ -89,8 +89,8 @@ bun tools/bun-doc-refs.ts integrity
 | `bun-doc-refs integrity`                   | 2026-08-04 | 12 stale links repaired · 1 claimed-lane color anchor remains                           |
 | ast-grep `anchors --zone agents --fail-on` | 2026-08-04 | pass · 4/4 source-backed anchors; Markdown-only and absent targets retired              |
 | `reference-discovery --json --skip-unused` | 2026-08-04 | 0 errors · 0 warnings                                                                   |
-| `skills:validate`                          | 2026-08-04 | pass · 34 definitions · 23 loop-registry entries · optional `bet-ticker-worker` warning |
-| `harness-skills-catalog`                   | 2026-08-04 | 34 repository skill definitions                                                         |
+| `skills:validate`                          | current | validator emits active, registered, and retired counts                                  |
+| `harness-skills-catalog`                   | current | generated from active repository skill packages                                          |
 
 ## Retirement
 

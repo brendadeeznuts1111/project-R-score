@@ -398,7 +398,7 @@ rule:
 
 ## This monorepo (Bun / sports-terminal / kimi-plugin)
 
-Verified against `/Users/nolarose/Projects`:
+Verified against the Project R repository root:
 
 ```bash
 AG=.agents/skills/ast-grep/scripts/ast_grep_helper.py

@@ -105,8 +105,8 @@ After `lib/**/*.ts`: `bun x prettier --write <files>` then re-stage.
 
 | Agent / plane | When |
 | ------------- | ---- |
-| public-discovery | Static anti-patterns under `public/` |
-| public-audit-gap-close | Close public-plane gap rows |
+| reference-discovery | Static anti-patterns and registry drift under `public/` |
+| audit-gap-close | Close public-plane gap rows with fresh proof |
 | branded-ids | Typed domain brands (not visual) |
 | web-perf | Core Web Vitals / Lighthouse |
 | `factory create` / `.bun-create/factory-library` | New **library/package** only — hand off; packages board “Copy create” is the sole portal UX touchpoint |

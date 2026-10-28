@@ -75,7 +75,7 @@ Grammar (middle-dot U+00B7):
 
 **Partner package forum topics** — identical for every partner CODE. Full plan: [partner-package-group-handshake.md § Forum topic plans](partner-package-group-handshake.md#forum-topic-plans-ssot) · code `PARTNER_PACKAGE_FORUM_TOPIC_PLAN` · `bun run telegram:handshake:catalog --json`.
 
-Factory SSOT: [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts) (house surfaces only). Package titles in Soft desk: [`toc-ops-repo` telegram-surfaces](../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts). Bind chat ids with `TELEGRAM_SURFACES` JSON (`pkg-{code}` for package forums); primary projector fallback remains `TELEGRAM_OPS_CHAT_ID`.
+Factory SSOT: [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts) (house surfaces only). Package titles in the optional Soft desk checkout are owned by `toc-ops-repo/src/central-tool/telegram-surfaces.ts`. Bind chat ids with `TELEGRAM_SURFACES` JSON (`pkg-{code}` for package forums); primary projector fallback remains `TELEGRAM_OPS_CHAT_ID`.
 
 **Outbox routing (no DM `telegramId`):** `alerts`/`dod`/`toc` → `hq` · `plays`/`identity`/`provisioning` → `ash-staging` · `experiments` → `sandbox` · else `TELEGRAM_OPS_CHAT_ID`. Directory tags `surface_slug` from title/env. Broadcast: `telegram:ops -- send --surface ash-staging --all …`. ACL: `/register` DM-only · `/deploy` needs portal admin or `OPS_ADMIN_USER_IDS`.
 

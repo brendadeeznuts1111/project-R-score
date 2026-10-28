@@ -3,7 +3,7 @@
 **Tenant** `maintain-workspace` (operator runbook — not a spine cron)  
 **Purpose** Keep project-R-score + workspace maintainable: lanes, delivery, daily/weekly pulses, Cursor automations  
 **Related** [`AUTHORITY.md`](../AUTHORITY.md) · [`day-loop.md`](../day-loop.md) · [`workspace-lane-cross-map.md`](workspace-lane-cross-map.md) · [`remaining-work.md`](remaining-work.md) · [`portal-doctor.md`](portal-doctor.md) · [`public-plane.md`](public-plane.md) · [`ops-loop-throughput.md`](ops-loop-throughput.md)  
-**Skills** `.agents/skills/project-r-ops-management/` · `.agents/skills/harness-improve/`
+**Skills** `.agents/skills/project-r-ops-management/` · `.agents/skills/audit-gap-close/`
 
 Operator map for “how do I maintain this workspace?” — diagrams + exact commands + copy-paste Cursor automation prompts.
 
@@ -174,7 +174,7 @@ bun run ops:outbox:requeue
 bun run telegram:verify
 ```
 
-VPS poller / cascade: see cascade-mover runbook (`.agents/skills/cascade-mover-v3/`). Token reseed only when the JWT refresh loop breaks.
+VPS poller / cascade: use the `cascade-mover` MCP and nested Cascade repository guidance. Token reseed only when the JWT refresh loop breaks.
 
 ## Failure routing
 
@@ -196,7 +196,7 @@ flowchart TD
   Rerun --> Keep{"Keep / revise / drop"}
 ```
 
-Repeated gate thrash → [`.agents/skills/harness-improve/`](../../../.agents/skills/harness-improve/SKILL.md) (earliest failed handoff → smallest reversible fix → fresh rerun).
+Repeated gate thrash → [`.agents/skills/audit-gap-close/`](../../../.agents/skills/audit-gap-close/SKILL.md) harness-feedback mode (earliest failed handoff → smallest reversible fix → fresh rerun).
 
 ## Nesting (how the loops compose)
 
@@ -275,7 +275,7 @@ You are the FactoryWager harness thrash detector. Trigger when the same pre-comm
 
 Read:
 - docs/harness/tenants/maintain-workspace.md § Failure routing
-- .agents/skills/harness-improve/SKILL.md
+- .agents/skills/audit-gap-close/SKILL.md
 - docs/harness/FEEDBACK.md
 
 Job:

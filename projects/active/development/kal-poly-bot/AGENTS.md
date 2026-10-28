@@ -1,45 +1,39 @@
-# 🤖 AGENTS.md - Surgical Precision Development
+# Kal/Poly Bot — agent entrypoint
 
-## ⚡ Build/Lint/Test Commands
-**Full Build**: `bun run build` | **All Tests**: `bun test` | **Type Check**: `bunx tsc --noEmit`
-**Lint**: `bun run lint`, `bun run lint:fix` | **Single Test**: `bun test path/to/file.test.ts`
-**Benchmark**: `bun run bench`
+Project R root policy remains authoritative. This file owns only local runtime,
+command, and subproject boundaries. Use [`README.md`](README.md) and
+[`docs/DOCUMENTATION_INDEX.md`](docs/DOCUMENTATION_INDEX.md) for detail.
 
-**Subprojects**: MCP(`cd surgical-precision-mcp && bun test`), Platform(`cd operation_surgical_precision && bun test`), Bot(`cd poly-kalshi-arb && cargo test`)
+## Runtime and ownership
 
-## 📝 Code Style Guidelines
+- Use Bun for the TypeScript workspaces and Cargo inside `poly-kalshi-arb/`.
+- `package.json` is the root command catalog. Subprojects own their own
+  `package.json`, lockfile, tests, and runtime configuration.
+- Do not infer that similarly named `operation-surgical-precision/` and
+  `operation_surgical_precision/` paths are interchangeable; resolve the owner
+  before running a command.
+- Keep credentials out of prompts and shell history. Use the existing
+  environment owners for workers, market APIs, and bot processes.
 
-**Imports**: External first, named exports, `import type` for types
-**Formatting**: 2-space indent, 100 char lines, Prettier
-**Types**: Strict TS, no `any`, `readonly` for immutable, interfaces over types
-**Naming**: kebab-case files, PascalCase classes/types, camelCase vars/functions, UPPER_SNAKE constants
-**Error Handling**: Descriptive errors, async/await, avoid silent failures
-**Bun Patterns**: Use native APIs (`Bun.env`, `Bun.test`, `Bun.build`)
+## Common proof
 
-## 🗄️ Database Guidelines
+```bash
+bun run lint:check
+bun run type-check
+bun run test:all
+bun run build:all
+```
 
-**SQLite**: Use `bun:sqlite` (v3.51.1+) with EXISTS-to-JOIN optimizations
-**Schema**: Define indexes for frequently queried columns
-**Transactions**: Use explicit transactions for bulk operations
-**Performance**: Leverage query planner improvements for subqueries
+For focused work, use the named package script or run `bun test <path>` from the
+owning subproject. MCP checks are `bun run mcp:health` and focused MCP tests;
+infrastructure checks use the `golden-matrix:*` or `*:infrastructure` scripts.
 
-## ⚙️ Bun Runtime Configuration
+## Change rules
 
-**Run Commands**: Configure via `[run]` section in `bunfig.toml`
-- `shell`: `"bun"` (default on Windows) or `"system"` (default elsewhere)
-- `bun`: `true` to auto-alias `node` to `bun` in scripts
-- `silent`: `true` to suppress command reporting in `bun run`
-
-**Configuration Files**:
-- `configs/bunfig.toml`: Main development configuration
-- `configs/bunfig.production.toml`: Production-optimized settings
-- `demo-app/bunfig.toml`: Demo application configuration
-- `operation_surgical_precision/service_mesh/bunfig.toml`: Service mesh configuration
-
-## 🎯 Cursor Rules
-- Surgical precision development with zero-collateral operations
-- 13+ benchmark categories with 98.5%+ success rates
-- Team color coding and real-time monitoring
-- Sub-100ms performance targets and concurrent testing
-- Comprehensive documentation with performance metrics</content>
-<parameter name="filePath">AGENTS.md
+- Keep TypeScript strict and use named exports and explicit error handling.
+- Preserve the Rust boundary in `poly-kalshi-arb/`; do not translate Cargo
+  workflows into Bun commands.
+- Worker deployment and secrets commands are consequential operations. Run
+  them only with the authorization required by the repository root.
+- Verify all new command names against the owning package rather than copying
+  command catalogs into documentation.

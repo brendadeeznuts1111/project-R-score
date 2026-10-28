@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "packages": {
+    "agents-sdk": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/agents-sdk"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "ast-grep": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/joelhooks/pi-ast-grep", "sourceRevision": "15fe3216acde7ca09bef148159915e1df5a96fc8", "sourcePaths": ["skills/pi-ast-grep"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "audit-gap-close": { "lifecycle": "active", "provenance": "first-party" },
+    "branded-ids": { "lifecycle": "active", "provenance": "first-party" },
+    "cloudflare": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/cloudflare"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "cloudflare-email-service": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/cloudflare-email-service"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "cloudflare-one": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/cloudflare-one"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "cloudflare-one-migrations": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/cloudflare-one-migrations"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "durable-objects": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/durable-objects"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "ops-dual-mode-experiments": { "lifecycle": "active", "provenance": "first-party" },
+    "portal-design": { "lifecycle": "active", "provenance": "first-party" },
+    "project-r-agent-team": { "lifecycle": "active", "provenance": "first-party" },
+    "project-r-ops-management": { "lifecycle": "active", "provenance": "first-party" },
+    "project-r-skill-maintenance": { "lifecycle": "active", "provenance": "first-party" },
+    "reference-discovery": { "lifecycle": "active", "provenance": "first-party" },
+    "sandbox-sdk": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/sandbox-stable", "skills/sandbox-next", "skills/sandbox-migrate-to-next"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "turnstile-spin": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/turnstile-spin"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "workers-best-practices": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/workers-best-practices"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" },
+    "wrangler": { "lifecycle": "active", "provenance": "forked", "source": "https://github.com/cloudflare/skills", "sourceRevision": "f96bff754e428838818017f75817f0f9428acd48", "sourcePaths": ["skills/wrangler"], "verifiedAt": "2026-08-16", "upstreamState": "adapted" }
+  },
+  "retired": {
+    "cascade-mover-v3": { "replacement": "cascade-mover MCP and projects/active/enterprise/cascade-mover-v3 repository guidance", "reason": "The MCP and nested repository own current tool and source behavior." },
+    "harness-improve": { "replacement": "audit-gap-close", "reason": "Harness feedback and fresh-rerun work is an audit closure mode." },
+    "partner-profile-os": { "replacement": "ops-dual-mode-experiments", "reason": "Partner profile integration is owned by the ops bridge and the Sports Terminal workspace guidance." },
+    "public-audit-gap-close": { "replacement": "audit-gap-close", "reason": "Public-plane closure is an audit-gap-close mode." },
+    "public-discovery": { "replacement": "reference-discovery", "reason": "Public-plane discovery is a reference-discovery mode." },
+    "sports-terminal-os": { "replacement": "projects/active/sports-terminal-os/AGENTS.md", "reason": "The workspace-specific AGENTS.md and package scripts are more authoritative than a duplicate root skill." }
+  }
+}

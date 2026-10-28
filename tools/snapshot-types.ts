@@ -25,6 +25,10 @@ export type SnapshotRunOptions = {
   debug?: boolean;
 };
 
+export type SnapshotRunResult =
+  | { ok: true; dryRun: true; manifest: null }
+  | { ok: boolean; dryRun: false; manifest: SnapshotManifest };
+
 export type SnapshotFilterOptions = {
   scope?: SnapshotScopeName;
   grep?: string;

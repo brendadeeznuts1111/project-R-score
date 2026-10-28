@@ -1,0 +1,4 @@
+interface:
+  display_name: "Turnstile Setup"
+  short_description: "Add or repair Turnstile without exposing secrets"
+  default_prompt: "Use $turnstile-spin to map the existing protected surface and backend, confirm the exact remote and secret-write targets, add canonical Siteverify validation, and prove success plus replay rejection without exposing credentials."

@@ -1,0 +1,36 @@
+{
+  "$schema": "./schemas/ai-friction.schema.json",
+  "schemaVersion": 1,
+  "promotionThreshold": 3,
+  "observationWindowDays": 30,
+  "retentionDays": 90,
+  "issues": [
+    {
+      "id": "fragmented-agent-discovery",
+      "title": "Agents had to search package scripts, guidance, and skills separately",
+      "status": "resolved",
+      "tags": ["agent", "discovery", "commands", "guidance", "skills"],
+      "owner": "tools/ai-path.ts",
+      "match": { "tool": "ai", "code": "manual-discovery" },
+      "prevention": "bun run ai -- discover <task> --path <target>"
+    },
+    {
+      "id": "stale-guidance-pointers",
+      "title": "Guidance linked to missing files and optional sibling checkouts",
+      "status": "resolved",
+      "tags": ["docs", "links", "paths", "guidance"],
+      "owner": "tools/md-link-check.ts",
+      "match": { "tool": "docs:links:check", "code": "broken-relative-link" },
+      "prevention": "bun run docs:links:check"
+    },
+    {
+      "id": "static-score-overclaim",
+      "title": "Static compliance could be mistaken for proved skill capability",
+      "status": "resolved",
+      "tags": ["skills", "rating", "evidence", "dynamic"],
+      "owner": "scripts/rate-agent-skills.ts",
+      "match": { "tool": "skills:rate", "code": "static-proof-overclaim" },
+      "prevention": "bun run skills:rate:dynamic"
+    }
+  ]
+}

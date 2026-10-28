@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factory-wager.com/schemas/ai-friction.schema.json",
+  "title": "Project R AI friction registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "promotionThreshold",
+    "observationWindowDays",
+    "retentionDays",
+    "issues"
+  ],
+  "properties": {
+    "$schema": { "const": "./schemas/ai-friction.schema.json" },
+    "schemaVersion": { "const": 1 },
+    "promotionThreshold": { "type": "integer", "minimum": 2 },
+    "observationWindowDays": { "type": "integer", "minimum": 1 },
+    "retentionDays": { "type": "integer", "minimum": 1 },
+    "issues": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issue" }
+    }
+  },
+  "$defs": {
+    "stableId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9:._/-]{0,95}$"
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "status", "tags", "owner", "match"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+        "title": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["active", "resolved", "accepted"] },
+        "tags": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/stableId" }
+        },
+        "owner": { "type": "string", "minLength": 1 },
+        "prevention": { "type": "string", "minLength": 1 },
+        "match": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tool", "code"],
+          "properties": {
+            "tool": { "$ref": "#/$defs/stableId" },
+            "code": { "$ref": "#/$defs/stableId" },
+            "path": { "type": "string", "minLength": 1 }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "resolved" } } },
+          "then": { "required": ["prevention"] }
+        }
+      ]
+    }
+  }
+}

@@ -256,7 +256,7 @@ opr health:full
 
 ### API Examples
 
-See [`examples/api-usage-examples.js`](./examples/api-usage-examples.js) for comprehensive usage examples including:
+See the [`docs/api` index](./docs/api/README.md) for the maintained API examples and component guides, including:
 
 - HTTP client usage with advanced Bun features
 - WebSocket terminal connections

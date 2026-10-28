@@ -16,17 +16,9 @@ Fetch the **latest** versions before writing or reviewing Workers code. Do not r
 | Wrangler config schema | `node_modules/wrangler/config-schema.json` | Config fields, binding shapes, allowed values |
 | Cloudflare docs | Search tool or `https://developers.cloudflare.com/workers/` | API reference, compatibility dates/flags |
 
-## FIRST: Fetch Latest References
+## First: resolve current references
 
-Before reviewing or writing Workers code, retrieve the current best practices page and relevant type definitions. If the project's `node_modules` has an older version, **prefer the latest published version**.
-
-```bash
-# Fetch latest workers types
-mkdir -p /tmp/workers-types-latest && \
-  npm pack @cloudflare/workers-types --pack-destination /tmp/workers-types-latest && \
-  tar -xzf /tmp/workers-types-latest/cloudflare-workers-types-*.tgz -C /tmp/workers-types-latest
-# Types at /tmp/workers-types-latest/package/index.d.ts
-```
+Before reviewing or writing Workers code, retrieve the current best-practices page, inspect the repository's installed types, and compare exact changing APIs with the current official type source. Do not install an unpinned package merely to inspect it. Use the repository's package manager and lockfile when a type dependency change is actually in scope.
 
 ## Reference Documentation
 
@@ -51,6 +43,7 @@ mkdir -p /tmp/workers-types-latest && \
 |------|---------|
 | Streaming | Stream large/unknown payloads — never `await response.text()` on unbounded data |
 | waitUntil | Use `ctx.waitUntil()` for post-response work; do not destructure `ctx` |
+| External fetch | Bound critical external requests with `AbortSignal.timeout(...)` or a propagated abort signal |
 
 ### Architecture
 
@@ -125,3 +118,4 @@ This skill covers Workers-specific best practices and code review. For related t
 - **Provide evidence.** Reference line numbers, tool output, or docs links.
 - **Focus on what developers will copy.** Workers code in examples and docs gets pasted into production.
 - **Correctness over completeness.** A concise example that works beats a comprehensive one with errors.
+- **Respect the execution boundary.** Worker examples target the Workers runtime; repository automation and shell steps must follow the owning repository's platform and package-manager policy.

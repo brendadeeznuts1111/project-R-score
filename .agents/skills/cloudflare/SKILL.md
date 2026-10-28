@@ -16,11 +16,17 @@ Fetch the **latest** information before citing specific numbers, API signatures,
 | Source | How to retrieve | Use for |
 |--------|----------------|---------|
 | Cloudflare docs | `cloudflare-docs` search tool or `https://developers.cloudflare.com/` | Limits, pricing, API reference, compatibility dates/flags |
-| Workers types | `npm pack @cloudflare/workers-types` or check `node_modules` | Type signatures, binding shapes, handler types |
+| Workers types | Installed package types or current official source | Type signatures, binding shapes, handler types |
 | Wrangler config schema | `node_modules/wrangler/config-schema.json` | Config fields, binding shapes, allowed values |
 | Product changelogs | `https://developers.cloudflare.com/changelog/` | Recent changes to limits, features, deprecations |
 
 When a reference file and the docs disagree, **trust the docs**. This is especially important for: numeric limits, pricing tiers, type signatures, and configuration options.
+
+## Execution boundaries
+
+This package mirrors a cross-runtime upstream catalog. Upstream npm/npx examples are compatibility references, not Project R package-manager authority. In a Bun-owned repository, prefer its scripts and translate ordinary package execution to `bun x` or dependency changes to `bun add`; preserve npm only where the target image, tool, or repository explicitly requires it.
+
+Shell fragments in the upstream references are platform-specific, generally POSIX-only. Do not run them on another platform without translating them through Bun Shell or the owning repository's portable command. For Bun server configuration, use `Bun.env` and Bun's env-file behavior; retain `process.env` only when the target framework or runtime owns Node compatibility. Worker bindings remain the authority inside Workers.
 
 ## Quick Decision Trees
 

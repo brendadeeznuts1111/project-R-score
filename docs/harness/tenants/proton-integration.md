@@ -24,9 +24,9 @@ Canonical docs:
 | SSH agent                                     | [`ssh-agent`](https://protonpass.github.io/pass-cli/) `start` · `load` · `debug` · `daemon` — `bun run proton:ssh:doctor`                                                                                                              |
 | Troubleshoot                                  | [Troubleshoot](https://protonpass.github.io/pass-cli/help/troubleshoot/) · [Configuration](https://protonpass.github.io/pass-cli/get-started/configuration/) (`PROTON_PASS_KEY_PROVIDER`, `PROTON_PASS_SESSION_DIR`, `PASS_LOG_LEVEL`) |
 
-This monorepo prefers **`inject`** → project `.env` (see below). Sibling
-Kalshi-bot prefers **`run`** + `.env.protonpass` — see
-[`Kalshi-bot/docs/PROTONPASS.md`](../../../Kalshi-bot/docs/PROTONPASS.md).
+This monorepo prefers **`inject`** → project `.env` (see below). The optional
+Kalshi-bot sibling checkout prefers **`run`** + `.env.protonpass`; its authority
+is `Kalshi-bot/docs/PROTONPASS.md` when that checkout is installed.
 
 **Portable package (v0.1):**
 [`packages/proton-pass`](../../../packages/proton-pass/) —

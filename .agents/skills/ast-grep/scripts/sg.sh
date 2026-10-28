@@ -30,7 +30,7 @@ resolve_binary() {
 
 if ! BIN="$(resolve_binary)"; then
   echo "ast-grep 0.44+ not found (outline required)." >&2
-  echo "Global: npm install -g @ast-grep/cli@0.44.0" >&2
+  echo "Global: bun add --global @ast-grep/cli@0.44.0" >&2
   echo "Workspace: $SKILL_ROOT/scripts/install.sh" >&2
   exit 3
 fi

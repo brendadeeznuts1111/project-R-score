@@ -1,0 +1,386 @@
+{
+  "schemaVersion": 3,
+  "generatedAt": "2026-08-16T21:32:41.792Z",
+  "manifestSha256": "1052e2eaf8f73012d912fcc4f5399ef80ae807cd360755334a32abd68e2de754",
+  "mode": "preview",
+  "promotion": {
+    "ready": false,
+    "blockers": [
+      "live-access-proof-required",
+      "1-runtime-gated"
+    ]
+  },
+  "surface": {
+    "path": "/portal/labs/data-formats/",
+    "access": "cloudflare-access",
+    "execution": "build-time-static",
+    "accessProof": {
+      "protectedHosts": [
+        "score.factory-wager.com",
+        "project-r-score.pages.dev"
+      ],
+      "canonicalHost": "score.factory-wager.com",
+      "path": "/portal",
+      "access": "applied",
+      "unknownHostPolicy": "redirect-to-canonical",
+      "live": {
+        "verified": false,
+        "generatedAt": "2026-07-31T11:04:12.236Z",
+        "maxAgeHours": 24,
+        "evidence": "portal · policy has score.factory-wager.com/portal (offline · no live probe)"
+      }
+    }
+  },
+  "security": {
+    "maxFixtureBytes": 262144,
+    "maxOutputBytes": 262144,
+    "externalEntities": "forbidden",
+    "rendering": "text-only"
+  },
+  "timing": {
+    "source": "Bun.nanoseconds",
+    "durationNs": "raw monotonic nanoseconds",
+    "durationMs": "durationNs / 1,000,000"
+  },
+  "runtime": {
+    "version": "1.3.14",
+    "revision": "0d9b296af33f2b851fcbf4df3e9ec89751734ba4"
+  },
+  "summary": {
+    "total": 7,
+    "available": 6,
+    "gated": 1,
+    "drift": 0,
+    "proofFailures": 0
+  },
+  "formats": [
+    {
+      "id": "json",
+      "label": "JSON",
+      "api": "JSON",
+      "minimumBunVersion": null,
+      "requiredOperations": [
+        "parse",
+        "stringify"
+      ],
+      "fixtureBytes": 36,
+      "fixtureSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0",
+      "negativeFixtureBytes": 10,
+      "negativeFixtureSha256": "7a2191b6c96ae9a6db2a7596a6d7c6a51b522ee915b8eccbd6f962d0217fb937",
+      "operations": {
+        "parse": true,
+        "stringify": true
+      },
+      "missing": [],
+      "status": "available",
+      "behaviorProof": {
+        "ok": true,
+        "positive": {
+          "parse": {
+            "ok": true,
+            "durationNs": 22417,
+            "durationMs": 0.022417,
+            "outputBytes": 36,
+            "outputSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0"
+          },
+          "stringify": {
+            "ok": true,
+            "durationNs": 1709,
+            "durationMs": 0.001709,
+            "outputBytes": 36,
+            "outputSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0"
+          }
+        },
+        "negative": {
+          "parse": {
+            "ok": true,
+            "durationNs": 52416,
+            "durationMs": 0.052416,
+            "behavior": "threw",
+            "errorSha256": "1522e4839f458a293ee5eb708d8e2ae5700cd1d9c2ed28246c1805ae9db5b975"
+          }
+        },
+        "roundTrip": {
+          "ok": true,
+          "durationNs": 9167,
+          "durationMs": 0.009167,
+          "outputBytes": 36,
+          "beforeSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0",
+          "afterSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0"
+        }
+      }
+    },
+    {
+      "id": "jsonc",
+      "label": "JSONC",
+      "api": "Bun.JSONC",
+      "minimumBunVersion": null,
+      "requiredOperations": [
+        "parse"
+      ],
+      "fixtureBytes": 52,
+      "fixtureSha256": "8771169ad9c6c8bad96f85fb0e1a52f46f51c52da7d777dcaadc861acd1fcc57",
+      "negativeFixtureBytes": 10,
+      "negativeFixtureSha256": "7a2191b6c96ae9a6db2a7596a6d7c6a51b522ee915b8eccbd6f962d0217fb937",
+      "operations": {
+        "parse": true
+      },
+      "missing": [],
+      "status": "available",
+      "behaviorProof": {
+        "ok": true,
+        "positive": {
+          "parse": {
+            "ok": true,
+            "durationNs": 4542,
+            "durationMs": 0.004542,
+            "outputBytes": 23,
+            "outputSha256": "c2fee70e609f658f8125e35d4a909bc4da3ebf9e9411006eec3737698c392d39"
+          }
+        },
+        "negative": {
+          "parse": {
+            "ok": true,
+            "durationNs": 17584,
+            "durationMs": 0.017584,
+            "behavior": "threw",
+            "errorSha256": "4e763ac53da481069fbbf19df8ae43ff467ed25edcae1926619d0b13d2f8d6c9"
+          }
+        },
+        "roundTrip": null
+      }
+    },
+    {
+      "id": "json5",
+      "label": "JSON5",
+      "api": "Bun.JSON5",
+      "minimumBunVersion": null,
+      "requiredOperations": [
+        "parse",
+        "stringify"
+      ],
+      "fixtureBytes": 39,
+      "fixtureSha256": "8d882499e41989d4fff69afc57455c85a8ccbf3221762bbd2df2d0bb36531665",
+      "negativeFixtureBytes": 8,
+      "negativeFixtureSha256": "5c1ab2874477faab0bc8d476ec359a5e76316d60ce9fa434df6d58eaae4df4e1",
+      "operations": {
+        "parse": true,
+        "stringify": true
+      },
+      "missing": [],
+      "status": "available",
+      "behaviorProof": {
+        "ok": true,
+        "positive": {
+          "parse": {
+            "ok": true,
+            "durationNs": 4250,
+            "durationMs": 0.00425,
+            "outputBytes": 39,
+            "outputSha256": "201d3d18bcd2ee9a1a6c9e522363b27321895d5c602eb8eccd6a1afc3b58a585"
+          },
+          "stringify": {
+            "ok": true,
+            "durationNs": 6542,
+            "durationMs": 0.006542,
+            "outputBytes": 35,
+            "outputSha256": "f23c2991a71a3deaf301a83255e74ccb71f108378853554adaeaa08e723719c6"
+          }
+        },
+        "negative": {
+          "parse": {
+            "ok": true,
+            "durationNs": 4000,
+            "durationMs": 0.004,
+            "behavior": "threw",
+            "errorSha256": "cd186a307b8fa0415bf4b5fc7e3a571e19b968c248912a022ce95eebf786a8b7"
+          }
+        },
+        "roundTrip": {
+          "ok": true,
+          "durationNs": 6375,
+          "durationMs": 0.006375,
+          "outputBytes": 39,
+          "beforeSha256": "201d3d18bcd2ee9a1a6c9e522363b27321895d5c602eb8eccd6a1afc3b58a585",
+          "afterSha256": "201d3d18bcd2ee9a1a6c9e522363b27321895d5c602eb8eccd6a1afc3b58a585"
+        }
+      }
+    },
+    {
+      "id": "jsonl",
+      "label": "JSONL",
+      "api": "Bun.JSONL",
+      "minimumBunVersion": null,
+      "requiredOperations": [
+        "parse",
+        "parseChunk"
+      ],
+      "fixtureBytes": 36,
+      "fixtureSha256": "e88f018409c92a5f4ff4a542015c7179f73e1be78e0b4699939136b4888df770",
+      "negativeFixtureBytes": 9,
+      "negativeFixtureSha256": "60498ebafa3f473a2a72c1242e8c3202bf50a6d81dfc721958be1550f46faf33",
+      "operations": {
+        "parse": true,
+        "parseChunk": true
+      },
+      "missing": [],
+      "status": "available",
+      "behaviorProof": {
+        "ok": true,
+        "positive": {
+          "parse": {
+            "ok": true,
+            "durationNs": 1834,
+            "durationMs": 0.001834,
+            "outputBytes": 37,
+            "outputSha256": "205189e67be6142348ea3a889d2a57658f63f1f92b0d4152ec85db464b734e49"
+          },
+          "parseChunk": {
+            "ok": true,
+            "durationNs": 1875,
+            "durationMs": 0.001875,
+            "outputBytes": 83,
+            "outputSha256": "af6c4643ac1188c42f29b9b43b800589d64aa2cd6a021aedc9d09e5670e4e907"
+          }
+        },
+        "negative": {
+          "parse": {
+            "ok": true,
+            "durationNs": 2000,
+            "durationMs": 0.002,
+            "behavior": "threw",
+            "errorSha256": "c20e63cf3c09352af7573ba47343edb8905ffff18c270afe06ebc74da7a9145b"
+          },
+          "parseChunk": {
+            "ok": true,
+            "durationNs": 3125,
+            "durationMs": 0.003125,
+            "behavior": "error-result",
+            "errorSha256": "a94919ccaec3a69c419d8082fc6fc69f44d1c6f08a108c2e8999f359aa7911c5"
+          }
+        },
+        "roundTrip": null
+      }
+    },
+    {
+      "id": "yaml",
+      "label": "YAML",
+      "api": "Bun.YAML",
+      "minimumBunVersion": null,
+      "requiredOperations": [
+        "parse",
+        "stringify"
+      ],
+      "fixtureBytes": 31,
+      "fixtureSha256": "357fe9f716c1e3f7d3b32d557fcb283aaa304e40696646d493545ae5d09c7017",
+      "negativeFixtureBytes": 13,
+      "negativeFixtureSha256": "b1c52fc5731e21cb4c8dd2db2ccf58031a2d3de9225b4f1dc46d583b3a197796",
+      "operations": {
+        "parse": true,
+        "stringify": true
+      },
+      "missing": [],
+      "status": "available",
+      "behaviorProof": {
+        "ok": true,
+        "positive": {
+          "parse": {
+            "ok": true,
+            "durationNs": 6042,
+            "durationMs": 0.006042,
+            "outputBytes": 36,
+            "outputSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0"
+          },
+          "stringify": {
+            "ok": true,
+            "durationNs": 9750,
+            "durationMs": 0.00975,
+            "outputBytes": 32,
+            "outputSha256": "29d60a31a9f502d1ea2d34c1abb138876341d89c863693825b33423918f09ebb"
+          }
+        },
+        "negative": {
+          "parse": {
+            "ok": true,
+            "durationNs": 2583,
+            "durationMs": 0.002583,
+            "behavior": "threw",
+            "errorSha256": "42d41bdb46100bc84c9c8b3092f968af9eb648080324c3d3c06e86f3d4bf2839"
+          }
+        },
+        "roundTrip": {
+          "ok": true,
+          "durationNs": 7625,
+          "durationMs": 0.007625,
+          "outputBytes": 36,
+          "beforeSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0",
+          "afterSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0"
+        }
+      }
+    },
+    {
+      "id": "toml",
+      "label": "TOML",
+      "api": "Bun.TOML",
+      "minimumBunVersion": null,
+      "requiredOperations": [
+        "parse"
+      ],
+      "fixtureBytes": 35,
+      "fixtureSha256": "078bfbacb1459489b131bdbe10d41587c320323b0b1363415cefee29054e735e",
+      "negativeFixtureBytes": 7,
+      "negativeFixtureSha256": "df9ffe49c4983d1af083978fc53fc921e9b0ae82e6f0aeaf48d49687140a3c33",
+      "operations": {
+        "parse": true
+      },
+      "missing": [],
+      "status": "available",
+      "behaviorProof": {
+        "ok": true,
+        "positive": {
+          "parse": {
+            "ok": true,
+            "durationNs": 3625,
+            "durationMs": 0.003625,
+            "outputBytes": 36,
+            "outputSha256": "0446f8dca3c20109dcc183630a0b1b4782d170a877bff97a98cbd323ef1976f0"
+          }
+        },
+        "negative": {
+          "parse": {
+            "ok": true,
+            "durationNs": 5834,
+            "durationMs": 0.005834,
+            "behavior": "threw",
+            "errorSha256": "c5952455c27aae1d257307d15dfa5c73c2f689b5cb68050314e0490b154f7960"
+          }
+        },
+        "roundTrip": null
+      }
+    },
+    {
+      "id": "xml",
+      "label": "XML",
+      "api": "Bun.XML",
+      "minimumBunVersion": "1.4.0",
+      "requiredOperations": [
+        "parse",
+        "stringify"
+      ],
+      "fixtureBytes": 57,
+      "fixtureSha256": "dae6e26d4b3b6eb1034bd2d39cc34c6ed734718c4eddce69e1c82d608cebd930",
+      "negativeFixtureBytes": 37,
+      "negativeFixtureSha256": "0e9fe55570d0314ce0e9bfc25aa223f6f3acafa9b51144d6c65c66ae1cd181b4",
+      "operations": {
+        "parse": false,
+        "stringify": false
+      },
+      "missing": [
+        "parse",
+        "stringify"
+      ],
+      "status": "runtime-gated",
+      "behaviorProof": null
+    }
+  ]
+}

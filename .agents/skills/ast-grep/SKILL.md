@@ -28,7 +28,7 @@ pruning root workspace links under the isolated linker.
 **Portable global fallback:**
 
 ```bash
-npm install -g @ast-grep/cli@0.44.0
+bun add --global @ast-grep/cli@0.44.0
 ast-grep outline --help   # must work
 ```
 

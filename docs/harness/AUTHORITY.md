@@ -110,7 +110,7 @@ map:
 **Key reference:** this section is the repository authority for local-only merge
 proof and Cloudflare Pages delivery. Root [`AGENTS.md`](../../AGENTS.md), the
 human [`README.md`](../../README.md), and the machine-global
-`/Users/nolarose/.config/dx/AGENTS.md` point here instead of redefining policy.
+`~/.config/dx/AGENTS.md` point here instead of redefining policy.
 
 GitHub Actions is disabled for this repository. Hosted-runner billing locks jobs
 before step 1, so a GitHub check cannot prove artifact health and must never be

@@ -67,6 +67,11 @@ const steps: CiStep[] = [
   },
   { name: 'core', command: ['bun', 'run', 'ci:core'], cwd: repoRoot },
   {
+    name: 'domain-invariants',
+    command: ['bun', 'run', 'test:invariants'],
+    cwd: repoRoot,
+  },
+  {
     name: 'snapshots',
     command: ['bun', 'run', 'test:snapshots'],
     cwd: repoRoot,

@@ -88,6 +88,25 @@ async function writeRegistry(root: string, names: string[], skillsValue?: unknow
     registryPath,
     JSON.stringify({ version: 2, skills })
   );
+  const packageNames: string[] = [];
+  for await (const path of new Bun.Glob('*/SKILL.md').scan({
+    cwd: resolveAgentSkillsRoot(root),
+    onlyFiles: true,
+  })) {
+    packageNames.push(path.split('/')[0]!);
+  }
+  const governancePath = resolveAgentSkillsPath(root, AGENT_SKILLS_PATHS.governanceManifest);
+  await mkdir(dirname(governancePath), { recursive: true });
+  await writeFile(
+    governancePath,
+    JSON.stringify({
+      version: 1,
+      packages: Object.fromEntries(
+        packageNames.map(name => [name, { lifecycle: 'active', provenance: 'first-party' }])
+      ),
+      retired: {},
+    })
+  );
 }
 
 describe('validateAgentSkills', () => {
@@ -100,7 +119,30 @@ describe('validateAgentSkills', () => {
     expect(result.ok).toBe(true);
     expect(result.skillCount).toBe(2);
     expect(result.registryCount).toBe(1);
+    expect(result.retiredCount).toBe(0);
     expect(result.issues).toEqual([]);
+  });
+
+  it('rejects untracked packages and active retired aliases', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    await writeRegistry(root, ['demo-skill']);
+    const governancePath = resolveAgentSkillsPath(root, AGENT_SKILLS_PATHS.governanceManifest);
+    await writeFile(
+      governancePath,
+      JSON.stringify({
+        version: 1,
+        packages: {},
+        retired: {
+          'demo-skill': { replacement: 'next-skill', reason: 'consolidated' },
+        },
+      })
+    );
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('governance-package-missing');
+    expect(result.issues.map(item => item.code)).toContain('governance-retired-active');
   });
 
   it('rejects unsupported frontmatter and non-empty directories without SKILL.md', async () => {
@@ -175,6 +217,51 @@ describe('validateAgentSkills', () => {
     expect(result.ok).toBe(false);
     expect(result.issues.map(item => item.code)).toContain('skill-link-broken');
     expect(result.issues.map(item => item.code)).not.toContain('skill-entry-broken');
+  });
+
+  it('rejects broken links and retired pointers in skill references', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    const referencePath = resolveAgentSkillsPath(root, 'demo-skill', 'references', 'guide.md');
+    await mkdir(dirname(referencePath), { recursive: true });
+    await writeFile(
+      referencePath,
+      '[missing](missing.md)\n\nDo not invoke `$old-skill` from active guidance.'
+    );
+    await writeRegistry(root, ['demo-skill']);
+    const governancePath = resolveAgentSkillsPath(root, AGENT_SKILLS_PATHS.governanceManifest);
+    const governance = await Bun.file(governancePath).json();
+    governance.retired = {
+      'old-skill': { replacement: 'demo-skill', reason: 'consolidated' },
+    };
+    await writeFile(governancePath, JSON.stringify(governance));
+
+    const result = await validateAgentSkills(root);
+    expect(result.ok).toBe(false);
+    expect(result.issues.map(item => item.code)).toContain('skill-link-broken');
+    expect(result.issues.map(item => item.code)).toContain('skill-retired-pointer');
+  });
+
+  it('requires auditable provenance for external skill packages', async () => {
+    const root = await fixtureRoot();
+    await writeSkill(root, 'demo-skill');
+    await writeRegistry(root, ['demo-skill']);
+    const governancePath = resolveAgentSkillsPath(root, AGENT_SKILLS_PATHS.governanceManifest);
+    const governance = await Bun.file(governancePath).json();
+    governance.packages['demo-skill'] = {
+      lifecycle: 'active',
+      provenance: 'vendored',
+      source: 'http://example.test/skills',
+    };
+    await writeFile(governancePath, JSON.stringify(governance));
+
+    const result = await validateAgentSkills(root);
+    const codes = result.issues.map(item => item.code);
+    expect(codes).toContain('governance-source-url');
+    expect(codes).toContain('governance-source-revision');
+    expect(codes).toContain('governance-source-paths');
+    expect(codes).toContain('governance-verified-at');
+    expect(codes).toContain('governance-upstream-state');
   });
 
   it('rejects phantom bun scripts and noncanonical cross-skill paths', async () => {

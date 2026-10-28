@@ -1,9 +1,15 @@
 # AGENTS — routing tables
 
-Just-in-time task router. Root [`AGENTS.md`](../AGENTS.md) owns always-loaded
-guardrails; the
+Searchable fallback routing corpus for `bun run ai -- discover`. Root
+[`AGENTS.md`](../AGENTS.md) owns always-loaded invariants; executable tools own
+behavior; the
 [`capability map`](harness/capability-map.md#grounded-capability-map) owns the
-grounded API matrix. Load only the matching route and its owner.
+grounded API matrix. This file helps discovery rank a focused route. It is not a
+controller and should not be read sequentially.
+
+Agent-path architecture and the recurring-friction lifecycle:
+[`design/ai-native-agent-path.md`](design/ai-native-agent-path.md) ·
+`bun run ai -- doctor`.
 
 ## Platform
 
@@ -15,6 +21,8 @@ grounded API matrix. Load only the matching route and its owner.
   [`DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md)
 - Bun APIs: [`BUN_NATIVE_CAPABILITIES.md`](BUN_NATIVE_CAPABILITIES.md) ·
   [`BUN_DOCS_OPERATE.md`](BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
+- Test/invariant/snapshot architecture:
+  [`design/bun-test-invariant-snapshot-architecture.md`](design/bun-test-invariant-snapshot-architecture.md)
 - Native fetch protocols: `lib/docs/fetch-protocol-docs.ts` ·
   `bun test tests/bun-release-tracker.test.ts`
 - Console output:
@@ -37,6 +45,12 @@ grounded API matrix. Load only the matching route and its owner.
 - Bun channel/type governance:
   [`design/bun-channel-governance.md`](design/bun-channel-governance.md) ·
   `bun run bun:channel:check`
+- Data-format capability lab:
+  [`design/data-format-lab.md`](design/data-format-lab.md) ·
+  `bun run data-formats:check`
+- Bun enhancement discovery:
+  [`design/bun-enhancement-pipeline.md`](design/bun-enhancement-pipeline.md) ·
+  `bun run enhancements -- check` · `/.well-known/experiments`
 - Audit findings: [`audit/README.md`](audit/README.md) ·
   `bun tools/bun-doc-refs.ts suggest --audit "<q>"`
 - Import graph: [`IMPORT_BOUNDARIES.md`](IMPORT_BOUNDARIES.md) ·

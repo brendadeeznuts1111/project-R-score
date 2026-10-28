@@ -13,9 +13,9 @@ has registry DNS.
 
 ## Permanent files in repo
 
-- Canonical registry config: `/Users/nolarose/Projects/registry.config.json5`
-- Canonical npm config: `/Users/nolarose/Projects/.npmrc`
-- Registry env template: `/Users/nolarose/Projects/.env.registry.example`
+- Canonical registry config: [`registry.config.json5`](../../registry.config.json5)
+- Canonical npm config: [`.npmrc`](../../.npmrc)
+- Registry env template: [`.env.registry.example`](../../.env.registry.example)
 
 ## Doctor commands
 

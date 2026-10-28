@@ -14,7 +14,7 @@
 | Partners package | [`@factorywager/partners`](../../../packages/partners/README.md) · `./adapters/telegram-handshake` |
 | REF:ID Flags | §1.1 table below · `bun run docs:refid:check` · `telegramOpsToolFlags` in [`ref-id-tool-flags.ts`](../../../lib/docs/ref-id-tool-flags.ts) |
 | Package title grammar (factory) | [`lib/telegram/surfaces.ts`](../../../lib/telegram/surfaces.ts) `formatPackageGroupTitle` |
-| Package title grammar (ct) | [`toc-ops-repo/src/central-tool/telegram-surfaces.ts`](../../../toc-ops-repo/src/central-tool/telegram-surfaces.ts) `packageGroupTitle` |
+| Package title grammar (ct) | `toc-ops-repo/src/central-tool/telegram-surfaces.ts` in the optional sibling checkout · `packageGroupTitle` |
 | Registry | [`lib/telegram/package-group-registry.ts`](../../../lib/telegram/package-group-registry.ts) |
 | Onboard emit | [`lib/operations/partner-onboard-package.ts`](../../../lib/operations/partner-onboard-package.ts) |
 | Link CLI | [`tools/telegram-ops.ts`](../../../tools/telegram-ops.ts) `link-package-group` |
@@ -414,7 +414,7 @@ bun run telegram:ops -- link-package-group ASH -100… --invite '…'
 bun run telegram:ops -- acknowledge-pending ASH
 ```
 
-Future: MTProto auto-create — **implemented** (Decision #52). See [`toc-ops-repo/docs/system/TELEGRAM.md`](../../../toc-ops-repo/docs/system/TELEGRAM.md) § MTProto user lane.
+Future: MTProto auto-create — **implemented** (Decision #52). See `toc-ops-repo/docs/system/TELEGRAM.md` in the optional sibling checkout, § MTProto user lane.
 
 ### Forum metadata (`reports/telegram/forums/{CODE}.json`)
 
@@ -550,7 +550,7 @@ bun run telegram:ops:consume -- --preview
 - [x] ct surface map can register same title (demo DB wire proved `telegram_ref`)
 - [x] NOV package forum wired (`-1004464761699`) · verify 9/9 live · desk OK
 
-Optional Soft automation (Decision #52): `bun run package-group-create-forum CODE` in `toc-ops-repo` when MTProto session configured — see [`toc-ops-repo/docs/system/TELEGRAM.md`](../../../toc-ops-repo/docs/system/TELEGRAM.md) § MTProto App Registry + bootstrap troubleshooting.
+Optional Soft automation (Decision #52): `bun run package-group-create-forum CODE` in `toc-ops-repo` when MTProto session configured — see `toc-ops-repo/docs/system/TELEGRAM.md` in that optional checkout, § MTProto App Registry + bootstrap troubleshooting.
 
 - [x] MTProto session bootstrapped (2026-07-26) · `bun run telegram-user-health` → OK in `toc-ops-repo`
 

@@ -84,7 +84,7 @@ import {
   decidePublishAuth,
 } from '../lib/registry/publish-auth.ts';
 import { envCheckForHealth } from '../lib/env-check.ts';
-import { avatarWebpResponse } from '../lib/images/avatar-response.ts';
+import { avatarWebpResponse, isSafeAvatarId } from '../lib/images/avatar-response.ts';
 import {
   computeDataETag,
   isFresh,
@@ -111,7 +111,13 @@ import {
   maybeInjectLiveReloadResponse,
   shouldEnableLiveReload,
 } from '../lib/http/live-reload.ts';
-import { formString, requireFormBlob, sha256Blob, writeFormBlob } from '../lib/http/form-upload.ts';
+import {
+  formString,
+  requireFormBlob,
+  sha3Blob,
+  sha256Blob,
+  writeFormBlob,
+} from '../lib/http/form-upload.ts';
 import {
   contentTypePolicyTableRows,
   summarizeContentTypeMatrix,
@@ -166,6 +172,8 @@ import {
   startAgentOddsBroadcast,
   stopAgentOddsBroadcast,
 } from '../lib/operator-research/agent-odds-http.ts';
+import { EnhancementStore } from '../lib/enhancements/store.ts';
+import { publicEnhancementSnapshot } from '../lib/enhancements/public.ts';
 
 /** Unknown long-option allowlist (registry: serve:public). */
 applyUnknownLongOptionGuardFor('serve:public', Bun.argv.slice(2));
@@ -185,6 +193,13 @@ const SERVE_DEVELOPMENT =
   Bun.env.SERVE_PUBLIC_DEV === '1' ||
   Bun.env.NODE_ENV === 'development' ||
   Bun.env.NODE_ENV === 'dev';
+
+const enhancementStore = new EnhancementStore();
+await enhancementStore.load();
+await enhancementStore.startDevelopmentWatcher(snapshot => {
+  const enabled = snapshot.items.filter(item => item.enabled).map(item => item.id);
+  console.info(`♻️ Registry updated — flags reloaded (${enabled.join(', ') || 'none'})`);
+});
 
 /** Active server for graceful stop (Bun Server interface). */
 let activeServer: BunServer | null = null;
@@ -222,6 +237,27 @@ function jsonETag(
       vary: 'Accept',
     }
   );
+}
+
+function withExperimentsLink(response: Response): Response {
+  response.headers.append('Link', '</.well-known/experiments>; rel="help"');
+  return response;
+}
+
+async function enhancementAvatarResponse(avatarKey: string): Promise<Response> {
+  if (enhancementStore.enabled('bun-image')) return avatarWebpResponse(avatarKey);
+  if (!isSafeAvatarId(avatarKey)) return json({ error: 'invalid avatar id' }, 400);
+  const cached = Bun.file(`public/avatars/${avatarKey}.webp`);
+  if (await cached.exists()) {
+    return new Response(cached, {
+      headers: {
+        'Content-Type': 'image/webp',
+        'Cache-Control': 'public, max-age=300',
+        'X-Avatar-Enhancement': 'prebuilt-fallback',
+      },
+    });
+  }
+  return json({ error: 'Bun.Image beta disabled and no prebuilt avatar exists' }, 503);
 }
 
 /** Fail-closed publish gate — 503 unconfigured, 401 bad/missing Bearer. */
@@ -434,6 +470,7 @@ async function listVersions(req: Request, name: string): Promise<Response> {
           version: v,
           publishedAt: r?.publishedAt || null,
           checksum: r?.storage?.checksum || null,
+          sha3: r?.storage?.sha3 || null,
           type: r?.type || null,
           description: r?.description || null,
         };
@@ -464,7 +501,7 @@ async function publishVersion(req: Request, name: string): Promise<Response> {
     /* empty metadata */
   }
   const { blob } = filePart;
-  const sha256 = await sha256Blob(blob);
+  const [sha256, sha3] = await Promise.all([sha256Blob(blob), sha3Blob(blob)]);
   const size = blob.size;
   const storageDir = `public/registry/storage/${name}/${version}`;
   // Bun.write accepts Blob/File directly (no Buffer.copy)
@@ -490,11 +527,12 @@ async function publishVersion(req: Request, name: string): Promise<Response> {
       r2Key: `@factorywager/${name}/${version}.tgz`,
       size,
       checksum: sha256,
+      sha3: { algorithm: 'sha3-256', digest: sha3 },
       contentType: blob.type || 'application/gzip',
     },
   };
   await Bun.write('public/registry/registry.json', `${JSON.stringify(reg, null, 2)}\n`);
-  return json({ success: true, version, checksum: sha256, size });
+  return json({ success: true, version, checksum: sha256, sha3, size });
 }
 
 // ── npm-compatible publish (bun publish) ────────────────────────────
@@ -524,6 +562,9 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
   const sha256 = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', tarballBuf)))
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
+  const sha3Hasher = new Bun.CryptoHasher('sha3-256');
+  sha3Hasher.update(tarballBuf);
+  const sha3 = sha3Hasher.digest('hex');
   const storageDir = `public/registry/storage/${name}/${version}`;
   await writeBytes(`${storageDir}/artifact.tgz`, tarballBuf);
   const raw = await Bun.file('public/registry/registry.json').text();
@@ -550,6 +591,7 @@ async function npmPublish(req: Request, name: string): Promise<Response> {
       r2Key: `@factorywager/${name}/${version}.tgz`,
       size: tarballBuf.length,
       checksum: sha256,
+      sha3: { algorithm: 'sha3-256', digest: sha3 },
       contentType: 'application/gzip',
     },
   };
@@ -2033,9 +2075,24 @@ function buildPublicRoutes() {
     '/health/pre/': (req: Request, server: RouteServer) => healthHtml(req, server),
 
     '/': (req: Request): Promise<Response> =>
-      staticFile('/index.html', req).then(r => r ?? new Response('Not found', { status: 404 })),
+      staticFile('/index.html', req).then(r =>
+        withExperimentsLink(r ?? new Response('Not found', { status: 404 }))
+      ),
     '/index.html': (req: Request): Promise<Response> =>
-      staticFile('/index.html', req).then(r => r ?? new Response('Not found', { status: 404 })),
+      staticFile('/index.html', req).then(r =>
+        withExperimentsLink(r ?? new Response('Not found', { status: 404 }))
+      ),
+
+    '/.well-known/experiments': (req: Request) =>
+      jsonETag(req, publicEnhancementSnapshot(enhancementStore.snapshot), {
+        versionKey: `enhancements-${enhancementStore.snapshot.version}`,
+        cache: 'public, max-age=5, must-revalidate',
+      }),
+    '/.well-known/experiments/': (req: Request) =>
+      jsonETag(req, publicEnhancementSnapshot(enhancementStore.snapshot), {
+        versionKey: `enhancements-${enhancementStore.snapshot.version}`,
+        cache: 'public, max-age=5, must-revalidate',
+      }),
 
     '/api/content-type': (req: Request) => contentTypeApi(req),
     '/api/content-type/': (req: Request) => contentTypeApi(req),
@@ -2408,8 +2465,9 @@ function buildPublicRoutes() {
     '/llms-full.txt': llmsFullTxt(),
 
     // Tennis HQ — on-demand avatar (Bun.Image, zero npm image deps)
-    '/avatar/:id': (req: BunRequest<'/avatar/:id'>) => avatarWebpResponse(req.params.id),
-    '/api/avatar/:id': (req: BunRequest<'/api/avatar/:id'>) => avatarWebpResponse(req.params.id),
+    '/avatar/:id': (req: BunRequest<'/avatar/:id'>) => enhancementAvatarResponse(req.params.id),
+    '/api/avatar/:id': (req: BunRequest<'/api/avatar/:id'>) =>
+      enhancementAvatarResponse(req.params.id),
 
     '/__hmr': (req: Request, server: RouteServer) => {
       if (server?.timeout) {
@@ -2560,6 +2618,7 @@ async function gracefulShutdown(signal: string): Promise<void> {
   } catch {
     /* ignore */
   }
+  enhancementStore.close();
   try {
     if (activeServer) await activeServer.stop(false);
   } catch (e) {
@@ -2590,6 +2649,9 @@ console.log(`Monitoring API ${base}/api/monitoring`);
 console.log(`Registry:      ${base}/api/registry`);
 console.log(`Catalog:       ${base}/api/catalog`);
 console.log(`Prediction:    ${base}/registry/prediction/report/`);
+console.log(
+  `Enhancements:  ${base}/.well-known/experiments · ${enhancementStore.snapshot.items.filter(item => item.enabled).length}/${enhancementStore.snapshot.items.length} enabled`
+);
 if (SERVE_DEVELOPMENT) console.log(`Dev error:     ${base}/__debug/error`);
 const publishReady = Boolean(configuredPublishToken());
 console.log(

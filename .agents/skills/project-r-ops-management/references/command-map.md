@@ -17,6 +17,47 @@ it compares each complete repository-owned package with `~/.codex/skills` and
 rejects changed, missing, or stale files. It is repository-owned and does not
 depend on a machine-wide developer-experience wrapper.
 
+## Structured-data capability proof
+
+```bash
+bun --version
+bun --revision
+bun run data-formats:check
+```
+
+This is the read-only proof for JSON, JSONC, JSON5, JSONL, YAML, TOML, and XML.
+It validates positive operations, malformed-input behavior, semantic round trips
+for parse/stringify formats, byte ceilings, hashes, and correctly converted
+`durationNs`/`durationMs` evidence. `Bun.XML` is reported as `runtime-gated`
+until the active runtime meets the manifest minimum and exposes every required
+operation.
+
+Refresh the protected static artifact only as an explicit write:
+
+```bash
+bun run data-formats:bake
+```
+
+Do not enable the surface until runtime gates, operation proof, and live
+Cloudflare Access proof all pass. A bake is not a runtime promotion or an
+Access-policy mutation. The full integrity, promotion, and rollback contract is
+in [`structured-data-runbook.md`](structured-data-runbook.md).
+
+## Skill health and dynamic evidence
+
+```bash
+bun run skills:rate
+bun run skills:rate:dynamic
+bun run skills:schedule:check
+```
+
+The first command reports static compliance only. The dynamic command executes
+bounded, scoped structure/runtime/contract proofs and reports an evidence score,
+overall score, and confidence separately only for skills with explicitly owned
+runtime or contract evidence. Other skills remain `unproven`, not numerically
+ranked. The six-hour `skill-deep-score` scheduler job owns recurring dynamic
+collection; do not run a second daemon.
+
 ## Bun channel proof
 
 ```bash
@@ -24,6 +65,41 @@ bun run bun:channel:check
 bun test tests/bun-channel-doctor.test.ts tests/bun-channel-doctor-cron.test.ts
 bun run type-check:ci
 ```
+
+## Bun enhancement proof
+
+```bash
+bun run enhancements -- show
+bun run enhancements -- check
+bun run enhancements -- agent-test
+```
+
+`show` resolves the current Bun runtime and environment without writing. `check`
+validates registry structure, evidence paths, and the committed well-known bake.
+`agent-test` proves the experimental image resolver selects fallback and native
+states as the flag changes. It does not execute image behavior; the owning
+avatar and server tests remain separate. Use `bake` only for an intentional
+generated-artifact refresh.
+
+For runtime promotion evidence, invoke the same focused tests and benchmark
+through explicit stable and temporary canary binaries:
+
+```bash
+bun run bench:bun-upgrade
+/absolute/path/to/temporary/canary/bun tools/benchmarks/bun-upgrade-probes.ts
+```
+
+Never run `bun upgrade --canary` against the reviewed stable executable. A
+Windows ARM64 cross-compile proves artifact generation only; execution proof
+requires a Windows ARM64 host. The offline desk experimental proof is:
+
+```bash
+bun run build:desk:offline
+bun test tests/build-offline-desk.test.ts
+```
+
+It produces one self-contained local HTML artifact while leaving the online desk
+source unchanged; promotion still requires rollout evidence.
 
 `bun:channel:check` is read-only. `bun:channel:report` is the explicit derived
 artifact write. Scheduler registration and removal are manual host mutations.

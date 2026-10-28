@@ -12,9 +12,9 @@ if [[ -z "${TOKEN}" ]]; then
   exit 1
 fi
 
-BIN="${GITHUB_MCP_SERVER_BIN:-/Users/nolarose/go/bin/github-mcp-server}"
+BIN="${GITHUB_MCP_SERVER_BIN:-$(command -v github-mcp-server || true)}"
 if [[ ! -x "${BIN}" ]]; then
-  echo "github-mcp-stdio: missing binary at ${BIN} (go install github.com/github/github-mcp-server/cmd/github-mcp-server@latest)" >&2
+  echo "github-mcp-stdio: set GITHUB_MCP_SERVER_BIN or install github-mcp-server on PATH" >&2
   exit 1
 fi
 

@@ -110,7 +110,7 @@ Environment:
 
 Note:
   bun:test reviewed snaps live in tests/__snapshots__/ (git SSOT).
-  Gate: bun run check:snapshots · update: bun run test:snapshots:update
+  Gate: bun run check:snapshots · update: bun run test:snapshots:update -- --id <suite>
 
 Examples:
   portal-cli snapshot run --scope prediction
@@ -918,7 +918,8 @@ async function dispatchSnapshot(sub: string | undefined, rest: string[]): Promis
   switch (sub) {
     case 'run': {
       await ensureSnapshotDir();
-      await runSnapshot({ scope, baseUrl, dryRun, debug });
+      const result = await runSnapshot({ scope, baseUrl, dryRun, debug });
+      if (!result.ok) cliError(`snapshot ${scope} failed; inspect ${result.manifest.id}`);
       break;
     }
     case 'list': {

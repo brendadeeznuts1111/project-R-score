@@ -11,6 +11,10 @@
  * Scope-aware snapshot core — imported by snapshot-data-plane.ts and portal-cli.ts.
  */
 import { Glob, write, file } from 'bun';
+// Bun 1.3 has no native atomic rename/exclusive-directory primitive. The fs
+// compatibility layer supplies those two operations; content I/O stays Bun-native.
+// eslint-disable-next-line no-restricted-imports
+import { mkdir, rename, rmdir } from 'node:fs/promises';
 import { colorize, logDepth, logTable } from '../lib/console-depth.ts';
 import { runPublicDiscovery } from '../lib/public-discovery.ts';
 import { resolvePath } from '../lib/path-bun.ts';
@@ -27,6 +31,7 @@ import type {
   ParsedSnapshotFlags,
   SnapshotFilterOptions,
   SnapshotManifest,
+  SnapshotRunResult,
   SnapshotRunOptions,
 } from './snapshot-types.ts';
 
@@ -34,10 +39,13 @@ export type {
   ParsedSnapshotFlags,
   SnapshotFilterOptions,
   SnapshotManifest,
+  SnapshotRunResult,
   SnapshotRunOptions,
 } from './snapshot-types.ts';
 
 const SCOPE_MARKER = '.snapshot-scope';
+const SNAPSHOT_ID_RE = /^(prediction|portal|gaps|limits)-[a-z0-9]+-[a-z0-9]{4}$/;
+const DEFAULT_FETCH_TIMEOUT_MS = 30_000;
 
 /** Snapshot root — override with PORTAL_SNAPSHOT_DIR. */
 export function getSnapshotDir(): string {
@@ -50,13 +58,38 @@ function indexPath(): string {
 }
 
 export function manifestJsonPath(id: string): string {
-  // brand-ok — opaque snapshot id
+  assertSnapshotId(id);
   return `${getSnapshotDir()}/${id}.json`;
 }
 
 export function manifestFlatPath(id: string): string {
-  // brand-ok — opaque snapshot id
+  assertSnapshotId(id);
   return `${getSnapshotDir()}/${id}.txt`;
+}
+
+export function isSnapshotManifestId(id: unknown, scope?: unknown): id is string {
+  if (typeof id !== 'string' || !SNAPSHOT_ID_RE.test(id)) return false;
+  return (
+    scope === undefined ||
+    (typeof scope === 'string' && isSnapshotScope(scope) && id.startsWith(`${scope}-`))
+  );
+}
+
+function assertSnapshotId(id: unknown, scope?: unknown): asserts id is string {
+  if (!isSnapshotManifestId(id, scope)) {
+    throw new TypeError(`invalid snapshot id: ${String(id)}`);
+  }
+}
+
+function fetchTimeoutMs(): number {
+  const configured = Number(Bun.env.PORTAL_SNAPSHOT_FETCH_TIMEOUT_MS);
+  return Number.isFinite(configured) && configured >= 100 && configured <= 300_000
+    ? configured
+    : DEFAULT_FETCH_TIMEOUT_MS;
+}
+
+function snapshotFetch(url: string): Promise<Response> {
+  return fetch(url, { signal: AbortSignal.timeout(fetchTimeoutMs()) });
 }
 
 export function termColor(text: string, color: string): string {
@@ -210,14 +243,46 @@ export function formatFlatManifest(m: SnapshotManifest): string {
   return parts.join(' ') + '\n';
 }
 
+async function withIndexLock<T>(fn: () => Promise<T>): Promise<T> {
+  const lockDir = `${indexPath()}.lock`;
+  const deadline = Date.now() + 5_000;
+  while (true) {
+    try {
+      await mkdir(lockDir);
+      break;
+    } catch (error) {
+      if ((error as { code?: string }).code !== 'EEXIST' || Date.now() >= deadline) throw error;
+      await Bun.sleep(25);
+    }
+  }
+  try {
+    return await fn();
+  } finally {
+    await rmdir(lockDir).catch(() => undefined);
+  }
+}
+
+async function atomicWrite(path: string, content: string): Promise<void> {
+  const temporaryPath = `${path}.${process.pid}.${crypto.randomUUID()}.tmp`;
+  try {
+    await write(temporaryPath, content);
+    await rename(temporaryPath, path);
+  } finally {
+    if (await file(temporaryPath).exists()) await file(temporaryPath).delete();
+  }
+}
+
 async function writeManifest(manifest: SnapshotManifest): Promise<void> {
+  assertSnapshotId(manifest.id, manifest.scope);
   await Bun.$`mkdir -p ${getSnapshotDir()}`.quiet();
-  await write(manifestJsonPath(manifest.id), JSON.stringify(manifest, null, 2));
-  await write(manifestFlatPath(manifest.id), formatFlatManifest(manifest));
-  const existing = await file(indexPath())
-    .text()
-    .catch(() => '');
-  await write(indexPath(), existing + JSON.stringify(manifest) + '\n');
+  await atomicWrite(manifestJsonPath(manifest.id), JSON.stringify(manifest, null, 2));
+  await atomicWrite(manifestFlatPath(manifest.id), formatFlatManifest(manifest));
+  await withIndexLock(async () => {
+    const existing = await file(indexPath())
+      .text()
+      .catch(() => '');
+    await atomicWrite(indexPath(), existing + JSON.stringify(manifest) + '\n');
+  });
 }
 
 export async function readSnapshotIndex(): Promise<SnapshotManifest[]> {
@@ -229,7 +294,12 @@ export async function readSnapshotIndex(): Promise<SnapshotManifest[]> {
   for (const line of text.split('\n')) {
     if (!line.trim()) continue;
     try {
-      out.push(JSON.parse(line) as SnapshotManifest);
+      const parsed = JSON.parse(line) as SnapshotManifest;
+      if (!isSnapshotManifestId(parsed.id, parsed.scope)) {
+        warn(`index.jsonl: skipping invalid snapshot id (${String(parsed.id).slice(0, 48)})`);
+        continue;
+      }
+      out.push(parsed);
     } catch {
       // One corrupt line must not kill list/last/grep for every snapshot.
       warn(`index.jsonl: skipping unparseable line (${line.slice(0, 48)}…)`);
@@ -342,7 +412,7 @@ async function writeFetchBody(destPath: string, resp: Response): Promise<void> {
 }
 
 async function fetchAsset(url: string, destPath: string): Promise<boolean> {
-  const resp = await fetch(url);
+  const resp = await snapshotFetch(url);
   if (!resp.ok) {
     warn(`${url}: ${resp.status}`);
     return false;
@@ -390,7 +460,7 @@ async function copyLocalAssets(
 }
 
 /** Capture a scope-aware snapshot (#16–#19). */
-export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotManifest | null> {
+export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotRunResult> {
   const scope = opts.scope;
   const baseUrl = opts.baseUrl ?? DEFAULT_SNAPSHOT_BASE;
   const dryRun = opts.dryRun ?? false;
@@ -452,7 +522,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
     }
     console.log(`     Flat:   ${manifestFlatPath(id)}`);
     console.log('');
-    return null;
+    return { ok: true, dryRun: true, manifest: null };
   }
 
   const capturedFiles: string[] = [];
@@ -475,7 +545,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
     const reportUrl = resolveSnapshotUrl(baseUrl, config.reportPath);
     console.log(`  Fetching: ${reportUrl}`);
     try {
-      const resp = await fetch(reportUrl);
+      const resp = await snapshotFetch(reportUrl);
       manifest.metadata.statusCode = String(resp.status);
       if (resp.ok) {
         const ext = config.reportKind === 'html' ? 'html' : 'json';
@@ -515,8 +585,13 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
           const data = JSON.parse(await Bun.file(dest).text()) as Record<string, unknown>;
           extractPredictionMetadata(data, manifest.metadata);
         }
+      } else {
+        manifest.metadata.status = 'error';
+        manifest.metadata.error = `required asset failed: ${assetPath}`;
       }
     } catch (e) {
+      manifest.metadata.status = 'error';
+      manifest.metadata.error = `required asset failed: ${assetPath}: ${e instanceof Error ? e.message : String(e)}`;
       warn(`Asset ${assetPath}: ${e instanceof Error ? e.message : String(e)}`);
     }
   }
@@ -544,7 +619,10 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
   }
 
   await writeManifest(manifest);
-  console.log(`\n  ${termColor(`✅ Snapshot ${id}: ${capturedFiles.length} files`, 'green')}`);
+  const ok = manifest.metadata.status === 'ok';
+  console.log(
+    `\n  ${termColor(`${ok ? '✅' : '❌'} Snapshot ${id}: ${capturedFiles.length} files`, ok ? 'green' : 'red')}`
+  );
   console.log(`  📝 ${manifestJsonPath(id)}`);
   console.log(`  📝 ${manifestFlatPath(id)}\n`);
 
@@ -552,7 +630,7 @@ export async function runSnapshot(opts: SnapshotRunOptions): Promise<SnapshotMan
     logDepth({ manifest, gitInfo, config: scopeConfigs[scope], capturedFiles }, { depth: 5 });
   }
 
-  return manifest;
+  return { ok, dryRun: false, manifest };
 }
 
 export async function listSnapshots(opts: SnapshotFilterOptions = {}): Promise<void> {
@@ -649,7 +727,7 @@ export async function pruneSnapshots(opts: {
   }
 
   for (const id of removedIds) {
-    // brand-ok — opaque snapshot id
+    assertSnapshotId(id);
     const dir = `${getSnapshotDir()}/${id}`;
     const json = manifestJsonPath(id);
     const flat = manifestFlatPath(id);
@@ -663,10 +741,9 @@ export async function pruneSnapshots(opts: {
     } catch {
       /* ignore */
     }
-    // recursive dir — spawn rm -rf only for the snapshot id dir under getSnapshotDir()
+    // Bun.$ interpolation keeps the validated path a single cross-platform argument.
     try {
-      const proc = Bun.spawn(['rm', '-rf', dir], { stdout: 'ignore', stderr: 'ignore' });
-      await proc.exited;
+      await Bun.$`rm -rf ${dir}`.quiet();
     } catch {
       /* ignore */
     }
@@ -676,7 +753,7 @@ export async function pruneSnapshots(opts: {
   // Rewrite index.jsonl
   const indexP = indexPath();
   const lines = nextIndex.map(m => JSON.stringify(m)).join('\n') + (nextIndex.length ? '\n' : '');
-  await write(indexP, lines);
+  await withIndexLock(() => atomicWrite(indexP, lines));
   console.log(
     `  pruned ${removedIds.length} snapshot(s); kept ${nextIndex.length} (keep=${keep}${opts.scope ? ` scope=${opts.scope}` : ''})`
   );

@@ -43,18 +43,6 @@ Inspect every generated frontend and backend pair:
 
 Native forms that navigate do not need reset logic. For each same-page flow, verify that the code retains the widget ID returned by `turnstile.render()` and calls `turnstile.reset(widgetId)` after the request completes. Multiple protected surfaces must not share a widget ID or reset without an ID.
 
-## Test 5: Skill persists to a bundle location
-
-After Step 11:
-
-```sh
-test -f .claude/skills/turnstile-spin/SKILL.md \
-  || test -f .codex/skills/turnstile-spin/SKILL.md \
-  || test -f .opencode/skills/turnstile-spin/SKILL.md
-```
-
-Expected exit code: 0. File-oriented rules targets install the hosted `prompt.md` directly instead of using `persist-skill.sh`.
-
 ## Running all cases
 
 The consuming test harness must pass the widget secret through standard input. It must not export it or place it in a command argument.

@@ -6,7 +6,8 @@ description: >-
   prediction backtests, and champion/challenger shadow eval on FactoryWager
   operations. Use when working on provisioning queues, sandbox-gated WebView
   signup, experiment variants/phases, prediction_accuracy, ops-summary C4/C5
-  panels, or ops:diagnose / ops:snapshot freshness.
+  panels, ops:diagnose / ops:snapshot freshness, or the root partner-profile
+  bridge and its Sports Terminal integration boundary.
 ---
 
 # Ops dual-mode + experiments
@@ -19,6 +20,7 @@ description: >-
 - Coverage floor variants (`min_coverage_pct` …) affecting `canOfferOnPlatform`
 - Prediction backtest / report / shadow champion-challenger
 - Ops summary empty or stale on `/portal/ops/` · `/portal/dashboard/` · Pages
+- Root partner binding/play-gate work or Sports Terminal profile integration
 
 Deep maps (do not duplicate here):
 [`lib/experiments/README.md`](../../../lib/experiments/README.md) ·
@@ -52,6 +54,18 @@ Deep maps (do not duplicate here):
 | Orchestrator      | Commits, `package.json` scripts, this skill                                                                                                                                                                                                          |
 
 Stage named files only. Never sweep unrelated dirty portal/DOD trees.
+
+### Partner profile boundary
+
+- Root identity, binding, play-gate, and projection work belongs to
+  `lib/operations/partner-profile-bridge.ts`, the partner contract, and the
+  `ops-partner-bridge` tenant proof.
+- Sports Terminal TOML materialization, lifecycle transitions, settlement, and
+  `PartnerGateway.evaluate()` belong to
+  `projects/active/sports-terminal-os/AGENTS.md` and
+  `projects/active/sports-terminal-os/src/zones/partner-profile/`.
+- Treat the workspace profile system as an integration boundary, not a second
+  root ledger or schema authority.
 
 ## Job loop
 

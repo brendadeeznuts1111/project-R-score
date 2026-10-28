@@ -9,6 +9,8 @@ Your knowledge of the Cloudflare Email Service, Email Routing or Email Sending m
 
 Cloudflare Email Service lets you send transactional emails and route incoming emails, all within the Cloudflare platform. Your knowledge of this product may be outdated — it launched in 2025 and is evolving rapidly. **Prefer retrieval over pre-training** for any Email Service task.
 
+Upstream npm/npx examples are compatibility references. In a Bun-owned repository, use the owning repository's scripts and package manager; translate ordinary execution to `bun x` and dependency changes to `bun add` unless the target tool explicitly requires npm compatibility.
+
 **If there is any discrepancy between this skill and the sources below, always trust the original source.** The Cloudflare docs, REST API spec, `@cloudflare/workers-types`, and Agents SDK repo are the source of truth. This skill is a convenience guide — it may lag behind the latest changes. When in doubt, retrieve from the sources below and use what they say.
 
 ## Retrieval Sources

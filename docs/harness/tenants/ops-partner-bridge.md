@@ -142,5 +142,5 @@ Process: `processChannelOutbox` (welcome/onboard.complete use `telegram` project
 
 - Deep onboarding + Telegram templates: [`partner-onboarding-package.md`](partner-onboarding-package.md)
 - Ops dual-mode experiments skill: [`.agents/skills/ops-dual-mode-experiments/`](../../../.agents/skills/ops-dual-mode-experiments/)
-- Partner Profile OS product skill: [`.agents/skills/partner-profile-os/`](../../../.agents/skills/partner-profile-os/)
+- Sports Terminal profile authority: [`projects/active/sports-terminal-os/AGENTS.md`](../../../projects/active/sports-terminal-os/AGENTS.md)
 - Ops snapshot tenant: [`ops-snapshot.md`](ops-snapshot.md)

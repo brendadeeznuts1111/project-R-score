@@ -294,33 +294,6 @@
       "description": "This skill — helper, rules, MCP, repo-map"
     },
     {
-      "id": "agents-sports-terminal-skill",
-      "zone": "agents",
-      "name": "sports-terminal-os skill",
-      "path": ".agents/skills/sports-terminal-os",
-      "view": "digest",
-      "tags": ["skill", "sports-terminal"],
-      "description": "SKILL.md runbook for Sports Terminal OS workspace"
-    },
-    {
-      "id": "agents-partner-profile",
-      "zone": "agents",
-      "name": "partner-profile-os skill",
-      "path": ".agents/skills/partner-profile-os",
-      "view": "digest",
-      "tags": ["skill", "partner"],
-      "description": "Partner Profile OS skill — gateway, lifecycle, SOR"
-    },
-    {
-      "id": "agents-cascade-mover",
-      "zone": "agents",
-      "name": "cascade-mover-v3 skill",
-      "path": ".agents/skills/cascade-mover-v3",
-      "view": "digest",
-      "tags": ["skill", "cascade", "mcp"],
-      "description": "Sports intelligence and multi-market cascading (MCP-first)"
-    },
-    {
       "id": "agents-project-r-skill-maintenance",
       "zone": "agents",
       "name": "project-r-skill-maintenance skill",

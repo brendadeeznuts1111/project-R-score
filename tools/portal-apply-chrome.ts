@@ -52,6 +52,7 @@ type PageKey =
   | 'toc'
   | 'compliance'
   | 'limits'
+  | 'desk'
   | 'partners'
   | 'partner-health'
   | 'account'
@@ -71,6 +72,7 @@ type PageKey =
   | 'brands'
   | 'surfaces'
   | 'science'
+  | 'data-formats'
   | 'template';
 
 const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: string }[] = [
@@ -196,6 +198,12 @@ const PAGES: { file: string; active: PageKey; pageLabel: string; brandBadge?: st
     brandBadge: 'ops',
   },
   { file: 'science/index.html', active: 'science', pageLabel: 'Science', brandBadge: 'ops' },
+  {
+    file: 'labs/data-formats/index.html',
+    active: 'data-formats',
+    pageLabel: 'Data formats',
+    brandBadge: 'lab',
+  },
   { file: '_page-template.html', active: 'template', pageLabel: 'New Page', brandBadge: 'ops' },
 ];
 

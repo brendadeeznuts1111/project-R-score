@@ -1,0 +1,81 @@
+{
+  "$schema": "./schemas/data-format-lab.schema.json",
+  "schemaVersion": 1,
+  "mode": "preview",
+  "surface": {
+    "path": "/portal/labs/data-formats/",
+    "access": "cloudflare-access",
+    "execution": "build-time-static"
+  },
+  "security": {
+    "maxFixtureBytes": 262144,
+    "maxOutputBytes": 262144,
+    "externalEntities": "forbidden",
+    "rendering": "text-only"
+  },
+  "formats": [
+    {
+      "id": "json",
+      "label": "JSON",
+      "api": "JSON",
+      "minimumBunVersion": null,
+      "requiredOperations": ["parse", "stringify"],
+      "fixture": "{\"name\":\"FactoryWager\",\"ready\":true}",
+      "negativeFixture": "{\"ready\":}"
+    },
+    {
+      "id": "jsonc",
+      "label": "JSONC",
+      "api": "Bun.JSONC",
+      "minimumBunVersion": null,
+      "requiredOperations": ["parse"],
+      "fixture": "{/* comments are accepted */\n\"name\": \"FactoryWager\"}",
+      "negativeFixture": "{\"ready\":}"
+    },
+    {
+      "id": "json5",
+      "label": "JSON5",
+      "api": "Bun.JSON5",
+      "minimumBunVersion": null,
+      "requiredOperations": ["parse", "stringify"],
+      "fixture": "{name: 'FactoryWager', trailing: true,}",
+      "negativeFixture": "{ready:}"
+    },
+    {
+      "id": "jsonl",
+      "label": "JSONL",
+      "api": "Bun.JSONL",
+      "minimumBunVersion": null,
+      "requiredOperations": ["parse", "parseChunk"],
+      "fixture": "{\"event\":\"start\"}\n{\"event\":\"ready\"}\n",
+      "negativeFixture": "not-json\n"
+    },
+    {
+      "id": "yaml",
+      "label": "YAML",
+      "api": "Bun.YAML",
+      "minimumBunVersion": null,
+      "requiredOperations": ["parse", "stringify"],
+      "fixture": "name: FactoryWager\nready: true\n",
+      "negativeFixture": "[unterminated"
+    },
+    {
+      "id": "toml",
+      "label": "TOML",
+      "api": "Bun.TOML",
+      "minimumBunVersion": null,
+      "requiredOperations": ["parse"],
+      "fixture": "name = \"FactoryWager\"\nready = true\n",
+      "negativeFixture": "ready ="
+    },
+    {
+      "id": "xml",
+      "label": "XML",
+      "api": "Bun.XML",
+      "minimumBunVersion": "1.4.0",
+      "requiredOperations": ["parse", "stringify"],
+      "fixture": "<project ready=\"true\"><name>FactoryWager</name></project>",
+      "negativeFixture": "<project><name>FactoryWager</project>"
+    }
+  ]
+}

@@ -1,53 +1,37 @@
-# AGENTS.md
+# TOML CLI — agent entrypoint
 
-This file provides guidance to agents when working with code in this repository.
+Project R root policy applies. Use [`README.md`](README.md) and
+[`docs/INDEX.md`](docs/INDEX.md) for product detail; `package.json` owns commands.
 
-## Non-Obvious Project-Specific Patterns
+## Local contract
 
-### Bun Native API Requirements (Critical)
-- **NEVER use axios, node-fetch, form-data, or dotenv** - ESLint will error. Use Bun's native equivalents:
-  - `fetch()` instead of axios/node-fetch
-  - `FormData` API instead of form-data package
-  - Bun automatically loads `.env` files - no dotenv import needed
-- **TOML handling**: Bun has `TOML.parse()` but NOT `TOML.stringify()`. The [`ConfigManager.save()`](src/config-manager.ts:280) method manually builds TOML strings line-by-line - follow this pattern for TOML serialization.
+- Use Bun-native fetch, FormData, environment loading, and TOML parsing.
+- The existing `ConfigManager` serialization path owns TOML output; Bun exposes
+  parsing but no general TOML stringify API.
+- Compile-time features are enabled by the declared `bun build --feature=...`
+  scripts. Do not replace them with runtime environment branches.
+- Preserve path aliases and the existing lint/type rules. Prefix intentionally
+  unused variables with `_`.
+- Keep R2 credentials in environment owners and never commit or print them.
 
-### Feature Flag System
-- Features are **compile-time flags** using Bun's `--feature` flag, not runtime environment variables
-- Example: `bun build --feature=ENTERPRISE --feature=DEBUG` enables those code paths
-- Check features with `feature('FLAG_NAME')` from `bun` import
-- Available features: DEBUG, ENTERPRISE, PREMIUM_SECRETS, R2_STORAGE, DEVELOPMENT, MOCK_API
+## Proof
 
-### Build Commands (Non-Standard)
-- `bun run build:enterprise` - Production build with all enterprise features
-- `bun run build:dev` - Development build with DEBUG and MOCK_API features
-- `bun run ci:bundle` - Full bundle analysis pipeline (analyze + compare)
-- `bun run devices:dashboard` - Virtual device monitoring dashboard
-- `bun run system:full-demo` - Runs both device integration and API demos
+```bash
+bun run lint
+bun run type-check
+bun run test:unit
+bun run test:integration
+bun run test:e2e
+bun run build
+```
 
-### Testing Requirements
-- **Test timeout is 5 seconds** (configured in [bunfig.toml](bunfig.toml:9))
-- Test files MUST be in `tests/` directory (enforced by bunfig.toml)
-- Run single test: `bun test tests/unit/config-manager.test.ts`
-- Run with features: `bun test --feature=MOCK_API tests/`
+Use `bun test <path>` for focused work. Do not use the retired `ci:bundle`,
+`devices:dashboard`, or `system:full-demo` names unless they become declared
+package scripts again.
 
-### Path Aliases
-- `@/*` → `src/*`
-- `@config/*` → `config/*`
-- `@types/*` → `types/*`
-- `@utils/*` → `utils/*`
+## Routes
 
-### Code Style Enforcement
-- **Explicit return types required** for all TypeScript functions (@typescript-eslint/explicit-function-return-types: warn)
-- **Console logs allowed but warned** (no-console: warn)
-- Unused variables must be prefixed with underscore (`_unusedVar`)
-- No explicit any without warning (@typescript-eslint/no-explicit-any: warn)
-
-### R2 Storage Pattern
-- R2 credentials MUST be environment variables with `EMPIRE_` prefix (e.g., `EMPIRE_R2_ACCOUNT_ID`)
-- Public URL construction requires `R2_PUBLIC_URL` to be set
-- Uploads use `configs/{environment}/config.toml` key structure
-
-### Virtual Device System
-- Device monitoring via `agent-container/` directory
-- Reports generated in `reports/` with timestamped JSON files
-- Integration tests use mock APIs with `--feature=MOCK_API` flag
+- Architecture: [`docs/BUN_NATIVE_ARCHITECTURE.md`](docs/BUN_NATIVE_ARCHITECTURE.md)
+- Feature flags: [`docs/FEATURE_FLAGS_DEVELOPER_GUIDE.md`](docs/FEATURE_FLAGS_DEVELOPER_GUIDE.md)
+- Tests: [`docs/TEST_GUIDE.md`](docs/TEST_GUIDE.md)
+- Wire behavior: [`docs/WIRE_MODE_ARCHITECTURE.md`](docs/WIRE_MODE_ARCHITECTURE.md)
