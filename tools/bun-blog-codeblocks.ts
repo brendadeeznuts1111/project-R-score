@@ -20,7 +20,7 @@
 // @see https://bun.com/reference/bun/markdown/AnsiTheme — Bun.markdown.AnsiTheme reference
 // @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
 // @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
-// @see https://bun.com/rss.xml — Bun release RSS (optional --rss mode; not HTML blog)
+// @see https://bun.com/rss.xml — Bun blog RSS
 // @see https://bun.com/docs/guides/process/argv — util.parseArgs (page restructured, section anchors removed)
 /**
  * Extract `<div class="CodeBlock">` regions from a Bun blog HTML post.
@@ -46,13 +46,19 @@ import {
 } from '../lib/docs/blog-release-tokens.ts';
 import {
   decodeHtmlEntities,
+  DEFAULT_HARVEST_MAP_CONFIG,
   extractCodeBlocks,
   extractCodeBlocksFromFile,
+  harvestMapStats,
+  mapHarvestToBlogHtml,
+  mapHarvestToBlogMarkdown,
+  summarizeHarvestMap,
   stripShikiPre,
   subtreeBlockCount,
   type CodeBlock,
   type CodeBlockClassSummary,
   type ExtractResult,
+  type HarvestAiSummary,
   type HeadingNode,
 } from '../lib/docs/blog-codeblocks.ts';
 import {
@@ -90,12 +96,31 @@ import {
 
 export type { CodeBlock, ExtractResult, HeadingNode } from '../lib/docs/blog-codeblocks.ts';
 export {
+  BLOG_ANCHOR_CLASS,
+  BLOG_CHIP_CLASS,
+  BLOG_CODE_CLASS,
+  BLOG_HEADING_CLASS,
+  blogGuideBlockId,
+  blogHeadingHref,
   decodeHtmlEntities,
+  DEFAULT_HARVEST_MAP_CONFIG,
   extractCodeBlocks,
   extractCodeBlocksFromFile,
   formatBlockId,
+  formatHarvestFlagCmdTable,
+  formatHarvestTemplateTable,
+  HARVEST_AI_CMD,
+  HARVEST_CLI_CMD,
+  HARVEST_CONFIG_CMD,
+  HARVEST_RUNTIME,
+  HARVEST_TEMPLATE_ROWS,
+  harvestRuntimeVersion,
+  harvestMapStats,
   hashCodeBlock,
   INTRO_HEADING_ID,
+  mapHarvestToBlogHtml,
+  mapHarvestToBlogMarkdown,
+  summarizeHarvestMap,
   stripShikiPre,
   subtreeBlockCount,
 } from '../lib/docs/blog-codeblocks.ts';
@@ -735,6 +760,7 @@ Extract div.CodeBlock samples from a Bun blog HTML post.
   --markdown-kitty-graphics  Render local images with Kitty graphics when supported
   --references        Print exact Bun guide/API cross-references and exit
   --offline           Never fetch; require the saved HTML input
+  --ai                Call the harvest AI provider (default Ollama llama2)
   -r, --rss           Opt-in live RSS enrich when release-index misses
   -h, --help          Show help
 
@@ -767,6 +793,7 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
       'markdown-kitty-graphics': { type: 'boolean', default: false },
       references: { type: 'boolean', default: false },
       offline: { type: 'boolean', default: false },
+      ai: { type: 'boolean', default: false },
       help: { type: 'boolean', short: 'h', default: false },
     },
     allowPositionals: true,
@@ -847,6 +874,8 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
   const stem = `${slug}-CodeBlock`;
   const jsonPath = resolvePath(outDir, `${stem}.json`);
   const mdPath = resolvePath(outDir, `${stem}.md`);
+  const blogMdPath = resolvePath(outDir, `${stem}.blog.md`);
+  const blogHtmlPath = resolvePath(outDir, `${stem}.blog.html`);
   const renderedHtmlPath = resolvePath(outDir, `${stem}.html`);
   const renderedAnsiPath = resolvePath(outDir, `${stem}.ansi.txt`);
   const derivedPath = resolvePath(outDir, `${stem}-DerivedApi.json`);
@@ -879,6 +908,13 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     outline: extracted.outline,
     h2Count: extracted.outline.length,
     introBlockIds: extracted.introBlockIds,
+    images: extracted.images,
+    links: extracted.links,
+    inlineCodes: extracted.inlineCodes,
+    tables: extracted.tables,
+    footnotes: extracted.footnotes,
+    stats: harvestMapStats(extracted),
+    config: DEFAULT_HARVEST_MAP_CONFIG,
     blocks: blocksForJson,
   };
   const wrote: string[] = [jsonPath, mdPath];
@@ -915,6 +951,19 @@ export async function runCli(argv: string[] = Bun.argv.slice(2)): Promise<number
     md += `### \`${b.blockId}\` · #${b.index} · ${b.section}\n\nStatus: **${b.statusLabel}** · Class: \`${b.classNames.join(' ')}\` · Hash: \`${b.codeHash.slice(0, 12)}\`\n\n\`\`\`\n${b.code}\n\`\`\`\n\n`;
   }
   await Bun.write(mdPath, md);
+  if (values.ai && values.offline) {
+    console.error('--ai cannot run with --offline');
+    return 1;
+  }
+  let summaries: Record<string, HarvestAiSummary> = {};
+  if (values.ai) {
+    summaries = await summarizeHarvestMap(extracted, DEFAULT_HARVEST_MAP_CONFIG);
+  }
+  const blogMap = { sourceUrl: source, guideKey, summaries };
+  const blogMd = mapHarvestToBlogMarkdown(extracted, blogMap);
+  await Bun.write(blogMdPath, blogMd);
+  await Bun.write(blogHtmlPath, mapHarvestToBlogHtml(extracted, blogMap));
+  wrote.push(blogMdPath, blogHtmlPath);
   if (markdownPlan.html) {
     await Bun.write(renderedHtmlPath, markdownHtml(md, markdownPlan.parserOptions));
     wrote.push(renderedHtmlPath);

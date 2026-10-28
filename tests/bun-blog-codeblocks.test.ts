@@ -96,6 +96,10 @@
 // @updated Bun.inspect.table · changed v1.1.31 · 2024-10-18 · https://bun.com/blog/bun-v1.1.31
 // @updated Bun.inspect.table · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
 // @verified Bun.inspect.table · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
+// @see https://bun.com/docs/runtime/utils#bun-escapehtml — Bun.escapeHTML
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-html — Bun.markdown.html
+// @see https://bun.com/docs/runtime/markdown#bun-markdown-render — Bun.markdown.render
+// @see https://bun.com/blog/bun-v1.4#bun-markdown — Bun.markdown blog heading
 // @see https://bun.com/docs/runtime/utils#bun-randomuuidv7 — Bun.randomUUIDv7
 // @updated Bun.randomUUIDv7 · changed v1.1.34 · 2024-11-02 · https://bun.com/blog/bun-v1.1.34
 // @verified Bun.randomUUIDv7 · Bun v1.3.14 · 2026-08-06 · https://bun.com/docs/runtime/utils#bun-randomuuidv7
@@ -117,11 +121,21 @@ import {
   hashCodeBlock,
   INTRO_HEADING_ID,
   matchBlocksToTokens,
+  mapHarvestToBlogHtml,
+  mapHarvestToBlogMarkdown,
   parseBlockSelector,
   parseBlogSlug,
   parseBlogVersion,
   resolveHarvestPaths,
   type HeadingNode,
+  BLOG_ANCHOR_CLASS,
+  BLOG_CHIP_CLASS,
+  BLOG_CODE_CLASS,
+  BLOG_HEADING_CLASS,
+  blogHeadingHref,
+  DEFAULT_HARVEST_MAP_CONFIG,
+  HARVEST_AI_CMD,
+  HARVEST_CLI_CMD,
   previewLine,
   resolveCodeBlockMode,
   resolveMarkdownOutputPlan,
@@ -378,6 +392,147 @@ describe('bun-blog-codeblocks extract', () => {
     ]);
     expect(filterBlocks(result.blocks, { section: 'bun-test' })).toHaveLength(2);
   });
+
+  test('Bun.markdown maps harvest locators onto live blog id/href/class', () => {
+    const sample = `const html = Bun.markdown.html("# Hello **world**");
+// "<h1>Hello <strong>world</strong></h1>\\n"
+
+// ANSI terminal output
+const ansi = Bun.markdown.render("# Hello\\n\\n**bold**", {
+  heading: (children) => \`\\x1b[1;4m\${children}\\x1b[0m\\n\`,
+  paragraph: (children) => children + "\\n",
+  strong: (children) => \`\\x1b[1m\${children}\\x1b[22m\`,
+});
+
+// React
+export default function Page() {
+  return Bun.markdown.react(readme);
+}`;
+    const html = `
+      <h2 id="what-s-new" class="anchored">What's new<a href="#what-s-new" class="anchor">#</a></h2>
+      <h3 id="bun-markdown" class="anchored"><code>Bun.markdown</code>
+        <a class="since" href="/blog/release-notes/bun-v1.3.8" title="Shipped in Bun v1.3.8">v1.3.8</a>
+        <a class="since" href="/blog/release-notes/bun-v1.4.0" title="Improved in Bun v1.4.0">v1.4.0</a>
+        <a href="#bun-markdown" aria-label="Permalink" class="anchor">#</a>
+      </h3>
+      <div class="CodeBlock group/code"><pre><code>${Bun.escapeHTML(sample)}</code></pre></div>`;
+    const result = extractCodeBlocks(html);
+    const sourceUrl = 'https://bun.com/blog/bun-v1.4';
+    const mapped = mapHarvestToBlogHtml(result, {
+      sourceUrl,
+      guideKey: 'blog/bun-v1.4',
+    });
+    expect(blogHeadingHref(sourceUrl, 'bun-markdown')).toBe(
+      'https://bun.com/blog/bun-v1.4#bun-markdown'
+    );
+    expect(mapped).toContain(`id="bun-markdown"`);
+    expect(mapped).toContain(`class="${BLOG_HEADING_CLASS}"`);
+    expect(mapped).toContain(`href="#bun-markdown"`);
+    expect(mapped).toContain(`class="${BLOG_ANCHOR_CLASS}"`);
+    expect(mapped).toContain(`class="${BLOG_CODE_CLASS}"`);
+    expect(mapped).toContain(`class="${BLOG_CHIP_CLASS}"`);
+    expect(mapped).toContain('href="/blog/release-notes/bun-v1.3.8"');
+    expect(mapped).toContain('title="Shipped in Bun v1.3.8"');
+    expect(mapped).toContain('title="Improved in Bun v1.4.0"');
+    expect(mapped).toContain('data-block-id="bun-markdown/1"');
+    expect(mapped).toContain('Bun.markdown.html');
+    expect(mapped).toContain('Bun.markdown.react(readme)');
+    expect(mapped).not.toContain('id="bunmarkdown"');
+    expect(mapped).not.toContain('id="whats-new"');
+    expect(mapped).toContain('id="what-s-new"');
+
+    const md = mapHarvestToBlogMarkdown(result, {
+      sourceUrl,
+      guideKey: 'blog/bun-v1.4',
+    });
+    expect(md).toContain('[Bun.markdown](https://bun.com/blog/bun-v1.4#bun-markdown)');
+    expect(md).toContain('blog/bun-v1.4#bun-markdown/1');
+    expect(md).toContain('class: `CodeBlock group/code`');
+    const htmlFromMd = Bun.markdown.html(md, { headings: { ids: true } });
+    expect(htmlFromMd).toContain('Bun.markdown');
+  });
+
+  test('harvest map CONFIG includes TOC, stats, images, links, inline code, blocks, raw JSON', () => {
+    expect(DEFAULT_HARVEST_MAP_CONFIG).toMatchObject({
+      includeToc: true,
+      includeStats: true,
+      includeImages: true,
+      includeLinks: true,
+      includeInlineCode: true,
+      includeCodeBlocks: true,
+      includeRawJson: true,
+      includeTables: true,
+      includeFootnotes: true,
+      includeSocial: true,
+      enableAI: true,
+      aiProvider: 'ollama',
+      aiEndpoint: 'http://localhost:11434/api/generate',
+      aiModel: 'llama2',
+      aiApiKey: '',
+      aiResponsePath: 'response',
+    });
+    const html = `
+      <h2 id="what-s-new" class="anchored">What's new</h2>
+      <p>See <a href="/docs/runtime/markdown" class="relative">the markdown guide</a> and <code>Bun.markdown.html</code>.</p>
+      <img src="/images/blog/bun-1.4/image-pipeline-src.svg" alt="Bun.Image pipeline" class="mx-auto block"/>
+      <h3 id="bun-markdown" class="anchored">Bun.markdown
+        <a class="since" href="/blog/release-notes/bun-v1.3.8" title="Shipped in Bun v1.3.8">v1.3.8</a>
+      </h3>
+      <div class="CodeBlock group/code"><pre><code>const html = Bun.markdown.html("# Hello **world**");</code></pre></div>`;
+    const result = extractCodeBlocks(html);
+    expect(result.images.map(row => row.src)).toEqual([
+      '/images/blog/bun-1.4/image-pipeline-src.svg',
+    ]);
+    expect(result.links.some(row => row.href === '/docs/runtime/markdown')).toBe(true);
+    expect(result.links.some(row => row.className.includes('since'))).toBe(true);
+    expect(result.inlineCodes.some(row => row.text === 'Bun.markdown.html')).toBe(true);
+
+    const sourceUrl = 'https://bun.com/blog/bun-v1.4';
+    const mapped = mapHarvestToBlogHtml(result, { sourceUrl, guideKey: 'blog/bun-v1.4' });
+    expect(mapped).toContain('class="toc"');
+    expect(mapped).toContain('>Field</th>');
+    expect(mapped).toContain('>Type</th>');
+    expect(mapped).toContain('>Property</th>');
+    expect(mapped).toContain('>Flag</th>');
+    expect(mapped).toContain('>Cmd</th>');
+    expect(mapped).toContain('>Runtime</th>');
+    expect(mapped).toContain('>Version</th>');
+    expect(mapped).toContain('includeCodeBlocks');
+    expect(mapped).toContain('CONFIG.includeCodeBlocks');
+    expect(mapped).toContain(HARVEST_CLI_CMD);
+    expect(mapped).toContain('>Bun</td>');
+    expect(mapped).toContain(Bun.version);
+    expect(mapped).toContain('image-pipeline-src.svg');
+    expect(mapped).toContain('/docs/runtime/markdown');
+    expect(mapped).toContain('<code>Bun.markdown.html</code>');
+    expect(mapped).toContain('id="harvest-raw"');
+    expect(mapped).toContain('data-block-id="bun-markdown/1"');
+
+    const md = mapHarvestToBlogMarkdown(result, { sourceUrl, guideKey: 'blog/bun-v1.4' });
+    expect(md).toContain('## Config');
+    expect(md).toContain('| Type');
+    expect(md).toContain('| Property');
+    expect(md).toContain('| Flag');
+    expect(md).toContain('| Cmd');
+    expect(md).toContain('| Runtime');
+    expect(md).toContain('| Version');
+    expect(md).toContain('## TOC');
+    expect(md).toContain('## Stats');
+    expect(md).toContain('| Field');
+    expect(md).toContain('includeCodeBlocks');
+    expect(md).toContain(HARVEST_AI_CMD);
+    expect(md).toContain('## Raw JSON');
+    expect(md).toContain('image: ![Bun.Image pipeline]');
+    expect(md).toContain('inline: `Bun.markdown.html`');
+
+    const withoutBlocks = mapHarvestToBlogMarkdown(result, {
+      sourceUrl,
+      config: { includeCodeBlocks: false, includeRawJson: false },
+    });
+    expect(withoutBlocks).not.toContain('```');
+    expect(withoutBlocks).not.toContain('## Raw JSON');
+    expect(withoutBlocks).toContain('## TOC');
+  });
 });
 
 describe('bun-blog-codeblocks CLI', () => {
@@ -522,6 +677,14 @@ describe('bun-blog-codeblocks CLI', () => {
       resolvePath(outDir, 'bun-v9.9.9-CodeBlock.md')
     ).text();
     expect(markdown).toContain('Class pattern: `CodeBlock*` via `Bun.Glob.match()`');
+    const blogHtml = await Bun.file(
+      resolvePath(outDir, 'bun-v9.9.9-CodeBlock.blog.html')
+    ).text();
+    expect(blogHtml).toContain('id="files-in-bun-build"');
+    expect(blogHtml).toContain(`class="${BLOG_HEADING_CLASS}"`);
+    expect(blogHtml).toContain(`class="${BLOG_CODE_CLASS}"`);
+    const blogMd = await Bun.file(resolvePath(outDir, 'bun-v9.9.9-CodeBlock.blog.md')).text();
+    expect(blogMd).toContain('https://bun.com/blog/bun-v9.9.9#files-in-bun-build');
     expect(markdown).toContain('| `CodeBlockTab` | skipped · tab container | 1 |');
     expect(markdown).toContain('Status: **parsed** · Class: `CodeBlock`');
     expect(markdown).toContain('`files-in-bun-build/1`');
@@ -589,6 +752,17 @@ describe('bun-blog-codeblocks CLI', () => {
     const renderedAnsi = await Bun.file(`${stem}.ansi.txt`).text();
     expect(renderedAnsi).toContain('Bun v9.9.9');
     expect(renderedAnsi).not.toContain('\x1b[');
+  });
+
+  test('runCli --ai with --offline exits non-zero', async () => {
+    const code = await runCli([
+      FIXTURE,
+      '--url',
+      'https://bun.com/blog/bun-v9.9.9',
+      '--offline',
+      '--ai',
+    ]);
+    expect(code).toBe(1);
   });
 
   test('missing HTML exits non-zero with Bun.write hint', () => {

@@ -41,16 +41,10 @@ export function normalizeSocialKey(raw: string): keyof SocialMetadata | undefine
     : undefined;
 }
 
-/**
- * Extract social metadata from an already-fetched Response.
- * When `baseUrl` is set, relative `image` values are resolved against it.
- *
- * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
- */
-export async function extractSocialMetadataFromResponse(
-  response: Response,
-  baseUrl?: string
-): Promise<SocialMetadata> {
+function createSocialCollector(baseUrl?: string): {
+  rewriter: HTMLRewriter;
+  finalize: () => SocialMetadata;
+} {
   const metadata: SocialMetadata = {};
   let titleFallback = '';
 
@@ -94,21 +88,46 @@ export async function extractSocialMetadataFromResponse(
       },
     });
 
-  await rewriter.transform(response).blob();
-
-  if (!metadata.title && titleFallback.trim()) {
-    metadata.title = titleFallback.trim();
-  }
-
-  if (metadata.image && baseUrl && !metadata.image.startsWith('http')) {
-    try {
-      metadata.image = new URL(metadata.image, baseUrl).href;
-    } catch {
-      // keep relative
+  const finalize = (): SocialMetadata => {
+    if (!metadata.title && titleFallback.trim()) {
+      metadata.title = titleFallback.trim();
     }
-  }
+    if (metadata.image && baseUrl && !metadata.image.startsWith('http')) {
+      try {
+        metadata.image = new URL(metadata.image, baseUrl).href;
+      } catch {
+        // keep relative
+      }
+    }
+    return metadata;
+  };
 
-  return metadata;
+  return { rewriter, finalize };
+}
+
+/**
+ * Extract social metadata from an already-fetched Response.
+ * When `baseUrl` is set, relative `image` values are resolved against it.
+ *
+ * @see https://bun.com/docs/guides/html-rewriter/extract-social-meta#extract-social-share-images-and-open-graph-tags
+ */
+export async function extractSocialMetadataFromResponse(
+  response: Response,
+  baseUrl?: string
+): Promise<SocialMetadata> {
+  const { rewriter, finalize } = createSocialCollector(baseUrl);
+  await rewriter.transform(response).blob();
+  return finalize();
+}
+
+/**
+ * Sync HTML string path — `HTMLRewriter.transform(string)` runs handlers in-process.
+ * Harvest uses this so `extractCodeBlocks` stays synchronous.
+ */
+export function extractSocialMetadataFromHtmlSync(html: string, baseUrl?: string): SocialMetadata {
+  const { rewriter, finalize } = createSocialCollector(baseUrl);
+  rewriter.transform(html);
+  return finalize();
 }
 
 /**
