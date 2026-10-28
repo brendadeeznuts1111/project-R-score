@@ -4,31 +4,31 @@
   /* Core HSL Colors - High Saturation, Bright */
   --tag-bun: hsl(280, 100%, 60%);
   --tag-bun-glow: hsl(280, 100%, 70%);
-  
+
   --tag-typescript: hsl(210, 100%, 55%);
   --tag-typescript-glow: hsl(210, 100%, 65%);
-  
+
   --tag-realtime: hsl(150, 100%, 45%);
   --tag-realtime-glow: hsl(150, 100%, 55%);
-  
+
   --tag-websocket: hsl(320, 100%, 65%);
   --tag-websocket-glow: hsl(320, 100%, 75%);
-  
+
   --tag-payment: hsl(45, 100%, 55%);
   --tag-payment-glow: hsl(45, 100%, 65%);
-  
+
   --tag-security: hsl(0, 100%, 60%);
   --tag-security-glow: hsl(0, 100%, 70%);
-  
+
   --tag-analytics: hsl(180, 100%, 50%);
   --tag-analytics-glow: hsl(180, 100%, 60%);
-  
+
   --tag-dashboard: hsl(260, 100%, 70%);
   --tag-dashboard-glow: hsl(260, 100%, 80%);
-  
+
   --tag-mcp: hsl(30, 100%, 55%);
   --tag-mcp-glow: hsl(30, 100%, 65%);
-  
+
   --tag-vectorize: hsl(120, 100%, 50%);
   --tag-vectorize-glow: hsl(120, 100%, 60%);
 }
@@ -51,11 +51,17 @@
 
 /* Glow Animation */
 @keyframes tagPulse {
-  0%, 100% {
-    box-shadow: 0 0 5px currentColor, 0 0 10px currentColor;
+  0%,
+  100% {
+    box-shadow:
+      0 0 5px currentColor,
+      0 0 10px currentColor;
   }
   50% {
-    box-shadow: 0 0 15px currentColor, 0 0 25px currentColor, 0 0 35px currentColor;
+    box-shadow:
+      0 0 15px currentColor,
+      0 0 25px currentColor,
+      0 0 35px currentColor;
   }
 }
 
@@ -120,7 +126,7 @@
 .tag-mcp {
   background: linear-gradient(135deg, var(--tag-mcp), hsl(40, 100%, 60%));
   color: #000;
-  animation: tagPulse 2.0s ease-in-out infinite;
+  animation: tagPulse 2s ease-in-out infinite;
 }
 
 .tag-vectorize {
@@ -137,18 +143,13 @@
 
 /* Shimmer Effect */
 .repo-tag::after {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
   background-size: 200% 100%;
   animation: tagShimmer 3s linear infinite;
   pointer-events: none;

@@ -35,11 +35,7 @@ type LimitRaisesSnapshot = {
   patterns?: Record<string, unknown>;
 };
 
-async function loadJson(
-  env: PagesEnv,
-  origin: string,
-  path: string
-): Promise<unknown | null> {
+async function loadJson(env: PagesEnv, origin: string, path: string): Promise<unknown | null> {
   const url = new URL(path, origin);
   try {
     let res: Response;

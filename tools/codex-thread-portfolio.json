@@ -1230,10 +1230,23 @@
       "state": "audit",
       "pin": false,
       "summary": "Reviewed recent Project R threads and initiated portfolio intake, scheduler selection, safe retry, and research logging improvements.",
-      "evidence": ["fresh root-thread inventory performed", "title and state drift identified", "daily research quota failure recorded", "portfolio operations improvements implemented"],
+      "evidence": [
+        "fresh root-thread inventory performed",
+        "title and state drift identified",
+        "daily research quota failure recorded",
+        "portfolio operations improvements implemented"
+      ],
       "references": [
-        {"kind": "document", "label": "Thread portfolio runbook", "target": "docs/harness/tenants/codex-thread-portfolio.md"},
-        {"kind": "command", "label": "Portfolio verification", "target": "bun run threads:portfolio:verify"}
+        {
+          "kind": "document",
+          "label": "Thread portfolio runbook",
+          "target": "docs/harness/tenants/codex-thread-portfolio.md"
+        },
+        {
+          "kind": "command",
+          "label": "Portfolio verification",
+          "target": "bun run threads:portfolio:verify"
+        }
       ],
       "relatedRefs": ["RTH-025", "RTH-033", "RTH-036"],
       "closure": "Apply the catalog title, verify root parity, and deliver the focused portfolio operations lane."

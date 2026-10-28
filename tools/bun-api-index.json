@@ -19,9 +19,7 @@
     "onelinersCmd": "bun tools/bun-doc-refs.ts oneliners [--json] [--id=…] · --run <id> [--live]",
     "refresh": "bun run docs:refresh"
   },
-  "typesAllowlist": [
-    "bun"
-  ],
+  "typesAllowlist": ["bun"],
   "coverage": {
     "generated": "2026-08-14T05:52:28.678Z",
     "bunVersion": "1.3.14",
@@ -136,10 +134,7 @@
       "frozenLockfileWorkspaceDev": false,
       "minimumReleaseAgeSeconds": 259200,
       "cacheDir": "absolute path in ~/.bunfig.toml [install.cache].dir",
-      "shellEnvForbidden": [
-        "BUN_INSTALL_CACHE_DIR",
-        "BUN_INSTALL_GLOBAL_STORE"
-      ]
+      "shellEnvForbidden": ["BUN_INSTALL_CACHE_DIR", "BUN_INSTALL_GLOBAL_STORE"]
     },
     "noteIds": [
       "backend",
@@ -174,117 +169,63 @@
   },
   "prefer": {
     "fileIo": {
-      "use": [
-        "Bun.file",
-        "Bun.write"
-      ],
-      "avoid": [
-        "fs.readFile",
-        "fs.writeFile",
-        "fs-extra"
-      ],
+      "use": ["Bun.file", "Bun.write"],
+      "avoid": ["fs.readFile", "fs.writeFile", "fs-extra"],
       "group": "io"
     },
     "exists": {
-      "use": [
-        "Bun.file"
-      ],
-      "avoid": [
-        "existsSync"
-      ],
+      "use": ["Bun.file"],
+      "avoid": ["existsSync"],
       "group": "io"
     },
     "glob": {
-      "use": [
-        "Bun.Glob"
-      ],
-      "avoid": [
-        "fast-glob",
-        "globby"
-      ],
+      "use": ["Bun.Glob"],
+      "avoid": ["fast-glob", "globby"],
       "group": "io"
     },
     "paths": {
       "use": [],
-      "avoid": [
-        "path",
-        "node:path"
-      ],
+      "avoid": ["path", "node:path"],
       "group": "io"
     },
     "hashing": {
-      "use": [
-        "Bun.CryptoHasher",
-        "Bun.hash"
-      ],
-      "avoid": [
-        "crypto.createHash"
-      ],
+      "use": ["Bun.CryptoHasher", "Bun.hash"],
+      "avoid": ["crypto.createHash"],
       "group": "crypto"
     },
     "passwords": {
-      "use": [
-        "Bun.password"
-      ],
-      "avoid": [
-        "bcrypt",
-        "argon2"
-      ],
+      "use": ["Bun.password"],
+      "avoid": ["bcrypt", "argon2"],
       "group": "crypto"
     },
     "secrets": {
-      "use": [
-        "Bun.secrets"
-      ],
+      "use": ["Bun.secrets"],
       "avoid": [],
       "group": "crypto"
     },
     "spawn": {
-      "use": [
-        "Bun.spawn",
-        "Bun.spawnSync",
-        "Bun.$"
-      ],
-      "avoid": [
-        "child_process",
-        "execa"
-      ],
+      "use": ["Bun.spawn", "Bun.spawnSync", "Bun.$"],
+      "avoid": ["child_process", "execa"],
       "group": "process"
     },
     "which": {
-      "use": [
-        "Bun.which"
-      ],
+      "use": ["Bun.which"],
       "avoid": [],
       "group": "process"
     },
     "httpServer": {
-      "use": [
-        "Bun.serve"
-      ],
-      "avoid": [
-        "express",
-        "fastify"
-      ],
+      "use": ["Bun.serve"],
+      "avoid": ["express", "fastify"],
       "group": "process"
     },
     "fetch": {
-      "use": [
-        "fetch"
-      ],
-      "avoid": [
-        "axios",
-        "node-fetch"
-      ],
+      "use": ["fetch"],
+      "avoid": ["axios", "node-fetch"],
       "group": "process"
     },
     "cron": {
-      "use": [
-        "Bun.cron"
-      ],
-      "avoid": [
-        "node-cron"
-      ],
+      "use": ["Bun.cron"],
+      "avoid": ["node-cron"],
       "group": "process"
     },
     "entryGuard": {
@@ -293,104 +234,53 @@
       "group": "process"
     },
     "sqlite": {
-      "use": [
-        "bun:sqlite"
-      ],
-      "avoid": [
-        "better-sqlite3"
-      ],
+      "use": ["bun:sqlite"],
+      "avoid": ["better-sqlite3"],
       "group": "data"
     },
     "sql": {
-      "use": [
-        "Bun.sql",
-        "bun:sql"
-      ],
-      "avoid": [
-        "pg",
-        "mysql2"
-      ],
+      "use": ["Bun.sql", "bun:sql"],
+      "avoid": ["pg", "mysql2"],
       "group": "data"
     },
     "redis": {
-      "use": [
-        "Bun.redis"
-      ],
-      "avoid": [
-        "ioredis"
-      ],
+      "use": ["Bun.redis"],
+      "avoid": ["ioredis"],
       "group": "data"
     },
     "s3": {
-      "use": [
-        "Bun.s3"
-      ],
+      "use": ["Bun.s3"],
       "avoid": [],
       "group": "data"
     },
     "tomlYaml": {
-      "use": [
-        "Bun.TOML",
-        "Bun.YAML"
-      ],
-      "avoid": [
-        "@iarna/toml",
-        "toml"
-      ],
+      "use": ["Bun.TOML", "Bun.YAML"],
+      "avoid": ["@iarna/toml", "toml"],
       "group": "data"
     },
     "semver": {
-      "use": [
-        "Bun.semver"
-      ],
-      "avoid": [
-        "semver"
-      ],
+      "use": ["Bun.semver"],
+      "avoid": ["semver"],
       "group": "data"
     },
     "test": {
-      "use": [
-        "bun:test"
-      ],
-      "avoid": [
-        "vitest",
-        "jest"
-      ],
+      "use": ["bun:test"],
+      "avoid": ["vitest", "jest"],
       "group": "data"
     },
     "image": {
-      "use": [
-        "Bun.Image"
-      ],
-      "avoid": [
-        "sharp"
-      ],
+      "use": ["Bun.Image"],
+      "avoid": ["sharp"],
       "group": "ui"
     },
     "webview": {
-      "use": [
-        "Bun.WebView"
-      ],
-      "avoid": [
-        "puppeteer",
-        "playwright"
-      ],
+      "use": ["Bun.WebView"],
+      "avoid": ["puppeteer", "playwright"],
       "group": "ui"
     },
     "colorAnsi": {
-      "use": [
-        "Bun.color",
-        "Bun.stripANSI",
-        "Bun.stringWidth",
-        "Bun.wrapAnsi"
-      ],
-      "avoid": [
-        "chalk",
-        "kleur",
-        "string-width",
-        "strip-ansi",
-        "wrap-ansi"
-      ],
+      "use": ["Bun.color", "Bun.stripANSI", "Bun.stringWidth", "Bun.wrapAnsi"],
+      "avoid": ["chalk", "kleur", "string-width", "strip-ansi", "wrap-ansi"],
       "group": "ui"
     },
     "markdown": {
@@ -401,61 +291,36 @@
         "Bun.markdown.render",
         "Bun.markdown.react"
       ],
-      "avoid": [
-        "marked"
-      ],
+      "avoid": ["marked"],
       "group": "ui"
     },
     "inspect": {
-      "use": [
-        "Bun.inspect",
-        "Bun.inspect.table"
-      ],
-      "avoid": [
-        "util.inspect",
-        "cli-table",
-        "cli-table3"
-      ],
+      "use": ["Bun.inspect", "Bun.inspect.table"],
+      "avoid": ["util.inspect", "cli-table", "cli-table3"],
       "group": "ui"
     },
     "htmlEscape": {
-      "use": [
-        "Bun.escapeHTML"
-      ],
-      "avoid": [
-        "escape-html"
-      ],
+      "use": ["Bun.escapeHTML"],
+      "avoid": ["escape-html"],
       "group": "ui"
     },
     "env": {
-      "use": [
-        "Bun.env"
-      ],
-      "avoid": [
-        "process.env"
-      ],
+      "use": ["Bun.env"],
+      "avoid": ["process.env"],
       "group": "harness"
     },
     "deepEquals": {
-      "use": [
-        "Bun.deepEquals"
-      ],
+      "use": ["Bun.deepEquals"],
       "avoid": [],
       "group": "harness"
     },
     "peek": {
-      "use": [
-        "Bun.peek"
-      ],
+      "use": ["Bun.peek"],
       "avoid": [],
       "group": "harness"
     },
     "timeUuid": {
-      "use": [
-        "Bun.nanoseconds",
-        "Bun.sleep",
-        "Bun.randomUUIDv7"
-      ],
+      "use": ["Bun.nanoseconds", "Bun.sleep", "Bun.randomUUIDv7"],
       "avoid": [],
       "group": "harness"
     }

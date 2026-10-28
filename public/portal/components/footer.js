@@ -31,9 +31,7 @@ function footerInnerHtml(links, runtime = null) {
     return `<a href="${l.href}"${ext}>${l.label}</a>`;
   });
   const bunLabel =
-    runtime?.bunVersion != null && runtime.bunVersion !== ''
-      ? `Bun v${runtime.bunVersion}`
-      : '';
+    runtime?.bunVersion != null && runtime.bunVersion !== '' ? `Bun v${runtime.bunVersion}` : '';
   return `<p>
       <strong>FactoryWager</strong> ·
       ${parts.join(' ·\n      ')}

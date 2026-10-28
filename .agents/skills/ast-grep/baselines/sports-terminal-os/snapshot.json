@@ -1,11 +1,6 @@
 {
   "snapshotVersion": "2.0.0",
-  "sections": [
-    "policy",
-    "transpiler",
-    "semver",
-    "network"
-  ],
+  "sections": ["policy", "transpiler", "semver", "network"],
   "scannerVersion": "2.0.0",
   "policy": {
     "snapshotVersionRange": "^2.0.0",

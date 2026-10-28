@@ -1,6 +1,7 @@
 # Partner type and reference map
 
 <!-- REF:ID 0.1.partner-type-reference-map -->
+
 <a id="0.1.partner-type-reference-map"></a>
 
 Status: proposed canonical map (2026-08-06)
@@ -247,12 +248,12 @@ The React `/partners` route and unmounted `partnerRoutes` remain **reference /
 unsafe** surfaces (float money, bare `partnerId`, contact/Telegram). The
 dashboard connector is **implemented** via a separate authenticated projection:
 
-| Candidate                                          | Current evidence                                                                                         | Canonical decision                                                                                          |
-| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| React `/partners`                                  | Page-local DTOs; mutation paths                                                                          | Reuse IA only; do not copy schema                                                                           |
-| `GET /api/partners` / `GET /api/partners/:id`      | Unmounted `partnerRoutes`; float money + bare ids                                                        | Never consume; do not mount                                                                                 |
-| `GET /api/v1/partners/integration-health`          | Mounted in main router with `auth: "required"`; ExternalPartnerRef map; integer-minor / money-free rows  | `IntegrationHealthReadPort` live contract                                                                   |
-| `/registry/sports-terminal/partner-integration-health.json` | Public fixture parsed by `parseSportsTerminalIntegrationHealth`                                 | Bake input; authors `integrations.sportsTerminal` + `identity.externalPartnerRefs`                          |
+| Candidate                                                   | Current evidence                                                                                        | Canonical decision                                                                 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| React `/partners`                                           | Page-local DTOs; mutation paths                                                                         | Reuse IA only; do not copy schema                                                  |
+| `GET /api/partners` / `GET /api/partners/:id`               | Unmounted `partnerRoutes`; float money + bare ids                                                       | Never consume; do not mount                                                        |
+| `GET /api/v1/partners/integration-health`                   | Mounted in main router with `auth: "required"`; ExternalPartnerRef map; integer-minor / money-free rows | `IntegrationHealthReadPort` live contract                                          |
+| `/registry/sports-terminal/partner-integration-health.json` | Public fixture parsed by `parseSportsTerminalIntegrationHealth`                                         | Bake input; authors `integrations.sportsTerminal` + `identity.externalPartnerRefs` |
 
 The `sports-terminal` connector is `implemented` in the TOML (`enabled = true`,
 `input_kind = registry-artifact`). Full STO package `type-check:sto` alias debt

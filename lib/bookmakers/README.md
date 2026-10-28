@@ -1,17 +1,18 @@
 # Bookmakers
 
 <!-- REF:ID 0.1.bookmakers-readme -->
+
 <a id="0.1.bookmakers-readme"></a>
 
 Bookmaker catalog v0.4 contracts and the v0.3 migration boundary.
 
-| Module | Role |
-|--------|------|
-| [`v04-types.ts`](./v04-types.ts) | Public and operator catalog shapes, fetcher/lifecycle values, regions, and enrichment defaults |
+| Module                                             | Role                                                                                                  |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| [`v04-types.ts`](./v04-types.ts)                   | Public and operator catalog shapes, fetcher/lifecycle values, regions, and enrichment defaults        |
 | [`migrate-v03-to-v04.ts`](./migrate-v03-to-v04.ts) | Splits a legacy catalog into public-safe and operator-only artifacts and audits the public projection |
-| [`resolve.ts`](./resolve.ts) | Resolve id/slug/label/skin/host against the public mirror (partner register CLI) |
-| [`merge.ts`](./merge.ts) | `loadMergedRegistry()` — public + ops merge, derived status, `/api/partners/health` rows |
-| [`desk-coverage.ts`](./desk-coverage.ts) | Seat desk `book` labels ↔ registry ids · typo aliases · maxBet apply · unmatched (e.g. Orange777) |
+| [`resolve.ts`](./resolve.ts)                       | Resolve id/slug/label/skin/host against the public mirror (partner register CLI)                      |
+| [`merge.ts`](./merge.ts)                           | `loadMergedRegistry()` — public + ops merge, derived status, `/api/partners/health` rows              |
+| [`desk-coverage.ts`](./desk-coverage.ts)           | Seat desk `book` labels ↔ registry ids · typo aliases · maxBet apply · unmatched (e.g. Orange777)     |
 
 ## Data boundary
 
@@ -31,7 +32,8 @@ bun test tests/bookmakers-registry-bake.test.ts
 bun run lib:domains:check
 ```
 
-Human runbook: [`docs/harness/tenants/bookmakers-registry.md`](../../docs/harness/tenants/bookmakers-registry.md).
+Human runbook:
+[`docs/harness/tenants/bookmakers-registry.md`](../../docs/harness/tenants/bookmakers-registry.md).
 
 Open issues (Orange777 domain, Pages/R2 lag, null limits, publish `--readme`):
 [`docs/harness/tenants/bookmakers-open-issues.md`](../../docs/harness/tenants/bookmakers-open-issues.md).

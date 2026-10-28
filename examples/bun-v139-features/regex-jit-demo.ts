@@ -1,87 +1,87 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9: RegExp JIT Optimization Demo
- * 
+ *
  * Demonstrates 3.9x speedup for fixed-count regex patterns
  */
 
-import { performance } from "node:perf_hooks";
+import { performance } from 'node:perf_hooks';
 
-console.info("⚡ Bun v1.3.9: RegExp JIT Optimization Demo\n");
-console.info("=" .repeat(70));
+console.info('⚡ Bun v1.3.9: RegExp JIT Optimization Demo\n');
+console.info('='.repeat(70));
 
 // Color codes for output
-const GREEN = "\x1b[32m";
-const YELLOW = "\x1b[33m";
-const CYAN = "\x1b[36m";
-const RESET = "\x1b[0m";
+const GREEN = '\x1b[32m';
+const YELLOW = '\x1b[33m';
+const CYAN = '\x1b[36m';
+const RESET = '\x1b[0m';
 
 // Pattern definitions with descriptions
 const PATTERNS = {
   // JIT-optimized patterns (v1.3.9+)
   jit: [
     {
-      name: "Fixed-count non-capturing",
+      name: 'Fixed-count non-capturing',
       pattern: /(?:abc){3}/,
-      testString: "abcabcabc",
-      expectedSpeedup: "3.9x",
+      testString: 'abcabcabc',
+      expectedSpeedup: '3.9x',
     },
     {
-      name: "Fixed-count with capture",
+      name: 'Fixed-count with capture',
       pattern: /(a+){2}b/,
-      testString: "aaab",
-      expectedSpeedup: "3.9x",
+      testString: 'aaab',
+      expectedSpeedup: '3.9x',
     },
     {
-      name: "Alternatives with prefixes",
+      name: 'Alternatives with prefixes',
       pattern: /aaaa|bbbb/,
-      testString: "aaaaxxxx",
-      expectedSpeedup: "SIMD",
+      testString: 'aaaaxxxx',
+      expectedSpeedup: 'SIMD',
     },
     {
-      name: "Exact repeat count",
+      name: 'Exact repeat count',
       pattern: /\d{4}/,
-      testString: "1234",
-      expectedSpeedup: "3.9x",
+      testString: '1234',
+      expectedSpeedup: '3.9x',
     },
     {
-      name: "Multiple fixed groups",
+      name: 'Multiple fixed groups',
       pattern: /(?:\w{3}){2}/,
-      testString: "abcdef",
-      expectedSpeedup: "3.9x",
+      testString: 'abcdef',
+      expectedSpeedup: '3.9x',
     },
   ],
   // Interpreter patterns (no JIT)
   interpreter: [
     {
-      name: "Variable count (one or more)",
+      name: 'Variable count (one or more)',
       pattern: /(?:abc)+/,
-      testString: "abcabcabc",
-      reason: "Variable repetition count",
+      testString: 'abcabcabc',
+      reason: 'Variable repetition count',
     },
     {
-      name: "Zero or more",
+      name: 'Zero or more',
       pattern: /(a+)*b/,
-      testString: "aaab",
-      reason: "Zero-or-more quantifier",
+      testString: 'aaab',
+      reason: 'Zero-or-more quantifier',
     },
     {
-      name: "Lazy quantifier",
+      name: 'Lazy quantifier',
       pattern: /(?:abc)+?/,
-      testString: "abcabcabc",
-      reason: "Lazy matching",
+      testString: 'abcabcabc',
+      reason: 'Lazy matching',
     },
     {
-      name: "Variable range",
+      name: 'Variable range',
       pattern: /\d{2,4}/,
-      testString: "123",
-      reason: "Variable range {min,max}",
+      testString: '123',
+      reason: 'Variable range {min,max}',
     },
     {
-      name: "Optional quantifier",
+      name: 'Optional quantifier',
       pattern: /(abc)?/,
-      testString: "abc",
-      reason: "Optional (?)",
+      testString: 'abc',
+      reason: 'Optional (?)',
     },
   ],
 };
@@ -94,17 +94,17 @@ function warmup(pattern: RegExp, testString: string, iterations: number = 1000):
 
 function benchmark(pattern: RegExp, testString: string, iterations: number): number {
   warmup(pattern, testString, 1000);
-  
+
   if (globalThis.gc) {
     globalThis.gc();
   }
-  
+
   const start = performance.now();
   for (let i = 0; i < iterations; i++) {
     pattern.test(testString);
   }
   const end = performance.now();
-  
+
   return end - start;
 }
 
@@ -126,8 +126,8 @@ async function runBenchmark() {
 
   // JIT patterns
   console.info(`${GREEN}✓ JIT-OPTIMIZED PATTERNS (v1.3.9+)${RESET}`);
-  console.info("-".repeat(70));
-  
+  console.info('-'.repeat(70));
+
   for (const p of PATTERNS.jit) {
     const time = benchmark(p.pattern, p.testString, ITERATIONS);
     results.jit.push({
@@ -135,13 +135,15 @@ async function runBenchmark() {
       time,
       pattern: p.pattern.toString(),
     });
-    console.info(`${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`);
+    console.info(
+      `${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`
+    );
   }
 
   // Interpreter patterns
   console.info(`\n${YELLOW}⚠ INTERPRETER PATTERNS (no JIT)${RESET}`);
-  console.info("-".repeat(70));
-  
+  console.info('-'.repeat(70));
+
   for (const p of PATTERNS.interpreter) {
     const time = benchmark(p.pattern, p.testString, ITERATIONS);
     results.interpreter.push({
@@ -149,16 +151,19 @@ async function runBenchmark() {
       time,
       pattern: p.pattern.toString(),
     });
-  console.info(`${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`);
+    console.info(
+      `${formatTime(time).padStart(12)} | ${p.pattern.toString().padEnd(20)} | ${p.name}`
+    );
   }
 
   // Comparison
-  console.info("\n" + "=".repeat(70));
-  console.info("📊 COMPARISON");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('📊 COMPARISON');
+  console.info('='.repeat(70));
 
   const avgJit = results.jit.reduce((a, b) => a + b.time, 0) / results.jit.length;
-  const avgInterp = results.interpreter.reduce((a, b) => a + b.time, 0) / results.interpreter.length;
+  const avgInterp =
+    results.interpreter.reduce((a, b) => a + b.time, 0) / results.interpreter.length;
   const speedup = avgInterp / avgJit;
 
   console.info(`Average JIT time:      ${formatTime(avgJit)}`);
@@ -170,9 +175,9 @@ async function runBenchmark() {
 }
 
 function showOptimizationGuide() {
-  console.info("\n" + "=".repeat(70));
-  console.info("💡 OPTIMIZATION GUIDE");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('💡 OPTIMIZATION GUIDE');
+  console.info('='.repeat(70));
   console.info(`
 ${GREEN}✓ DO:${RESET} Use fixed-count quantifiers when possible
    /(?:abc){3}/  instead of  /(?:abc)+/
@@ -195,9 +200,9 @@ ${YELLOW}✗ AVOID:${RESET} Variable ranges when possible
 }
 
 function showTechnicalDetails() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🔧 TECHNICAL DETAILS");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🔧 TECHNICAL DETAILS');
+  console.info('='.repeat(70));
   console.info(`
 JIT Compilation Requirements:
 • Fixed repetition count: {n} or {n,n} where min=max
@@ -217,9 +222,9 @@ The JIT compiler in Bun v1.3.9 uses:
 }
 
 function showRealWorldExamples() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🌍 REAL-WORLD OPTIMIZATION EXAMPLES");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🌍 REAL-WORLD OPTIMIZATION EXAMPLES');
+  console.info('='.repeat(70));
   console.info(`
 UUID Validation:
   Before: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -245,7 +250,7 @@ async function main() {
   showTechnicalDetails();
   showRealWorldExamples();
 
-  console.info("\n✅ Demo complete!\n");
+  console.info('\n✅ Demo complete!\n');
 }
 
 if (import.meta.main) {

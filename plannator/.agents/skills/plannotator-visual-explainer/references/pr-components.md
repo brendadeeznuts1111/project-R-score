@@ -1,8 +1,11 @@
 # PR Component Patterns
 
-Component patterns specific to PR explainer documents. For the base design system (colors, typography, layout), see `../../plannotator-visual-plan/references/design-system.md`.
+Component patterns specific to PR explainer documents. For the base design
+system (colors, typography, layout), see
+`../../plannotator-visual-plan/references/design-system.md`.
 
 ## Table of Contents
+
 1. [PR Header](#pr-header)
 2. [TL;DR Box](#tldr-box)
 3. [Diff Rendering](#diff-rendering)
@@ -40,8 +43,12 @@ Component patterns specific to PR explainer documents. For the base design syste
   margin-top: 8px;
 }
 
-.pr-meta .additions { color: var(--success); }
-.pr-meta .deletions { color: var(--destructive); }
+.pr-meta .additions {
+  color: var(--success);
+}
+.pr-meta .deletions {
+  color: var(--destructive);
+}
 ```
 
 ## TL;DR box
@@ -49,9 +56,11 @@ Component patterns specific to PR explainer documents. For the base design syste
 ```html
 <div class="tldr">
   <h3>TL;DR</h3>
-  <p>Adds WebSocket-based notifications with per-user channels. Messages fan out
-     from a new NotificationService through Redis pub/sub. Existing REST endpoints
-     are unchanged.</p>
+  <p>
+    Adds WebSocket-based notifications with per-user channels. Messages fan out
+    from a new NotificationService through Redis pub/sub. Existing REST
+    endpoints are unchanged.
+  </p>
 </div>
 ```
 
@@ -85,11 +94,15 @@ Component patterns specific to PR explainer documents. For the base design syste
 
 ## Diff rendering
 
-Use Pierre diffs via CDN for syntax-highlighted, theme-aware diff rendering. Renders into shadow DOM (no style conflicts) with Shiki syntax highlighting.
+Use Pierre diffs via CDN for syntax-highlighted, theme-aware diff rendering.
+Renders into shadow DOM (no style conflicts) with Shiki syntax highlighting.
 
 ```html
 <script type="module">
-  import { getSingularPatch, registerDiffsComponent } from 'https://cdn.jsdelivr.net/npm/@pierre/diffs@1.1.21/+esm';
+  import {
+    getSingularPatch,
+    registerDiffsComponent,
+  } from 'https://cdn.jsdelivr.net/npm/@pierre/diffs@1.1.21/+esm';
   registerDiffsComponent();
 
   const patch = `--- a/src/handler.ts
@@ -102,7 +115,9 @@ Use Pierre diffs via CDN for syntax-highlighted, theme-aware diff rendering. Ren
   const container = document.querySelector('diffs-container');
   container.fileDiff = getSingularPatch(patch);
   container.options = {
-    themeType: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
+    themeType: window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light',
     diffStyle: 'unified',
     diffIndicators: 'bars',
     lineDiffType: 'word-alt',
@@ -120,7 +135,9 @@ Use Pierre diffs via CDN for syntax-highlighted, theme-aware diff rendering. Ren
 <diffs-container></diffs-container>
 ```
 
-For multiple diffs, create one `<diffs-container>` per file. Pierre handles syntax highlighting, line numbers, add/del coloring, and word-level diffs automatically.
+For multiple diffs, create one `<diffs-container>` per file. Pierre handles
+syntax highlighting, line numbers, add/del coloring, and word-level diffs
+automatically.
 
 ## Review comments
 
@@ -131,13 +148,18 @@ Speech bubbles with severity-coded left borders, attached below a diff block.
   <div class="bubble blocking">
     <span class="anchor">line 11</span>
     <span class="severity">BLOCKING</span>
-    <p>This mutation isn't wrapped in a transaction. If the second write
-       fails, the first persists — leaving the user in a broken state.</p>
+    <p>
+      This mutation isn't wrapped in a transaction. If the second write fails,
+      the first persists — leaving the user in a broken state.
+    </p>
   </div>
   <div class="bubble nit">
     <span class="anchor">line 24</span>
     <span class="severity">NIT</span>
-    <p>Prefer <code>const</code> here since <code>config</code> is never reassigned.</p>
+    <p>
+      Prefer <code>const</code> here since <code>config</code> is never
+      reassigned.
+    </p>
   </div>
 </div>
 ```
@@ -162,12 +184,18 @@ Speech bubbles with severity-coded left borders, attached below a diff block.
   max-width: 680px;
 }
 
-.bubble.blocking { border-left-color: var(--primary); }
-.bubble.nit { border-left-color: var(--border); }
-.bubble.suggestion { border-left-color: var(--success); }
+.bubble.blocking {
+  border-left-color: var(--primary);
+}
+.bubble.nit {
+  border-left-color: var(--border);
+}
+.bubble.suggestion {
+  border-left-color: var(--success);
+}
 
 .bubble::before {
-  content: "";
+  content: '';
   position: absolute;
   left: -9px;
   top: 16px;
@@ -199,9 +227,15 @@ Speech bubbles with severity-coded left borders, attached below a diff block.
   margin-left: 8px;
 }
 
-.bubble.blocking .severity { color: var(--primary); }
-.bubble.nit .severity { color: var(--muted-foreground); }
-.bubble.suggestion .severity { color: var(--success); }
+.bubble.blocking .severity {
+  color: var(--primary);
+}
+.bubble.nit .severity {
+  color: var(--muted-foreground);
+}
+.bubble.suggestion .severity {
+  color: var(--success);
+}
 
 .bubble p {
   margin-top: 6px;
@@ -276,19 +310,25 @@ Chips that give a quick overview of file risk levels.
   background: color-mix(in oklab, var(--destructive) 8%, transparent);
   border-color: color-mix(in oklab, var(--destructive) 40%, transparent);
 }
-.chip.attention .dot { background: var(--destructive); }
+.chip.attention .dot {
+  background: var(--destructive);
+}
 
 .chip.medium {
   background: color-mix(in oklab, var(--warning) 10%, transparent);
   border-color: color-mix(in oklab, var(--warning) 30%, transparent);
 }
-.chip.medium .dot { background: var(--warning); }
+.chip.medium .dot {
+  background: var(--warning);
+}
 
 .chip.safe {
   background: color-mix(in oklab, var(--success) 8%, transparent);
   border-color: color-mix(in oklab, var(--success) 35%, transparent);
 }
-.chip.safe .dot { background: var(--success); }
+.chip.safe .dot {
+  background: var(--success);
+}
 ```
 
 ## File cards
@@ -301,13 +341,18 @@ Expandable cards grouping a file's diff and review commentary.
     <div class="file-info">
       <span class="file-path">src/auth/middleware.ts</span>
       <span class="file-badge mod">MOD</span>
-      <span class="file-stats"><span class="additions">+28</span> <span class="deletions">-12</span></span>
+      <span class="file-stats"
+        ><span class="additions">+28</span>
+        <span class="deletions">-12</span></span
+      >
     </div>
     <span class="risk-tag attention">ATTENTION</span>
   </div>
   <div class="file-why">
-    <p>Replaced session-cookie auth with JWT verification. The trust boundary
-       moves from the session store to the token signature check.</p>
+    <p>
+      Replaced session-cookie auth with JWT verification. The trust boundary
+      moves from the session store to the token signature check.
+    </p>
   </div>
   <div class="diff"><!-- diff rows --></div>
   <div class="comments"><!-- review bubbles --></div>
@@ -318,7 +363,9 @@ Expandable cards grouping a file's diff and review commentary.
   <summary>
     <span class="file-path">src/types/index.ts</span>
     <span class="file-badge mod">MOD</span>
-    <span class="file-stats"><span class="additions">+4</span> <span class="deletions">-0</span></span>
+    <span class="file-stats"
+      ><span class="additions">+4</span> <span class="deletions">-0</span></span
+    >
     <span class="risk-tag safe">SAFE</span>
   </summary>
   <div class="file-why">
@@ -362,8 +409,12 @@ Expandable cards grouping a file's diff and review commentary.
   font-size: 0.72rem;
 }
 
-.file-stats .additions { color: var(--success); }
-.file-stats .deletions { color: var(--destructive); }
+.file-stats .additions {
+  color: var(--success);
+}
+.file-stats .deletions {
+  color: var(--destructive);
+}
 
 .file-why {
   padding: 12px 20px;
@@ -414,13 +465,17 @@ Two-column comparison grid.
 <div class="before-after">
   <div class="ba-panel before">
     <h4>Before</h4>
-    <p>Auth checked via session cookie on every request.
-       Session store hit adds ~15ms latency.</p>
+    <p>
+      Auth checked via session cookie on every request. Session store hit adds
+      ~15ms latency.
+    </p>
   </div>
   <div class="ba-panel after">
     <h4>After</h4>
-    <p>JWT signature verified in-process. No external store hit.
-       Latency drops to ~1ms per request.</p>
+    <p>
+      JWT signature verified in-process. No external store hit. Latency drops to
+      ~1ms per request.
+    </p>
   </div>
 </div>
 ```
@@ -434,7 +489,9 @@ Two-column comparison grid.
 }
 
 @media (max-width: 640px) {
-  .before-after { grid-template-columns: 1fr; }
+  .before-after {
+    grid-template-columns: 1fr;
+  }
 }
 
 .ba-panel {
@@ -457,8 +514,12 @@ Two-column comparison grid.
   margin-bottom: 8px;
 }
 
-.ba-panel.before h4 { color: var(--muted-foreground); }
-.ba-panel.after h4 { color: var(--success); }
+.ba-panel.before h4 {
+  color: var(--muted-foreground);
+}
+.ba-panel.after h4 {
+  color: var(--success);
+}
 
 .ba-panel p {
   font-size: 0.9rem;
@@ -477,8 +538,10 @@ Numbered callout cards directing reviewers.
     <span class="focus-number">1</span>
     <div>
       <strong>src/auth/middleware.ts:verifyToken()</strong>
-      <p>New trust boundary. Verify the JWT validation covers all edge cases:
-         expired tokens, malformed signatures, missing claims.</p>
+      <p>
+        New trust boundary. Verify the JWT validation covers all edge cases:
+        expired tokens, malformed signatures, missing claims.
+      </p>
     </div>
   </div>
 </div>
@@ -543,7 +606,9 @@ Checkbox-style verification checklist.
   </div>
   <div class="test-item">
     <span class="check"></span>
-    <span>Concurrent WebSocket connections scale to 1000 without memory leak</span>
+    <span
+      >Concurrent WebSocket connections scale to 1000 without memory leak</span
+    >
   </div>
 </div>
 ```
@@ -674,7 +739,10 @@ Phased deployment strip showing ramp percentages.
 ```
 
 ```css
-.rollout { display: flex; gap: 0; }
+.rollout {
+  display: flex;
+  gap: 0;
+}
 
 .rollout-step {
   flex: 1;
@@ -683,9 +751,15 @@ Phased deployment strip showing ramp percentages.
   padding: 16px 18px;
 }
 
-.rollout-step:first-child { border-radius: var(--radius) 0 0 var(--radius); }
-.rollout-step:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
-.rollout-step + .rollout-step { border-left: none; }
+.rollout-step:first-child {
+  border-radius: var(--radius) 0 0 var(--radius);
+}
+.rollout-step:last-child {
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.rollout-step + .rollout-step {
+  border-left: none;
+}
 
 .rollout-when {
   font-family: var(--font-mono);
@@ -710,8 +784,15 @@ Phased deployment strip showing ramp percentages.
 }
 
 @media (max-width: 720px) {
-  .rollout { flex-direction: column; }
-  .rollout-step { border-radius: var(--radius); }
-  .rollout-step + .rollout-step { border-left: 1.5px solid var(--border); margin-top: 10px; }
+  .rollout {
+    flex-direction: column;
+  }
+  .rollout-step {
+    border-radius: var(--radius);
+  }
+  .rollout-step + .rollout-step {
+    border-left: 1.5px solid var(--border);
+    margin-top: 10px;
+  }
 }
 ```

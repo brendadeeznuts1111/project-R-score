@@ -6,21 +6,21 @@
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     return env.ASSETS.fetch(request);
-  }
+  },
 };
 ```
 
 **2. Fetch specific asset by path:**
 
 ```typescript
-const response = await env.ASSETS.fetch("https://assets.local/logo.png");
+const response = await env.ASSETS.fetch('https://assets.local/logo.png');
 ```
 
 **3. Modify request before fetching asset:**
 
 ```typescript
 const url = new URL(request.url);
-url.pathname = "/index.html";
+url.pathname = '/index.html';
 return env.ASSETS.fetch(new Request(url, request));
 ```
 
@@ -29,8 +29,8 @@ return env.ASSETS.fetch(new Request(url, request));
 ```typescript
 const response = await env.ASSETS.fetch(request);
 const modifiedResponse = new Response(response.body, response);
-modifiedResponse.headers.set("X-Custom-Header", "value");
-modifiedResponse.headers.set("Cache-Control", "public, max-age=3600");
+modifiedResponse.headers.set('X-Custom-Header', 'value');
+modifiedResponse.headers.set('Cache-Control', 'public, max-age=3600');
 return modifiedResponse;
 ```
 
@@ -44,7 +44,7 @@ export default {
       return env.ASSETS.fetch('/index.html');
     }
     return env.ASSETS.fetch(request);
-  }
+  },
 };
 ```
 
@@ -60,12 +60,12 @@ export default {
       return handleAPI(request, env);
     }
     return env.ASSETS.fetch(request);
-  }
+  },
 };
 
 async function handleAPI(request: Request, env: Env): Promise<Response> {
   return new Response(JSON.stringify({ status: 'ok' }), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 }
 ```
@@ -85,7 +85,7 @@ export default {
       }
     }
     return env.ASSETS.fetch(request);
-  }
+  },
 };
 ```
 
@@ -102,7 +102,7 @@ export default {
     secureResponse.headers.set('X-Content-Type-Options', 'nosniff');
     secureResponse.headers.set('Content-Security-Policy', "default-src 'self'");
     return secureResponse;
-  }
+  },
 };
 ```
 
@@ -118,7 +118,7 @@ export default {
       return env.ASSETS.fetch(`/index-${variant}.html`);
     }
     return env.ASSETS.fetch(request);
-  }
+  },
 };
 ```
 
@@ -127,7 +127,8 @@ export default {
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const locale = request.headers.get('Accept-Language')?.split(',')[0] || 'en';
+    const locale =
+      request.headers.get('Accept-Language')?.split(',')[0] || 'en';
     const url = new URL(request.url);
     if (url.pathname === '/') {
       return env.ASSETS.fetch(`/${locale}/index.html`);
@@ -136,7 +137,7 @@ export default {
       url.pathname = `/${locale}${url.pathname}`;
     }
     return env.ASSETS.fetch(url);
-  }
+  },
 };
 ```
 
@@ -153,14 +154,14 @@ export default {
         return new Response(null, {
           status: 302,
           headers: {
-            'Location': '/',
-            'Set-Cookie': `session=${session}; HttpOnly; Secure; SameSite=Lax`
-          }
+            Location: '/',
+            'Set-Cookie': `session=${session}; HttpOnly; Secure; SameSite=Lax`,
+          },
         });
       }
     }
     return env.ASSETS.fetch(request);
-  }
+  },
 };
 ```
 
@@ -179,11 +180,11 @@ export default {
         ...response,
         headers: {
           ...Object.fromEntries(response.headers),
-          'Cache-Control': 'public, max-age=31536000, immutable'
-        }
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        },
       });
     }
     return response;
-  }
+  },
 };
 ```

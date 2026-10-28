@@ -4,17 +4,17 @@ export function elapsedMsSince(startNs: number): number {
   return Math.round(Number(Bun.nanoseconds() - startNs) / 1_000_000);
 }
 
-const inflightSlot = Symbol("inflight");
+const inflightSlot = Symbol('inflight');
 
 type InflightState = { [inflightSlot]: Promise<void> | null };
 
 /** Join or skip overlapping runs — returns in-flight promise when still pending. */
 export async function runInflight(
   run: () => Promise<void>,
-  state: InflightState = defaultInflight,
+  state: InflightState = defaultInflight
 ): Promise<void> {
   const existing = state[inflightSlot];
-  if (existing !== null && Bun.peek.status(existing) === "pending") {
+  if (existing !== null && Bun.peek.status(existing) === 'pending') {
     return existing;
   }
   const promise = run().finally(() => {
@@ -31,8 +31,10 @@ export function createInflightState(): InflightState {
 }
 
 /** Fire-and-forget coalescer (cron probe ticks). */
-export function createInflightCoalescer(state: InflightState = defaultInflight): (run: () => Promise<void>) => void {
-  return (run) => {
+export function createInflightCoalescer(
+  state: InflightState = defaultInflight
+): (run: () => Promise<void>) => void {
+  return run => {
     void runInflight(run, state);
   };
 }

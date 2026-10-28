@@ -72,8 +72,8 @@ Defined in `semantic-vocabulary.ts` with `seeAlso` into downstream limit fields:
 
 Treat these as **inventory nodes**, not as license to fabricate wire payloads.
 Surface keys live on `API_INFRA_CONCEPTS` (not `LIMIT_FIELD_CONCEPTS`):
-`identityApi` · `partnerApi` · `predictionApi` · `agentApi` ·
-`bookmakerFeedApi` · `limitEventsApi` · `limitCacheApi`.
+`identityApi` · `partnerApi` · `predictionApi` · `agentApi` · `bookmakerFeedApi`
+· `limitEventsApi` · `limitCacheApi`.
 
 ### Adding a new agent-facing field
 

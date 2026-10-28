@@ -76,9 +76,7 @@ async function loadToc() {
 async function loadOpsSummaryExtras(embedLoop) {
   try {
     const summary = await fetchJson('/registry/ops-summary.json');
-    const limitChanges = Array.isArray(summary?.limitChanges)
-      ? summary.limitChanges
-      : null;
+    const limitChanges = Array.isArray(summary?.limitChanges) ? summary.limitChanges : null;
     // Warm projects-registry (tenant plane) so surfaces orphan scan stays closed
     try {
       await fetchJson('/registry/projects-registry.json');
@@ -158,7 +156,10 @@ function joinLimitChangesToPartners(changes, partners) {
   };
   if (!Array.isArray(changes) || !Array.isArray(partners)) return empty;
 
-  const norm = s => String(s ?? '').trim().toLowerCase();
+  const norm = s =>
+    String(s ?? '')
+      .trim()
+      .toLowerCase();
   const keyToPartner = new Map();
   const callSignKeys = new Set();
 
@@ -216,11 +217,20 @@ function joinLimitChangesToPartners(changes, partners) {
 /** Build join keys from TOC partners + optional identity bridge. */
 function partnerJoinKeysFromToc(partners, identity) {
   const idByCode = new Map(
-    (identity?.partners || []).map(p => [String(p.partnerCode || '').trim().toLowerCase(), p])
+    (identity?.partners || []).map(p => [
+      String(p.partnerCode || '')
+        .trim()
+        .toLowerCase(),
+      p,
+    ])
   );
   return (partners || []).map(p => {
     const callSigns = (p.accounts || []).map(a => a.callSign).filter(Boolean);
-    const id = idByCode.get(String(p.partnerCode || '').trim().toLowerCase());
+    const id = idByCode.get(
+      String(p.partnerCode || '')
+        .trim()
+        .toLowerCase()
+    );
     const treeNodeIds = [];
     if (id?.treeNodeId) treeNodeIds.push(id.treeNodeId);
     for (const a of id?.accounts || []) {
@@ -361,13 +371,11 @@ function renderHarnessGlance(mh, complianceSummary) {
   const grade = mh?.grade || '—';
   const gKind = gradeKind(mh?.grade);
   const cycles = mh?.cyclicDependencyCount ?? '—';
-  const large =
-    mh?.largeFilePercent != null ? `${Number(mh.largeFilePercent).toFixed(1)}%` : '—';
+  const large = mh?.largeFilePercent != null ? `${Number(mh.largeFilePercent).toFixed(1)}%` : '—';
   const files = mh?.fileCount ?? '—';
-  const comp =
-    complianceSummary?.available
-      ? `${complianceSummary.enhancements || '—'} · ${complianceSummary.ok ? 'ok' : 'degraded'}`
-      : '—';
+  const comp = complianceSummary?.available
+    ? `${complianceSummary.enhancements || '—'} · ${complianceSummary.ok ? 'ok' : 'degraded'}`
+    : '—';
   return `<section class="toc-section" id="harness">
     ${sectionHead('Harness', 'Monorepo health score · packages map · compliance (Pages bake)')}
     <div class="toc-stats">
@@ -401,7 +409,8 @@ function renderEnforcement(enf) {
   const d = enf.diagnosis || {};
   const t = enf.throughput || {};
   const fails = (enf.gates || []).filter(g => !g.ok);
-  const focusKind = d.focus === 'rope' || d.ropeBroken ? 'hot' : d.focus === 'elevate' ? 'ok' : 'dim';
+  const focusKind =
+    d.focus === 'rope' || d.ropeBroken ? 'hot' : d.focus === 'elevate' ? 'ok' : 'dim';
   return `
     <section class="toc-section" id="constraint">
       ${sectionHead('Constraint', d.summary || 'Rope → Drum → Buffer → Elevate')}
@@ -669,7 +678,9 @@ function renderAgents(experts) {
                 <ul>
                   <li>${esc((pr.markets || e.markets || []).join(' · '))}</li>
                   ${(pr.wagerPlaces || [])
-                    .map(w => `<li class="toc-sub"><code>${esc(w.venueId)}</code> ${esc(w.label)}</li>`)
+                    .map(
+                      w => `<li class="toc-sub"><code>${esc(w.venueId)}</code> ${esc(w.label)}</li>`
+                    )
                     .join('')}
                   ${(pr.bookPermissions || [])
                     .map(
@@ -741,9 +752,7 @@ function formatPartnerProfile(pr) {
     .map(
       ph =>
         `<li class="toc-sub">${esc(ph.label)} ${esc(ph.e164 || '')} · ${esc(ph.carrier || '')}${
-          ph.dataPlan
-            ? ` · ${ph.dataPlan.usedGb}/${ph.dataPlan.gbMonth}GB`
-            : ''
+          ph.dataPlan ? ` · ${ph.dataPlan.usedGb}/${ph.dataPlan.gbMonth}GB` : ''
         } ${pill(ph.status, ph.status === 'active' ? 'ok' : 'dim')}</li>`
     )
     .join('');
@@ -788,7 +797,10 @@ function formatPartnerProfile(pr) {
       pr.softDailyT?.length
         ? `<h4 class="toc-subhead">Soft T / day</h4><ul>${pr.softDailyT
             .slice(-7)
-            .map(d => `<li class="toc-sub">${esc(d.day)} T ${money(d.t)}${d.oe ? ` · OE ${money(d.oe)}` : ''}</li>`)
+            .map(
+              d =>
+                `<li class="toc-sub">${esc(d.day)} T ${money(d.t)}${d.oe ? ` · OE ${money(d.oe)}` : ''}</li>`
+            )
             .join('')}</ul>`
         : ''
     }
@@ -853,9 +865,7 @@ function renderVenuesRollup(venues, catalog) {
   const legal = Object.entries(venues.byLegalStatus || {})
     .map(([k, n]) => `${k}:${n}`)
     .join(' ');
-  const catalogHint = catalog?.venueIds?.length
-    ? `catalog ${catalog.venueIds.length} venues`
-    : '';
+  const catalogHint = catalog?.venueIds?.length ? `catalog ${catalog.venueIds.length} venues` : '';
   return `<section class="toc-section" id="venues">
     ${sectionHead('Venues', 'Sportsbooks · exchanges · crypto · PPH · post-up · casino · kiosk')}
     <div class="toc-stats">
@@ -960,10 +970,8 @@ function renderComplianceBoard(board) {
   const mm = shadow?.mismatches ?? 0;
   // Mirror isComplianceBoardOk (lib/monitoring/compliance-slice.ts)
   const integrityOk =
-    !Array.isArray(board?.integrity?.checks) ||
-    board.integrity.checks.every(c => c?.ok !== false);
-  const boardOk =
-    total > 0 ? passed === total && mm === 0 && integrityOk : mm === 0 && integrityOk;
+    !Array.isArray(board?.integrity?.checks) || board.integrity.checks.every(c => c?.ok !== false);
+  const boardOk = total > 0 ? passed === total && mm === 0 && integrityOk : mm === 0 && integrityOk;
   const ok = available && boardOk;
   const states = 'MA / NJ';
   return `<section class="toc-section" id="compliance-board">
@@ -1065,10 +1073,7 @@ function renderReturnEfficiency(re, ranked, buf) {
     ${
       procRank.length
         ? `<table class="portal-table toc-rp-table"><thead><tr><th>Process</th><th>avg R_P</th></tr></thead><tbody>${procRank
-            .map(
-              ([proc, rp]) =>
-                `<tr><td><code>${esc(proc)}</code></td><td>${fmtRP(rp)}</td></tr>`
-            )
+            .map(([proc, rp]) => `<tr><td><code>${esc(proc)}</code></td><td>${fmtRP(rp)}</td></tr>`)
             .join('')}</tbody></table>`
         : ''
     }
@@ -1168,10 +1173,10 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
               }
               ${
                 p.exposureAging &&
-                (p.exposureAging.bucket0_24h +
+                p.exposureAging.bucket0_24h +
                   p.exposureAging.bucket24_72h +
                   p.exposureAging.bucket72hPlus >
-                  0)
+                  0
                   ? `<p class="toc-sub">exposure aging 0-24h ${money(p.exposureAging.bucket0_24h)} · 24-72h ${money(p.exposureAging.bucket24_72h)} · 72h+ ${money(p.exposureAging.bucket72hPlus)}</p>`
                   : ''
               }
@@ -1239,42 +1244,38 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
                             : ''
                         }${ce ? ` · CE ${Number(ce.ce).toFixed(5)}` : ''}${le ? ` · LE ${Number(le.le).toFixed(5)}` : ''}</div>`
                       : '';
-                  const warm =
-                    (a.warmCycles || []).length
-                      ? `<div class="toc-sub">warm ${(a.warmCycles || [])
-                          .map(
-                            w =>
-                              `c${w.cycle}:${w.status}${
-                                w.returnedAmount != null ? ` ${money(w.returnedAmount)}` : ''
-                              }`
-                          )
-                          .join(' · ')}</div>`
-                      : '';
-                  const cap =
-                    (a.capitalLedger || []).length
-                      ? `<div class="toc-sub">cap ${[...(a.capitalLedger || [])]
-                          .slice(-2)
-                          .map(m => `${m.from}→${m.to} ${money(m.amount)}`)
-                          .join(' · ')}</div>`
-                      : '';
-                  const g12led =
-                    (a.gate12Ledger || []).length
-                      ? `<div class="toc-sub">g12 ${[...(a.gate12Ledger || [])]
-                          .slice(-2)
-                          .map(g => `${g.kind} rem ${money(g.remainingAfter)}`)
-                          .join(' · ')}</div>`
-                      : '';
-                  const limHist =
-                    (a.limitHistory || []).length
-                      ? `<div class="toc-sub">limits ${[...(a.limitHistory || [])]
-                          .map(
-                            h =>
-                              `${h.at.slice(5, 10)} ${h.freshness}${
-                                h.dailyMax != null ? ` d${money(h.dailyMax)}` : ''
-                              }`
-                          )
-                          .join(' · ')}</div>`
-                      : '';
+                  const warm = (a.warmCycles || []).length
+                    ? `<div class="toc-sub">warm ${(a.warmCycles || [])
+                        .map(
+                          w =>
+                            `c${w.cycle}:${w.status}${
+                              w.returnedAmount != null ? ` ${money(w.returnedAmount)}` : ''
+                            }`
+                        )
+                        .join(' · ')}</div>`
+                    : '';
+                  const cap = (a.capitalLedger || []).length
+                    ? `<div class="toc-sub">cap ${[...(a.capitalLedger || [])]
+                        .slice(-2)
+                        .map(m => `${m.from}→${m.to} ${money(m.amount)}`)
+                        .join(' · ')}</div>`
+                    : '';
+                  const g12led = (a.gate12Ledger || []).length
+                    ? `<div class="toc-sub">g12 ${[...(a.gate12Ledger || [])]
+                        .slice(-2)
+                        .map(g => `${g.kind} rem ${money(g.remainingAfter)}`)
+                        .join(' · ')}</div>`
+                    : '';
+                  const limHist = (a.limitHistory || []).length
+                    ? `<div class="toc-sub">limits ${[...(a.limitHistory || [])]
+                        .map(
+                          h =>
+                            `${h.at.slice(5, 10)} ${h.freshness}${
+                              h.dailyMax != null ? ` d${money(h.dailyMax)}` : ''
+                            }`
+                        )
+                        .join(' · ')}</div>`
+                    : '';
                   const expos =
                     a.pendingExposure != null && a.pendingExposure > 0
                       ? `<div class="toc-sub">pending exposure ${money(a.pendingExposure)}${
@@ -1283,15 +1284,14 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
                             : ''
                         }</div>`
                       : '';
-                  const recycle =
-                    (a.recycleCycles || []).length
-                      ? `<div class="toc-sub">recycle ${(a.recycleCycles || [])
-                          .map(
-                            c =>
-                              `${c.status}${c.blockReason ? ` (${esc(c.blockReason)})` : ''} ${money(c.redeployAmount)}`
-                          )
-                          .join(' · ')}</div>`
-                      : '';
+                  const recycle = (a.recycleCycles || []).length
+                    ? `<div class="toc-sub">recycle ${(a.recycleCycles || [])
+                        .map(
+                          c =>
+                            `${c.status}${c.blockReason ? ` (${esc(c.blockReason)})` : ''} ${money(c.redeployAmount)}`
+                        )
+                        .join(' · ')}</div>`
+                    : '';
                   const acctRaises = raisesBySign[a.callSign] || 0;
                   return `<li><code>${esc(a.callSign)}</code> ${pill(a.status, a.status === 'WARMED' ? 'ok' : 'dim')} ${pill(a.flowStage, 'dim')}
                     warm ${a.warmupCount}/2 · ${esc(a.capitalLocation)} ${money(a.hardBalance)} ${g12}
@@ -1307,9 +1307,9 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
                         : ''
                     }</div>${metrics}${warm}${cap}${g12led}${limHist}${expos}${recycle}${
                       (a.warmPlaybook || []).length
-                        ? `<div class="toc-sub">warm SOP ${(a.warmPlaybook || [])
-                            .filter(s => s.status === 'done')
-                            .length}/${(a.warmPlaybook || []).length} done${
+                        ? `<div class="toc-sub">warm SOP ${
+                            (a.warmPlaybook || []).filter(s => s.status === 'done').length
+                          }/${(a.warmPlaybook || []).length} done${
                             (a.warmPlaybook || []).some(s => s.status === 'blocked')
                               ? ' · blocked'
                               : ''
@@ -1412,7 +1412,9 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
               }
               ${
                 (p.settlementCalendar || []).length
-                  ? `<h4 class="toc-subhead">Settlement calendar</h4><ul>${(p.settlementCalendar || [])
+                  ? `<h4 class="toc-subhead">Settlement calendar</h4><ul>${(
+                      p.settlementCalendar || []
+                    )
                       .slice(0, 4)
                       .map(
                         s =>
@@ -1425,7 +1427,9 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
               }
               ${
                 (p.exceptionResolution || []).length
-                  ? `<h4 class="toc-subhead">Exception resolution</h4><ul>${(p.exceptionResolution || [])
+                  ? `<h4 class="toc-subhead">Exception resolution</h4><ul>${(
+                      p.exceptionResolution || []
+                    )
                       .slice(0, 4)
                       .map(
                         r =>
@@ -1522,7 +1526,9 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
               </ul>
               ${(() => {
                 const entries = [...(p.softBalance?.recentEntries || [])]
-                  .sort((a, b) => String(b.timestamp || '').localeCompare(String(a.timestamp || '')))
+                  .sort((a, b) =>
+                    String(b.timestamp || '').localeCompare(String(a.timestamp || ''))
+                  )
                   .slice(0, 5);
                 if (!entries.length) return '';
                 return `<ul class="toc-soft-journal">${entries
@@ -1576,7 +1582,16 @@ function renderPartners(partners, assetBySign, limitBySign, raiseJoin) {
 
 function render(
   root,
-  { mode, data, loop, complianceBoard, complianceSummary, monorepoHealth, limitChangeCount, limitChanges }
+  {
+    mode,
+    data,
+    loop,
+    complianceBoard,
+    complianceSummary,
+    monorepoHealth,
+    limitChangeCount,
+    limitChanges,
+  }
 ) {
   const s = data.summary || {};
   const buf = data.buffer || {};

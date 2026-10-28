@@ -2,19 +2,24 @@
 
 > FactoryWager **AuditConcept** — sibling SSOT (not BunToken / bun.com).
 
-| Field | Value |
-|-------|-------|
-| id | `sha3-integrity` |
-| kind | `AuditConcept` |
-| publishedAt | 2026-07-21 |
-| since | 1.3.13 |
-| docs | [`docs/audit/concepts/sha3-integrity.md`](./sha3-integrity.md) |
+| Field       | Value                                                          |
+| ----------- | -------------------------------------------------------------- |
+| id          | `sha3-integrity`                                               |
+| kind        | `AuditConcept`                                                 |
+| publishedAt | 2026-07-21                                                     |
+| since       | 1.3.13                                                         |
+| docs        | [`docs/audit/concepts/sha3-integrity.md`](./sha3-integrity.md) |
 
 ## Description
 
-FactoryWager AuditFinding evidence blobs are fingerprinted with SHA3-256 via Bun.CryptoHasher('sha3-256'). SSOT catalog verify requires sha3-256; parse still accepts inbound sha256 for audit:migrate:sha3. Wire shape is evidence.algorithm + evidence.digest (Phase 2). This is tamper-detection only — keyed authentication (HMAC/signing) is a separate, unimplemented lane.
+FactoryWager AuditFinding evidence blobs are fingerprinted with SHA3-256 via
+Bun.CryptoHasher('sha3-256'). SSOT catalog verify requires sha3-256; parse still
+accepts inbound sha256 for audit:migrate:sha3. Wire shape is
+evidence.algorithm + evidence.digest (Phase 2). This is tamper-detection only —
+keyed authentication (HMAC/signing) is a separate, unimplemented lane.
 
-Bun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto / CryptoHasher). See relatedDocs SHA3-256 for the ship note.
+Bun shipped native SHA-3 support in v1.3.13 (WebCrypto SHA3-* + node:crypto /
+CryptoHasher). See relatedDocs SHA3-256 for the ship note.
 
 ## References
 

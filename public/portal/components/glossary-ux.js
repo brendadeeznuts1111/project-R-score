@@ -644,8 +644,7 @@ export function primarySectionTitleEl(sectionEl, conceptId, doc = null) {
   if (!isDomEl(heading)) return null;
 
   const byConcept =
-    conceptId &&
-    heading.querySelector(`a.section-anchor[data-glossary-concept="${conceptId}"]`);
+    conceptId && heading.querySelector(`a.section-anchor[data-glossary-concept="${conceptId}"]`);
   if (isDomEl(byConcept)) return byConcept;
 
   const sectionAnchor = heading.querySelector('a.section-anchor');
@@ -672,10 +671,9 @@ export function primarySectionTitleEl(sectionEl, conceptId, doc = null) {
  * @returns {{ applied: number, missing: string[], surface: string|null }}
  */
 export function applySectionTitles(glossary, options = {}) {
-  const pathname = options.pathname ?? (typeof window !== 'undefined' ? window.location.pathname : '');
-  const root =
-    options.root ??
-    (typeof document !== 'undefined' ? document : null);
+  const pathname =
+    options.pathname ?? (typeof window !== 'undefined' ? window.location.pathname : '');
+  const root = options.root ?? (typeof document !== 'undefined' ? document : null);
   const surface = surfaceByPath(glossary, pathname);
   if (!surface || !Array.isArray(surface.sections) || !root) {
     return { applied: 0, missing: [], surface: surface?.path ?? null };
@@ -695,7 +693,10 @@ export function applySectionTitles(glossary, options = {}) {
     }
     const ariaHidden = sectionEl.getAttribute?.('aria-hidden') === 'true';
     const className = sectionEl.getAttribute?.('class') || sectionEl.className || '';
-    if (ariaHidden || (typeof className === 'string' && className.split(/\s+/).includes('sr-only'))) {
+    if (
+      ariaHidden ||
+      (typeof className === 'string' && className.split(/\s+/).includes('sr-only'))
+    ) {
       continue;
     }
 

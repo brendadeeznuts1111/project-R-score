@@ -16,10 +16,7 @@ import {
 
 export type { HealthEnv };
 
-export async function onRequest(context: {
-  request: Request;
-  env: HealthEnv;
-}): Promise<Response> {
+export async function onRequest(context: { request: Request; env: HealthEnv }): Promise<Response> {
   if (context.request.method === 'OPTIONS') {
     return edgeHealthOptionsResponse();
   }

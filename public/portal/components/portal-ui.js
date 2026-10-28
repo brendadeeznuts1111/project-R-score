@@ -89,11 +89,8 @@ export function renderPortalBanner(opts) {
   const tone = opts.tone ?? '';
   const cls = tone ? `portal-banner ${tone}` : 'portal-banner';
   const meta =
-    opts.meta != null && opts.meta !== ''
-      ? `<div class="meta">${escHtml(opts.meta)}</div>`
-      : '';
-  const trailing =
-    opts.trailingHtml != null && opts.trailingHtml !== '' ? opts.trailingHtml : '';
+    opts.meta != null && opts.meta !== '' ? `<div class="meta">${escHtml(opts.meta)}</div>` : '';
+  const trailing = opts.trailingHtml != null && opts.trailingHtml !== '' ? opts.trailingHtml : '';
   return (
     `<div class="${escHtml(cls)}" role="status">` +
     `<span class="dot" aria-hidden="true"></span>` +
@@ -115,9 +112,7 @@ export function renderPortalHero(opts) {
       ? `<p class="portal-eyebrow">${escHtml(opts.eyebrow)}</p>`
       : '';
   const sub =
-    opts.sub != null && opts.sub !== ''
-      ? `<p class="hero-sub">${escHtml(opts.sub)}</p>`
-      : '';
+    opts.sub != null && opts.sub !== '' ? `<p class="hero-sub">${escHtml(opts.sub)}</p>` : '';
   const meta =
     opts.metaHtml != null && opts.metaHtml !== ''
       ? `<div class="portal-hero-meta">${opts.metaHtml}</div>`

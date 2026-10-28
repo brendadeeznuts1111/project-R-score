@@ -24,12 +24,7 @@ function esc(text) {
 
 /** Resolve partner CODE from optional fields or OCR (ASH-001 / "ASH · …"). */
 export function resolvePartnerCode(entry) {
-  const candidates = [
-    entry?.partner_code,
-    entry?.partnerCode,
-    entry?.call_sign,
-    entry?.callSign,
-  ];
+  const candidates = [entry?.partner_code, entry?.partnerCode, entry?.call_sign, entry?.callSign];
   for (const raw of candidates) {
     if (raw == null || raw === '') continue;
     const s = String(raw).trim().toUpperCase();
@@ -72,9 +67,7 @@ export function reconcileBannerHtml(entry) {
   if (!banner && status !== 'mismatch') return '';
   const text =
     banner ||
-    (status === 'mismatch'
-      ? 'Stake mismatch — confirm expected vs OCR amount in Accounting'
-      : '');
+    (status === 'mismatch' ? 'Stake mismatch — confirm expected vs OCR amount in Accounting' : '');
   if (!text) return '';
   const cls = status === 'mismatch' ? 'mismatch' : 'unknown';
   return `<div class="dod-reconcile-banner ${cls}" role="alert">${esc(text)}</div>`;
@@ -92,8 +85,7 @@ export function resolveTelegramMessageLink(entry) {
     .replace(/^@/, '')
     .trim();
   const threadId = Number(entry?.telegram_thread_id ?? entry?.telegramThreadId);
-  const threadSeg =
-    Number.isFinite(threadId) && threadId > 0 ? `${Math.trunc(threadId)}/` : '';
+  const threadSeg = Number.isFinite(threadId) && threadId > 0 ? `${Math.trunc(threadId)}/` : '';
 
   if (username && /^[A-Za-z][A-Za-z0-9_]{3,31}$/.test(username)) {
     return `https://t.me/${username}/${threadSeg}${Math.trunc(messageId)}`;
@@ -166,8 +158,7 @@ export function confirmLinksHtml(entry, handshakePartners) {
 export function imageMetaHtml(entry) {
   const meta = entry?.image_meta || entry?.imageMeta;
   if (!meta || typeof meta !== 'object') return '';
-  const dims =
-    meta.width != null && meta.height != null ? `${meta.width}×${meta.height}` : null;
+  const dims = meta.width != null && meta.height != null ? `${meta.width}×${meta.height}` : null;
   const rows = [
     dims ? ['dims', dims] : null,
     meta.format ? ['format', meta.format] : null,
@@ -178,16 +169,15 @@ export function imageMetaHtml(entry) {
     meta.gps
       ? ['gps', `${Number(meta.gps.lat).toFixed(4)}, ${Number(meta.gps.lng).toFixed(4)}`]
       : null,
-    meta.missingExif != null ? ['exif', meta.missingExif ? 'missing (screenshot-like)' : 'present'] : null,
+    meta.missingExif != null
+      ? ['exif', meta.missingExif ? 'missing (screenshot-like)' : 'present']
+      : null,
   ].filter(Boolean);
 
   if (!rows.length) return '';
 
   const dl = rows
-    .map(
-      ([k, v]) =>
-        `<div><dt>${esc(k)}</dt><dd><code>${esc(v)}</code></dd></div>`
-    )
+    .map(([k, v]) => `<div><dt>${esc(k)}</dt><dd><code>${esc(v)}</code></dd></div>`)
     .join('');
 
   const json = esc(JSON.stringify(meta));
@@ -482,14 +472,13 @@ export function renderDodDashboard(state) {
 
   const confirmStripHtml = partnerConfirmStripHtml(handshakePartners);
 
-  const helpHtml =
-    readOnly
-      ? `<details class="dod-help"><summary>How to approve or reject</summary>
+  const helpHtml = readOnly
+    ? `<details class="dod-help"><summary>How to approve or reject</summary>
             <p>Pages serves a baked queue from <code>bun run ops:snapshot</code>. Mutations need Bun + SQLite:</p>
             <pre><code>bun run serve:public
 open http://localhost:3000/portal/dod/</code></pre>
           </details>`
-      : '';
+    : '';
 
   const listHtml = entries.length
     ? entries
@@ -641,7 +630,9 @@ export async function initDodDashboard() {
       const total = Object.values(byStatus || {}).reduce((n, v) => n + Number(v || 0), 0);
       const shown = currentFilter === 'all' ? total : Number(byStatus?.[currentFilter] || 0);
       countEl.textContent =
-        currentFilter === 'all' ? `${total} shown` : `${entries.length}/${total} · ${currentFilter}`;
+        currentFilter === 'all'
+          ? `${total} shown`
+          : `${entries.length}/${total} · ${currentFilter}`;
       void shown;
     }
     if (clearBtn) clearBtn.disabled = currentFilter === 'flagged';
@@ -767,8 +758,7 @@ export async function initDodDashboard() {
     currentFilter = status;
     const embed = readEmbed();
     if (embed?.entries) {
-      entries =
-        status === 'all' ? embed.entries : embed.entries.filter(e => e.status === status);
+      entries = status === 'all' ? embed.entries : embed.entries.filter(e => e.status === status);
       byStatus = embed.byStatus || countByStatus(embed.entries);
       readOnly = embed.readOnly !== false;
       mode = embed.mode || (readOnly ? 'snapshot' : 'live');

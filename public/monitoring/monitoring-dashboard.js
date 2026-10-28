@@ -67,7 +67,12 @@ async function loadData() {
   const mon = await fetchJson(['/api/monitoring', '/registry/monitoring.json']);
   if (!mon) throw new Error('No monitoring data');
   const ops = await fetchJson(['/registry/ops-summary.json', '/api/operations/summary']);
-  return { mon: mon.data, monSource: mon.source, ops: ops?.data ?? null, opsSource: ops?.source ?? null };
+  return {
+    mon: mon.data,
+    monSource: mon.source,
+    ops: ops?.data ?? null,
+    opsSource: ops?.source ?? null,
+  };
 }
 
 function mergeRouting(mon, ops) {
@@ -91,10 +96,9 @@ function renderEnvTable(env) {
     return '<p class="mon-empty">No env table — run <code>bun run ops:snapshot</code></p>';
   }
   const body = rows
-    .map((row) => {
+    .map(row => {
       const st = String(row.Status || '');
-      const cls =
-        st === 'set' || st === 'ok' ? 'st-ok' : st === 'missing' ? 'st-bad' : 'st-warn';
+      const cls = st === 'set' || st === 'ok' ? 'st-ok' : st === 'missing' ? 'st-bad' : 'st-warn';
       return `<tr>
         <td class="mono">${esc(row.Key)}</td>
         <td>${esc(row.Group)}</td>
@@ -119,11 +123,11 @@ function renderRoutesTable(routing) {
   if (!routes.length) {
     return `<p class="mon-empty">Routing routes unavailable — <a href="/portal/ops/">Ops</a> · run <code>bun run ops:snapshot --force-routing</code></p>`;
   }
-  const failed = routes.filter((r) => !r.pass);
+  const failed = routes.filter(r => !r.pass);
   const body = routes
     .slice()
     .sort((a, b) => (a.critical === b.critical ? 0 : a.critical ? -1 : 1))
-    .map((r) => {
+    .map(r => {
       const cls = r.pass ? 'st-ok' : r.critical ? 'st-bad' : 'st-warn';
       return `<tr class="${r.critical ? 'critical' : ''}">
         <td class="mono">${esc(r.path)}</td>
@@ -138,7 +142,9 @@ function renderRoutesTable(routing) {
   return `<p class="mon-section-meta">${routing.passed}/${routing.total} passed · base ${esc(
     routing.baseUrl || '—'
   )} · p95 ${routing.p95Ms != null ? `${routing.p95Ms.toFixed(1)}ms` : '—'} · ${
-    failed.length ? `<span class="st-bad">${failed.length} failed</span>` : '<span class="st-ok">all pass</span>'
+    failed.length
+      ? `<span class="st-bad">${failed.length} failed</span>`
+      : '<span class="st-ok">all pass</span>'
   }</p>
   <div class="mon-table-wrap"><table class="mon-table">
     <thead><tr><th>Path</th><th>Probe</th><th>HTTP</th><th>Latency</th><th>Critical</th><th>Type</th></tr></thead>
@@ -157,7 +163,9 @@ function renderProofTiles(mon, ops) {
       title: 'Bun utils',
       val: `${bun.demosPassed ?? bu.passed ?? '?'}/${bun.demosTotal ?? bu.total ?? '?'}`,
       sub: bu.bunVersion ? `Bun ${bu.bunVersion}` : bun.generated ? fmtTime(bun.generated) : '',
-      ok: (bu.failed ?? 0) === 0 && (bu.passed ?? bun.demosPassed ?? 0) >= (bu.total ?? bun.demosTotal ?? 1),
+      ok:
+        (bu.failed ?? 0) === 0 &&
+        (bu.passed ?? bun.demosPassed ?? 0) >= (bu.total ?? bun.demosTotal ?? 1),
       href: '/registry/@factorywager/bun-utils-test/latest.json',
     },
     {
@@ -176,7 +184,13 @@ function renderProofTiles(mon, ops) {
     },
     {
       title: 'Networking',
-      val: net ? (net.allOk ? 'ok' : 'degraded') : ops?.networking?.available === false ? 'n/a' : '—',
+      val: net
+        ? net.allOk
+          ? 'ok'
+          : 'degraded'
+        : ops?.networking?.available === false
+          ? 'n/a'
+          : '—',
       sub: net?.proofHash ? net.proofHash.slice(0, 16) + '…' : '',
       ok: net ? net.allOk : ops?.networking?.allOk,
       href: '/registry/networking-proof.json',
@@ -197,7 +211,7 @@ function renderProofTiles(mon, ops) {
   ];
   return `<div class="mon-proof-grid">${tiles
     .map(
-      (t) =>
+      t =>
         `<a class="mon-proof ${statusClass(t.ok, t.ok === undefined)}" href="${esc(t.href)}"><h4>${esc(
           t.title
         )}</h4><div class="val">${esc(t.val)}</div><div class="sub">${esc(t.sub)}</div></a>`
@@ -208,9 +222,7 @@ function renderProofTiles(mon, ops) {
 function renderKvTable(title, obj) {
   const rows = Object.entries(obj || {});
   if (!rows.length) return `<h2 class="mon-h2">${esc(title)}</h2><p class="mon-empty">none</p>`;
-  const body = rows
-    .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`)
-    .join('');
+  const body = rows.map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('');
   return `<h2 class="mon-h2">${esc(title)}</h2><div class="mon-table-wrap narrow"><table class="mon-table"><tbody>${body}</tbody></table></div>`;
 }
 
@@ -220,7 +232,8 @@ export function renderMonitoringDashboard(payload) {
   const integrity = mon.lastIntegrity || {};
   const env = mon.env || {};
   const intOk = integrity.status === 'ok' && (integrity.failures ?? 0) === 0;
-  const routeOk = routing.total > 0 && routing.passed >= routing.total && (routing.criticalFailed ?? 0) === 0;
+  const routeOk =
+    routing.total > 0 && routing.passed >= routing.total && (routing.criticalFailed ?? 0) === 0;
   const envOk = (env.summary?.requiredMissing ?? 0) === 0;
   const overallOk = intOk && routeOk && envOk;
 
@@ -238,13 +251,38 @@ export function renderMonitoringDashboard(payload) {
   return {
     bannerCls,
     meta,
-    overallTitle: overallOk ? 'Monitoring healthy' : routeOk ? 'Monitoring degraded' : 'Attention required',
+    overallTitle: overallOk
+      ? 'Monitoring healthy'
+      : routeOk
+        ? 'Monitoring degraded'
+        : 'Attention required',
     cardsHtml: [
       card('Packages', mon.packageCount ?? '—', `${mon.versionCount ?? '—'} versions`),
-      card('Routing', routing.total ? `${routing.passed}/${routing.total}` : '—', routing.baseUrl || '', statusClass(routeOk)),
-      card('Integrity', integrity.status || 'unknown', fmtTime(integrity.timestamp), statusClass(intOk)),
-      card('Env checks', env.summary ? `${env.summary.ok}/${env.summary.total}` : '—', `${env.summary?.requiredMissing ?? 0} required missing`, statusClass(envOk)),
-      card('DOD queue', mon.dodQueue ?? 0, Object.keys(mon.dodByStatus || {}).length ? JSON.stringify(mon.dodByStatus) : 'empty', '', '/portal/dod/'),
+      card(
+        'Routing',
+        routing.total ? `${routing.passed}/${routing.total}` : '—',
+        routing.baseUrl || '',
+        statusClass(routeOk)
+      ),
+      card(
+        'Integrity',
+        integrity.status || 'unknown',
+        fmtTime(integrity.timestamp),
+        statusClass(intOk)
+      ),
+      card(
+        'Env checks',
+        env.summary ? `${env.summary.ok}/${env.summary.total}` : '—',
+        `${env.summary?.requiredMissing ?? 0} required missing`,
+        statusClass(envOk)
+      ),
+      card(
+        'DOD queue',
+        mon.dodQueue ?? 0,
+        Object.keys(mon.dodByStatus || {}).length ? JSON.stringify(mon.dodByStatus) : 'empty',
+        '',
+        '/portal/dod/'
+      ),
       card(
         'Compliance',
         mon.compliance?.enhancements ?? ops?.compliance?.enhancements ?? '—',
@@ -282,12 +320,22 @@ export function renderMonitoringDashboard(payload) {
         mon.limitRaises?.available ? (mon.limitRaises.ok ? 'ok' : 'bad') : '',
         mon.limitRaises?.portal || '/portal/limits/'
       ),
-      card('Platforms', Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0', `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`),
+      card(
+        'Platforms',
+        Object.values(mon.platformSummary || {}).reduce((a, b) => a + b, 0) || '0',
+        `api yes ${mon.platformApiAvailable?.yes ?? 0} · no ${mon.platformApiAvailable?.no ?? 0}`
+      ),
       card('Experiments', mon.experimentsActive ?? 0),
-      card('Prediction', mon.predictionN ?? 0, mon.predictionN ? 'coverage report available' : '', mon.predictionN ? 'ok' : '', mon.predictionN ? '/registry/prediction/report/' : ''),
+      card(
+        'Prediction',
+        mon.predictionN ?? 0,
+        mon.predictionN ? 'coverage report available' : '',
+        mon.predictionN ? 'ok' : '',
+        mon.predictionN ? '/registry/prediction/report/' : ''
+      ),
       card(
         'TG invite gaps',
-        ops?.telegramHandshake?.available ? ops.telegramHandshake.inviteGaps ?? 0 : '—',
+        ops?.telegramHandshake?.available ? (ops.telegramHandshake.inviteGaps ?? 0) : '—',
         ops?.telegramHandshake?.available
           ? `${ops.telegramHandshake.partners ?? 0} groups · ${ops.telegramHandshake.verifyFailPartners ?? 0} verify fail · ${ops.telegramHandshake.laneFailPartners ?? 0} lane fail`
           : 'run ops:snapshot',

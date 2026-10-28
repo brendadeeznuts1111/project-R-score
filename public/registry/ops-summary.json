@@ -832,9 +832,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       },
       {
         "partnerCode": "BIL",
@@ -855,9 +853,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       },
       {
         "partnerCode": "NOV",
@@ -878,9 +874,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       },
       {
         "partnerCode": "SPEN",
@@ -901,9 +895,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       }
     ],
     "commands": {
@@ -1197,14 +1189,8 @@
             "book": "Hard Rock Florida",
             "username": "—",
             "missingFund": [],
-            "missingBookTerms": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
-            "missingAll": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
+            "missingBookTerms": ["max bet", "freeplay % on deposit"],
+            "missingAll": ["max bet", "freeplay % on deposit"],
             "deferred": true,
             "complete": false
           }
@@ -1263,14 +1249,8 @@
             "book": "SouthFL PPH Desk",
             "username": "—",
             "missingFund": [],
-            "missingBookTerms": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
-            "missingAll": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
+            "missingBookTerms": ["max bet", "freeplay % on deposit"],
+            "missingAll": ["max bet", "freeplay % on deposit"],
             "deferred": true,
             "complete": false
           }
@@ -1338,14 +1318,8 @@
             "book": "Orange777",
             "username": "dmk1064",
             "missingFund": [],
-            "missingBookTerms": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
-            "missingAll": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
+            "missingBookTerms": ["max bet", "freeplay % on deposit"],
+            "missingAll": ["max bet", "freeplay % on deposit"],
             "deferred": true,
             "complete": false
           }
@@ -1377,9 +1351,7 @@
         "purpose": "One line per incomplete out — mirrors Copy todo button.",
         "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
         "postable": false,
-        "dynamicFields": [
-          "perOutMissing"
-        ]
+        "dynamicFields": ["perOutMissing"]
       },
       {
         "id": "reply-hint",
@@ -1388,9 +1360,7 @@
         "purpose": "Single pipe line for first incomplete out.",
         "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
         "postable": false,
-        "dynamicFields": [
-          "firstIncompleteOutNum"
-        ]
+        "dynamicFields": ["firstIncompleteOutNum"]
       },
       {
         "id": "topic-intake",
@@ -1454,10 +1424,7 @@
     "hmac": true,
     "zipWindowOk": true,
     "scoreHint": "integrity+hmac",
-    "states": [
-      "MA",
-      "NJ"
-    ],
+    "states": ["MA", "NJ"],
     "generatedAt": "2026-08-01T21:28:29.678Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
@@ -1881,17 +1848,8 @@
         "avg_influence_score": 0.6043,
         "partners": 2,
         "nodes": 6,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070",
-          "071",
-          "072",
-          "073",
-          "075",
-          "084"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070", "071", "072", "073", "075", "084"],
         "top_market": "spread"
       },
       {
@@ -1904,16 +1862,8 @@
         "avg_influence_score": 0.6166,
         "partners": 1,
         "nodes": 5,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070",
-          "071",
-          "072",
-          "073",
-          "075"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070", "071", "072", "073", "075"],
         "top_market": "totals"
       },
       {
@@ -1926,14 +1876,8 @@
         "avg_influence_score": 0.2583,
         "partners": 2,
         "nodes": 2,
-        "states": [
-          "MA",
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "016",
-          "084"
-        ],
+        "states": ["MA", "NJ"],
+        "zip_prefixes": ["016", "084"],
         "top_market": "match_winner"
       },
       {
@@ -1946,12 +1890,8 @@
         "avg_influence_score": 0.5936,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "071"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["071"],
         "top_market": "spread"
       }
     ],
@@ -1966,17 +1906,8 @@
         "avg_influence_score": 0.6015,
         "partners": 2,
         "nodes": 7,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070",
-          "071",
-          "072",
-          "073",
-          "075",
-          "084"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070", "071", "072", "073", "075", "084"],
         "top_market": "spread"
       },
       {
@@ -1989,12 +1920,8 @@
         "avg_influence_score": 0,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "016"
-        ],
+        "states": ["MA"],
+        "zip_prefixes": ["016"],
         "top_market": "match_winner"
       }
     ],
@@ -2009,12 +1936,8 @@
         "avg_influence_score": 0.6089,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "071"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["071"],
         "top_market": "spread"
       },
       {
@@ -2027,12 +1950,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070"],
         "top_market": "spread"
       },
       {
@@ -2045,12 +1964,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "072"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["072"],
         "top_market": "spread"
       },
       {
@@ -2063,12 +1978,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["073"],
         "top_market": "spread"
       },
       {
@@ -2081,12 +1992,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "075"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["075"],
         "top_market": "spread"
       },
       {
@@ -2099,12 +2006,8 @@
         "avg_influence_score": 0.5758,
         "partners": 1,
         "nodes": 2,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "084"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["084"],
         "top_market": "match_winner"
       },
       {
@@ -2117,12 +2020,8 @@
         "avg_influence_score": 0,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "016"
-        ],
+        "states": ["MA"],
+        "zip_prefixes": ["016"],
         "top_market": "match_winner"
       }
     ],
@@ -2148,11 +2047,7 @@
         "net_delta": 2000,
         "avg_delta_pct": 133.33,
         "avg_influence_score": 0.6089,
-        "sportsbooks": [
-          "draftkings",
-          "fanduel",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "fanduel", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2176,10 +2071,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2203,10 +2095,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2230,10 +2119,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2257,10 +2143,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2284,9 +2167,7 @@
         "net_delta": -450,
         "avg_delta_pct": -40.91,
         "avg_influence_score": 0,
-        "sportsbooks": [
-          "caesars"
-        ],
+        "sportsbooks": ["caesars"],
         "top_market": "match_winner"
       },
       {
@@ -2310,9 +2191,7 @@
         "net_delta": 1750,
         "avg_delta_pct": 140,
         "avg_influence_score": 0.635,
-        "sportsbooks": [
-          "hardrock"
-        ],
+        "sportsbooks": ["hardrock"],
         "top_market": "over_under"
       },
       {
@@ -2336,9 +2215,7 @@
         "net_delta": 700,
         "avg_delta_pct": 77.78,
         "avg_influence_score": 0.5166,
-        "sportsbooks": [
-          "caesars"
-        ],
+        "sportsbooks": ["caesars"],
         "top_market": "match_winner"
       }
     ],

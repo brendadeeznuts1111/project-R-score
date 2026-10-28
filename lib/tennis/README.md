@@ -17,17 +17,17 @@ Player display name  ──normalizePlayerSlug──►  slug
               nameToSlug{}   ◄── board + live-matches join on slug
 ```
 
-| Artifact                | Path                                                                    |
-| ----------------------- | ----------------------------------------------------------------------- |
-| Metrics                 | `/registry/tennis/board-metrics.json`                                   |
-| Mid buckets             | `/registry/tennis/mid-distribution.json`                                |
-| **Avatar index**        | `/registry/tennis/avatar-index.json`                                    |
-| **Live matches**        | `/registry/tennis/live-matches.json`                                    |
-| **Agent registry auth** | `/registry/tennis/agent-auth.json` (`FACTORY_WAGER_TOKEN` · configured) |
+| Artifact                | Path                                                                              |
+| ----------------------- | --------------------------------------------------------------------------------- |
+| Metrics                 | `/registry/tennis/board-metrics.json`                                             |
+| Mid buckets             | `/registry/tennis/mid-distribution.json`                                          |
+| **Avatar index**        | `/registry/tennis/avatar-index.json`                                              |
+| **Live matches**        | `/registry/tennis/live-matches.json`                                              |
+| **Agent registry auth** | `/registry/tennis/agent-auth.json` (`FACTORY_WAGER_TOKEN` · configured)           |
 | **Partner contracts**   | `/registry/tennis/partner-contracts.json` (live capacity/finance or offline join) |
-| Tenant packages         | `/registry/tennis/registry.json`                                        |
-| Source photos           | `warehouse/avatars/{slug}.*`                                            |
-| Static thumbs           | `public/avatars/{slug}.webp`                                            |
+| Tenant packages         | `/registry/tennis/registry.json`                                                  |
+| Source photos           | `warehouse/avatars/{slug}.*`                                                      |
+| Static thumbs           | `public/avatars/{slug}.webp`                                                      |
 
 Cloud agent / private registry:
 [`docs/harness/tenants/tennis-hq-registry.md`](../../docs/harness/tenants/tennis-hq-registry.md)
@@ -35,14 +35,14 @@ Cloud agent / private registry:
 
 ## Modules
 
-| File                     | Role                                                         |
-| ------------------------ | ------------------------------------------------------------ |
-| `board-metrics.ts`       | Mid buckets, series volume                                   |
-| `avatar-index.ts`        | Slug normalize, warehouse scan, name→slug maps               |
-| `live-matches.ts`        | Paired event rows + edge + venue · mid quality               |
-| `partner-contracts.ts`   | Live v1 capacity/finance → public bake · offline ops join    |
-| `agent-auth.ts`          | Registry token evidence (no secret values)                   |
-| Bake                     | `bun run tennis:board:bake` · `tennis:partner-contracts:bake` |
+| File                   | Role                                                          |
+| ---------------------- | ------------------------------------------------------------- |
+| `board-metrics.ts`     | Mid buckets, series volume                                    |
+| `avatar-index.ts`      | Slug normalize, warehouse scan, name→slug maps                |
+| `live-matches.ts`      | Paired event rows + edge + venue · mid quality                |
+| `partner-contracts.ts` | Live v1 capacity/finance → public bake · offline ops join     |
+| `agent-auth.ts`        | Registry token evidence (no secret values)                    |
+| Bake                   | `bun run tennis:board:bake` · `tennis:partner-contracts:bake` |
 
 Live list ranks **usable mids first**, then live/scheduled, then recency.
 `quality` on `live-matches.json` and `desk` on `board-metrics.json` report

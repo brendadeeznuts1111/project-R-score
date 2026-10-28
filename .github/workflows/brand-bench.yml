@@ -3,26 +3,26 @@ name: brand-bench
 on:
   pull_request:
     paths:
-      - 'lib/types/branded/**'
-      - 'lib/types/brand-manifest.json'
-      - 'tools/brand*'
-      - 'tools/branded*'
-      - 'docs/decisions/**'
-      - 'package.json'
-      - 'bun.lock'
-      - '.github/workflows/brand-bench.yml'
+      - "lib/types/branded/**"
+      - "lib/types/brand-manifest.json"
+      - "tools/brand*"
+      - "tools/branded*"
+      - "docs/decisions/**"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/brand-bench.yml"
   push:
     branches:
       - main
     paths:
-      - 'lib/types/branded/**'
-      - 'lib/types/brand-manifest.json'
-      - 'tools/brand*'
-      - 'tools/branded*'
-      - 'docs/decisions/**'
-      - 'package.json'
-      - 'bun.lock'
-      - '.github/workflows/brand-bench.yml'
+      - "lib/types/branded/**"
+      - "lib/types/brand-manifest.json"
+      - "tools/brand*"
+      - "tools/branded*"
+      - "docs/decisions/**"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/brand-bench.yml"
   workflow_dispatch:
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
-      BUN_INSTALL_GLOBAL_STORE: '1'
+      BUN_INSTALL_GLOBAL_STORE: "1"
       BRAND_BENCH_STRICT: ${{ vars.BRAND_BENCH_STRICT || '0' }}
     steps:
       - uses: actions/checkout@v4

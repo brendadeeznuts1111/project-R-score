@@ -96,8 +96,14 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
       source = 'http';
     } else {
       return healthJson(
-        { status: 'error', indexOk: false, message: 'Registry index unavailable (all sources empty)' },
-        503, head, cors
+        {
+          status: 'error',
+          indexOk: false,
+          message: 'Registry index unavailable (all sources empty)',
+        },
+        503,
+        head,
+        cors
       );
     }
   }
@@ -107,7 +113,9 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
     if (!stats) {
       return healthJson(
         { status: 'error', indexOk: false, message: 'Registry index is invalid' },
-        503, head, cors
+        503,
+        head,
+        cors
       );
     }
 
@@ -121,7 +129,9 @@ export async function onRequest(context: RegistryHealthContext): Promise<Respons
         source,
         checkedAt: new Date().toISOString(),
       },
-      200, head, cors
+      200,
+      head,
+      cors
     );
   } catch {
     return healthJson(

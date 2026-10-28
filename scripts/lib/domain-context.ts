@@ -30,7 +30,9 @@ export type DomainContext = {
 };
 
 export function normalizeDomain(domain: string): string {
-  return String(domain || '').trim().toLowerCase();
+  return String(domain || '')
+    .trim()
+    .toLowerCase();
 }
 
 export function domainNamespace(domain: string): string {
@@ -84,7 +86,9 @@ export async function createDomainContext(input: {
   const prefix = resolved.prefix;
   const zone = resolved.zone;
   const endpoint = resolved.endpoint;
-  const accountIdRaw = String(input.accountIdRaw || accountIdFromEndpoint(endpoint || '') || '').trim();
+  const accountIdRaw = String(
+    input.accountIdRaw || accountIdFromEndpoint(endpoint || '') || ''
+  ).trim();
   const accountId = maskAccountId(accountIdRaw);
   return {
     domain,

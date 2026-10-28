@@ -1,4 +1,4 @@
-import type { EffectPlugin } from "../../../scripts/scan/transpiler/workflow-effects/plugin.ts";
+import type { EffectPlugin } from '../../../scripts/scan/transpiler/workflow-effects/plugin.ts';
 
 let pingCount = 0;
 
@@ -11,9 +11,9 @@ export function getPingCount(): number {
 }
 
 const PingEffect: EffectPlugin = {
-  id: "ping",
-  name: "Ping",
-  description: "Test fixture — increments ping counter",
+  id: 'ping',
+  name: 'Ping',
+  description: 'Test fixture — increments ping counter',
   async run() {
     pingCount++;
   },

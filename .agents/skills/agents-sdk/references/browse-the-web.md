@@ -1,8 +1,10 @@
 # Browse the Web (Experimental)
 
-Fetch https://developers.cloudflare.com/agents/api-reference/browse-the-web/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/api-reference/browse-the-web/ for
+complete documentation.
 
-CDP-powered browser tools that let agents scrape, screenshot, and interact with web pages.
+CDP-powered browser tools that let agents scrape, screenshot, and interact with
+web pages.
 
 ## Setup
 
@@ -11,27 +13,27 @@ CDP-powered browser tools that let agents scrape, screenshot, and interact with 
 {
   "browser": { "binding": "BROWSER" },
   "worker_loaders": [{ "binding": "LOADER" }],
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
 }
 ```
 
 ## Usage with AI SDK
 
 ```typescript
-import { createBrowserTools } from "agents/browser/ai";
+import { createBrowserTools } from 'agents/browser/ai';
 
 export class MyAgent extends AIChatAgent<Env> {
   async onChatMessage(onFinish) {
     const browserTools = createBrowserTools({
       browser: this.env.BROWSER,
-      loader: this.env.LOADER
+      loader: this.env.LOADER,
     });
 
     const result = streamText({
-      model: openai("gpt-4o"),
+      model: openai('gpt-4o'),
       messages: await convertToModelMessages(this.messages),
       tools: { ...myTools, ...browserTools },
-      onFinish
+      onFinish,
     });
     return result.toUIMessageStreamResponse();
   }
@@ -40,9 +42,9 @@ export class MyAgent extends AIChatAgent<Env> {
 
 ## Available Tools
 
-| Tool | Purpose |
-|------|---------|
-| `browser_search` | Search the web and return results |
+| Tool              | Purpose                                     |
+| ----------------- | ------------------------------------------- |
+| `browser_search`  | Search the web and return results           |
 | `browser_execute` | Navigate to URL, execute JS, return results |
 
 The LLM writes async JavaScript IIFEs that run in a fresh browser session.
@@ -55,9 +57,9 @@ The LLM writes async JavaScript IIFEs that run in a fresh browser session.
 ## Low-Level API
 
 ```typescript
-import { connectBrowser, CdpSession } from "agents/browser";
+import { connectBrowser, CdpSession } from 'agents/browser';
 
 const browser = await connectBrowser(this.env.BROWSER);
 const cdp = new CdpSession(browser);
-await cdp.send("Page.navigate", { url: "https://example.com" });
+await cdp.send('Page.navigate', { url: 'https://example.com' });
 ```

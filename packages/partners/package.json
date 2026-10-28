@@ -18,7 +18,6 @@
     "./adapters/sports-terminal": "./src/adapters/sports-terminal.ts",
     "./adapters/telegram-handshake": "./src/adapters/telegram-handshake.ts",
     "./adapters/tennis-capacity": "./src/adapters/tennis-capacity.ts",
-
     "./boundary": "./src/boundary/index.ts",
     "./compatibility": "./src/compatibility/index.ts",
     "./compatibility/legacy-partners-ops": "./src/compatibility/legacy-partners-ops.ts",

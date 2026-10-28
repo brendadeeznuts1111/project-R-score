@@ -1,40 +1,57 @@
 # Ops summary endpoint
 
-**Endpoint** `GET /api/operations/summary` **Portal** `/portal/ops/` **Diagnose** `bun run ops:diagnose` **Runbook** `bun run docs:ops-summary-endpoint`
+**Endpoint** `GET /api/operations/summary` **Portal** `/portal/ops/`
+**Diagnose** `bun run ops:diagnose` **Runbook**
+`bun run docs:ops-summary-endpoint`
 
-Two pipelines serve the same dashboard. Confusing them produces “proofs green but ops empty” or “JSON URL looks broken.”
+Two pipelines serve the same dashboard. Confusing them produces “proofs green
+but ops empty” or “JSON URL looks broken.”
 
 ## Two pipelines
 
 **Layer 1 — API (server assemble)**
 
-- Handler: [`scripts/serve-public.ts`](../../scripts/serve-public.ts) `liveOpsSummary()` → [`lib/operations/ops-summary.ts`](../../lib/operations/ops-summary.ts) `buildOpsSummary(db, 'live')`
-- Data: SQLite `data/operations.db` + `Bun.mmap` of `public/registry/*.json` + in-process `buildBunUtilsProof()`
-- **No `fetch()` on the happy path** — `BUN_CONFIG_VERBOSE_FETCH` stays quiet when you curl the summary API
+- Handler: [`scripts/serve-public.ts`](../../scripts/serve-public.ts)
+  `liveOpsSummary()` →
+  [`lib/operations/ops-summary.ts`](../../lib/operations/ops-summary.ts)
+  `buildOpsSummary(db, 'live')`
+- Data: SQLite `data/operations.db` + `Bun.mmap` of `public/registry/*.json` +
+  in-process `buildBunUtilsProof()`
+- **No `fetch()` on the happy path** — `BUN_CONFIG_VERBOSE_FETCH` stays quiet
+  when you curl the summary API
 
 **Layer 2 — Portal (browser)**
 
-- [`public/portal/operations-dashboard.js`](../../public/portal/operations-dashboard.js) `load()` fetches summary, then `loadVerificationArtifacts()` issues **12+** `fetch('/registry/*.json')` for full panels
-- Use browser **Network** tab for portal failures; use server verbose fetch only on probe tools
+- [`public/portal/operations-dashboard.js`](../../public/portal/operations-dashboard.js)
+  `load()` fetches summary, then `loadVerificationArtifacts()` issues **12+**
+  `fetch('/registry/*.json')` for full panels
+- Use browser **Network** tab for portal failures; use server verbose fetch only
+  on probe tools
 
 ## Source switch
 
 Read `source` (and optional `fallback`) in the JSON body:
 
 - **`live`** — DB + proofs OK (local `serve:public`)
-- **`snapshot`** + **`fallback: db-unavailable`** — SQLite failed; last `public/registry/ops-summary.json`
+- **`snapshot`** + **`fallback: db-unavailable`** — SQLite failed; last
+  `public/registry/ops-summary.json`
 - **`error`** + HTTP **503** — DB and snapshot both missing
 
-Pages edge: [`functions/api/operations/summary.ts`](../../functions/api/operations/summary.ts) serves snapshot only (no `bun:sqlite`).
+Pages edge:
+[`functions/api/operations/summary.ts`](../../functions/api/operations/summary.ts)
+serves snapshot only (no `bun:sqlite`).
 
 ## Empty ops ≠ broken API
 
-- **Proofs** (channel meta, Bun utils, taxonomy, docs coverage) — registry artifacts + live proof builders
-- **Ops metrics** (liquidity, plays, experts) — SQLite only; `$0` and empty arrays are valid empty DB state
+- **Proofs** (channel meta, Bun utils, taxonomy, docs coverage) — registry
+  artifacts + live proof builders
+- **Ops metrics** (liquidity, plays, experts) — SQLite only; `$0` and empty
+  arrays are valid empty DB state
 
 ## Verbose fetch scope
 
-[`BUN_CONFIG_VERBOSE_FETCH`](https://bun.com/docs/runtime/debugger) logs Bun `fetch()` / `node:http` only. Use on:
+[`BUN_CONFIG_VERBOSE_FETCH`](https://bun.com/docs/runtime/debugger) logs Bun
+`fetch()` / `node:http` only. Use on:
 
 - `bun tools/verify-networking.ts`
 - routing proof generation / remote probes
@@ -43,7 +60,8 @@ Not on: `curl localhost:3000/api/operations/summary`
 
 ## Debugger breakpoints
 
-[`Bun --inspect`](https://bun.com/docs/runtime/debugger) on `bun --inspect scripts/serve-public.ts`:
+[`Bun --inspect`](https://bun.com/docs/runtime/debugger) on
+`bun --inspect scripts/serve-public.ts`:
 
 - `liveOpsSummary` — DB exception → snapshot fallback
 - `buildOpsSummary` — full payload assembly
@@ -66,19 +84,34 @@ probe on `--base-url` (default localhost when diagnosing local server).
 
 ## Triage layers
 
-1. **Raw API** — `curl` + `bun run ops:diagnose`; check `source` / HTTP status / missing blocks
-2. **Portal banner** — “Operations summary unavailable” after retries → server down, wrong port, or both summary paths failed
-3. **Specific panel** — summary embed vs separate registry fetch (networking, release-features, etc.)
+1. **Raw API** — `curl` + `bun run ops:diagnose`; check `source` / HTTP status /
+   missing blocks
+2. **Portal banner** — “Operations summary unavailable” after retries → server
+   down, wrong port, or both summary paths failed
+3. **Specific panel** — summary embed vs separate registry fetch (networking,
+   release-features, etc.)
 
-`ops:diagnose` prints a **compliance** board line when `payload.compliance` is present (same column style as `channelMeta` / `routing`): `ok · 8/8 · shadowΔ 0 · hmac`, `WARN · …`, or `not baked` when `available: false`. Absent field → quiet.
+`ops:diagnose` prints a **compliance** board line when `payload.compliance` is
+present (same column style as `channelMeta` / `routing`):
+`ok · 8/8 · shadowΔ 0 · hmac`, `WARN · …`, or `not baked` when
+`available: false`. Absent field → quiet.
 
-`payload.compliance` is **not** assembled from SQLite — it is a freeze-shape projection of `public/registry/compliance-board.json` (`loadComplianceSummarySliceSync`). Same board also feeds monitoring, edge health, and `/portal/compliance/`. Projection map: [`tenants/compliance-portal.md`](tenants/compliance-portal.md).
+`payload.compliance` is **not** assembled from SQLite — it is a freeze-shape
+projection of `public/registry/compliance-board.json`
+(`loadComplianceSummarySliceSync`). Same board also feeds monitoring, edge
+health, and `/portal/compliance/`. Projection map:
+[`tenants/compliance-portal.md`](tenants/compliance-portal.md).
 
 ## Ownership
 
-- **Artifact freshness** (ops-summary.json, monitoring, static, routing/bun-utils proofs) — tenant [`ops-snapshot`](tenants/ops-snapshot.md) · claim `ops-snapshot-cron-v1`
-- **Compliance board bake** — companion of ops-snapshot · [`compliance-portal`](tenants/compliance-portal.md)
-- **Channel meta / taxonomy embeds** — [`channel-meta-verification`](tenants/channel-meta-verification.md) · claim `channel-meta-verification-v1`
+- **Artifact freshness** (ops-summary.json, monitoring, static,
+  routing/bun-utils proofs) — tenant [`ops-snapshot`](tenants/ops-snapshot.md) ·
+  claim `ops-snapshot-cron-v1`
+- **Compliance board bake** — companion of ops-snapshot ·
+  [`compliance-portal`](tenants/compliance-portal.md)
+- **Channel meta / taxonomy embeds** —
+  [`channel-meta-verification`](tenants/channel-meta-verification.md) · claim
+  `channel-meta-verification-v1`
 
 ## Ratchet
 

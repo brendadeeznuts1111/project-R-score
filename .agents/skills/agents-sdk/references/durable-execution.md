@@ -1,15 +1,17 @@
 # Durable Execution
 
-Fetch https://developers.cloudflare.com/agents/api-reference/durable-execution/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/api-reference/durable-execution/
+for complete documentation.
 
-Fibers let agent work survive Durable Object eviction. Progress is checkpointed to SQLite; on recovery, you decide what to do.
+Fibers let agent work survive Durable Object eviction. Progress is checkpointed
+to SQLite; on recovery, you decide what to do.
 
 ## `runFiber`
 
 ```typescript
 export class MyAgent extends Agent<Env, State> {
   async onRequest(request: Request) {
-    await this.runFiber("process-data", async (ctx) => {
+    await this.runFiber('process-data', async ctx => {
       const step1 = await fetchData();
       ctx.stash({ step: 1, data: step1 });
 
@@ -18,7 +20,7 @@ export class MyAgent extends Agent<Env, State> {
 
       this.setState({ result: step2 });
     });
-    return new Response("Started");
+    return new Response('Started');
   }
 
   async onFiberRecovered(ctx) {
@@ -33,19 +35,20 @@ export class MyAgent extends Agent<Env, State> {
 
 ## Key APIs
 
-| API | Purpose |
-|-----|---------|
-| `this.runFiber(name, fn)` | Start a named fiber |
-| `ctx.stash` / `this.stash` | Read latest checkpoint |
-| `ctx.stash = data` | Write checkpoint (JSON-serializable) |
-| `onFiberRecovered(ctx)` | Called on DO restart if fiber was in-flight |
-| `keepAlive()` | Prevent hibernation while fiber runs |
-| `keepAliveWhile(fn)` | Keep alive for duration of async function |
+| API                        | Purpose                                     |
+| -------------------------- | ------------------------------------------- |
+| `this.runFiber(name, fn)`  | Start a named fiber                         |
+| `ctx.stash` / `this.stash` | Read latest checkpoint                      |
+| `ctx.stash = data`         | Write checkpoint (JSON-serializable)        |
+| `onFiberRecovered(ctx)`    | Called on DO restart if fiber was in-flight |
+| `keepAlive()`              | Prevent hibernation while fiber runs        |
+| `keepAliveWhile(fn)`       | Keep alive for duration of async function   |
 
 ## Important
 
 - `stash` replaces the entire checkpoint — not a merge
-- The lambda is NOT restored on recovery — only the stash data is. You must re-derive what to do in `onFiberRecovered`
+- The lambda is NOT restored on recovery — only the stash data is. You must
+  re-derive what to do in `onFiberRecovered`
 - No auto-retry on throw — handle errors yourself
 - For long-running pipelines with automatic retries, use Workflows instead
 - Filter concurrent fibers by `ctx.name` in `onFiberRecovered`

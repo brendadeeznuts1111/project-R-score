@@ -1,32 +1,36 @@
 ---
-name: "[P0][COMPLIANCE] Hash escalation tokens in audit logs"
+name: '[P0][COMPLIANCE] Hash escalation tokens in audit logs'
 about: Fix plaintext token logging for compliance
-title: "[P0][COMPLIANCE] Hash escalation tokens in audit logs"
+title: '[P0][COMPLIANCE] Hash escalation tokens in audit logs'
 labels: compliance, security, p0, logging
 assignees: dev-team
 ---
 
 ## Routing (optional — human queue)
 
-| Field | Value |
-|-------|-------|
-| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
-| **Tracker** | tenant open-issue id · or n/a |
-| **Concept** | vocabulary id only if chrome/wire changes · or n/a |
+| Field       | Value                                                                              |
+| ----------- | ---------------------------------------------------------------------------------- |
+| **Domain**  | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | tenant open-issue id · or n/a                                                      |
+| **Concept** | vocabulary id only if chrome/wire changes · or n/a                                 |
 
 See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
 
 ## 📋 Description
-Audit logs contain plaintext escalation tokens (`--force` flags), creating credential leak risk.
+
+Audit logs contain plaintext escalation tokens (`--force` flags), creating
+credential leak risk.
 
 **File**: `pm.ts:581-590`
 
 ## ❌ Current Code
+
 ```typescript
 console.log(`Escalation used: ${token}`); // ❌ Plaintext
 ```
 
 ## ✅ Expected Fix
+
 ```typescript
 import { createHash } from 'crypto';
 
@@ -39,6 +43,7 @@ console.log(`Escalation used: token_hash: ${hashToken(token)}`);
 ```
 
 ## 📋 Acceptance Criteria
+
 - [ ] Hash tokens with SHA-256 before logging
 - [ ] Log format: `token_hash: abc123... (first 16 chars)`
 - [ ] Maintain separate secure vault for token→user mapping (if needed)
@@ -47,6 +52,7 @@ console.log(`Escalation used: token_hash: ${hashToken(token)}`);
 - [ ] Add audit log retention policy
 
 ## 🔍 Search for Affected Code
+
 ```bash
 # Find all token logging
 grep -r "Escalation.*token" .
@@ -55,9 +61,10 @@ grep -r "logger.*token" .
 ```
 
 ## 🧪 Test Cases
+
 ```typescript
 // Test: Token is hashed
-const token = "redacted-token";
+const token = 'redacted-token';
 const logOutput = captureLog(() => {
   logEscalation(token);
 });
@@ -67,20 +74,24 @@ expect(logOutput).not.toContain('redacted-token');
 ```
 
 ## 📊 Compliance Requirements
+
 - **GDPR Article 32**: Security of processing requires credential protection
 - **SOC2**: Audit logs must not contain sensitive credentials
 - **PCI-DSS**: Tokenized data only in logs
 
 ## 🔐 Security Impact
+
 - **Before**: Plaintext tokens in logs (credential leak risk)
 - **After**: Hashed tokens only (irreversible)
 
 ## 📝 Log Format Example
+
 ```
 [2026-01-23 12:00:00] INFO: Escalation used: token_hash: a1b2c3d4e5f6g7h8 (user: admin@example.com)
 ```
 
 ## 🔗 Related
+
 - Required for: GDPR compliance
 - Required for: SOC2 audit
 - Part of: Security audit compliance

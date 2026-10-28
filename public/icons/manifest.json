@@ -2,11 +2,7 @@
   "schema": "factorywager/portal-icons/v1",
   "bun": "1.4.0",
   "generated": "2026-07-23T06:47:28.040Z",
-  "sizes": [
-    16,
-    32,
-    64
-  ],
+  "sizes": [16, 32, 64],
   "tenants": {
     "factory": {
       "color": "#3b82f6",

@@ -81,10 +81,10 @@ async function loadDashboard() {
 function dashboardHasData(data) {
   return Boolean(
     data.health?.score != null ||
-      data.registry?.packageCount != null ||
-      data.vault?.activeItems != null ||
-      data.doctor?.present ||
-      data.bakeFreshness?.rows?.some(r => r.ok)
+    data.registry?.packageCount != null ||
+    data.vault?.activeItems != null ||
+    data.doctor?.present ||
+    data.bakeFreshness?.rows?.some(r => r.ok)
   );
 }
 
@@ -94,9 +94,7 @@ function badgeHtml(tone, label) {
 
 function renderHealth(w) {
   const scoreLabel = w.score != null ? `${Math.round(w.score)}/100` : '—';
-  const statusLine = w.healthy
-    ? 'No critical test failures'
-    : `${w.failureCount} test failure(s)`;
+  const statusLine = w.healthy ? 'No critical test failures' : `${w.failureCount} test failure(s)`;
   return `
     <article class="cc-widget" data-group="harness">
       <header class="cc-widget-head">
@@ -115,9 +113,7 @@ function renderHealth(w) {
 
 function renderDoctor(w) {
   const badgeTone = w.tone === 'green' ? 'ok' : w.tone === 'red' ? 'bad' : 'warn';
-  const label = w.present
-    ? `${w.passed}/${w.checkCount} · ${w.tone}`
-    : 'missing';
+  const label = w.present ? `${w.passed}/${w.checkCount} · ${w.tone}` : 'missing';
   const groupLine =
     Array.isArray(w.failedGroups) && w.failedGroups.length > 0
       ? w.failedGroups.map(g => `${g.group} ${g.failed}/${g.total}`).join(' · ')
@@ -385,7 +381,8 @@ function bindDoctorRun(root = document) {
   const btn = root.querySelector('#cc-doctor-run');
   if (!btn || btn.dataset.bound === '1') return;
   btn.dataset.bound = '1';
-  const status = root.querySelector('#cc-doctor-status') || document.getElementById('cc-doctor-status');
+  const status =
+    root.querySelector('#cc-doctor-status') || document.getElementById('cc-doctor-status');
   btn.addEventListener('click', async () => {
     if (!isLoopbackHost()) {
       if (status) status.textContent = 'Loopback only — use: bun run bake:doctor';

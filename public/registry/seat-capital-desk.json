@@ -280,14 +280,8 @@
           "book": "Hard Rock Florida",
           "username": "—",
           "missingFund": [],
-          "missingBookTerms": [
-            "max bet",
-            "freeplay % on deposit"
-          ],
-          "missingAll": [
-            "max bet",
-            "freeplay % on deposit"
-          ],
+          "missingBookTerms": ["max bet", "freeplay % on deposit"],
+          "missingAll": ["max bet", "freeplay % on deposit"],
           "deferred": true,
           "complete": false
         }
@@ -346,14 +340,8 @@
           "book": "SouthFL PPH Desk",
           "username": "—",
           "missingFund": [],
-          "missingBookTerms": [
-            "max bet",
-            "freeplay % on deposit"
-          ],
-          "missingAll": [
-            "max bet",
-            "freeplay % on deposit"
-          ],
+          "missingBookTerms": ["max bet", "freeplay % on deposit"],
+          "missingAll": ["max bet", "freeplay % on deposit"],
           "deferred": true,
           "complete": false
         }
@@ -421,14 +409,8 @@
           "book": "Orange777",
           "username": "dmk1064",
           "missingFund": [],
-          "missingBookTerms": [
-            "max bet",
-            "freeplay % on deposit"
-          ],
-          "missingAll": [
-            "max bet",
-            "freeplay % on deposit"
-          ],
+          "missingBookTerms": ["max bet", "freeplay % on deposit"],
+          "missingAll": ["max bet", "freeplay % on deposit"],
           "deferred": true,
           "complete": false
         }
@@ -460,9 +442,7 @@
       "purpose": "One line per incomplete out — mirrors Copy todo button.",
       "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
       "postable": false,
-      "dynamicFields": [
-        "perOutMissing"
-      ]
+      "dynamicFields": ["perOutMissing"]
     },
     {
       "id": "reply-hint",
@@ -471,9 +451,7 @@
       "purpose": "Single pipe line for first incomplete out.",
       "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
       "postable": false,
-      "dynamicFields": [
-        "firstIncompleteOutNum"
-      ]
+      "dynamicFields": ["firstIncompleteOutNum"]
     },
     {
       "id": "topic-intake",

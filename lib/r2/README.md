@@ -2,8 +2,9 @@
 
 R2 storage helpers.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API
+surface.
 
-| Entry |
-|-------|
+| Entry                                                |
+| ---------------------------------------------------- |
 | [`r2-storage-enhanced.ts`](./r2-storage-enhanced.ts) |

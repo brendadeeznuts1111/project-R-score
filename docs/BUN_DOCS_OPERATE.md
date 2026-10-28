@@ -69,14 +69,14 @@ that contract; its presence alone proves only release-note coverage.
 
 ### Bun 1.4 release graph
 
-| Intent                  | Command / owner                                                                                                                         |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Source and asset check  | `bun run docs:blog-assets:check` · [`bun-1.4-assets.json`](../public/registry/bun-1.4-assets.json)                                      |
-| Capability shape        | [`bun-1.4-capabilities.json`](../public/registry/bun-1.4-capabilities.json) · `bun test tests/bun-1.4-capabilities.test.ts`             |
-| Feed and snapshot check | `bun run channels:bun-1.4:check` · [`bun-1.4-channel-release.json`](../public/registry/bun-1.4-channel-release.json)                    |
-| Project ownership map   | `bun run channels:projects:check` · [`project-rss-channels.json`](../public/registry/project-rss-channels.json)                         |
-| Lifecycle and removal   | [`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md) · active projection first, content-addressed archive before retirement |
-| Media rights and delivery | [`BUN_1_4_MEDIA_RIGHTS.md`](./BUN_1_4_MEDIA_RIGHTS.md) · external source URLs by default; vendor only with reviewed approval |
+| Intent                    | Command / owner                                                                                                                         |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Source and asset check    | `bun run docs:blog-assets:check` · [`bun-1.4-assets.json`](../public/registry/bun-1.4-assets.json)                                      |
+| Capability shape          | [`bun-1.4-capabilities.json`](../public/registry/bun-1.4-capabilities.json) · `bun test tests/bun-1.4-capabilities.test.ts`             |
+| Feed and snapshot check   | `bun run channels:bun-1.4:check` · [`bun-1.4-channel-release.json`](../public/registry/bun-1.4-channel-release.json)                    |
+| Project ownership map     | `bun run channels:projects:check` · [`project-rss-channels.json`](../public/registry/project-rss-channels.json)                         |
+| Lifecycle and removal     | [`BUN_1_4_CHANNEL_LIFECYCLE.md`](./BUN_1_4_CHANNEL_LIFECYCLE.md) · active projection first, content-addressed archive before retirement |
+| Media rights and delivery | [`BUN_1_4_MEDIA_RIGHTS.md`](./BUN_1_4_MEDIA_RIGHTS.md) · external source URLs by default; vendor only with reviewed approval            |
 
 Do not copy the capability list into docs or skills. Point to the registry and
 retain the five adoption states; only `integrated` and `contract` carry local

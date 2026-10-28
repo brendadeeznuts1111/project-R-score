@@ -12,8 +12,8 @@ Drum / Buffer / Rope partner desk (demo-readonly on Pages).
 
 ## Agent brief
 
-Read `#toc-agent-brief` on the HTML board, or fetch the JSON artifact.
-Theory SSOT: `toc-ops-repo` (TOC-REF · ACCOUNTING · SOPs).
+Read `#toc-agent-brief` on the HTML board, or fetch the JSON artifact. Theory
+SSOT: `toc-ops-repo` (TOC-REF · ACCOUNTING · SOPs).
 
 ## Commands
 

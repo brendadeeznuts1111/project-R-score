@@ -316,17 +316,17 @@ Prefer branded IDs and wire-boundary parse-once — see root
 
 ## Docs
 
-| Need                 | Read                                                                                                                   |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Index                | [docs/README.md](../README.md)                                                                                         |
-| Dev / test workflow  | [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md)                                                                  |
-| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`                                                  |
-| Concept lifecycle    | [CONCEPT_LIFECYCLE.md](../CONCEPT_LIFECYCLE.md)                                                                        |
-| Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`                                         |
-| Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                                                            |
-| Wire / brands        | [WIRE_BOUNDARY.md](../WIRE_BOUNDARY.md) · branded-ids skill                                                            |
-| Agent skills         | [`.agents/skills`](../../.agents/skills/) · `bun run skills:validate`                                                    |
-| Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run bun:remediation`                                |
+| Need                 | Read                                                                                    |
+| -------------------- | --------------------------------------------------------------------------------------- |
+| Index                | [docs/README.md](../README.md)                                                          |
+| Dev / test workflow  | [DEVELOPMENT-WORKFLOW.md](../DEVELOPMENT-WORKFLOW.md)                                   |
+| REF:ID validation    | [§ REF:ID Validation](#refid-validation) · `bun run docs:refid:check`                   |
+| Concept lifecycle    | [CONCEPT_LIFECYCLE.md](../CONCEPT_LIFECYCLE.md)                                         |
+| Surface coverage map | [SURFACE_COVERAGE.md](../SURFACE_COVERAGE.md) · `bun run surface-coverage:map`          |
+| Install / bunfig     | [UNIFIED.md](../UNIFIED.md)                                                             |
+| Wire / brands        | [WIRE_BOUNDARY.md](../WIRE_BOUNDARY.md) · branded-ids skill                             |
+| Agent skills         | [`.agents/skills`](../../.agents/skills/) · `bun run skills:validate`                   |
+| Bun APIs             | [BUN_NATIVE_CAPABILITIES.md](../BUN_NATIVE_CAPABILITIES.md) · `bun run bun:remediation` |
 
 Issues:
 [project-R-score issues](https://github.com/brendadeeznuts1111/project-R-score/issues).

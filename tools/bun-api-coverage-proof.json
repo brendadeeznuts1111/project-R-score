@@ -69,9 +69,7 @@
       "id": "file-meta",
       "kind": "api",
       "summary": "Bun.file exists/stat/json",
-      "apis": [
-        "Bun.file"
-      ],
+      "apis": ["Bun.file"],
       "runtimeOutput": "nonempty=true name=factorywager-enterprise",
       "runtimeOk": true,
       "proofHash": "c2c3b00bc5c94c1974144724bbe633d5eb49dc7ac9c1f15ab4dd2de787c2b582",
@@ -81,10 +79,7 @@
       "id": "file-write-copy",
       "kind": "api",
       "summary": "Bun.write copy via Bun.file",
-      "apis": [
-        "Bun.write",
-        "Bun.file"
-      ],
+      "apis": ["Bun.write", "Bun.file"],
       "runtimeOutput": "copied=true",
       "runtimeOk": true,
       "proofHash": "a89ded9e3cf3b3b2a0a51cd9ef32cc9ea981539164d36e32dc562b775062f5f2",
@@ -94,11 +89,7 @@
       "id": "toml",
       "kind": "api",
       "summary": "Bun.TOML parse + stringify",
-      "apis": [
-        "Bun.TOML",
-        "Bun.TOML.parse",
-        "Bun.TOML.stringify"
-      ],
+      "apis": ["Bun.TOML", "Bun.TOML.parse", "Bun.TOML.stringify"],
       "runtimeOutput": "a=1",
       "runtimeOk": true,
       "proofHash": "74b38bc8976cd9efce1b87b00c36b3b5e944c894f5f889fecdbe665312c2e3bc",
@@ -108,11 +99,7 @@
       "id": "json-family",
       "kind": "api",
       "summary": "JSONC / JSON5 / JSONL parse",
-      "apis": [
-        "Bun.JSONC",
-        "Bun.JSON5",
-        "Bun.JSONL"
-      ],
+      "apis": ["Bun.JSONC", "Bun.JSON5", "Bun.JSONL"],
       "runtimeOutput": "jsonc=1 json5=world jsonl=2",
       "runtimeOk": true,
       "proofHash": "643a4f68d091395f6aafbcf022c18be260c9566bd33552ad8297e73d47318aa9",
@@ -122,9 +109,7 @@
       "id": "crypto-hasher",
       "kind": "api",
       "summary": "CryptoHasher SHA-256 + HMAC",
-      "apis": [
-        "Bun.CryptoHasher"
-      ],
+      "apis": ["Bun.CryptoHasher"],
       "runtimeOutput": "1b2c16b75bd2a870",
       "runtimeOk": true,
       "proofHash": "ba5f5e2dacea97ce2c876f97438544edc60319e5c20b9fd2af2ea03848ddfe79",
@@ -134,11 +119,7 @@
       "id": "password",
       "kind": "api",
       "summary": "Bun.password argon2id",
-      "apis": [
-        "Bun.password",
-        "Bun.password.hash",
-        "Bun.password.verify"
-      ],
+      "apis": ["Bun.password", "Bun.password.hash", "Bun.password.verify"],
       "runtimeOutput": "verify=true",
       "runtimeOk": true,
       "proofHash": "5fc1d0b834e6517020d9993809d21d0c5e8dfc73bdfa572fc13bee9472a327b4",
@@ -148,10 +129,7 @@
       "id": "hash-wyhash-crc32",
       "kind": "api",
       "summary": "Bun.hash + crc32",
-      "apis": [
-        "Bun.hash",
-        "Bun.hash.crc32"
-      ],
+      "apis": ["Bun.hash", "Bun.hash.crc32"],
       "runtimeOutput": "wyhash=1019145960556548909 crc32=907060870",
       "runtimeOk": true,
       "proofHash": "eb28842517233694b4184db97432a6651ba68e2607dbbcecd22da50534cab159",
@@ -161,9 +139,7 @@
       "id": "uuid-v7",
       "kind": "api",
       "summary": "Bun.randomUUIDv7",
-      "apis": [
-        "Bun.randomUUIDv7"
-      ],
+      "apis": ["Bun.randomUUIDv7"],
       "runtimeOutput": "uuid-v7=true",
       "runtimeOk": true,
       "proofHash": "7937a758a186d137b1b1d69ff35314bec29d4b4d2e073b27d1416b6a7bdf8adc",
@@ -190,10 +166,7 @@
       "id": "buffers",
       "kind": "api",
       "summary": "concatArrayBuffers + allocUnsafe",
-      "apis": [
-        "Bun.concatArrayBuffers",
-        "Bun.allocUnsafe"
-      ],
+      "apis": ["Bun.concatArrayBuffers", "Bun.allocUnsafe"],
       "runtimeOutput": "concat=4 alloc=1024",
       "runtimeOk": true,
       "proofHash": "0be7f5cb08eec2ed242f1bd10497e56935117526554cfb63ba21870e463bf966",
@@ -219,9 +192,7 @@
       "id": "color",
       "kind": "api",
       "summary": "Bun.color convert",
-      "apis": [
-        "Bun.color"
-      ],
+      "apis": ["Bun.color"],
       "runtimeOutput": "#ff0000",
       "runtimeOk": true,
       "proofHash": "0aa117549b10ea6d8e2e1848d772fb6ad4e4d9ff44e2ab314099449ef4ac7400",
@@ -231,10 +202,7 @@
       "id": "inspect-table",
       "kind": "api",
       "summary": "Bun.inspect + inspect.table",
-      "apis": [
-        "Bun.inspect",
-        "Bun.inspect.table"
-      ],
+      "apis": ["Bun.inspect", "Bun.inspect.table"],
       "runtimeOutput": "inspect=true table=true",
       "runtimeOk": true,
       "proofHash": "1ce1a74862609bcefd82987f81a0c1f16628b95dbcb06391cb6d03e55654bb68",
@@ -244,11 +212,7 @@
       "id": "semver",
       "kind": "api",
       "summary": "Bun.semver order + satisfies",
-      "apis": [
-        "Bun.semver",
-        "Bun.semver.order",
-        "Bun.semver.satisfies"
-      ],
+      "apis": ["Bun.semver", "Bun.semver.order", "Bun.semver.satisfies"],
       "runtimeOutput": "order=-1 ok=true",
       "runtimeOk": true,
       "proofHash": "c8c707de48d45f98fd0d0123c2806b8694925830776b085be5dbd9c85033ff98",
@@ -258,11 +222,7 @@
       "id": "markdown",
       "kind": "api",
       "summary": "Bun.markdown.html + ansi",
-      "apis": [
-        "Bun.markdown",
-        "Bun.markdown.html",
-        "Bun.markdown.ansi"
-      ],
+      "apis": ["Bun.markdown", "Bun.markdown.html", "Bun.markdown.ansi"],
       "runtimeOutput": "html=true ansi=true",
       "runtimeOk": true,
       "proofHash": "afe6237b631ecda0cece3c9487a181ff417cdeea1f61674135dbdb0a887e39a2",
@@ -272,10 +232,7 @@
       "id": "shell-which",
       "kind": "api",
       "summary": "Bun.$ + Bun.which",
-      "apis": [
-        "Bun.$",
-        "Bun.which"
-      ],
+      "apis": ["Bun.$", "Bun.which"],
       "runtimeOutput": "hello which=yes",
       "runtimeOk": true,
       "proofHash": "c684f3aaa3f9f8db4e4b66883298eeedae43695d8c7829f8fc593d877b209e22",
@@ -285,10 +242,7 @@
       "id": "spawn",
       "kind": "api",
       "summary": "Bun.spawnSync",
-      "apis": [
-        "Bun.spawn",
-        "Bun.spawnSync"
-      ],
+      "apis": ["Bun.spawn", "Bun.spawnSync"],
       "runtimeOutput": "1.3.14",
       "runtimeOk": true,
       "proofHash": "9e42b5ef9361032493077144482cc1a9d3f54667cfcdf74be8023dd76365bb34",
@@ -298,9 +252,7 @@
       "id": "glob",
       "kind": "api",
       "summary": "Bun.Glob scan + match",
-      "apis": [
-        "Bun.Glob"
-      ],
+      "apis": ["Bun.Glob"],
       "runtimeOutput": "match=true",
       "runtimeOk": true,
       "proofHash": "63cefd39a77c61b67e84717a53f48b8f420ad5c0c02cb58192d0ca46ad612f26",
@@ -310,11 +262,7 @@
       "id": "csrf",
       "kind": "api",
       "summary": "Bun.CSRF generate + verify",
-      "apis": [
-        "Bun.CSRF",
-        "Bun.CSRF.generate",
-        "Bun.CSRF.verify"
-      ],
+      "apis": ["Bun.CSRF", "Bun.CSRF.generate", "Bun.CSRF.verify"],
       "runtimeOutput": "verify=true",
       "runtimeOk": true,
       "proofHash": "dde5be3cec3381f1c98db1773c21f4e14a7ad5cc16a31c02e11fe1837988e89e",
@@ -324,10 +272,7 @@
       "id": "cookies",
       "kind": "api",
       "summary": "Bun.Cookie + CookieMap",
-      "apis": [
-        "Bun.Cookie",
-        "Bun.CookieMap"
-      ],
+      "apis": ["Bun.Cookie", "Bun.CookieMap"],
       "runtimeOutput": "session=abc123",
       "runtimeOk": true,
       "proofHash": "cbc7751f625572562c603b94312f50c98e7a46bab8afae7d49bf8c59bf3b92d3",
@@ -337,9 +282,7 @@
       "id": "sqlite",
       "kind": "api",
       "summary": "bun:sqlite CRUD",
-      "apis": [
-        "bun:sqlite"
-      ],
+      "apis": ["bun:sqlite"],
       "runtimeOutput": "rows=1 name=Alice",
       "runtimeOk": true,
       "proofHash": "ef55531eeaa900bf15a553081194e91fc51a4245fcedb23300cc9be778e0a636",
@@ -349,9 +292,7 @@
       "id": "archive",
       "kind": "api",
       "summary": "Bun.Archive create + list",
-      "apis": [
-        "Bun.Archive"
-      ],
+      "apis": ["Bun.Archive"],
       "runtimeOutput": "bytes=10240",
       "runtimeOk": true,
       "proofHash": "0d0efc0091323d97b08f6fc13280777a4b38d3acca7d2b6a64fdba421d9cf25f",
@@ -361,9 +302,7 @@
       "id": "transpiler",
       "kind": "api",
       "summary": "Bun.Transpiler transformSync",
-      "apis": [
-        "Bun.Transpiler"
-      ],
+      "apis": ["Bun.Transpiler"],
       "runtimeOutput": "ok",
       "runtimeOk": true,
       "proofHash": "b8053b3245d477858433ff8b631a7ac9758f3c8168ab4e5e6c0e834980d34b27",
@@ -373,9 +312,7 @@
       "id": "resolve",
       "kind": "api",
       "summary": "Bun.resolveSync",
-      "apis": [
-        "Bun.resolveSync"
-      ],
+      "apis": ["Bun.resolveSync"],
       "runtimeOutput": "package=true",
       "runtimeOk": true,
       "proofHash": "40fcbe8ab4bfb1390c05d71a536d08cd911ad01c4d68a6b33232dc724db6a53c",
@@ -385,11 +322,7 @@
       "id": "env-argv-main",
       "kind": "api",
       "summary": "Bun.env / argv / main",
-      "apis": [
-        "Bun.env",
-        "Bun.argv",
-        "Bun.main"
-      ],
+      "apis": ["Bun.env", "Bun.argv", "Bun.main"],
       "runtimeOutput": "home=true argv=true main=true",
       "runtimeOk": true,
       "proofHash": "8b162af7b351b5b7cb36d156e575fe753d7ee3d2765ff035c86d2545080e8e0d",
@@ -399,10 +332,7 @@
       "id": "version-revision",
       "kind": "api",
       "summary": "Bun.version + Bun.revision",
-      "apis": [
-        "Bun.version",
-        "Bun.revision"
-      ],
+      "apis": ["Bun.version", "Bun.revision"],
       "runtimeOutput": "1.3.14 0d9b296a",
       "runtimeOk": true,
       "proofHash": "bc5468f49f5dbbb8d76e1fe96e6317de11c6c6c778d11171e46afafb0215fde0",
@@ -412,10 +342,7 @@
       "id": "deep-equals-peek",
       "kind": "api",
       "summary": "Bun.deepEquals + Bun.peek",
-      "apis": [
-        "Bun.deepEquals",
-        "Bun.peek"
-      ],
+      "apis": ["Bun.deepEquals", "Bun.peek"],
       "runtimeOutput": "eq=true peek=42",
       "runtimeOk": true,
       "proofHash": "74553d35a9b233972d8dd58449d9137bee701e566cc64c9cee6a769f6b54b8f3",
@@ -425,9 +352,7 @@
       "id": "serve-stop",
       "kind": "api",
       "summary": "Bun.serve start + stop (localhost)",
-      "apis": [
-        "Bun.serve"
-      ],
+      "apis": ["Bun.serve"],
       "runtimeOutput": "listening=true body=ok",
       "runtimeOk": true,
       "proofHash": "9ad02fea3c317c6b5f60ad3a91bed4a0b22296adf8394a86a151d501aa0b5bb9",
@@ -437,9 +362,7 @@
       "id": "build-inline",
       "kind": "api",
       "summary": "Bun.build in-memory entry",
-      "apis": [
-        "Bun.build"
-      ],
+      "apis": ["Bun.build"],
       "runtimeOutput": "success=true outputs=1",
       "runtimeOk": true,
       "proofHash": "b5d38dc30495205f423fbaf97ae61442e6f2186952c2000bf12dd2874161d2ab",
@@ -449,11 +372,7 @@
       "id": "timers",
       "kind": "api",
       "summary": "Bun.sleep / sleepSync / nanoseconds",
-      "apis": [
-        "Bun.sleep",
-        "Bun.sleepSync",
-        "Bun.nanoseconds"
-      ],
+      "apis": ["Bun.sleep", "Bun.sleepSync", "Bun.nanoseconds"],
       "runtimeOutput": "slept=true clock=true",
       "runtimeOk": true,
       "proofHash": "4ce34687623e101a4f95d44c453f96020c482129bfdec4c32ab5a42f2a31d46c",
@@ -463,10 +382,7 @@
       "id": "streams",
       "kind": "api",
       "summary": "readableStreamToBytes + ArrayBufferSink",
-      "apis": [
-        "Bun.readableStreamToBytes",
-        "Bun.ArrayBufferSink"
-      ],
+      "apis": ["Bun.readableStreamToBytes", "Bun.ArrayBufferSink"],
       "runtimeOutput": "stream=ab sink=hello",
       "runtimeOk": true,
       "proofHash": "67c3e3009db397bdb4cd938d3c3c4f41644396eabc77b517a23d167fc38967be",
@@ -476,10 +392,7 @@
       "id": "gc-heap",
       "kind": "api",
       "summary": "Bun.gc (+ generateHeapSnapshot exists)",
-      "apis": [
-        "Bun.gc",
-        "Bun.generateHeapSnapshot"
-      ],
+      "apis": ["Bun.gc", "Bun.generateHeapSnapshot"],
       "runtimeOutput": "heapSnapshotFn=function",
       "runtimeOk": true,
       "proofHash": "e9401530b674101c80c7fcdbe658eb8958ad4d729a933e671ac53c24357b3079",
@@ -489,9 +402,7 @@
       "id": "mmap",
       "kind": "api",
       "summary": "Bun.mmap → Uint8Array",
-      "apis": [
-        "Bun.mmap"
-      ],
+      "apis": ["Bun.mmap"],
       "runtimeOutput": "ctor=Uint8Array nonempty=true",
       "runtimeOk": true,
       "proofHash": "6ad3f0ce594fb1edbc0168b3457cf44ad1b243bbdb25b4c79d7d7e6222ae2c4b",
@@ -501,10 +412,7 @@
       "id": "path-url",
       "kind": "api",
       "summary": "pathToFileURL / fileURLToPath",
-      "apis": [
-        "Bun.pathToFileURL",
-        "Bun.fileURLToPath"
-      ],
+      "apis": ["Bun.pathToFileURL", "Bun.fileURLToPath"],
       "runtimeOutput": "/tmp/x",
       "runtimeOk": true,
       "proofHash": "56e8cc0802fb3d8673d563c2c8efaaa017ce0085b7a7cc100040b0cb21546224",
@@ -514,9 +422,7 @@
       "id": "cron",
       "kind": "api",
       "summary": "Bun.cron schedule (in-process)",
-      "apis": [
-        "Bun.cron"
-      ],
+      "apis": ["Bun.cron"],
       "runtimeOutput": "next=2027-01-01T00:00:00.000Z",
       "runtimeOk": true,
       "proofHash": "e698c60eadcb720bfdecc737e124bcc8cd0037514f83e5b276315f6c3292be6a",
@@ -526,9 +432,7 @@
       "id": "fs-router",
       "kind": "api",
       "summary": "Bun.FileSystemRouter",
-      "apis": [
-        "Bun.FileSystemRouter"
-      ],
+      "apis": ["Bun.FileSystemRouter"],
       "runtimeOutput": "match=true",
       "runtimeOk": true,
       "proofHash": "6b58a7603cf2f8aa86d59550292ee03fe0ca4ba9f878555a2d1864282b01977c",
@@ -538,9 +442,7 @@
       "id": "html-rewriter",
       "kind": "api",
       "summary": "HTMLRewriter transform",
-      "apis": [
-        "HTMLRewriter"
-      ],
+      "apis": ["HTMLRewriter"],
       "runtimeOutput": "ok",
       "runtimeOk": true,
       "proofHash": "f12b1d226d9869b557074bc35094698bd267d9b0fab7dda21dfd9de57d976e73",
@@ -550,11 +452,7 @@
       "id": "onboard-partner",
       "kind": "ops",
       "summary": "Onboard partner node with proof hash",
-      "apis": [
-        "Bun.randomUUIDv7",
-        "Bun.CryptoHasher",
-        "bun:sqlite"
-      ],
+      "apis": ["Bun.randomUUIDv7", "Bun.CryptoHasher", "bun:sqlite"],
       "runtimeOutput": "partner=Partner B proof=1227da11",
       "runtimeOk": true,
       "proofHash": "a2ba02477953af9c5958bf740a3a66f579885aef541d35c26de21788354f06f4",
@@ -564,10 +462,7 @@
       "id": "fund-agent-rail",
       "kind": "ops",
       "summary": "Fund agent via PayPal rail",
-      "apis": [
-        "bun:sqlite",
-        "Bun.CryptoHasher"
-      ],
+      "apis": ["bun:sqlite", "Bun.CryptoHasher"],
       "runtimeOutput": "funded=$10000 balance=$15000 proof=8d923315",
       "runtimeOk": true,
       "proofHash": "1531f46c70519e068cbe3c9af6679278b344c7d11161301bc0bac9752960415b",
@@ -577,11 +472,7 @@
       "id": "generate-play",
       "kind": "ops",
       "summary": "Expert play HMAC-signed via PlaySigner",
-      "apis": [
-        "Bun.CryptoHasher",
-        "Bun.randomUUIDv7",
-        "bun:sqlite"
-      ],
+      "apis": ["Bun.CryptoHasher", "Bun.randomUUIDv7", "bun:sqlite"],
       "runtimeOutput": "play=stored sig=true",
       "runtimeOk": true,
       "proofHash": "48fcbdae9e64a5ba51fd4066a74e08123d05c931a39d55765fddd4b43f9f2e9b",
@@ -591,9 +482,7 @@
       "id": "distribute-play",
       "kind": "ops",
       "summary": "Fan-out play to agent tree nodes",
-      "apis": [
-        "bun:sqlite"
-      ],
+      "apis": ["bun:sqlite"],
       "runtimeOutput": "recipients=2 play=stored",
       "runtimeOk": true,
       "proofHash": "931a6ad6c16f8e0dee94637c73cf2508f6762c89dfc0793ffe468a45aedbc7d5",
@@ -603,9 +492,7 @@
       "id": "track-wager",
       "kind": "ops",
       "summary": "Close play with P&L",
-      "apis": [
-        "bun:sqlite"
-      ],
+      "apis": ["bun:sqlite"],
       "runtimeOutput": "pnl=$2000",
       "runtimeOk": true,
       "proofHash": "68ba517fcc42f5fae2bea531bcd67ec2490bd9fea3e50359796835b5aaf3222f",
@@ -615,10 +502,7 @@
       "id": "reconcile-rails",
       "kind": "ops",
       "summary": "Reconcile rail totals vs agent deposits",
-      "apis": [
-        "bun:sqlite",
-        "Bun.inspect"
-      ],
+      "apis": ["bun:sqlite", "Bun.inspect"],
       "runtimeOutput": "reconciled diff=$-5000",
       "runtimeOk": true,
       "proofHash": "29d8eb573773089190fc97525ab1cdad7fd3538b1a07955aaca4b42f6846d82b",
@@ -628,10 +512,7 @@
       "id": "phone-inventory",
       "kind": "ops",
       "summary": "Assign phone to agent from inventory",
-      "apis": [
-        "bun:sqlite",
-        "Bun.randomUUIDv7"
-      ],
+      "apis": ["bun:sqlite", "Bun.randomUUIDv7"],
       "runtimeOutput": "phone=issued assigned=true",
       "runtimeOk": true,
       "proofHash": "2caba695e81d52585c2e79ca33b738e5eaab74917b34698a6dcdf1f524048f3e",
@@ -641,10 +522,7 @@
       "id": "daily-pnl-report",
       "kind": "ops",
       "summary": "P&L table via Bun.inspect.table",
-      "apis": [
-        "bun:sqlite",
-        "Bun.inspect.table"
-      ],
+      "apis": ["bun:sqlite", "Bun.inspect.table"],
       "runtimeOutput": "table=empty",
       "runtimeOk": true,
       "proofHash": "5f0c06458a07aee8d139d7c284cda9b7f2983580494ae3d0c0eac179f402b84b",
@@ -654,10 +532,7 @@
       "id": "auto-fund-cron",
       "kind": "ops",
       "summary": "Preview auto-fund cron and execute one cycle",
-      "apis": [
-        "Bun.cron",
-        "bun:sqlite"
-      ],
+      "apis": ["Bun.cron", "bun:sqlite"],
       "runtimeOutput": "scheduled=true funded=yes",
       "runtimeOk": true,
       "proofHash": "2edb26cdf039787dce65170db3a46dd5bfd89ca094fd71e36b8f7ac8134178c2",
@@ -667,9 +542,7 @@
   "demoApis": {
     "Bun.$": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "shell-which"
-      ],
+      "demoIds": ["shell-which"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -693,9 +566,7 @@
     },
     "Bun.Archive": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "archive"
-      ],
+      "demoIds": ["archive"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -719,9 +590,7 @@
     },
     "Bun.ArrayBufferSink": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "streams"
-      ],
+      "demoIds": ["streams"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -745,9 +614,7 @@
     },
     "Bun.CSRF": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "csrf"
-      ],
+      "demoIds": ["csrf"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -771,9 +638,7 @@
     },
     "Bun.CSRF.generate": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "csrf"
-      ],
+      "demoIds": ["csrf"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -797,9 +662,7 @@
     },
     "Bun.CSRF.verify": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "csrf"
-      ],
+      "demoIds": ["csrf"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -823,9 +686,7 @@
     },
     "Bun.Cookie": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "cookies"
-      ],
+      "demoIds": ["cookies"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -849,9 +710,7 @@
     },
     "Bun.CookieMap": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "cookies"
-      ],
+      "demoIds": ["cookies"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -904,9 +763,7 @@
     },
     "Bun.FileSystemRouter": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "fs-router"
-      ],
+      "demoIds": ["fs-router"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -930,9 +787,7 @@
     },
     "Bun.Glob": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "glob"
-      ],
+      "demoIds": ["glob"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -956,9 +811,7 @@
     },
     "Bun.JSON5": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "json-family"
-      ],
+      "demoIds": ["json-family"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -982,9 +835,7 @@
     },
     "Bun.JSONC": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "json-family"
-      ],
+      "demoIds": ["json-family"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1008,9 +859,7 @@
     },
     "Bun.JSONL": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "json-family"
-      ],
+      "demoIds": ["json-family"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1034,9 +883,7 @@
     },
     "Bun.TOML": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "toml"
-      ],
+      "demoIds": ["toml"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1060,9 +907,7 @@
     },
     "Bun.TOML.parse": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "toml"
-      ],
+      "demoIds": ["toml"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1086,9 +931,7 @@
     },
     "Bun.TOML.stringify": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "toml"
-      ],
+      "demoIds": ["toml"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1112,9 +955,7 @@
     },
     "Bun.Transpiler": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "transpiler"
-      ],
+      "demoIds": ["transpiler"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1138,9 +979,7 @@
     },
     "Bun.allocUnsafe": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "buffers"
-      ],
+      "demoIds": ["buffers"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1164,9 +1003,7 @@
     },
     "Bun.argv": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "env-argv-main"
-      ],
+      "demoIds": ["env-argv-main"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1190,9 +1027,7 @@
     },
     "Bun.build": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "build-inline"
-      ],
+      "demoIds": ["build-inline"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1216,9 +1051,7 @@
     },
     "Bun.color": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "color"
-      ],
+      "demoIds": ["color"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1242,9 +1075,7 @@
     },
     "Bun.concatArrayBuffers": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "buffers"
-      ],
+      "demoIds": ["buffers"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1268,10 +1099,7 @@
     },
     "Bun.cron": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "cron",
-        "auto-fund-cron"
-      ],
+      "demoIds": ["cron", "auto-fund-cron"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1295,9 +1123,7 @@
     },
     "Bun.deepEquals": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "deep-equals-peek"
-      ],
+      "demoIds": ["deep-equals-peek"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1321,9 +1147,7 @@
     },
     "Bun.deflateSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "compression"
-      ],
+      "demoIds": ["compression"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1347,9 +1171,7 @@
     },
     "Bun.env": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "env-argv-main"
-      ],
+      "demoIds": ["env-argv-main"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1373,9 +1195,7 @@
     },
     "Bun.escapeHTML": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "string-utils"
-      ],
+      "demoIds": ["string-utils"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1399,10 +1219,7 @@
     },
     "Bun.file": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "file-meta",
-        "file-write-copy"
-      ],
+      "demoIds": ["file-meta", "file-write-copy"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1426,9 +1243,7 @@
     },
     "Bun.fileURLToPath": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "path-url"
-      ],
+      "demoIds": ["path-url"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1452,9 +1267,7 @@
     },
     "Bun.gc": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "gc-heap"
-      ],
+      "demoIds": ["gc-heap"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1478,9 +1291,7 @@
     },
     "Bun.generateHeapSnapshot": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "gc-heap"
-      ],
+      "demoIds": ["gc-heap"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1504,9 +1315,7 @@
     },
     "Bun.gunzipSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "compression"
-      ],
+      "demoIds": ["compression"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1530,9 +1339,7 @@
     },
     "Bun.gzipSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "compression"
-      ],
+      "demoIds": ["compression"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1556,9 +1363,7 @@
     },
     "Bun.hash": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "hash-wyhash-crc32"
-      ],
+      "demoIds": ["hash-wyhash-crc32"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1582,9 +1387,7 @@
     },
     "Bun.hash.crc32": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "hash-wyhash-crc32"
-      ],
+      "demoIds": ["hash-wyhash-crc32"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1608,9 +1411,7 @@
     },
     "Bun.inflateSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "compression"
-      ],
+      "demoIds": ["compression"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1634,10 +1435,7 @@
     },
     "Bun.inspect": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "inspect-table",
-        "reconcile-rails"
-      ],
+      "demoIds": ["inspect-table", "reconcile-rails"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1661,10 +1459,7 @@
     },
     "Bun.inspect.table": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "inspect-table",
-        "daily-pnl-report"
-      ],
+      "demoIds": ["inspect-table", "daily-pnl-report"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1688,9 +1483,7 @@
     },
     "Bun.main": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "env-argv-main"
-      ],
+      "demoIds": ["env-argv-main"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1714,9 +1507,7 @@
     },
     "Bun.markdown": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "markdown"
-      ],
+      "demoIds": ["markdown"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1740,9 +1531,7 @@
     },
     "Bun.markdown.ansi": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "markdown"
-      ],
+      "demoIds": ["markdown"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1766,9 +1555,7 @@
     },
     "Bun.markdown.html": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "markdown"
-      ],
+      "demoIds": ["markdown"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1792,9 +1579,7 @@
     },
     "Bun.mmap": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "mmap"
-      ],
+      "demoIds": ["mmap"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1818,9 +1603,7 @@
     },
     "Bun.nanoseconds": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "timers"
-      ],
+      "demoIds": ["timers"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1844,9 +1627,7 @@
     },
     "Bun.password": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "password"
-      ],
+      "demoIds": ["password"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1870,9 +1651,7 @@
     },
     "Bun.password.hash": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "password"
-      ],
+      "demoIds": ["password"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1896,9 +1675,7 @@
     },
     "Bun.password.verify": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "password"
-      ],
+      "demoIds": ["password"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1922,9 +1699,7 @@
     },
     "Bun.pathToFileURL": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "path-url"
-      ],
+      "demoIds": ["path-url"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -1948,9 +1723,7 @@
     },
     "Bun.peek": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "deep-equals-peek"
-      ],
+      "demoIds": ["deep-equals-peek"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2003,9 +1776,7 @@
     },
     "Bun.readableStreamToBytes": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "streams"
-      ],
+      "demoIds": ["streams"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2029,9 +1800,7 @@
     },
     "Bun.resolveSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "resolve"
-      ],
+      "demoIds": ["resolve"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2055,9 +1824,7 @@
     },
     "Bun.revision": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "version-revision"
-      ],
+      "demoIds": ["version-revision"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2081,9 +1848,7 @@
     },
     "Bun.semver": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "semver"
-      ],
+      "demoIds": ["semver"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2107,9 +1872,7 @@
     },
     "Bun.semver.order": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "semver"
-      ],
+      "demoIds": ["semver"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2133,9 +1896,7 @@
     },
     "Bun.semver.satisfies": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "semver"
-      ],
+      "demoIds": ["semver"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2159,9 +1920,7 @@
     },
     "Bun.serve": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "serve-stop"
-      ],
+      "demoIds": ["serve-stop"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2185,9 +1944,7 @@
     },
     "Bun.sleep": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "timers"
-      ],
+      "demoIds": ["timers"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2211,9 +1968,7 @@
     },
     "Bun.sleepSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "timers"
-      ],
+      "demoIds": ["timers"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2237,9 +1992,7 @@
     },
     "Bun.sliceAnsi": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "string-utils"
-      ],
+      "demoIds": ["string-utils"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2263,9 +2016,7 @@
     },
     "Bun.spawn": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "spawn"
-      ],
+      "demoIds": ["spawn"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2289,9 +2040,7 @@
     },
     "Bun.spawnSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "spawn"
-      ],
+      "demoIds": ["spawn"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2315,9 +2064,7 @@
     },
     "Bun.stringWidth": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "string-utils"
-      ],
+      "demoIds": ["string-utils"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2341,9 +2088,7 @@
     },
     "Bun.stripANSI": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "string-utils"
-      ],
+      "demoIds": ["string-utils"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2367,9 +2112,7 @@
     },
     "Bun.version": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "version-revision"
-      ],
+      "demoIds": ["version-revision"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2393,9 +2136,7 @@
     },
     "Bun.which": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "shell-which"
-      ],
+      "demoIds": ["shell-which"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2419,9 +2160,7 @@
     },
     "Bun.wrapAnsi": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "string-utils"
-      ],
+      "demoIds": ["string-utils"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2445,9 +2184,7 @@
     },
     "Bun.write": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "file-write-copy"
-      ],
+      "demoIds": ["file-write-copy"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2471,9 +2208,7 @@
     },
     "Bun.zstdCompressSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "compression"
-      ],
+      "demoIds": ["compression"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2497,9 +2232,7 @@
     },
     "Bun.zstdDecompressSync": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "compression"
-      ],
+      "demoIds": ["compression"],
       "declaration": {
         "matched": true,
         "knownGap": false
@@ -2523,9 +2256,7 @@
     },
     "HTMLRewriter": {
       "scope": "curated-runnable-demo",
-      "demoIds": [
-        "html-rewriter"
-      ],
+      "demoIds": ["html-rewriter"],
       "declaration": {
         "matched": true,
         "knownGap": false

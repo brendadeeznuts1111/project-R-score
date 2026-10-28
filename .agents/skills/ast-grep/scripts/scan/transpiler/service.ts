@@ -1,18 +1,18 @@
-import { resolve } from "node:path";
-import { Registry } from "./registry.ts";
-import { resolveTargetDependencies } from "./dependency-resolver.ts";
-import type { ScanResult, Severity } from "./types.ts";
-import { meetsSeverity } from "./rule-engine.ts";
-import { runBundleScan } from "./bundle-scanner.ts";
-import type { BundleScanReport } from "./types.ts";
-import { suggestRemediation, type RemediationHint } from "./remediation.ts";
-import { violationToFinding } from "./dep-scan.ts";
+import { resolve } from 'node:path';
+import { Registry } from './registry.ts';
+import { resolveTargetDependencies } from './dependency-resolver.ts';
+import type { ScanResult, Severity } from './types.ts';
+import { meetsSeverity } from './rule-engine.ts';
+import { runBundleScan } from './bundle-scanner.ts';
+import type { BundleScanReport } from './types.ts';
+import { suggestRemediation, type RemediationHint } from './remediation.ts';
+import { violationToFinding } from './dep-scan.ts';
 import {
   buildRemediationPlan,
   applyRemediationPlan,
   remediationFromHint,
-} from "./remediation-plan.ts";
-import { loadPackageProfile } from "./profile-loader.ts";
+} from './remediation-plan.ts';
+import { loadPackageProfile } from './profile-loader.ts';
 
 export type ServiceOptions = {
   skillRoot: string;
@@ -36,14 +36,11 @@ export class Service {
   }
 
   private targetPath(): string {
-    return this.options.targetPath ?? ".";
+    return this.options.targetPath ?? '.';
   }
 
   private async resolvePackageProfile() {
-    return loadPackageProfile(
-      this.options.skillRoot,
-      this.options.packageProfileName ?? "default",
-    );
+    return loadPackageProfile(this.options.skillRoot, this.options.packageProfileName ?? 'default');
   }
 
   async extractDependencies(): Promise<{
@@ -54,7 +51,8 @@ export class Service {
     const { dependencies, packageJson } = await resolveTargetDependencies({
       repo: this.options.repo,
       targetPath: this.targetPath(),
-      includeDev: this.options.includeDevDependencies ?? pkgProfile.include_dev_dependencies ?? false,
+      includeDev:
+        this.options.includeDevDependencies ?? pkgProfile.include_dev_dependencies ?? false,
     });
     const packages: Record<string, string> = {};
     for (const d of dependencies) packages[d.name] = d.version;
@@ -71,8 +69,8 @@ export class Service {
     const { packages, packageJson } = await this.extractDependencies();
     const threatFeed = this.options.threatFeed ?? pkgProfile.threat_feed ?? true;
     const violations = await this.registry.checkAllViolations(packages, { threatFeed });
-    const min = this.options.minSeverity ?? pkgProfile.min_severity ?? "warn";
-    const filtered = violations.filter((v) => meetsSeverity(v.severity, min));
+    const min = this.options.minSeverity ?? pkgProfile.min_severity ?? 'warn';
+    const filtered = violations.filter(v => meetsSeverity(v.severity, min));
 
     const remediations: RemediationHint[] = [];
     const findings: ScanResult[] = [];
@@ -93,7 +91,14 @@ export class Service {
     const remediationEnabled = pkgProfile.remediation !== false;
     const plan = remediationEnabled
       ? await buildRemediationPlan({ repo: this.options.repo, findings })
-      : { actionable: 0, upgrades: 0, removals: 0, commands: [], items: [], totalFindings: findings.length };
+      : {
+          actionable: 0,
+          upgrades: 0,
+          removals: 0,
+          commands: [],
+          items: [],
+          totalFindings: findings.length,
+        };
     let fixesApplied: string[] = [];
     if (this.options.fix && packageJson && plan.items.length && remediationEnabled) {
       const applied = await applyRemediationPlan({
@@ -112,12 +117,12 @@ export class Service {
     const report = await runBundleScan({
       skillRoot: this.options.skillRoot,
       repo: this.options.repo,
-      profileName: this.options.profileName ?? "supply-chain-ci",
+      profileName: this.options.profileName ?? 'supply-chain-ci',
       scanPath: this.targetPath(),
       threatFeed: this.options.threatFeed ?? true,
-      format: "json",
+      format: 'json',
     });
-    const bundleFindings = report.targets.flatMap((t) => t.findings);
+    const bundleFindings = report.targets.flatMap(t => t.findings);
     return [...findings, ...bundleFindings];
   }
 
@@ -125,7 +130,7 @@ export class Service {
     return runBundleScan({
       skillRoot: this.options.skillRoot,
       repo: this.options.repo,
-      profileName: this.options.profileName ?? "supply-chain-ci",
+      profileName: this.options.profileName ?? 'supply-chain-ci',
       scanPath: this.targetPath(),
       threatFeed: this.options.threatFeed ?? true,
     });
@@ -144,8 +149,8 @@ export async function scanPackagesForTarget(opts: ServiceOptions): Promise<{
 }> {
   const registry = new Registry(opts.skillRoot);
   const targets = await registry.loadTargets();
-  let targetPath = opts.targetPath ?? ".";
-  let targetId = opts.targetId ?? "root";
+  let targetPath = opts.targetPath ?? '.';
+  let targetId = opts.targetId ?? 'root';
 
   if (opts.targetId) {
     const t = registry.getTarget(targets, opts.targetId);

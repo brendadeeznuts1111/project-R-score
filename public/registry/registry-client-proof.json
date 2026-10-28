@@ -19,9 +19,7 @@
     "arch": "arm64",
     "channelResolveSource": "runtime",
     "githubAuthSource": "none",
-    "subsystems": [
-      "package-manager"
-    ]
+    "subsystems": ["package-manager"]
   },
   "results": [
     {

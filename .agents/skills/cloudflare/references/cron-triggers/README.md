@@ -1,6 +1,7 @@
 # Cloudflare Cron Triggers
 
-Schedule Workers execution using cron expressions. Runs on Cloudflare's global network during underutilized periods.
+Schedule Workers execution using cron expressions. Runs on Cloudflare's global
+network during underutilized periods.
 
 ## Key Features
 
@@ -22,7 +23,8 @@ Schedule Workers execution using cron expressions. Runs on Cloudflare's global n
  * * * * *
 ```
 
-**Special chars:** `*` (any), `,` (list), `-` (range), `/` (step), `L` (last), `W` (weekday), `#` (nth)
+**Special chars:** `*` (any), `,` (list), `-` (range), `/` (step), `L` (last),
+`W` (weekday), `#` (nth)
 
 ## Common Schedules
 
@@ -40,32 +42,35 @@ Schedule Workers execution using cron expressions. Runs on Cloudflare's global n
 ## Quick Start
 
 **wrangler.jsonc:**
+
 ```jsonc
 {
   "name": "my-cron-worker",
   "triggers": {
-    "crons": ["*/5 * * * *", "0 2 * * *"]
-  }
+    "crons": ["*/5 * * * *", "0 2 * * *"],
+  },
 }
 ```
 
 **Handler:**
+
 ```typescript
 export default {
   async scheduled(
     controller: ScheduledController,
     env: Env,
-    ctx: ExecutionContext,
+    ctx: ExecutionContext
   ): Promise<void> {
-    console.log("Cron:", controller.cron);
-    console.log("Time:", new Date(controller.scheduledTime));
-    
+    console.log('Cron:', controller.cron);
+    console.log('Time:', new Date(controller.scheduledTime));
+
     ctx.waitUntil(asyncTask(env)); // Non-blocking
   },
 };
 ```
 
 **Test locally:**
+
 ```bash
 npx wrangler dev
 curl "http://localhost:8787/__scheduled?cron=*/5+*+*+*+*"
@@ -74,13 +79,15 @@ curl "http://localhost:8787/__scheduled?cron=*/5+*+*+*+*"
 ## Limits
 
 - **Free:** 3 triggers/worker, 10ms CPU
-- **Paid:** Unlimited triggers, 30s CPU (<1hr interval) / 15min CPU (≥1hr interval)
+- **Paid:** Unlimited triggers, 30s CPU (<1hr interval) / 15min CPU (≥1hr
+  interval)
 - **Propagation:** 15min global deployment
 - **Timezone:** UTC only
 
 ## Reading Order
 
 **New to cron triggers?** Start here:
+
 1. This README - Overview and quick start
 2. [configuration.md](./configuration.md) - Set up your first cron trigger
 3. [api.md](./api.md) - Understand the handler API
@@ -89,11 +96,16 @@ curl "http://localhost:8787/__scheduled?cron=*/5+*+*+*+*"
 **Troubleshooting?** Jump to [gotchas.md](./gotchas.md)
 
 ## In This Reference
-- [configuration.md](./configuration.md) - wrangler config, env-specific schedules, Green Compute
-- [api.md](./api.md) - ScheduledController, noRetry(), waitUntil, testing patterns
-- [patterns.md](./patterns.md) - Use cases, monitoring, queue integration, Durable Objects
+
+- [configuration.md](./configuration.md) - wrangler config, env-specific
+  schedules, Green Compute
+- [api.md](./api.md) - ScheduledController, noRetry(), waitUntil, testing
+  patterns
+- [patterns.md](./patterns.md) - Use cases, monitoring, queue integration,
+  Durable Objects
 - [gotchas.md](./gotchas.md) - Timezone issues, idempotency, security, testing
 
 ## See Also
+
 - [workflows](../workflows/) - Alternative for long-running scheduled tasks
 - [workers](../workers/) - Worker runtime documentation

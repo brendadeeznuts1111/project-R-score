@@ -10,9 +10,11 @@ Client (WebRTC) <---> CF Edge <---> Backend (HTTP)
                     Other Edges <---> Other Clients
 ```
 
-Anycast: Last-mile <50ms (95%), no region select, NACK shield, distributed consensus
+Anycast: Last-mile <50ms (95%), no region select, NACK shield, distributed
+consensus
 
 Cascading trees auto-scale to millions:
+
 ```
 Publisher -> Edge A -> Edge B -> Sub1
                     \-> Edge C -> Sub2,3
@@ -20,10 +22,11 @@ Publisher -> Edge A -> Edge B -> Sub1
 
 ## Use Cases
 
-**1:1:** A creates session+publishes, B creates+subscribes to A+publishes, A subscribes to B
-**N:N:** All create session+publish, backend broadcasts track IDs, all subscribe to others
-**1:N:** Publisher creates+publishes, viewers each create+subscribe (no fan-out limit)
-**Breakout:** Same PeerConnection! Backend closes/adds tracks, no recreation
+**1:1:** A creates session+publishes, B creates+subscribes to A+publishes, A
+subscribes to B **N:N:** All create session+publish, backend broadcasts track
+IDs, all subscribe to others **1:N:** Publisher creates+publishes, viewers each
+create+subscribe (no fan-out limit) **Breakout:** Same PeerConnection! Backend
+closes/adds tracks, no recreation
 
 ## PartyTracks (Recommended)
 
@@ -70,10 +73,16 @@ await pt.publishTrack(screen, {trackName: 'my-screen'});
 ## Backend
 
 Express:
+
 ```js
 app.post('/api/new-session', async (req, res) => {
-  const r = await fetch(`${CALLS_API}/apps/${process.env.CALLS_APP_ID}/sessions/new`,
-    {method: 'POST', headers: {'Authorization': `Bearer ${process.env.CALLS_APP_SECRET}`}});
+  const r = await fetch(
+    `${CALLS_API}/apps/${process.env.CALLS_APP_ID}/sessions/new`,
+    {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${process.env.CALLS_APP_SECRET}` },
+    }
+  );
   res.json(await r.json());
 });
 ```
@@ -91,7 +100,7 @@ function attachAudioLevelDetector(track: MediaStreamTrack) {
   const analyzer = ctx.createAnalyser();
   const src = ctx.createMediaStreamSource(new MediaStream([track]));
   src.connect(analyzer);
-  
+
   const data = new Uint8Array(analyzer.frequencyBinCount);
   const checkLevel = () => {
     analyzer.getByteFrequencyData(data);
@@ -109,7 +118,7 @@ function attachAudioLevelDetector(track: MediaStreamTrack) {
 pc.getStats().then(stats => {
   stats.forEach(report => {
     if (report.type === 'inbound-rtp' && report.kind === 'video') {
-      const {packetsLost, packetsReceived, jitter} = report;
+      const { packetsLost, packetsReceived, jitter } = report;
       const lossRate = packetsLost / (packetsLost + packetsReceived);
       if (lossRate > 0.05) console.warn('High packet loss:', lossRate);
       if (jitter > 100) console.warn('High jitter:', jitter);
@@ -125,16 +134,25 @@ pc.getStats().then(stats => {
 let activeSubscriptions = new Set<string>();
 
 function updateStage(topSpeakers: string[]) {
-  const toAdd = topSpeakers.filter(id => !activeSubscriptions.has(id)).slice(0, 6);
-  const toRemove = [...activeSubscriptions].filter(id => !topSpeakers.includes(id));
-  
+  const toAdd = topSpeakers
+    .filter(id => !activeSubscriptions.has(id))
+    .slice(0, 6);
+  const toRemove = [...activeSubscriptions].filter(
+    id => !topSpeakers.includes(id)
+  );
+
   toRemove.forEach(id => {
-    pc.getSenders().find(s => s.track?.id === id)?.track?.stop();
+    pc.getSenders()
+      .find(s => s.track?.id === id)
+      ?.track?.stop();
     activeSubscriptions.delete(id);
   });
-  
+
   toAdd.forEach(async id => {
-    await fetch(`/api/subscribe`, {method: 'POST', body: JSON.stringify({trackId: id})});
+    await fetch(`/api/subscribe`, {
+      method: 'POST',
+      body: JSON.stringify({ trackId: id }),
+    });
     activeSubscriptions.add(id);
   });
 }
@@ -143,32 +161,41 @@ function updateStage(topSpeakers: string[]) {
 ## Advanced
 
 Bandwidth mgmt:
+
 ```ts
 const s = pc.getSenders().find(s => s.track?.kind === 'video');
 const p = s.getParameters();
 if (!p.encodings) p.encodings = [{}];
-p.encodings[0].maxBitrate = 1200000; p.encodings[0].maxFramerate = 24;
+p.encodings[0].maxBitrate = 1200000;
+p.encodings[0].maxFramerate = 24;
 await s.setParameters(p);
 ```
 
 Simulcast (CF auto-forwards best layer):
+
 ```ts
-pc.addTransceiver('video', {direction: 'sendonly', sendEncodings: [
-  {rid: 'high', maxBitrate: 1200000},
-  {rid: 'med', maxBitrate: 600000, scaleResolutionDownBy: 2},
-  {rid: 'low', maxBitrate: 200000, scaleResolutionDownBy: 4}
-]});
+pc.addTransceiver('video', {
+  direction: 'sendonly',
+  sendEncodings: [
+    { rid: 'high', maxBitrate: 1200000 },
+    { rid: 'med', maxBitrate: 600000, scaleResolutionDownBy: 2 },
+    { rid: 'low', maxBitrate: 200000, scaleResolutionDownBy: 4 },
+  ],
+});
 ```
 
 DataChannel:
+
 ```ts
-const dc = pc.createDataChannel('chat', {ordered: true, maxRetransmits: 3});
-dc.onopen = () => dc.send(JSON.stringify({type: 'chat', text: 'Hi'}));
-dc.onmessage = (e) => console.log('RX:', JSON.parse(e.data));
+const dc = pc.createDataChannel('chat', { ordered: true, maxRetransmits: 3 });
+dc.onopen = () => dc.send(JSON.stringify({ type: 'chat', text: 'Hi' }));
+dc.onmessage = e => console.log('RX:', JSON.parse(e.data));
 ```
 
-**WHIP/WHEP:** For streaming interop (OBS → SFU, SFU → video players), use WHIP (ingest) and WHEP (egress) protocols. See Cloudflare Stream integration docs.
+**WHIP/WHEP:** For streaming interop (OBS → SFU, SFU → video players), use WHIP
+(ingest) and WHEP (egress) protocols. See Cloudflare Stream integration docs.
 
 Integrations: R2 for recording `env.R2_BUCKET.put(...)`, Queues for analytics
 
-Perf: 100-250ms connect, ~50ms latency (95%), 200-400ms glass-to-glass, no participant limit (client: 10-50 tracks)
+Perf: 100-250ms connect, ~50ms latency (95%), 200-400ms glass-to-glass, no
+participant limit (client: 10-50 tracks)

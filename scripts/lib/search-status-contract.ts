@@ -156,8 +156,8 @@ export function freshnessStatus(input: {
     : LOOP_FRESHNESS_WINDOW_MINUTES;
   const aligned = Boolean(
     input.latestSnapshotIdSeen &&
-      input.loopStatusSnapshotId &&
-      input.latestSnapshotIdSeen === input.loopStatusSnapshotId
+    input.loopStatusSnapshotId &&
+    input.latestSnapshotIdSeen === input.loopStatusSnapshotId
   );
   if (!aligned) return 'fail';
   if (typeof input.staleMinutes === 'number' && input.staleMinutes > windowMinutes) return 'warn';

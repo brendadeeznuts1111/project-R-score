@@ -13,14 +13,8 @@
     "digest": "ef48291806bee47f6855f9b499aa21bee3561574df6a60b9cc60f74bd1f48cf3",
     "mediaType": "application/x-ndjson"
   },
-  "related": [
-    "nagata-map",
-    "jacobian-nullspace",
-    "sha3-integrity"
-  ],
-  "relatedDocs": [
-    "SHA3-256"
-  ],
+  "related": ["nagata-map", "jacobian-nullspace", "sha3-integrity"],
+  "relatedDocs": ["SHA3-256"],
   "meta": {
     "buildPin": "1.4.0",
     "emitter": "audit-emit-stub"

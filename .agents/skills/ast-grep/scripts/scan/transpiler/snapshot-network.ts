@@ -1,6 +1,6 @@
-import { readFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
-import type { HealthReport } from "./endpoint-catalog.ts";
+import { readFile } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import type { HealthReport } from './endpoint-catalog.ts';
 import {
   captureBaselineFromReport,
   diffAgainstBaseline,
@@ -8,18 +8,18 @@ import {
   parseJson5,
   type NetworkBaseline,
   type NetworkBaselineDelta,
-} from "./network-baseline.ts";
-import type { SnapshotNetworkSection, DoctorSnapshotV2 } from "./snapshot.ts";
-import type { BundleScanReport } from "./types.ts";
+} from './network-baseline.ts';
+import type { SnapshotNetworkSection, DoctorSnapshotV2 } from './snapshot.ts';
+import type { BundleScanReport } from './types.ts';
 
 export function defaultSnapshotPath(skillRoot: string, domain: string): string {
-  return join(skillRoot, "baselines", domain, "snapshot.json");
+  return join(skillRoot, 'baselines', domain, 'snapshot.json');
 }
 
 export function captureNetworkSectionFromReport(
   report: BundleScanReport,
   domain: string,
-  scanPath: string,
+  scanPath: string
 ): SnapshotNetworkSection {
   const baseline = captureBaselineFromReport(report, domain, scanPath);
   return baselineToSnapshotNetwork(baseline);
@@ -44,10 +44,10 @@ export function baselineToSnapshotNetwork(baseline: NetworkBaseline): SnapshotNe
 }
 
 export function snapshotNetworkToBaseline(section: SnapshotNetworkSection): NetworkBaseline {
-  const routes = section.routeFingerprints.map((fp) => {
-    const space = fp.indexOf(" ");
+  const routes = section.routeFingerprints.map(fp => {
+    const space = fp.indexOf(' ');
     return space < 0
-      ? { method: "GET", path: fp }
+      ? { method: 'GET', path: fp }
       : { method: fp.slice(0, space), path: fp.slice(space + 1) };
   });
   return {
@@ -73,8 +73,8 @@ export function snapshotNetworkToBaseline(section: SnapshotNetworkSection): Netw
 
 export function baselineFromSnapshot(
   snapshot: DoctorSnapshotV2,
-  fallbackDomain = "default",
-  fallbackScanPath = ".",
+  fallbackDomain = 'default',
+  fallbackScanPath = '.'
 ): NetworkBaseline | undefined {
   if (!snapshot.network) return undefined;
   const section = snapshot.network as SnapshotNetworkSection;
@@ -88,13 +88,13 @@ export function baselineFromSnapshot(
 export function diffSnapshotNetworkSection(
   pinned: SnapshotNetworkSection | undefined,
   current: SnapshotNetworkSection,
-  liveHealth?: HealthReport,
+  liveHealth?: HealthReport
 ): NetworkBaselineDelta | undefined {
   if (!pinned) return undefined;
   return diffAgainstBaseline(
     snapshotNetworkToBaseline(current),
     snapshotNetworkToBaseline(pinned),
-    liveHealth,
+    liveHealth
   );
 }
 
@@ -111,7 +111,7 @@ export async function loadDomainBaseline(options: {
 
   for (const path of snapshotCandidates) {
     try {
-      const snapshot = JSON.parse(await readFile(resolve(path), "utf8")) as DoctorSnapshotV2;
+      const snapshot = JSON.parse(await readFile(resolve(path), 'utf8')) as DoctorSnapshotV2;
       const baseline = baselineFromSnapshot(snapshot, options.domain);
       if (baseline) return { baseline, source: path, snapshot };
     } catch {
@@ -119,8 +119,9 @@ export async function loadDomainBaseline(options: {
     }
   }
 
-  const legacyPath = options.baselinePath
-    ?? join(options.skillRoot, "baselines", options.domain, "network-baseline.json5");
+  const legacyPath =
+    options.baselinePath ??
+    join(options.skillRoot, 'baselines', options.domain, 'network-baseline.json5');
   try {
     const baseline = await loadNetworkBaseline(legacyPath);
     return { baseline, source: legacyPath };
@@ -135,15 +136,16 @@ export async function migrateLegacyBaselineToSnapshot(options: {
   baselinePath?: string;
   scannerVersion?: string;
 }): Promise<DoctorSnapshotV2> {
-  const legacyPath = options.baselinePath
-    ?? join(options.skillRoot, "baselines", options.domain, "network-baseline.json5");
-  const raw = await readFile(resolve(legacyPath), "utf8");
+  const legacyPath =
+    options.baselinePath ??
+    join(options.skillRoot, 'baselines', options.domain, 'network-baseline.json5');
+  const raw = await readFile(resolve(legacyPath), 'utf8');
   const baseline = parseJson5(raw) as NetworkBaseline;
   const network = baselineToSnapshotNetwork(baseline);
   return {
-    snapshotVersion: "2.0.0",
-    sections: ["policy", "transpiler", "semver", "network"],
-    scannerVersion: options.scannerVersion ?? "2.0.0",
+    snapshotVersion: '2.0.0',
+    sections: ['policy', 'transpiler', 'semver', 'network'],
+    scannerVersion: options.scannerVersion ?? '2.0.0',
     network,
     generatedAt: new Date().toISOString(),
   };

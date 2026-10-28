@@ -1,6 +1,6 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import type { ImportKind, PolicyRule, RuleSet, Severity } from "./types.ts";
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { ImportKind, PolicyRule, RuleSet, Severity } from './types.ts';
 
 /** Map CSS-like astPattern strings to source regex (Bun.Transpiler has no public AST walker). */
 const AST_PATTERN_MAP: Record<string, string> = {
@@ -20,9 +20,9 @@ export const SEVERITY_RANK: Record<string, number> = {
 };
 
 export function normalizeSeverity(sev: Severity): Severity {
-  if (sev === "critical" || sev === "high") return "error";
-  if (sev === "medium") return "warn";
-  if (sev === "low") return "info";
+  if (sev === 'critical' || sev === 'high') return 'error';
+  if (sev === 'medium') return 'warn';
+  if (sev === 'low') return 'info';
   return sev;
 }
 
@@ -38,10 +38,10 @@ function policyToBuckets(rules: PolicyRule[]): RuleSet {
   const output_rules: PolicyRule[] = [];
   const network_rules: PolicyRule[] = [];
   for (const r of rules) {
-    const layer = r.layer ?? "source";
-    if (layer === "import" || r.type === "import") import_rules.push(r);
-    else if (layer === "network") network_rules.push(r);
-    else if (layer === "output") output_rules.push(r);
+    const layer = r.layer ?? 'source';
+    if (layer === 'import' || r.type === 'import') import_rules.push(r);
+    else if (layer === 'network') network_rules.push(r);
+    else if (layer === 'output') output_rules.push(r);
     else source_rules.push(r);
   }
   return { version: 1, import_rules, source_rules, output_rules, network_rules };
@@ -54,12 +54,15 @@ function mergeRules(base: PolicyRule[], extra: PolicyRule[]): PolicyRule[] {
   return [...byId.values()];
 }
 
-function jsonRuleToPolicy(row: Record<string, unknown>, layer: "import" | "source" | "output"): PolicyRule {
+function jsonRuleToPolicy(
+  row: Record<string, unknown>,
+  layer: 'import' | 'source' | 'output'
+): PolicyRule {
   return {
     id: String(row.id),
     description: String(row.message ?? row.id),
-    severity: (row.severity as Severity) ?? "warn",
-    type: layer === "import" ? "import" : "regex",
+    severity: (row.severity as Severity) ?? 'warn',
+    type: layer === 'import' ? 'import' : 'regex',
     layer,
     pattern: row.pattern ? String(row.pattern) : undefined,
     path_pattern: row.path_pattern ? String(row.path_pattern) : undefined,
@@ -69,27 +72,27 @@ function jsonRuleToPolicy(row: Record<string, unknown>, layer: "import" | "sourc
 }
 
 export async function loadJsonRules(path: string): Promise<RuleSet> {
-  const raw = JSON.parse(await readFile(path, "utf8")) as {
+  const raw = JSON.parse(await readFile(path, 'utf8')) as {
     import_rules?: Record<string, unknown>[];
     source_rules?: Record<string, unknown>[];
     output_rules?: Record<string, unknown>[];
   };
   const rules: PolicyRule[] = [
-    ...(raw.import_rules ?? []).map((r) => jsonRuleToPolicy(r, "import")),
-    ...(raw.source_rules ?? []).map((r) => jsonRuleToPolicy(r, "source")),
-    ...(raw.output_rules ?? []).map((r) => jsonRuleToPolicy(r, "output")),
+    ...(raw.import_rules ?? []).map(r => jsonRuleToPolicy(r, 'import')),
+    ...(raw.source_rules ?? []).map(r => jsonRuleToPolicy(r, 'source')),
+    ...(raw.output_rules ?? []).map(r => jsonRuleToPolicy(r, 'output')),
   ];
   return policyToBuckets(rules);
 }
 
 export async function loadTomlPolicy(path: string): Promise<PolicyRule[]> {
-  const text = await readFile(path, "utf8");
+  const text = await readFile(path, 'utf8');
   const doc = Bun.TOML.parse(text) as { rule?: PolicyRule[] | PolicyRule };
   const rows = Array.isArray(doc.rule) ? doc.rule : doc.rule ? [doc.rule] : [];
-  return rows.map((r) => {
-    const type = (r.type ?? "regex") as PolicyRule["type"];
+  return rows.map(r => {
+    const type = (r.type ?? 'regex') as PolicyRule['type'];
     let pattern = r.pattern;
-    if (type === "ast" && r.astPattern) {
+    if (type === 'ast' && r.astPattern) {
       pattern = AST_PATTERN_MAP[r.astPattern] ?? AST_PATTERN_MAP[String(r.astPattern)];
     }
     return {
@@ -97,14 +100,14 @@ export async function loadTomlPolicy(path: string): Promise<PolicyRule[]> {
       type,
       pattern,
       message: r.message ?? r.description,
-      layer: (r.layer ?? "source") as PolicyRule["layer"],
+      layer: (r.layer ?? 'source') as PolicyRule['layer'],
     };
   });
 }
 
 export async function loadRuleSet(skillRoot: string): Promise<RuleSet> {
-  const jsonPath = join(skillRoot, "bundle-threat-rules.json");
-  const tomlPath = join(skillRoot, "policies/security.policy.toml");
+  const jsonPath = join(skillRoot, 'bundle-threat-rules.json');
+  const tomlPath = join(skillRoot, 'policies/security.policy.toml');
   const jsonSet = await loadJsonRules(jsonPath);
   let tomlRules: PolicyRule[] = [];
   try {
@@ -119,7 +122,7 @@ export async function loadRuleSet(skillRoot: string): Promise<RuleSet> {
       ...jsonSet.output_rules,
       ...jsonSet.network_rules,
     ],
-    tomlRules,
+    tomlRules
   );
   return policyToBuckets(merged);
 }

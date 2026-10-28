@@ -44,10 +44,7 @@ function countByStatus(entries: Array<Record<string, unknown>>): Record<string, 
   return byStatus;
 }
 
-export async function onRequest(context: {
-  request: Request;
-  env: PagesEnv;
-}): Promise<Response> {
+export async function onRequest(context: { request: Request; env: PagesEnv }): Promise<Response> {
   const { request, env } = context;
   const origin = new URL(request.url).origin;
   const sub = new URL(request.url).pathname.replace(/^\/api\/dod\/?/, '');
@@ -73,8 +70,7 @@ export async function onRequest(context: {
   const snap = await loadSnapshot(env, origin);
   const all = snap?.entries ?? [];
   const status = new URL(request.url).searchParams.get('status') || 'all';
-  const entries =
-    status === 'all' ? all : all.filter(row => String(row.status ?? '') === status);
+  const entries = status === 'all' ? all : all.filter(row => String(row.status ?? '') === status);
   const byStatus = snap?.byStatus ?? countByStatus(all);
 
   return Response.json(

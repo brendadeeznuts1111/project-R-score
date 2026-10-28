@@ -47,7 +47,8 @@ type RepoTarget = {
 const TOOLS = [
   {
     name: 'ast_grep_doctor',
-    description: 'Health check: binary, outline, skill bundle, autofix rules. fix=true installs skill pin when missing.',
+    description:
+      'Health check: binary, outline, skill bundle, autofix rules. fix=true installs skill pin when missing.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -57,7 +58,8 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_outline',
-    description: 'Map code structure (symbols, exports, digest). Use only/zone to expand repo-map targets.',
+    description:
+      'Map code structure (symbols, exports, digest). Use only/zone to expand repo-map targets.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -106,7 +108,8 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_map',
-    description: 'Map repo-map.json zones/targets. list=true inventory; compact=true symbol counts; heatmap=true ASCII bar chart; default=full outline.',
+    description:
+      'Map repo-map.json zones/targets. list=true inventory; compact=true symbol counts; heatmap=true ASCII bar chart; default=full outline.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -124,12 +127,16 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_zones',
-    description: 'List repo-map zones and targets. stats=true includes symbol counts from outline index cache.',
+    description:
+      'List repo-map zones and targets. stats=true includes symbol counts from outline index cache.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         stats: { type: 'boolean', description: 'Include symbol counts per zone' },
-        discover: { type: 'boolean', description: 'Find unmapped monorepo candidates (alias: ast_grep_discover)' },
+        discover: {
+          type: 'boolean',
+          description: 'Find unmapped monorepo candidates (alias: ast_grep_discover)',
+        },
         zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
         failOn: { type: 'boolean', description: 'With discover: exit 1 when unmapped exist' },
         jsonOut: { type: 'boolean', description: 'Emit JSON' },
@@ -138,7 +145,8 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_discover',
-    description: 'Scan monorepo for repo-map gaps — skills, workspaces, packages (zone-discovery.json probes).',
+    description:
+      'Scan monorepo for repo-map gaps — skills, workspaces, packages (zone-discovery.json probes).',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -150,7 +158,8 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_index',
-    description: 'Cross-target symbol index from repo-map outlines. Filter by name, type, zone, exports.',
+    description:
+      'Cross-target symbol index from repo-map outlines. Filter by name, type, zone, exports.',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -232,34 +241,123 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_bun',
-    description: 'Bun native API: patterns, inventory, matrix, heatmap, or cataloged search by pattern id.',
+    description:
+      'Bun native API: patterns, inventory, matrix, heatmap, or cataloged search by pattern id.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', enum: ['patterns', 'bundles', 'inventory', 'matrix', 'heatmap', 'score', 'migrate', 'report', 'docs', 'roadmap', 'features', 'test-ci', 'test-list', 'install-docs', 'install-scan', 'install-ci', 'bundle-threat', 'supply-chain-layers', 'supply-chain-rules', 'supply-chain-advisories', 'supply-chain-scan', 'search'], description: 'Bun subcommand' },
-        topic: { type: 'string', enum: ['sources', 'linker', 'security', 'bunfig', 'env', 'profiles', 'platform', 'lockfile', 'backends', 'pnpm', 'peers', 'cache', 'cli'], description: 'For install-docs: filter section' },
+        action: {
+          type: 'string',
+          enum: [
+            'patterns',
+            'bundles',
+            'inventory',
+            'matrix',
+            'heatmap',
+            'score',
+            'migrate',
+            'report',
+            'docs',
+            'roadmap',
+            'features',
+            'test-ci',
+            'test-list',
+            'install-docs',
+            'install-scan',
+            'install-ci',
+            'bundle-threat',
+            'supply-chain-layers',
+            'supply-chain-rules',
+            'supply-chain-advisories',
+            'supply-chain-scan',
+            'search',
+          ],
+          description: 'Bun subcommand',
+        },
+        topic: {
+          type: 'string',
+          enum: [
+            'sources',
+            'linker',
+            'security',
+            'bunfig',
+            'env',
+            'profiles',
+            'platform',
+            'lockfile',
+            'backends',
+            'pnpm',
+            'peers',
+            'cache',
+            'cli',
+          ],
+          description: 'For install-docs: filter section',
+        },
         cpu: { type: 'string', description: 'For install-ci: --cpu override' },
         osTarget: { type: 'string', description: 'For install-ci: --os override' },
-        scanPath: { type: 'string', description: 'For install-scan or supply-chain-scan: directory or package.json' },
-        format: { type: 'string', enum: ['json', 'html', 'markdown'], description: 'For supply-chain-scan: report format' },
-        parallel: { type: 'boolean', description: 'For supply-chain-scan: Worker pool per-file scan' },
+        scanPath: {
+          type: 'string',
+          description: 'For install-scan or supply-chain-scan: directory or package.json',
+        },
+        format: {
+          type: 'string',
+          enum: ['json', 'html', 'markdown'],
+          description: 'For supply-chain-scan: report format',
+        },
+        parallel: {
+          type: 'boolean',
+          description: 'For supply-chain-scan: Worker pool per-file scan',
+        },
         ruleIds: { type: 'string', description: 'For supply-chain-scan: comma-separated rule ids' },
-        threatFeed: { type: 'boolean', description: 'For supply-chain-scan: correlate bun.lock with threat-feed.json' },
+        threatFeed: {
+          type: 'boolean',
+          description: 'For supply-chain-scan: correlate bun.lock with threat-feed.json',
+        },
         release: { type: 'string', description: 'For features: release key (1.3.13)' },
-        profile: { type: 'string', description: 'For test-ci: bun-test-profiles.json key (ci, unit, network, snapshot, ...)' },
-        testPath: { type: 'string', description: 'For test-ci: exact file (./tests/...) or substring filter' },
-        testFilter: { type: 'array', items: { type: 'string' }, description: 'For test-ci: position filters (unit, integration, concurrent)' },
-        testNamePattern: { type: 'string', description: 'For test-ci: -t regex on describe/test names' },
+        profile: {
+          type: 'string',
+          description: 'For test-ci: bun-test-profiles.json key (ci, unit, network, snapshot, ...)',
+        },
+        testPath: {
+          type: 'string',
+          description: 'For test-ci: exact file (./tests/...) or substring filter',
+        },
+        testFilter: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'For test-ci: position filters (unit, integration, concurrent)',
+        },
+        testNamePattern: {
+          type: 'string',
+          description: 'For test-ci: -t regex on describe/test names',
+        },
         shard: { type: 'string', description: 'For test-ci: M/N shard for CI matrix' },
         changed: { type: 'string', description: 'For test-ci: --changed or --changed=REF' },
-        skipPreflight: { type: 'boolean', description: 'For test-ci: skip snapshot-validate preflight' },
+        skipPreflight: {
+          type: 'boolean',
+          description: 'For test-ci: skip snapshot-validate preflight',
+        },
         dryRun: { type: 'boolean', description: 'For test-ci: print command only' },
-        priority: { type: 'string', enum: ['high', 'medium', 'low', 'nice'], description: 'For roadmap: filter by priority' },
-        integration: { type: 'string', enum: ['catalog', 'planned', 'integrated'], description: 'For roadmap: filter by integration state' },
-        patternId: { type: 'string', description: 'For search: bun-serve, bun-file, bun-glob, ...' },
+        priority: {
+          type: 'string',
+          enum: ['high', 'medium', 'low', 'nice'],
+          description: 'For roadmap: filter by priority',
+        },
+        integration: {
+          type: 'string',
+          enum: ['catalog', 'planned', 'integrated'],
+          description: 'For roadmap: filter by integration state',
+        },
+        patternId: {
+          type: 'string',
+          description: 'For search: bun-serve, bun-file, bun-glob, ...',
+        },
         only: { type: 'string' },
         zone: { type: 'string', enum: ZONE_IDS, description: ZONE_DESC },
-        group: { type: 'string', description: 'Filter patterns: http, io, db, crypto, anti-pattern, ...' },
+        group: {
+          type: 'string',
+          description: 'Filter patterns: http, io, db, crypto, anti-pattern, ...',
+        },
         tier: { type: 'string', enum: ['core', 'extended', 'migrate'] },
         coreOnly: { type: 'boolean', description: 'Shorthand for tier=core' },
         bundle: { type: 'string', description: 'Pattern bundle: server-boot, cli, core, hygiene' },
@@ -285,28 +383,36 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_scan',
-    description: 'Run bundled YAML rules (no-console-log, no-as-any, empty-catch, ...). Preview unless apply/fix=true.',
+    description:
+      'Run bundled YAML rules (no-console-log, no-as-any, empty-catch, ...). Preview unless apply/fix=true.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         paths: { type: 'array', items: { type: 'string' } },
         rule: { type: 'string', description: 'Single rule file under skill rules/' },
         apply: { type: 'boolean' },
-        fix: { type: 'boolean', description: 'Alias for apply (mutate files for rules with fix: field).' },
+        fix: {
+          type: 'boolean',
+          description: 'Alias for apply (mutate files for rules with fix: field).',
+        },
         globs: { type: 'array', items: { type: 'string' } },
       },
     },
   },
   {
     name: 'ast_grep_fix',
-    description: 'Apply all bundled autofix rules (rules with fix: field, e.g. no-as-any). dryRun=true for preview.',
+    description:
+      'Apply all bundled autofix rules (rules with fix: field, e.g. no-as-any). dryRun=true for preview.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         paths: { type: 'array', items: { type: 'string' } },
         rule: { type: 'string', description: 'Single autofix rule under skill rules/' },
         dryRun: { type: 'boolean', description: 'Preview violations only (no mutation).' },
-        only: { type: 'string', description: 'Expand paths from repo-map targets when paths omitted.' },
+        only: {
+          type: 'string',
+          description: 'Expand paths from repo-map targets when paths omitted.',
+        },
         globs: { type: 'array', items: { type: 'string' } },
       },
     },
@@ -346,7 +452,8 @@ const TOOLS = [
   },
   {
     name: 'ast_grep_audit',
-    description: 'Scan repo-map targets; summarize by rule. parallel=true uses Bun Worker pool (one scan per target).',
+    description:
+      'Scan repo-map targets; summarize by rule. parallel=true uses Bun Worker pool (one scan per target).',
     inputSchema: {
       type: 'object' as const,
       properties: {
@@ -400,17 +507,33 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        pointers: { type: 'boolean', description: 'Module/script/baseline index (no scan path required).' },
+        pointers: {
+          type: 'boolean',
+          description: 'Module/script/baseline index (no scan path required).',
+        },
         dryRun: { type: 'boolean', description: 'Single audit preview (no loop).' },
-        validateGroundTruth: { type: 'boolean', description: 'Compare live audit to pinned golden counts.' },
-        seed: { type: 'boolean', description: 'Refresh baselines/<domain>/snapshot.json network section.' },
+        validateGroundTruth: {
+          type: 'boolean',
+          description: 'Compare live audit to pinned golden counts.',
+        },
+        seed: {
+          type: 'boolean',
+          description: 'Refresh baselines/<domain>/snapshot.json network section.',
+        },
         loop: { type: 'boolean', description: 'Enter watch/probe loop.' },
         watch: { type: 'boolean', description: 'With loop: re-audit on file changes.' },
         scanPath: { type: 'string', description: 'Bundle scan path (e.g. dist/frontend).' },
         domain: { type: 'string', description: 'Domain id (default sports-terminal-os).' },
-        profile: { type: 'string', description: 'bundle-threat-profiles.json key (supply-chain-network-dist).' },
+        profile: {
+          type: 'string',
+          description: 'bundle-threat-profiles.json key (supply-chain-network-dist).',
+        },
         healthUrl: { type: 'string', description: 'Health probe URL.' },
-        output: { type: 'string', enum: ['table', 'json', 'herdr'], description: 'Dry-run output format.' },
+        output: {
+          type: 'string',
+          enum: ['table', 'json', 'herdr'],
+          description: 'Dry-run output format.',
+        },
         verbose: { type: 'boolean' },
         quiet: { type: 'boolean' },
         jsonOut: { type: 'boolean', description: 'JSON stdout (pointers, dry-run, validate).' },
@@ -429,24 +552,51 @@ const TOOLS = [
       properties: {
         action: {
           type: 'string',
-          enum: ['list', 'run', 'matrix', 'bench', 'bench-snapshot', 'close-loop', 'full', 'plan', 'workflow', 'precommit'],
-          description: 'Loop subcommand (plan = full --dry-run --explain; workflow/precommit delegate to dedicated tools).',
+          enum: [
+            'list',
+            'run',
+            'matrix',
+            'bench',
+            'bench-snapshot',
+            'close-loop',
+            'full',
+            'plan',
+            'workflow',
+            'precommit',
+          ],
+          description:
+            'Loop subcommand (plan = full --dry-run --explain; workflow/precommit delegate to dedicated tools).',
         },
         skill: { type: 'string', description: 'Target skill id (run action).' },
-        phases: { type: 'string', description: 'Comma-separated: doctor,test,bench,network,snapshot,rate.' },
+        phases: {
+          type: 'string',
+          description: 'Comma-separated: doctor,test,bench,network,snapshot,rate.',
+        },
         preset: { type: 'string', description: 'quick | standard | full | ci (full/plan).' },
         profile: { type: 'string', description: 'Bench profile (unit, ci, ...).' },
         iterations: { type: 'number', description: 'Bench or bench-snapshot repeat count.' },
         domain: { type: 'string', description: 'bench-snapshot domain (sports-terminal-os).' },
         scanPath: { type: 'string', description: 'bench-snapshot live network drift path.' },
         targetMs: { type: 'number', description: 'p50 speed target for bench rating.' },
-        groundTruth: { type: 'boolean', description: 'bench-snapshot: validateNetworkGroundTruth gate.' },
-        failOnNetworkDrift: { type: 'boolean', description: 'bench-snapshot: fail iteration on route drift.' },
+        groundTruth: {
+          type: 'boolean',
+          description: 'bench-snapshot: validateNetworkGroundTruth gate.',
+        },
+        failOnNetworkDrift: {
+          type: 'boolean',
+          description: 'bench-snapshot: fail iteration on route drift.',
+        },
         minRating: { type: 'number', description: 'Rating gate threshold.' },
         only: { type: 'string', description: 'Filter matrix skills by id substring.' },
         dryRun: { type: 'boolean', description: 'Preview plan without executing.' },
-        explain: { type: 'boolean', description: 'With dryRun: show commands and per-iteration pipeline.' },
-        verbose: { type: 'boolean', description: 'Per-phase timings (bench-snapshot) or phase starts.' },
+        explain: {
+          type: 'boolean',
+          description: 'With dryRun: show commands and per-iteration pipeline.',
+        },
+        verbose: {
+          type: 'boolean',
+          description: 'Per-phase timings (bench-snapshot) or phase starts.',
+        },
         quiet: { type: 'boolean' },
         parallel: { type: 'boolean', description: 'Matrix concurrent execution.' },
         skipPreflight: { type: 'boolean' },
@@ -471,11 +621,20 @@ const TOOLS = [
     inputSchema: {
       type: 'object' as const,
       properties: {
-        full: { type: 'boolean', description: 'Full gate chain + ast-grep --full (doctor, rules, semver, packages).' },
+        full: {
+          type: 'boolean',
+          description: 'Full gate chain + ast-grep --full (doctor, rules, semver, packages).',
+        },
         staged: { type: 'boolean', description: 'ast-grep gate: --staged (husky behaviour).' },
         changed: { type: 'boolean', description: 'ast-grep gate: --changed (diff vs HEAD).' },
-        hygiene: { type: 'boolean', description: 'Include repo-hygiene --staged (default true when full).' },
-        harness: { type: 'boolean', description: 'Include harness lint/format (default true when full).' },
+        hygiene: {
+          type: 'boolean',
+          description: 'Include repo-hygiene --staged (default true when full).',
+        },
+        harness: {
+          type: 'boolean',
+          description: 'Include harness lint/format (default true when full).',
+        },
         astGrep: { type: 'boolean', description: 'Include ast-grep + semver gate (default true).' },
       },
     },
@@ -500,7 +659,11 @@ const TOOLS = [
         fix: { type: 'boolean', description: 'Enable fix effect.' },
         report: { type: 'string', description: 'Report output path.' },
         effectsDir: { type: 'string', description: 'Custom effect plugins directory.' },
-        effects: { type: 'array', items: { type: 'string' }, description: 'Effect specs (e.g. custom, alert.url=...).' },
+        effects: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Effect specs (e.g. custom, alert.url=...).',
+        },
         jsonOut: { type: 'boolean' },
       },
       required: ['domain'],
@@ -519,7 +682,7 @@ async function executable(path: string): Promise<boolean> {
 
 async function resolveBinary(): Promise<string> {
   const env = process.env.AST_GREP_BIN;
-  if (env && await executable(env)) return env;
+  if (env && (await executable(env))) return env;
   const candidates = [
     join(SKILL_ROOT, 'node_modules/.bin/ast-grep'),
     '/opt/homebrew/bin/ast-grep',
@@ -532,7 +695,9 @@ async function resolveBinary(): Promise<string> {
       if (code === 0) return c;
     }
   }
-  throw new Error('ast-grep 0.44+ not found. Run: cd .agents/skills/ast-grep && ./scripts/install.sh');
+  throw new Error(
+    'ast-grep 0.44+ not found. Run: cd .agents/skills/ast-grep && ./scripts/install.sh'
+  );
 }
 
 function repoRoot(): string {
@@ -552,7 +717,10 @@ function truncate(text: string): string {
   return body || '(no output)';
 }
 
-async function runSg(args: string[], cwd: string): Promise<{ stdout: string; stderr: string; code: number }> {
+async function runSg(
+  args: string[],
+  cwd: string
+): Promise<{ stdout: string; stderr: string; code: number }> {
   const bin = await resolveBinary();
   const proc = Bun.spawn([bin, ...args], { cwd, stdout: 'pipe', stderr: 'pipe', env: process.env });
   const [stdout, stderr] = await Promise.all([
@@ -578,15 +746,22 @@ function wantsApply(args: Record<string, unknown>): boolean {
 }
 
 async function safeGitDiff(paths: string[], cwd: string): Promise<string> {
-  const check = Bun.spawn(['git', 'rev-parse', '--is-inside-work-tree'], { cwd, stdout: 'pipe', stderr: 'pipe' });
-  if (await check.exited !== 0) return '';
+  const check = Bun.spawn(['git', 'rev-parse', '--is-inside-work-tree'], {
+    cwd,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  if ((await check.exited) !== 0) return '';
   const diffArgs = ['git', 'diff', '--no-ext-diff', '--', ...paths];
   const proc = Bun.spawn(diffArgs, { cwd, stdout: 'pipe', stderr: 'pipe' });
   const stdout = await new Response(proc.stdout).text();
   return (await proc.exited) === 0 ? stdout.trim() : '';
 }
 
-async function runHelper(subcmd: string, extra: string[] = []): Promise<{ stdout: string; stderr: string; code: number }> {
+async function runHelper(
+  subcmd: string,
+  extra: string[] = []
+): Promise<{ stdout: string; stderr: string; code: number }> {
   const helper = join(SKILL_ROOT, 'scripts/ast_grep_helper.py');
   const proc = Bun.spawn(['python3', helper, subcmd, ...extra], {
     cwd: repoRoot(),
@@ -603,7 +778,7 @@ async function runHelper(subcmd: string, extra: string[] = []): Promise<{ stdout
 
 async function runBunScript(
   script: string,
-  extra: string[] = [],
+  extra: string[] = []
 ): Promise<{ stdout: string; stderr: string; code: number }> {
   const proc = Bun.spawn(['bun', script, ...extra], {
     cwd: repoRoot(),
@@ -637,13 +812,16 @@ async function cmdOutline(args: Record<string, unknown>): Promise<ToolCallResult
   if (args.bunRules === true) extra.push('--bun-rules');
   if (args.pubMembers === true) extra.push('--pub-members');
   if (args.jsonOut === true) extra.push('--json-out');
-  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const g of (args.globs as unknown[]) ?? []) extra.push('--globs', String(g));
   for (const p of strPaths(args)) extra.push(p);
   const { stdout, stderr, code } = await runHelper('outline', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no outline entries)'), code !== 0);
 }
 
-async function cmdSearch(args: Record<string, unknown>, filesOnly = false): Promise<ToolCallResult> {
+async function cmdSearch(
+  args: Record<string, unknown>,
+  filesOnly = false
+): Promise<ToolCallResult> {
   const pattern = String(args.pattern ?? '');
   if (!pattern) return toolText('pattern is required', true);
   const sgArgs = ['run', '--color', 'never', '-p', pattern];
@@ -654,11 +832,16 @@ async function cmdSearch(args: Record<string, unknown>, filesOnly = false): Prom
   pushGlobs(sgArgs, args.globs);
   sgArgs.push(...strPaths(args));
   const { stdout, stderr, code } = await runSg(sgArgs, repoRoot());
-  if (code !== 0 && code !== 1) return toolText(stderr || stdout || `search failed (${code})`, true);
+  if (code !== 0 && code !== 1)
+    return toolText(stderr || stdout || `search failed (${code})`, true);
   if (filesOnly) return toolText(truncate(stdout.trim() || '(no files with matches)'));
   if (!stdout.trim()) return toolText('(no matches)');
   try {
-    const matches = JSON.parse(stdout) as Array<{ file?: string; text?: string; range?: { start?: { line?: number } } }>;
+    const matches = JSON.parse(stdout) as Array<{
+      file?: string;
+      text?: string;
+      range?: { start?: { line?: number } };
+    }>;
     const lines: string[] = [];
     for (const m of matches.slice(0, 200)) {
       const line = m.range?.start?.line ?? '?';
@@ -884,7 +1067,7 @@ async function cmdFix(args: Record<string, unknown>): Promise<ToolCallResult> {
   if (args.dryRun === true) extra.push('--dry-run');
   if (args.rule) extra.push('--rule', String(args.rule));
   if (args.only) extra.push('--only', String(args.only));
-  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const g of (args.globs as unknown[]) ?? []) extra.push('--globs', String(g));
   for (const p of strPaths(args)) extra.push('--path', p);
   const { stdout, stderr, code } = await runHelper('fix', extra);
   let body = (stdout || stderr).trim() || '(no fix output)';
@@ -902,7 +1085,7 @@ async function cmdReplace(args: Record<string, unknown>): Promise<ToolCallResult
   const extra = [pattern, rewrite];
   if (args.lang) extra.push('--lang', String(args.lang));
   if (args.fix === true) extra.push('--fix');
-  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const g of (args.globs as unknown[]) ?? []) extra.push('--globs', String(g));
   for (const p of strPaths(args)) extra.push('--path', p);
   const { stdout, stderr, code } = await runHelper('replace', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no replace output)'), code !== 0);
@@ -933,7 +1116,7 @@ async function cmdAudit(args: Record<string, unknown>): Promise<ToolCallResult> 
   if (args.workers != null) extra.push('--workers', String(args.workers));
   if (args.format) extra.push('--format', String(args.format));
   if (args.failOn === true) extra.push('--fail-on');
-  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const g of (args.globs as unknown[]) ?? []) extra.push('--globs', String(g));
   const { stdout, stderr, code } = await runHelper('audit', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no audit output)'), code !== 0);
 }
@@ -949,7 +1132,7 @@ async function cmdCodemod(args: Record<string, unknown>): Promise<ToolCallResult
   const extra = [name];
   if (args.fix === true) extra.push('--fix');
   if (args.only) extra.push('--only', String(args.only));
-  for (const g of args.globs as unknown[] ?? []) extra.push('--globs', String(g));
+  for (const g of (args.globs as unknown[]) ?? []) extra.push('--globs', String(g));
   for (const p of strPaths(args)) extra.push('--path', p);
   const { stdout, stderr, code } = await runHelper('codemod', extra);
   return toolText(truncate((stdout || stderr).trim() || '(no codemod output)'), code !== 0);
@@ -1002,7 +1185,11 @@ async function cmdPrecommit(args: Record<string, unknown>): Promise<ToolCallResu
   const steps: Array<{ label: string; script: string; extra?: string[] }> = [];
 
   if (full || args.hygiene === true) {
-    steps.push({ label: 'hygiene', script: join(root, 'scripts/repo-hygiene.ts'), extra: ['--staged'] });
+    steps.push({
+      label: 'hygiene',
+      script: join(root, 'scripts/repo-hygiene.ts'),
+      extra: ['--staged'],
+    });
   }
   if (full || args.harness === true) {
     steps.push({ label: 'harness', script: join(root, 'scripts/pre-commit-harness.ts') });
@@ -1033,7 +1220,9 @@ async function cmdPrecommit(args: Record<string, unknown>): Promise<ToolCallResu
   let code = 0;
   for (const step of steps) {
     const { stdout, stderr, code: stepCode } = await runBunScript(step.script, step.extra ?? []);
-    chunks.push(`== ${step.label} ==\n${[stdout.trim(), stderr.trim()].filter(Boolean).join('\n')}`);
+    chunks.push(
+      `== ${step.label} ==\n${[stdout.trim(), stderr.trim()].filter(Boolean).join('\n')}`
+    );
     if (stepCode !== 0) {
       code = stepCode;
       break;
@@ -1068,7 +1257,13 @@ async function cmdWorkflow(args: Record<string, unknown>): Promise<ToolCallResul
 
 async function cmdSkillLoop(args: Record<string, unknown>): Promise<ToolCallResult> {
   let action = String(args.action ?? 'list');
-  if (action === 'precommit') return cmdPrecommit({ full: args.full, hygiene: args.hygiene, harness: args.harness, astGrep: args.astGrep });
+  if (action === 'precommit')
+    return cmdPrecommit({
+      full: args.full,
+      hygiene: args.hygiene,
+      harness: args.harness,
+      astGrep: args.astGrep,
+    });
   if (action === 'workflow') {
     return cmdWorkflow({
       domain: args.domain ?? 'sports-terminal-os',
@@ -1116,45 +1311,106 @@ async function cmdSkillLoop(args: Record<string, unknown>): Promise<ToolCallResu
   if (args.herdrTab === true) extra.push('--herdr-tab');
   if (args.noColor === true) extra.push('--no-color');
   const { stdout, stderr, code } = await runBunScript(script, extra);
-  const body = [stdout.trim(), stderr.trim()].filter(Boolean).join('\n') || '(no skill-loop output)';
+  const body =
+    [stdout.trim(), stderr.trim()].filter(Boolean).join('\n') || '(no skill-loop output)';
   return toolText(truncate(body), code !== 0);
 }
 
-async function handleToolsCall(id: number | string | undefined, params: Record<string, unknown>): Promise<JsonRpcMessage> {
+async function handleToolsCall(
+  id: number | string | undefined,
+  params: Record<string, unknown>
+): Promise<JsonRpcMessage> {
   const name = String(params?.name ?? '');
   const args = (params?.arguments ?? {}) as Record<string, unknown>;
   try {
     let result: ToolCallResult;
     switch (name) {
-      case 'ast_grep_doctor': result = await cmdDoctor(args); break;
-      case 'ast_grep_outline': result = await cmdOutline(args); break;
-      case 'ast_grep_search': result = await cmdSearch(args); break;
-      case 'ast_grep_files': result = await cmdSearch(args, true); break;
-      case 'ast_grep_map': result = await cmdMap(args); break;
-      case 'ast_grep_zones': result = await cmdZones(args); break;
-      case 'ast_grep_discover': result = await cmdDiscover(args); break;
-      case 'ast_grep_index': result = await cmdIndex(args); break;
-      case 'ast_grep_anchors': result = await cmdAnchors(args); break;
-      case 'ast_grep_exports': result = await cmdExports(args); break;
-      case 'ast_grep_collisions': result = await cmdCollisions(args); break;
-      case 'ast_grep_graph': result = await cmdGraph(args); break;
-      case 'ast_grep_jump': result = await cmdJump(args); break;
-      case 'ast_grep_bun': result = await cmdBun(args); break;
-      case 'ast_grep_nav': result = await cmdNav(args); break;
-      case 'ast_grep_scan': result = await cmdScan(args); break;
-      case 'ast_grep_fix': result = await cmdFix(args); break;
-      case 'ast_grep_replace': result = await cmdReplace(args); break;
-      case 'ast_grep_validate': result = await cmdValidate(args); break;
-      case 'ast_grep_rules': result = await cmdRules(); break;
-      case 'ast_grep_audit': result = await cmdAudit(args); break;
-      case 'ast_grep_codemods': result = await cmdCodemods(); break;
-      case 'ast_grep_codemod': result = await cmdCodemod(args); break;
-      case 'ast_grep_test': result = await cmdTest(args); break;
-      case 'ast_grep_network': result = await cmdNetwork(args); break;
-      case 'ast_grep_skill_loop': result = await cmdSkillLoop(args); break;
-      case 'ast_grep_precommit': result = await cmdPrecommit(args); break;
-      case 'ast_grep_workflow': result = await cmdWorkflow(args); break;
-      default: return rpcErr(id, -32601, `Unknown tool: ${name}`);
+      case 'ast_grep_doctor':
+        result = await cmdDoctor(args);
+        break;
+      case 'ast_grep_outline':
+        result = await cmdOutline(args);
+        break;
+      case 'ast_grep_search':
+        result = await cmdSearch(args);
+        break;
+      case 'ast_grep_files':
+        result = await cmdSearch(args, true);
+        break;
+      case 'ast_grep_map':
+        result = await cmdMap(args);
+        break;
+      case 'ast_grep_zones':
+        result = await cmdZones(args);
+        break;
+      case 'ast_grep_discover':
+        result = await cmdDiscover(args);
+        break;
+      case 'ast_grep_index':
+        result = await cmdIndex(args);
+        break;
+      case 'ast_grep_anchors':
+        result = await cmdAnchors(args);
+        break;
+      case 'ast_grep_exports':
+        result = await cmdExports(args);
+        break;
+      case 'ast_grep_collisions':
+        result = await cmdCollisions(args);
+        break;
+      case 'ast_grep_graph':
+        result = await cmdGraph(args);
+        break;
+      case 'ast_grep_jump':
+        result = await cmdJump(args);
+        break;
+      case 'ast_grep_bun':
+        result = await cmdBun(args);
+        break;
+      case 'ast_grep_nav':
+        result = await cmdNav(args);
+        break;
+      case 'ast_grep_scan':
+        result = await cmdScan(args);
+        break;
+      case 'ast_grep_fix':
+        result = await cmdFix(args);
+        break;
+      case 'ast_grep_replace':
+        result = await cmdReplace(args);
+        break;
+      case 'ast_grep_validate':
+        result = await cmdValidate(args);
+        break;
+      case 'ast_grep_rules':
+        result = await cmdRules();
+        break;
+      case 'ast_grep_audit':
+        result = await cmdAudit(args);
+        break;
+      case 'ast_grep_codemods':
+        result = await cmdCodemods();
+        break;
+      case 'ast_grep_codemod':
+        result = await cmdCodemod(args);
+        break;
+      case 'ast_grep_test':
+        result = await cmdTest(args);
+        break;
+      case 'ast_grep_network':
+        result = await cmdNetwork(args);
+        break;
+      case 'ast_grep_skill_loop':
+        result = await cmdSkillLoop(args);
+        break;
+      case 'ast_grep_precommit':
+        result = await cmdPrecommit(args);
+        break;
+      case 'ast_grep_workflow':
+        result = await cmdWorkflow(args);
+        break;
+      default:
+        return rpcErr(id, -32601, `Unknown tool: ${name}`);
     }
     return rpcOk(id, result);
   } catch (e) {

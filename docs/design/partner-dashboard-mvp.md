@@ -1,6 +1,7 @@
 # Partner dashboard MVP
 
 <!-- REF:ID 0.1.partner-dashboard-mvp -->
+
 <a id="0.1.partner-dashboard-mvp"></a>
 
 Status: implementation-ready (2026-08-08)

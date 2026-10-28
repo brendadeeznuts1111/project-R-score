@@ -2,19 +2,19 @@ id: bun-write-exact-signature
 snapshots:
   await Bun.write("a", "b", "c"):
     labels:
-    - source: Bun.write("a", "b", "c")
-      style: primary
-      start: 6
-      end: 30
+      - source: Bun.write("a", "b", "c")
+        style: primary
+        start: 6
+        end: 30
   await Bun.write("only-path"):
     labels:
-    - source: Bun.write("only-path")
-      style: primary
-      start: 6
-      end: 28
+      - source: Bun.write("only-path")
+        style: primary
+        start: 6
+        end: 28
   await Bun.write():
     labels:
-    - source: Bun.write()
-      style: primary
-      start: 6
-      end: 17
+      - source: Bun.write()
+        style: primary
+        start: 6
+        end: 17

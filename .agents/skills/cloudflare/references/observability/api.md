@@ -5,6 +5,7 @@
 **Endpoint**: `https://api.cloudflare.com/client/v4/graphql`
 
 **Query Workers Metrics**:
+
 ```graphql
 query {
   viewer {
@@ -36,9 +37,11 @@ query {
 
 ### Analytics Engine SQL API
 
-**Endpoint**: `https://api.cloudflare.com/client/v4/accounts/{account_id}/analytics_engine/sql`
+**Endpoint**:
+`https://api.cloudflare.com/client/v4/accounts/{account_id}/analytics_engine/sql`
 
-**Authentication**: `Authorization: Bearer <API_TOKEN>` (Account Analytics Read permission)
+**Authentication**: `Authorization: Bearer <API_TOKEN>` (Account Analytics Read
+permission)
 
 **Common Queries**:
 
@@ -82,6 +85,7 @@ ORDER BY occurrences DESC;
 ### Console Logging API
 
 **Methods**:
+
 ```typescript
 // Standard methods (all appear in Workers Logs)
 console.log('info message');
@@ -96,16 +100,18 @@ console.log({
   user_id: '123',
   action: 'checkout',
   amount: 99.99,
-  currency: 'USD'
+  currency: 'USD',
 });
 ```
 
-**Log Levels**: All console methods produce logs; use structured fields for filtering:
+**Log Levels**: All console methods produce logs; use structured fields for
+filtering:
+
 ```typescript
-console.log({ 
-  level: 'error', 
-  message: 'Payment failed', 
-  error_code: 'CARD_DECLINED' 
+console.log({
+  level: 'error',
+  message: 'Payment failed',
+  error_code: 'CARD_DECLINED',
 });
 ```
 
@@ -119,16 +125,17 @@ interface AnalyticsEngineDataset {
 interface AnalyticsEngineDataPoint {
   // Indexed strings (use for filtering/grouping)
   indexes?: string[];
-  
+
   // Non-indexed strings (metadata, IDs, URLs)
   blobs?: string[];
-  
+
   // Numeric values (counts, durations, amounts)
   doubles?: number[];
 }
 ```
 
 **Field Limits**:
+
 - Max 20 indexes
 - Max 20 blobs
 - Max 20 doubles

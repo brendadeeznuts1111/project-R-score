@@ -1,14 +1,14 @@
-import { stat } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { stat } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
 
-export const ENDPOINT_DOCS = "https://swagger.io/specification/";
+export const ENDPOINT_DOCS = 'https://swagger.io/specification/';
 
 export type EndpointEntry = {
   path: string;
   method: string;
   summary?: string;
   tags: string[];
-  kind: "health" | "metrics" | "proxy" | "api";
+  kind: 'health' | 'metrics' | 'proxy' | 'api';
 };
 
 export type EndpointCatalog = {
@@ -35,24 +35,27 @@ export type HealthProbe = {
 export type HealthReport = {
   probed: boolean;
   base_url: string;
-  overall: "healthy" | "degraded" | "unreachable";
+  overall: 'healthy' | 'degraded' | 'unreachable';
   probes: HealthProbe[];
 };
 
 const HEALTH_PATH_RE = /^\/api\/health|^\/health/i;
 
-export function classifyEndpoint(path: string, tags: string[]): EndpointEntry["kind"] {
+export function classifyEndpoint(path: string, tags: string[]): EndpointEntry['kind'] {
   const p = path.toLowerCase();
-  if (HEALTH_PATH_RE.test(p) || tags.some((t) => t.toLowerCase() === "system" && p.includes("health"))) {
-    return "health";
+  if (
+    HEALTH_PATH_RE.test(p) ||
+    tags.some(t => t.toLowerCase() === 'system' && p.includes('health'))
+  ) {
+    return 'health';
   }
-  if (p.includes("/metrics") || tags.some((t) => t.toLowerCase() === "metrics")) {
-    return "metrics";
+  if (p.includes('/metrics') || tags.some(t => t.toLowerCase() === 'metrics')) {
+    return 'metrics';
   }
-  if (p.includes("/proxy") || tags.some((t) => t.toLowerCase() === "auth")) {
-    return "proxy";
+  if (p.includes('/proxy') || tags.some(t => t.toLowerCase() === 'auth')) {
+    return 'proxy';
   }
-  return "api";
+  return 'api';
 }
 
 export function parseOpenApiDoc(doc: Record<string, unknown>, source: string): EndpointCatalog {
@@ -62,14 +65,14 @@ export function parseOpenApiDoc(doc: Record<string, unknown>, source: string): E
 
   for (const [path, methods] of Object.entries(paths)) {
     for (const [method, spec] of Object.entries(methods)) {
-      if (!["get", "post", "put", "patch", "delete", "head", "options"].includes(method)) continue;
+      if (!['get', 'post', 'put', 'patch', 'delete', 'head', 'options'].includes(method)) continue;
       const row = spec as Record<string, unknown>;
-      const tags = Array.isArray(row.tags) ? row.tags.map(String) : ["untagged"];
-      const kind = classifyEndpoint(path.startsWith("/api") ? path : `/api${path}`, tags);
+      const tags = Array.isArray(row.tags) ? row.tags.map(String) : ['untagged'];
+      const kind = classifyEndpoint(path.startsWith('/api') ? path : `/api${path}`, tags);
       entries.push({
-        path: path.startsWith("/api") ? path : `/api${path}`,
+        path: path.startsWith('/api') ? path : `/api${path}`,
         method: method.toUpperCase(),
-        summary: typeof row.summary === "string" ? row.summary : undefined,
+        summary: typeof row.summary === 'string' ? row.summary : undefined,
         tags,
         kind,
       });
@@ -85,12 +88,12 @@ export function parseOpenApiDoc(doc: Record<string, unknown>, source: string): E
     by_kind[e.kind] = (by_kind[e.kind] ?? 0) + 1;
   }
 
-  const health_routes = entries.filter((e) => e.kind === "health");
+  const health_routes = entries.filter(e => e.kind === 'health');
 
   return {
     source,
-    title: typeof info.title === "string" ? info.title : undefined,
-    version: typeof info.version === "string" ? info.version : undefined,
+    title: typeof info.title === 'string' ? info.title : undefined,
+    version: typeof info.version === 'string' ? info.version : undefined,
     total: entries.length,
     health_count: health_routes.length,
     by_tag,
@@ -109,10 +112,10 @@ export async function loadOpenApiCatalog(openapiPath: string): Promise<EndpointC
 /** Walk up from scan path looking for openapi.json */
 export async function discoverOpenApi(scanPath: string, repo: string): Promise<string | null> {
   const candidates = [
-    join(resolve(repo, scanPath), "openapi.json"),
-    join(resolve(repo, scanPath), "..", "openapi.json"),
-    join(resolve(repo, scanPath), "../..", "openapi.json"),
-    join(resolve(repo, scanPath), "../../..", "openapi.json"),
+    join(resolve(repo, scanPath), 'openapi.json'),
+    join(resolve(repo, scanPath), '..', 'openapi.json'),
+    join(resolve(repo, scanPath), '../..', 'openapi.json'),
+    join(resolve(repo, scanPath), '../../..', 'openapi.json'),
   ];
   for (const c of candidates) {
     try {
@@ -126,10 +129,10 @@ export async function discoverOpenApi(scanPath: string, repo: string): Promise<s
 }
 
 export const DEFAULT_HEALTH_PATHS = [
-  "/api/health",
-  "/api/health/ready",
-  "/api/health/live",
-  "/api/health/detailed",
+  '/api/health',
+  '/api/health/ready',
+  '/api/health/live',
+  '/api/health/detailed',
 ] as const;
 
 async function probeOne(url: string, timeoutMs: number): Promise<HealthProbe> {
@@ -137,7 +140,7 @@ async function probeOne(url: string, timeoutMs: number): Promise<HealthProbe> {
   try {
     const res = await fetch(url, {
       signal: AbortSignal.timeout(timeoutMs),
-      headers: { accept: "application/json" },
+      headers: { accept: 'application/json' },
     });
     const latency_ms = Math.round(Number(Bun.nanoseconds() - started) / 1_000_000);
     let body: Record<string, unknown> | undefined;
@@ -161,88 +164,91 @@ async function probeOne(url: string, timeoutMs: number): Promise<HealthProbe> {
 export async function probeHealth(
   baseUrl: string,
   paths: readonly string[] = DEFAULT_HEALTH_PATHS,
-  timeoutMs = 5000,
+  timeoutMs = 5000
 ): Promise<HealthReport> {
-  const base = baseUrl.replace(/\/$/, "");
-  const tasks = paths.map((path) => probeOne(`${base}${path}`, timeoutMs));
+  const base = baseUrl.replace(/\/$/, '');
+  const tasks = paths.map(path => probeOne(`${base}${path}`, timeoutMs));
   const probes = await Promise.all(
-    tasks.map(async (task) => {
-      if (Bun.peek.status(task) === "fulfilled") {
+    tasks.map(async task => {
+      if (Bun.peek.status(task) === 'fulfilled') {
         return Bun.peek(task) as HealthProbe;
       }
       return await task;
-    }),
+    })
   );
 
-  const anyReachable = probes.some((p) => p.status > 0 && p.status < 500);
-  const anyOk = probes.some((p) => p.ok);
-  const overall: HealthReport["overall"] = !anyReachable
-    ? "unreachable"
+  const anyReachable = probes.some(p => p.status > 0 && p.status < 500);
+  const anyOk = probes.some(p => p.ok);
+  const overall: HealthReport['overall'] = !anyReachable
+    ? 'unreachable'
     : anyOk
-      ? "healthy"
-      : "degraded";
+      ? 'healthy'
+      : 'degraded';
 
   return { probed: true, base_url: base, overall, probes };
 }
 
 export function buildEndpointMarkdown(catalog: EndpointCatalog, health?: HealthReport): string {
-  const lines: string[] = [
-    "# API Endpoint Catalog",
-    "",
-    `- **source:** ${catalog.source}`,
-  ];
+  const lines: string[] = ['# API Endpoint Catalog', '', `- **source:** ${catalog.source}`];
   if (catalog.title) lines.push(`- **title:** ${catalog.title}`);
   if (catalog.version) lines.push(`- **version:** ${catalog.version}`);
-  lines.push(
-    `- **endpoints:** ${catalog.total}`,
-    `- **health routes:** ${catalog.health_count}`,
-  );
+  lines.push(`- **endpoints:** ${catalog.total}`, `- **health routes:** ${catalog.health_count}`);
 
   if (health?.probed) {
     lines.push(
-      "",
-      "## Live health",
-      "",
+      '',
+      '## Live health',
+      '',
       `- **base:** ${health.base_url}`,
       `- **overall:** ${health.overall}`,
-      "",
-      "| Probe | Status | Latency | Result |",
-      "| --- | ---: | ---: | --- |",
+      '',
+      '| Probe | Status | Latency | Result |',
+      '| --- | ---: | ---: | --- |'
     );
     for (const p of health.probes) {
       const result = p.error
         ? p.error
-        : (p.body?.status as string | undefined) ?? (p.ok ? "ok" : "fail");
-      lines.push(`| \`${p.url.replace(health.base_url, "")}\` | ${p.status || "—"} | ${p.latency_ms}ms | ${result} |`);
+        : ((p.body?.status as string | undefined) ?? (p.ok ? 'ok' : 'fail'));
+      lines.push(
+        `| \`${p.url.replace(health.base_url, '')}\` | ${p.status || '—'} | ${p.latency_ms}ms | ${result} |`
+      );
     }
   }
 
   if (catalog.health_routes.length) {
-    lines.push("", "## Health endpoints (catalog)", "", "| Method | Path | Summary |", "| --- | --- | --- |");
+    lines.push(
+      '',
+      '## Health endpoints (catalog)',
+      '',
+      '| Method | Path | Summary |',
+      '| --- | --- | --- |'
+    );
     for (const r of catalog.health_routes) {
-      lines.push(`| ${r.method} | \`${r.path}\` | ${r.summary ?? ""} |`);
+      lines.push(`| ${r.method} | \`${r.path}\` | ${r.summary ?? ''} |`);
     }
   }
 
-  const tags = Object.entries(catalog.by_tag).sort(([, a], [, b]) => b - a).slice(0, 12);
+  const tags = Object.entries(catalog.by_tag)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 12);
   if (tags.length) {
-    lines.push("", "## By tag", "", "| Tag | Count |", "| --- | ---: |");
+    lines.push('', '## By tag', '', '| Tag | Count |', '| --- | ---: |');
     for (const [tag, count] of tags) lines.push(`| ${tag} | ${count} |`);
   }
 
   const kinds = Object.entries(catalog.by_kind).sort(([, a], [, b]) => b - a);
   if (kinds.length) {
-    lines.push("", "## By kind", "", "| Kind | Count |", "| --- | ---: |");
+    lines.push('', '## By kind', '', '| Kind | Count |', '| --- | ---: |');
     for (const [kind, count] of kinds) lines.push(`| \`${kind}\` | ${count} |`);
   }
 
-  return `${lines.join("\n")}\n`;
+  return `${lines.join('\n')}\n`;
 }
 
 export function mergeEndpointSections(
   networkMd: string,
   catalog?: EndpointCatalog,
-  health?: HealthReport,
+  health?: HealthReport
 ): string {
   if (!catalog) return networkMd;
   const endpointMd = buildEndpointMarkdown(catalog, health);

@@ -1,18 +1,18 @@
 /**
  * Bun v1.3.9 HTTP/2 Connection Upgrade Demo
- * 
+ *
  * Demonstrates the fixed HTTP/2 connection upgrade path.
  * Previously broken, now works correctly for proxy infrastructure.
- * 
+ *
  * Key fix: h2Server.emit("connection", rawSocket) now works
  */
 
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
-import { createSecureServer } from "node:http2";
-import { createServer } from "node:net";
+import { createSecureServer } from 'node:http2';
+import { createServer } from 'node:net';
 
 const PORT = 8443;
-const HOST = "localhost";
+const HOST = 'localhost';
 
 // Load certificates (or generate self-signed for testing)
 let cert: string;
@@ -24,35 +24,40 @@ if ((await certFile.exists()) && (await keyFile.exists())) {
   cert = await certFile.text();
   key = await keyFile.text();
 } else {
-  console.info("⚠ No certificates found, using dummy values");
-  console.info("  Generate with: openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes");
-  cert = "dummy";
-  key = "dummy";
+  console.info('⚠ No certificates found, using dummy values');
+  console.info(
+    '  Generate with: openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes'
+  );
+  cert = 'dummy';
+  key = 'dummy';
 }
 
 // Create HTTP/2 server
-const h2Server = createSecureServer(
-  { cert, key },
-  (req, res) => {
-    console.info(`[H2] ${req.method} ${req.url}`);
-    
-    res.writeHead(200, { "content-type": "application/json" });
-    res.end(JSON.stringify({
-      protocol: "HTTP/2",
-      secure: true,
-      headers: req.headers,
-      timestamp: Date.now(),
-    }, null, 2));
-  }
-);
+const h2Server = createSecureServer({ cert, key }, (req, res) => {
+  console.info(`[H2] ${req.method} ${req.url}`);
 
-// Handle HTTP/2 specific events
-h2Server.on("stream", (stream, headers) => {
-  console.info(`[H2 Stream] ${headers[":method"]} ${headers[":path"]}`);
+  res.writeHead(200, { 'content-type': 'application/json' });
+  res.end(
+    JSON.stringify(
+      {
+        protocol: 'HTTP/2',
+        secure: true,
+        headers: req.headers,
+        timestamp: Date.now(),
+      },
+      null,
+      2
+    )
+  );
 });
 
-h2Server.on("error", (err) => {
-  console.error("[H2 Server Error]", err.message);
+// Handle HTTP/2 specific events
+h2Server.on('stream', (stream, headers) => {
+  console.info(`[H2 Stream] ${headers[':method']} ${headers[':path']}`);
+});
+
+h2Server.on('error', err => {
+  console.error('[H2 Server Error]', err.message);
 });
 
 // Option 1: Direct HTTP/2 server
@@ -65,68 +70,70 @@ function startDirect() {
 // Option 2: Connection upgrade path (the v1.3.9 fix!)
 // This allows proxy infrastructure to upgrade connections properly
 function startWithUpgrade() {
-  const netServer = createServer((rawSocket) => {
+  const netServer = createServer(rawSocket => {
     // This emit pattern was broken before v1.3.9, now works!
-    h2Server.emit("connection", rawSocket);
+    h2Server.emit('connection', rawSocket);
   });
-  
+
   netServer.listen(PORT, HOST, () => {
     console.info(`✓ HTTP/2 server (with connection upgrade) on https://${HOST}:${PORT}`);
-    console.info("  Note: Connection upgrade path now works correctly in v1.3.9+");
+    console.info('  Note: Connection upgrade path now works correctly in v1.3.9+');
   });
-  
+
   return netServer;
 }
 
 // Health check endpoint
 function startHealthCheck() {
   const healthPort = PORT + 1;
-  const healthServer = createServer((socket) => {
-    socket.write("HTTP/1.1 200 OK\r\n");
-    socket.write("Content-Type: application/json\r\n");
-    socket.write("\r\n");
-    socket.write(JSON.stringify({ 
-      status: "healthy", 
-      http2: true,
-      version: Bun.version 
-    }));
+  const healthServer = createServer(socket => {
+    socket.write('HTTP/1.1 200 OK\r\n');
+    socket.write('Content-Type: application/json\r\n');
+    socket.write('\r\n');
+    socket.write(
+      JSON.stringify({
+        status: 'healthy',
+        http2: true,
+        version: Bun.version,
+      })
+    );
     socket.end();
-    
+
     // Emit to H2 server (demonstrates the fix)
-    h2Server.emit("connection", socket);
+    h2Server.emit('connection', socket);
   });
-  
+
   healthServer.listen(healthPort, () => {
     console.info(`✓ Health check on port ${healthPort}`);
   });
 }
 
 // Main
-const mode = process.argv[2] || "direct";
+const mode = process.argv[2] || 'direct';
 
-console.info("=".repeat(60));
-console.info("Bun v1.3.9 HTTP/2 Connection Upgrade Demo");
-console.info("=".repeat(60));
+console.info('='.repeat(60));
+console.info('Bun v1.3.9 HTTP/2 Connection Upgrade Demo');
+console.info('='.repeat(60));
 console.info(`Mode: ${mode}`);
 console.info(`Bun: ${Bun.version}`);
-console.info("");
+console.info('');
 
 switch (mode) {
-  case "direct":
+  case 'direct':
     startDirect();
     break;
-  case "upgrade":
+  case 'upgrade':
     startWithUpgrade();
     break;
-  case "health":
+  case 'health':
     startDirect();
     startHealthCheck();
     break;
   default:
-    console.info("Usage: bun run http2-server.ts [direct|upgrade|health]");
+    console.info('Usage: bun run http2-server.ts [direct|upgrade|health]');
     process.exit(1);
 }
 
-console.info("\nTest with:");
+console.info('\nTest with:');
 console.info(`  curl -k --http2 https://${HOST}:${PORT}/`);
-console.info("");
+console.info('');

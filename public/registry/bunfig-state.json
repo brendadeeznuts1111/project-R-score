@@ -49,19 +49,9 @@
     },
     {
       "key": "minimumReleaseAgeExcludes",
-      "machine": [
-        "bun-types",
-        "@types/bun",
-        "@types/node",
-        "typescript"
-      ],
+      "machine": ["bun-types", "@types/bun", "@types/node", "typescript"],
       "project": null,
-      "effective": [
-        "bun-types",
-        "@types/bun",
-        "@types/node",
-        "typescript"
-      ],
+      "effective": ["bun-types", "@types/bun", "@types/node", "typescript"],
       "source": "machine",
       "owner": "machine",
       "drift": false

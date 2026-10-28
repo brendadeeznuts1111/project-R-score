@@ -5,19 +5,19 @@
  * Keep the imperative shell small: parse args, build an Effect program, run it.
  */
 
-import { Data, Effect } from "effect";
+import { Data, Effect } from 'effect';
 
-export class FileReadError extends Data.TaggedError("FileReadError")<{
+export class FileReadError extends Data.TaggedError('FileReadError')<{
   path: string;
   error: unknown;
 }> {}
 
-export class FileWriteError extends Data.TaggedError("FileWriteError")<{
+export class FileWriteError extends Data.TaggedError('FileWriteError')<{
   path: string;
   error: unknown;
 }> {}
 
-export class SpawnError extends Data.TaggedError("SpawnError")<{
+export class SpawnError extends Data.TaggedError('SpawnError')<{
   cmd: readonly string[];
   code: number | null;
   stderr: string;
@@ -30,7 +30,7 @@ export class SpawnError extends Data.TaggedError("SpawnError")<{
 export const readTextEffect = (path: string): Effect.Effect<string, FileReadError> =>
   Effect.tryPromise({
     try: () => Bun.file(path).text(),
-    catch: (error) => new FileReadError({ path, error }),
+    catch: error => new FileReadError({ path, error }),
   });
 
 /**
@@ -40,7 +40,7 @@ export const readTextEffect = (path: string): Effect.Effect<string, FileReadErro
 export const readJsonEffect = <T>(path: string): Effect.Effect<T, FileReadError> =>
   Effect.tryPromise({
     try: async () => (await Bun.file(path).json()) as T,
-    catch: (error) => new FileReadError({ path, error }),
+    catch: error => new FileReadError({ path, error }),
   });
 
 /**
@@ -53,7 +53,7 @@ export const writeTextEffect = (
 ): Effect.Effect<number, FileWriteError> =>
   Effect.tryPromise({
     try: () => Bun.write(path, content),
-    catch: (error) => new FileWriteError({ path, error }),
+    catch: error => new FileWriteError({ path, error }),
   });
 
 /**
@@ -63,15 +63,15 @@ export const writeTextEffect = (
 export const spawnEffect = (
   cmd: string[],
   options: {
-    stdout?: "pipe" | "inherit";
-    stderr?: "pipe" | "inherit";
+    stdout?: 'pipe' | 'inherit';
+    stderr?: 'pipe' | 'inherit';
     env?: Record<string, string>;
   } = {}
 ): Effect.Effect<{ stdout: string; code: number }, SpawnError> =>
   Effect.tryPromise({
     try: async () => {
-      const stdoutMode = options.stdout ?? "pipe";
-      const stderrMode = options.stderr ?? "pipe";
+      const stdoutMode = options.stdout ?? 'pipe';
+      const stderrMode = options.stderr ?? 'pipe';
       const proc = Bun.spawn({
         cmd,
         stdout: stdoutMode,
@@ -79,20 +79,16 @@ export const spawnEffect = (
         env: options.env ? { ...Bun.env, ...options.env } : Bun.env,
       });
       const stdout =
-        stdoutMode === "pipe" && proc.stdout
-          ? await Bun.readableStreamToText(proc.stdout)
-          : "";
+        stdoutMode === 'pipe' && proc.stdout ? await Bun.readableStreamToText(proc.stdout) : '';
       const stderr =
-        stderrMode === "pipe" && proc.stderr
-          ? await Bun.readableStreamToText(proc.stderr)
-          : "";
+        stderrMode === 'pipe' && proc.stderr ? await Bun.readableStreamToText(proc.stderr) : '';
       const code = await proc.exited;
       if (code !== 0) {
         throw new SpawnError({ cmd, code, stderr });
       }
       return { stdout, code };
     },
-    catch: (error) =>
+    catch: error =>
       error instanceof SpawnError
         ? error
         : new SpawnError({ cmd, code: null, stderr: String(error) }),

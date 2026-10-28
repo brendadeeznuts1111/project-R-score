@@ -116,7 +116,9 @@ function toneClass(tone) {
 function showSkeletons() {
   const stats = $('doc-stats');
   if (stats) {
-    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join('');
+    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join(
+      ''
+    );
   }
   const gate = $('doc-gate');
   if (gate) {

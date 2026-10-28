@@ -18,57 +18,57 @@ const badges: BadgeConfig[] = [
     message: 'Bun',
     color: 'hsl(280,100%,60%)',
     labelColor: 'hsl(280,80%,40%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Language',
     message: 'TypeScript',
     color: 'hsl(210,100%,55%)',
     labelColor: 'hsl(210,80%,35%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Features',
     message: 'Real-time',
     color: 'hsl(150,100%,45%)',
     labelColor: 'hsl(150,80%,30%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Protocol',
     message: 'WebSocket',
     color: 'hsl(320,100%,65%)',
     labelColor: 'hsl(320,80%,45%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Security',
     message: 'Hardened',
     color: 'hsl(0,100%,60%)',
     labelColor: 'hsl(0,80%,40%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Database',
     message: 'Vectorize',
     color: 'hsl(120,100%,50%)',
     labelColor: 'hsl(120,80%,35%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Version',
     message: 'v1.3.8',
     color: 'hsl(45,100%,55%)',
     labelColor: 'hsl(45,80%,35%)',
-    style: 'for-the-badge'
+    style: 'for-the-badge',
   },
   {
     label: 'Status',
     message: 'Production',
     color: 'hsl(260,100%,70%)',
     labelColor: 'hsl(260,80%,50%)',
-    style: 'for-the-badge'
-  }
+    style: 'for-the-badge',
+  },
 ];
 
 function generateBadgeUrl(badge: BadgeConfig): string {
@@ -77,7 +77,7 @@ function generateBadgeUrl(badge: BadgeConfig): string {
     message: badge.message,
     color: badge.color.replace(/[hsl()%]/g, '').replace(/,/g, '-'),
     labelColor: (badge.labelColor || '555').replace(/[hsl()%]/g, '').replace(/,/g, '-'),
-    style: badge.style || 'flat'
+    style: badge.style || 'flat',
   });
 
   // Use shields.io with custom colors
@@ -127,12 +127,14 @@ const topics = [
   { name: 'analytics', color: 'hsl(180,100%,50%)', icon: '📊' },
   { name: 'dashboard', color: 'hsl(260,100%,70%)', icon: '📈' },
   { name: 'mcp', color: 'hsl(30,100%,55%)', icon: '🤖' },
-  { name: 'vectorize', color: 'hsl(120,100%,50%)', icon: '🔍' }
+  { name: 'vectorize', color: 'hsl(120,100%,50%)', icon: '🔍' },
 ];
 
 console.info('<div align="center">\n');
 topics.forEach(topic => {
   const hexColor = hslToHex(topic.color);
-  console.info(`  <img src="https://img.shields.io/badge/${topic.icon}%20${topic.name.replace(/-/g, '_')}-${hexColor}?style=for-the-badge&logoColor=white" alt="${topic.name}" />`);
+  console.info(
+    `  <img src="https://img.shields.io/badge/${topic.icon}%20${topic.name.replace(/-/g, '_')}-${hexColor}?style=for-the-badge&logoColor=white" alt="${topic.name}" />`
+  );
 });
 console.info('</div>');

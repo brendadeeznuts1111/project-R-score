@@ -117,11 +117,11 @@ Optional operator defaults may live in `config/serve-public.toml`. The Bun
 server entrypoint checks for the file and parses it with `Bun.TOML.parse`; an
 absent file is an empty overlay and must not prevent startup.
 
-This is a **repository-local application file**, not `bunfig.toml`.
-Its `[server]` table is owned by `serve-public-config.ts`; it must not be
-presented as Bun's `[serve]` configuration section or as a generic Bun server
-schema. The actual Bun configuration remains root `bunfig.toml` and its
-documented `[serve]` settings.
+This is a **repository-local application file**, not `bunfig.toml`. Its
+`[server]` table is owned by `serve-public-config.ts`; it must not be presented
+as Bun's `[serve]` configuration section or as a generic Bun server schema. The
+actual Bun configuration remains root `bunfig.toml` and its documented `[serve]`
+settings.
 
 ```toml
 [server]
@@ -392,7 +392,7 @@ bun run verify:portal    # auto when bind.json exists
 | Topic                  | Bun docs                                                                   | serve-public                                                                                                                                                                   |
 | ---------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Env loading            | Auto `.env` → `Bun.env`                                                    | Uses `Bun.env`; no custom dotenv                                                                                                                                               |
-| Operator defaults      | —                                                                          | Optional `config/serve-public.toml` (`Bun.TOML.parse` at startup)                                                                                                             |
+| Operator defaults      | —                                                                          | Optional `config/serve-public.toml` (`Bun.TOML.parse` at startup)                                                                                                              |
 | Default port           | Env chain → 3000                                                           | Same (omit `port`)                                                                                                                                                             |
 | Port busy              | `EADDRINUSE` or `port: 0`                                                  | Probe + one `port: 0` retry                                                                                                                                                    |
 | Discover actual port   | `server.port` / `server.url`                                               | + bind.json + startup logs                                                                                                                                                     |

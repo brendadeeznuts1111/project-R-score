@@ -1,10 +1,10 @@
-import { dirname } from "node:path";
-import { SemverMatcher } from "./semver-matcher.ts";
-import { listLockfileVersions } from "./lock-index.ts";
-import { strictestSafeRange } from "./policy-engine.ts";
-import type { ViolationKind } from "./types.ts";
+import { dirname } from 'node:path';
+import { SemverMatcher } from './semver-matcher.ts';
+import { listLockfileVersions } from './lock-index.ts';
+import { strictestSafeRange } from './policy-engine.ts';
+import type { ViolationKind } from './types.ts';
 
-export type RemediationAction = "upgrade" | "remove";
+export type RemediationAction = 'upgrade' | 'remove';
 
 export type RemediationHint = {
   package: string;
@@ -44,27 +44,31 @@ export async function suggestUpgrade(options: {
   const merged = strictestSafeRange([
     ...(options.safeRanges ?? []),
     ...(options.safeRange ? [options.safeRange] : []),
-    ...(options.vulnRange ? [resolveSafeRange(undefined, options.vulnRange) ?? ""] : []),
+    ...(options.vulnRange ? [resolveSafeRange(undefined, options.vulnRange) ?? ''] : []),
   ]);
   const safeRange = merged ?? resolveSafeRange(options.safeRange, options.vulnRange);
   if (!safeRange) return null;
 
   const lockVersions = await listLockfileVersions(options.repo, options.package);
-  const pool = [...new Set([...lockVersions, ...(options.extraVersions ?? []), options.currentVersion])];
+  const pool = [
+    ...new Set([...lockVersions, ...(options.extraVersions ?? []), options.currentVersion]),
+  ];
   const suggested = SemverMatcher.latestSatisfying(pool, safeRange);
   const latestInLockfile = lockVersions.length
-    ? SemverMatcher.latestSatisfying(lockVersions, "*")
+    ? SemverMatcher.latestSatisfying(lockVersions, '*')
     : null;
 
   const target = suggested ?? latestInLockfile;
   return {
     package: options.package,
     currentVersion: options.currentVersion,
-    action: "upgrade",
+    action: 'upgrade',
     safeRange,
     suggestedVersion: target,
     latestInLockfile,
-    command: target ? `bun add ${options.package}@${target}` : `bun add ${options.package}@${safeRange}`,
+    command: target
+      ? `bun add ${options.package}@${target}`
+      : `bun add ${options.package}@${safeRange}`,
     reason: `Upgrade ${options.package} to satisfy ${safeRange}`,
   };
 }
@@ -77,8 +81,8 @@ export function suggestRemoval(options: {
   return {
     package: options.package,
     currentVersion: options.currentVersion,
-    action: "remove",
-    safeRange: "removed",
+    action: 'remove',
+    safeRange: 'removed',
     suggestedVersion: null,
     latestInLockfile: null,
     command: `bun remove ${options.package}`,
@@ -97,7 +101,7 @@ export async function suggestRemediation(options: {
   vulnRange?: string;
   safeRanges?: string[];
 }): Promise<RemediationHint | null> {
-  if (options.kinds?.includes("blocked")) {
+  if (options.kinds?.includes('blocked')) {
     return suggestRemoval({
       package: options.package,
       currentVersion: options.currentVersion,
@@ -119,13 +123,14 @@ export async function applyPackageFix(options: {
     return { ok: true, command };
   }
   const cwd = dirname(options.packageJsonPath);
-  const proc = Bun.spawn(["bun", "add", spec], {
+  const proc = Bun.spawn(['bun', 'add', spec], {
     cwd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   const code = await proc.exited;
-  const output = `${await new Response(proc.stdout).text()}${await new Response(proc.stderr).text()}`.trim();
+  const output =
+    `${await new Response(proc.stdout).text()}${await new Response(proc.stderr).text()}`.trim();
   return { ok: code === 0, command, output };
 }
 
@@ -139,12 +144,13 @@ export async function applyPackageRemove(options: {
     return { ok: true, command };
   }
   const cwd = dirname(options.packageJsonPath);
-  const proc = Bun.spawn(["bun", "remove", options.package], {
+  const proc = Bun.spawn(['bun', 'remove', options.package], {
     cwd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   const code = await proc.exited;
-  const output = `${await new Response(proc.stdout).text()}${await new Response(proc.stderr).text()}`.trim();
+  const output =
+    `${await new Response(proc.stdout).text()}${await new Response(proc.stderr).text()}`.trim();
   return { ok: code === 0, command, output };
 }

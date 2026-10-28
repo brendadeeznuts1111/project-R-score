@@ -1,23 +1,23 @@
-import { runBundleScan } from "./bundle-scanner.ts";
-import { probeHealth, type HealthReport } from "./endpoint-catalog.ts";
+import { runBundleScan } from './bundle-scanner.ts';
+import { probeHealth, type HealthReport } from './endpoint-catalog.ts';
 import {
   auditResultFromTick,
   collectEndpointDetails,
   type NetworkAuditResult,
-} from "./network-audit-result.ts";
+} from './network-audit-result.ts';
 import {
   captureBaselineFromReport,
   diffAgainstBaseline,
   type NetworkBaseline,
   type NetworkBaselineDelta,
-} from "./network-baseline.ts";
-import type { BundleScanReport } from "./types.ts";
-import { createInflightState, runInflight, waitUntilAborted } from "./native-loop.ts";
-import type { NetworkLoopReason } from "./network-types.ts";
-import { runWatchLoop } from "./watch.ts";
+} from './network-baseline.ts';
+import type { BundleScanReport } from './types.ts';
+import { createInflightState, runInflight, waitUntilAborted } from './native-loop.ts';
+import type { NetworkLoopReason } from './network-types.ts';
+import { runWatchLoop } from './watch.ts';
 
-export type { NetworkAuditResult } from "./network-audit-result.ts";
-export type { NetworkLoopReason } from "./network-types.ts";
+export type { NetworkAuditResult } from './network-audit-result.ts';
+export type { NetworkLoopReason } from './network-types.ts';
 
 export type NetworkLoopTick = {
   reason: NetworkLoopReason;
@@ -47,15 +47,16 @@ export type NetworkLoopOptions = {
 };
 
 export function formatLoopStatus(tick: NetworkLoopTick): string {
-  const head = tick.detail && tick.reason === "watch"
-    ? `[loop] watch (${tick.detail})`
-    : `[loop] ${tick.reason}`;
+  const head =
+    tick.detail && tick.reason === 'watch'
+      ? `[loop] watch (${tick.detail})`
+      : `[loop] ${tick.reason}`;
   const parts = [head];
   if (tick.delta) {
     parts.push(
-      `Δ endpoints +${tick.delta.endpoints_added}/-${tick.delta.endpoints_removed}`
-      + ` Δ routes +${tick.delta.routes_added}/-${tick.delta.routes_removed}`
-      + ` health=${tick.delta.health_status}`,
+      `Δ endpoints +${tick.delta.endpoints_added}/-${tick.delta.endpoints_removed}` +
+        ` Δ routes +${tick.delta.routes_added}/-${tick.delta.routes_removed}` +
+        ` health=${tick.delta.health_status}`
     );
   }
   if (tick.report?.network) {
@@ -67,12 +68,12 @@ export function formatLoopStatus(tick: NetworkLoopTick): string {
   }
   if (tick.health) {
     parts.push(`health=${tick.health.overall}`);
-    const ok = tick.health.probes.filter((p) => p.ok).length;
+    const ok = tick.health.probes.filter(p => p.ok).length;
     parts.push(`probes=${ok}/${tick.health.probes.length}`);
-    const latency = tick.health.probes.find((p) => p.ok)?.latency_ms;
+    const latency = tick.health.probes.find(p => p.ok)?.latency_ms;
     if (latency !== undefined) parts.push(`latency=${latency}ms`);
   }
-  return parts.join(" ");
+  return parts.join(' ');
 }
 
 async function runFullAudit(opts: NetworkLoopOptions): Promise<BundleScanReport> {
@@ -81,7 +82,7 @@ async function runFullAudit(opts: NetworkLoopOptions): Promise<BundleScanReport>
     repo: opts.repo,
     profileName: opts.profileName,
     scanPath: opts.scanPath,
-    format: "json",
+    format: 'json',
     openapiPath: opts.openapiPath,
     healthUrl: opts.healthUrl,
   });
@@ -93,7 +94,7 @@ function healthFromReport(report: BundleScanReport): HealthReport | undefined {
     probed: report.health.probed,
     base_url: report.health.base_url,
     overall: report.health.overall,
-    probes: report.health.probes.map((p) => ({ ...p })),
+    probes: report.health.probes.map(p => ({ ...p })),
   };
 }
 
@@ -101,17 +102,11 @@ function buildTick(
   opts: NetworkLoopOptions,
   reason: NetworkLoopReason,
   report: BundleScanReport,
-  detail?: string,
+  detail?: string
 ): NetworkLoopTick {
   const health = healthFromReport(report);
-  const current = captureBaselineFromReport(
-    report,
-    opts.domain ?? opts.profileName,
-    opts.scanPath,
-  );
-  const delta = opts.baseline
-    ? diffAgainstBaseline(current, opts.baseline, health)
-    : undefined;
+  const current = captureBaselineFromReport(report, opts.domain ?? opts.profileName, opts.scanPath);
+  const delta = opts.baseline ? diffAgainstBaseline(current, opts.baseline, health) : undefined;
   return {
     reason,
     detail,
@@ -125,10 +120,13 @@ function buildTick(
 
 /** Run a single full audit (no loop, probes, or watch). */
 export async function runNetworkAuditOnce(
-  opts: Omit<NetworkLoopOptions, "onTick" | "signal" | "watch" | "watchIntervalMs" | "probeIntervalMs">,
+  opts: Omit<
+    NetworkLoopOptions,
+    'onTick' | 'signal' | 'watch' | 'watchIntervalMs' | 'probeIntervalMs'
+  >
 ): Promise<NetworkAuditResult> {
   const report = await runFullAudit(opts as NetworkLoopOptions);
-  const tick = buildTick(opts as NetworkLoopOptions, "initial", report);
+  const tick = buildTick(opts as NetworkLoopOptions, 'initial', report);
   const details = opts.verbose ? await collectEndpointDetails(report) : undefined;
   return auditResultFromTick(tick, details);
 }
@@ -142,14 +140,14 @@ export async function runNetworkAuditLoop(opts: NetworkLoopOptions): Promise<voi
   const fullSlot = createInflightState();
 
   let probeTimer: ReturnType<typeof setInterval> | null = null;
-  let lastHealthOverall: HealthReport["overall"] | undefined;
+  let lastHealthOverall: HealthReport['overall'] | undefined;
 
   const cleanup = () => {
     if (probeTimer) clearInterval(probeTimer);
     probeTimer = null;
   };
 
-  signal?.addEventListener("abort", cleanup, { once: true });
+  signal?.addEventListener('abort', cleanup, { once: true });
 
   const emitFull = async (reason: NetworkLoopReason, detail?: string) => {
     await runInflight(async () => {
@@ -163,13 +161,14 @@ export async function runNetworkAuditLoop(opts: NetworkLoopOptions): Promise<voi
   const emitProbe = async () => {
     if (!healthUrl || signal?.aborted) return;
     const health = await probeHealth(healthUrl);
-    const health_status = lastHealthOverall && lastHealthOverall !== health.overall
-      ? "changed" as const
-      : health.overall === "healthy"
-        ? "stable" as const
-        : "degraded" as const;
+    const health_status =
+      lastHealthOverall && lastHealthOverall !== health.overall
+        ? ('changed' as const)
+        : health.overall === 'healthy'
+          ? ('stable' as const)
+          : ('degraded' as const);
     await opts.onTick({
-      reason: "probe",
+      reason: 'probe',
       health,
       delta: opts.baseline
         ? {
@@ -199,17 +198,17 @@ export async function runNetworkAuditLoop(opts: NetworkLoopOptions): Promise<voi
       watchPath: opts.scanPath,
       intervalMs: watchInterval,
       includeLockfiles: false,
-      onEvent: async (detail) => {
-        if (detail === "initial") {
-          await emitFull("initial");
+      onEvent: async detail => {
+        if (detail === 'initial') {
+          await emitFull('initial');
           return;
         }
-        await emitFull("watch", detail);
+        await emitFull('watch', detail);
       },
       signal,
     });
   } else {
-    await emitFull("initial");
+    await emitFull('initial');
     const keepAlive = healthUrl || signal;
     if (keepAlive) {
       const waitSignal = signal ?? new AbortController().signal;

@@ -22,13 +22,13 @@ HTTP API, and a one-shot migration seeded from the two real SSOTs.
 
 ## Schema (`lib/concept-registry/schema.ts`)
 
-| Table | Purpose |
-|---|---|
-| `concepts` | live row: id, label, description, kind, category, group_prefix, status, color, unit, format, maps_to, see_also, synonyms, values, url, deprecated_by, source, timestamps |
-| `concept_versions` | immutable JSON snapshot per change (propose/approve/deprecate/archive bump a version) |
-| `concept_usage` | concept × board × file counts (seeded by a one-shot `data-glossary-concept` scan of `public/portal`) |
-| `concept_provenance` | correlationId/author provenance (empty on main; ready for PR-228 correlationIds) |
-| `concept_review` | proposed/approved/rejected review trail |
+| Table                | Purpose                                                                                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `concepts`           | live row: id, label, description, kind, category, group_prefix, status, color, unit, format, maps_to, see_also, synonyms, values, url, deprecated_by, source, timestamps |
+| `concept_versions`   | immutable JSON snapshot per change (propose/approve/deprecate/archive bump a version)                                                                                    |
+| `concept_usage`      | concept × board × file counts (seeded by a one-shot `data-glossary-concept` scan of `public/portal`)                                                                     |
+| `concept_provenance` | correlationId/author provenance (empty on main; ready for PR-228 correlationIds)                                                                                         |
+| `concept_review`     | proposed/approved/rejected review trail                                                                                                                                  |
 
 Lifecycle: `proposed → active → deprecated → archived` (soft delete). Reject
 leaves the concept `proposed` and records a rejected review.
@@ -49,8 +49,8 @@ PATCH  /api/concepts/:id/deprecate         # { replaceBy? } active → deprecate
 DELETE /api/concepts/:id                   # { force: true } soft archive
 ```
 
-Errors: `400` zod validation · `404` missing concept · `405` method ·
-`409` conflict / invalid transition.
+Errors: `400` zod validation · `404` missing concept · `405` method · `409`
+conflict / invalid transition.
 
 ## CLI
 

@@ -154,12 +154,12 @@ bun run partner:dashboard:refresh:check        # bake --check only
 
 **Bloat decisions**
 
-| Candidate | Decision |
-| --------- | -------- |
-| `limit-demo-*` / `partner-42` in `limit-raises.json` | **Keep** — owned by `/portal/limits/` demos, agent API examples, account-dossier tests. Partner bake already ignores non-CODE callSigns. |
-| Board `projectDashboardToOpsShape` / `projectDashboardToHandshakeShape` / `isLegacyPartnerComparisonRequested` | **Removed** from `partners-board.js` (HTML never called them). Package consumer-contract still documents retired `?compare=legacy`. |
-| Ops-shaped helpers (`indexOpsByPartner`, `flattenPartnerOuts`, `summarizePartnerDesk`, `listPartnerPhases`, `canonicalProfileCoverage`) | **Removed** — board uses dashboard-native flatten/index/desk/phases only. |
-| `partners-ops` out skeleton | **Optional fallback** — private profile `outs.out-CODE-N` is preferred inventory SSOT. |
+| Candidate                                                                                                                               | Decision                                                                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `limit-demo-*` / `partner-42` in `limit-raises.json`                                                                                    | **Keep** — owned by `/portal/limits/` demos, agent API examples, account-dossier tests. Partner bake already ignores non-CODE callSigns. |
+| Board `projectDashboardToOpsShape` / `projectDashboardToHandshakeShape` / `isLegacyPartnerComparisonRequested`                          | **Removed** from `partners-board.js` (HTML never called them). Package consumer-contract still documents retired `?compare=legacy`.      |
+| Ops-shaped helpers (`indexOpsByPartner`, `flattenPartnerOuts`, `summarizePartnerDesk`, `listPartnerPhases`, `canonicalProfileCoverage`) | **Removed** — board uses dashboard-native flatten/index/desk/phases only.                                                                |
+| `partners-ops` out skeleton                                                                                                             | **Optional fallback** — private profile `outs.out-CODE-N` is preferred inventory SSOT.                                                   |
 
 ## Proof commands (every lane)
 

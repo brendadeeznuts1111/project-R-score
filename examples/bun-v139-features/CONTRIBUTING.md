@@ -16,16 +16,16 @@ Thank you for your interest in contributing!
 #!/usr/bin/env bun
 /**
  * Feature Name - Brief Description
- * 
+ *
  * Detailed explanation of what this example demonstrates
  */
 
 // Imports
-import { something } from "bun";
+import { something } from 'bun';
 
 // Main demo function
 async function demo() {
-  console.log("Feature demo");
+  console.log('Feature demo');
 }
 
 // Additional helper functions

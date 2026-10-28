@@ -1,6 +1,6 @@
 /**
  * Bun v1.3.9 Markdown Performance Benchmarks
- * 
+ *
  * Demonstrates the performance improvements in Bun.Markdown:
  * - 3-15% faster Markdown-to-HTML rendering (SIMD-accelerated HTML escaping)
  * - 28% faster Bun.markdown.react() for small documents
@@ -8,7 +8,7 @@
  * - 6% smaller heap size during rendering
  */
 
-import { performance } from "perf_hooks";
+import { performance } from 'perf_hooks';
 
 // Test markdown documents of varying sizes
 const MARKDOWN_DOCS = {
@@ -174,18 +174,18 @@ function benchmark(name: string, fn: () => void, iterations: number): number {
   for (let i = 0; i < 100; i++) {
     fn();
   }
-  
+
   // Force garbage collection if available
   if (globalThis.gc) {
     globalThis.gc();
   }
-  
+
   const start = performance.now();
   for (let i = 0; i < iterations; i++) {
     fn();
   }
   const end = performance.now();
-  
+
   return end - start;
 }
 
@@ -199,88 +199,80 @@ function formatTime(ms: number): string {
 
 // Main benchmark
 async function runBenchmark() {
-  console.info("=".repeat(70));
-  console.info("Bun v1.3.9 Markdown Performance Benchmarks");
-  console.info("=".repeat(70));
+  console.info('='.repeat(70));
+  console.info('Bun v1.3.9 Markdown Performance Benchmarks');
+  console.info('='.repeat(70));
   console.info(`Bun version: ${Bun.version}`);
   console.info(`Platform: ${process.platform} ${process.arch}`);
-  console.info("");
-  
+  console.info('');
+
   const ITERATIONS = {
     small: 100_000,
     medium: 10_000,
     large: 1_000,
   };
-  
-  console.info("📊 Markdown-to-HTML Rendering (Bun.markdown.html)");
-  console.info("-".repeat(70));
-  
+
+  console.info('📊 Markdown-to-HTML Rendering (Bun.markdown.html)');
+  console.info('-'.repeat(70));
+
   for (const [size, markdown] of Object.entries(MARKDOWN_DOCS)) {
     const iterations = ITERATIONS[size as keyof typeof ITERATIONS];
-    const time = benchmark(
-      `toHTML-${size}`,
-      () => Bun.markdown.html(markdown),
-      iterations
-    );
+    const time = benchmark(`toHTML-${size}`, () => Bun.markdown.html(markdown), iterations);
     const avgTime = time / iterations;
     const chars = markdown.length;
-    
-    console.info(`${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`);
+
+    console.info(
+      `${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`
+    );
   }
-  
-  console.info("");
-  console.info("⚛️  React Component Rendering (Bun.markdown.react)");
-  console.info("-".repeat(70));
-  
+
+  console.info('');
+  console.info('⚛️  React Component Rendering (Bun.markdown.react)');
+  console.info('-'.repeat(70));
+
   // Note: React rendering is more complex, so fewer iterations
   for (const [size, markdown] of Object.entries(MARKDOWN_DOCS)) {
     const iterations = Math.floor(ITERATIONS[size as keyof typeof ITERATIONS] / 10);
     try {
-      const time = benchmark(
-        `react-${size}`,
-        () => Bun.markdown.react(markdown),
-        iterations
-      );
+      const time = benchmark(`react-${size}`, () => Bun.markdown.react(markdown), iterations);
       const avgTime = time / iterations;
       const chars = markdown.length;
-      
-      console.info(`${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`);
+
+      console.info(
+        `${size.padEnd(8)} | ${formatTime(avgTime).padEnd(12)} | ${chars.toLocaleString().padStart(6)} chars | ${iterations.toLocaleString()} iterations`
+      );
     } catch (e) {
       console.info(`${size.padEnd(8)} | Error: ${e}`);
     }
   }
-  
-  console.info("");
-  console.info("=".repeat(70));
-  console.info("EXPECTED IMPROVEMENTS (v1.3.9)");
-  console.info("=".repeat(70));
-  console.info("• Small documents:   ~28% faster (React renderer)");
-  console.info("• Medium documents:  ~7% faster (React renderer)");
-  console.info("• Large documents:   ~7.4% faster (React renderer)");
-  console.info("• HTML escaping:     3-15% faster (SIMD acceleration)");
-  console.info("• String allocations: 40% reduction");
-  console.info("• Heap size:         6% reduction");
-  console.info("");
-  
+
+  console.info('');
+  console.info('='.repeat(70));
+  console.info('EXPECTED IMPROVEMENTS (v1.3.9)');
+  console.info('='.repeat(70));
+  console.info('• Small documents:   ~28% faster (React renderer)');
+  console.info('• Medium documents:  ~7% faster (React renderer)');
+  console.info('• Large documents:   ~7.4% faster (React renderer)');
+  console.info('• HTML escaping:     3-15% faster (SIMD acceleration)');
+  console.info('• String allocations: 40% reduction');
+  console.info('• Heap size:         6% reduction');
+  console.info('');
+
   // Test HTML escaping performance specifically
-  console.info("🔍 HTML Escaping Performance Test");
-  console.info("-".repeat(70));
-  
-  const escapingTest = "This has & < > \" characters that need escaping!".repeat(1000);
+  console.info('🔍 HTML Escaping Performance Test');
+  console.info('-'.repeat(70));
+
+  const escapingTest = 'This has & < > " characters that need escaping!'.repeat(1000);
   const iterations = 10_000;
-  
-  const escapeTime = benchmark(
-    "html-escape",
-    () => Bun.markdown.html(escapingTest),
-    iterations
-  );
+
+  const escapeTime = benchmark('html-escape', () => Bun.markdown.html(escapingTest), iterations);
   const avgEscapeTime = escapeTime / iterations;
-  
+
   console.info(`Average time per render: ${formatTime(avgEscapeTime)}`);
   console.info(`Document size: ${escapingTest.length.toLocaleString()} characters`);
   console.info(`Special chars: ${(escapingTest.match(/[&<>"]/g) || []).length.toLocaleString()}`);
-  console.info("");
-  console.info("Note: SIMD acceleration is most noticeable with many special characters.");
+  console.info('');
+  console.info('Note: SIMD acceleration is most noticeable with many special characters.');
 }
 
 runBenchmark().catch(console.error);

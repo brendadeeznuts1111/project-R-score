@@ -18,27 +18,42 @@ return new Response(object.body, { headers });
 ```typescript
 const ifNoneMatch = request.headers.get('if-none-match');
 const object = await env.MY_BUCKET.get(key, {
-  onlyIf: { etagDoesNotMatch: ifNoneMatch?.replace(/"/g, '') || '' }
+  onlyIf: { etagDoesNotMatch: ifNoneMatch?.replace(/"/g, '') || '' },
 });
 
 if (!object) return new Response('Not found', { status: 404 });
-if (!object.body) return new Response(null, { status: 304, headers: { 'etag': object.httpEtag } });
+if (!object.body)
+  return new Response(null, {
+    status: 304,
+    headers: { etag: object.httpEtag },
+  });
 
-return new Response(object.body, { headers: { 'etag': object.httpEtag } });
+return new Response(object.body, { headers: { etag: object.httpEtag } });
 ```
 
 ## Upload with Validation
 
 ```typescript
 const key = url.pathname.slice(1);
-if (!key || key.includes('..')) return new Response('Invalid key', { status: 400 });
+if (!key || key.includes('..'))
+  return new Response('Invalid key', { status: 400 });
 
 const object = await env.MY_BUCKET.put(key, request.body, {
-  httpMetadata: { contentType: request.headers.get('content-type') || 'application/octet-stream' },
-  customMetadata: { uploadedAt: new Date().toISOString(), ip: request.headers.get('cf-connecting-ip') || 'unknown' }
+  httpMetadata: {
+    contentType:
+      request.headers.get('content-type') || 'application/octet-stream',
+  },
+  customMetadata: {
+    uploadedAt: new Date().toISOString(),
+    ip: request.headers.get('cf-connecting-ip') || 'unknown',
+  },
 });
 
-return Response.json({ key: object.key, size: object.size, etag: object.httpEtag });
+return Response.json({
+  key: object.key,
+  size: object.size,
+  etag: object.httpEtag,
+});
 ```
 
 ## Multipart with Progress
@@ -46,13 +61,18 @@ return Response.json({ key: object.key, size: object.size, etag: object.httpEtag
 ```typescript
 const PART_SIZE = 5 * 1024 * 1024; // 5MB
 const partCount = Math.ceil(file.size / PART_SIZE);
-const multipart = await env.MY_BUCKET.createMultipartUpload(key, { httpMetadata: { contentType: file.type } });
+const multipart = await env.MY_BUCKET.createMultipartUpload(key, {
+  httpMetadata: { contentType: file.type },
+});
 
 const uploadedParts: R2UploadedPart[] = [];
 try {
   for (let i = 0; i < partCount; i++) {
     const start = i * PART_SIZE;
-    const part = await multipart.uploadPart(i + 1, file.slice(start, start + PART_SIZE));
+    const part = await multipart.uploadPart(
+      i + 1,
+      file.slice(start, start + PART_SIZE)
+    );
     uploadedParts.push(part);
     onProgress?.(Math.round(((i + 1) / partCount) * 100));
   }
@@ -90,11 +110,14 @@ await env.MY_BUCKET.put(key, data, { sha256: hash });
 
 // Transition storage class (requires S3 SDK)
 import { S3Client, CopyObjectCommand } from '@aws-sdk/client-s3';
-await s3.send(new CopyObjectCommand({
-  Bucket: 'my-bucket', Key: key,
-  CopySource: `/my-bucket/${key}`,
-  StorageClass: 'STANDARD_IA'
-}));
+await s3.send(
+  new CopyObjectCommand({
+    Bucket: 'my-bucket',
+    Key: key,
+    CopySource: `/my-bucket/${key}`,
+    StorageClass: 'STANDARD_IA',
+  })
+);
 ```
 
 ## Client-Side Uploads (Presigned URLs)
@@ -108,10 +131,17 @@ import { PutObjectCommand } from '@aws-sdk/client-s3';
 const s3 = new S3Client({
   region: 'auto',
   endpoint: `https://${env.ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: { accessKeyId: env.R2_ACCESS_KEY_ID, secretAccessKey: env.R2_SECRET_ACCESS_KEY }
+  credentials: {
+    accessKeyId: env.R2_ACCESS_KEY_ID,
+    secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+  },
 });
 
-const url = await getSignedUrl(s3, new PutObjectCommand({ Bucket: 'my-bucket', Key: key }), { expiresIn: 3600 });
+const url = await getSignedUrl(
+  s3,
+  new PutObjectCommand({ Bucket: 'my-bucket', Key: key }),
+  { expiresIn: 3600 }
+);
 return Response.json({ uploadUrl: url });
 
 // Client: Upload directly
@@ -123,7 +153,11 @@ await fetch(uploadUrl, { method: 'PUT', body: file });
 
 ```typescript
 export default {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+  async fetch(
+    request: Request,
+    env: Env,
+    ctx: ExecutionContext
+  ): Promise<Response> {
     const cache = caches.default;
     const url = new URL(request.url);
     const cacheKey = new Request(url.toString(), request);
@@ -148,7 +182,7 @@ export default {
     ctx.waitUntil(cache.put(cacheKey, response.clone()));
 
     return response;
-  }
+  },
 };
 ```
 
@@ -163,8 +197,8 @@ export default {
         headers: {
           'access-control-allow-origin': '*',
           'access-control-allow-methods': 'GET, HEAD',
-          'access-control-max-age': '86400'
-        }
+          'access-control-max-age': '86400',
+        },
       });
     }
 
@@ -181,13 +215,14 @@ export default {
     headers.set('cache-control', 'public, max-age=31536000, immutable');
 
     return new Response(object.body, { headers });
-  }
+  },
 };
 ```
 
 ## r2.dev Public URLs
 
-Enable r2.dev in dashboard for simple public access: `https://pub-${hashId}.r2.dev/${key}`  
+Enable r2.dev in dashboard for simple public access:
+`https://pub-${hashId}.r2.dev/${key}`  
 Or add custom domain via dashboard: `https://files.example.com/${key}`
 
 **Limitations:** No auth, bucket-level CORS, no cache override.

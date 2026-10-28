@@ -1,10 +1,15 @@
 # Plannotator Theme Override
 
-When visual-explainer's workflow says to pick a palette and font pairing, use these Plannotator tokens instead. Everything else — layout, structure, components, anti-slop rules — stays as visual-explainer prescribes.
+When visual-explainer's workflow says to pick a palette and font pairing, use
+these Plannotator tokens instead. Everything else — layout, structure,
+components, anti-slop rules — stays as visual-explainer prescribes.
 
 ## CSS Custom Properties
 
-Replace visual-explainer's `--bg`, `--surface`, `--border`, `--text`, `--accent` variables with Plannotator's semantic tokens. Include these as `:root` defaults so the file works standalone. When embedded in Plannotator's raw HTML annotation mode, these get overridden by the active theme.
+Replace visual-explainer's `--bg`, `--surface`, `--border`, `--text`, `--accent`
+variables with Plannotator's semantic tokens. Include these as `:root` defaults
+so the file works standalone. When embedded in Plannotator's raw HTML annotation
+mode, these get overridden by the active theme.
 
 ```css
 :root {
@@ -45,55 +50,65 @@ Replace visual-explainer's `--bg`, `--surface`, `--border`, `--text`, `--accent`
 
 When visual-explainer references or templates use these variables, substitute:
 
-| visual-explainer | Plannotator | Notes |
-|-----------------|-------------|-------|
-| `--bg` | `var(--background)` | Page background |
-| `--surface` | `var(--card)` | Card/panel surfaces |
-| `--border` | `var(--border)` | Borders and dividers |
-| `--text` | `var(--foreground)` | Primary text |
-| `--text-dim` | `var(--muted-foreground)` | Secondary/subdued text |
-| `--accent` (primary) | `var(--primary)` | Primary accent |
-| `--accent-dim` | `color-mix(in oklab, var(--primary) 15%, transparent)` | Accent backgrounds |
-| `--accent-2` | `var(--accent)` | Secondary accent (warm) |
-| `--accent-3` | `var(--secondary)` | Tertiary accent |
-| `--success` | `var(--success)` | Positive indicators |
-| `--warning` | `var(--warning)` | Caution indicators |
-| `--error` / `--danger` | `var(--destructive)` | Error/destructive indicators |
-| `--font-body` | `var(--font-sans)` | Body text font |
-| `--font-mono` | `var(--font-mono)` | Code and labels |
-| `--font-heading` | `var(--font-display)` | Headings (serif) |
+| visual-explainer       | Plannotator                                            | Notes                        |
+| ---------------------- | ------------------------------------------------------ | ---------------------------- |
+| `--bg`                 | `var(--background)`                                    | Page background              |
+| `--surface`            | `var(--card)`                                          | Card/panel surfaces          |
+| `--border`             | `var(--border)`                                        | Borders and dividers         |
+| `--text`               | `var(--foreground)`                                    | Primary text                 |
+| `--text-dim`           | `var(--muted-foreground)`                              | Secondary/subdued text       |
+| `--accent` (primary)   | `var(--primary)`                                       | Primary accent               |
+| `--accent-dim`         | `color-mix(in oklab, var(--primary) 15%, transparent)` | Accent backgrounds           |
+| `--accent-2`           | `var(--accent)`                                        | Secondary accent (warm)      |
+| `--accent-3`           | `var(--secondary)`                                     | Tertiary accent              |
+| `--success`            | `var(--success)`                                       | Positive indicators          |
+| `--warning`            | `var(--warning)`                                       | Caution indicators           |
+| `--error` / `--danger` | `var(--destructive)`                                   | Error/destructive indicators |
+| `--font-body`          | `var(--font-sans)`                                     | Body text font               |
+| `--font-mono`          | `var(--font-mono)`                                     | Code and labels              |
+| `--font-heading`       | `var(--font-display)`                                  | Headings (serif)             |
 
 ## Typography exception
 
-Visual-explainer forbids Inter as `--font-body`. Plannotator uses Inter as its default sans-serif. This is intentional — Plannotator's identity is defined by its theme tokens, not font novelty. When using this skill, Inter is permitted as the body font because the output is meant to look like part of Plannotator, not like an independent design piece.
+Visual-explainer forbids Inter as `--font-body`. Plannotator uses Inter as its
+default sans-serif. This is intentional — Plannotator's identity is defined by
+its theme tokens, not font novelty. When using this skill, Inter is permitted as
+the body font because the output is meant to look like part of Plannotator, not
+like an independent design piece.
 
-The `--font-display` (serif) is still used for headings to create visual contrast, matching the visual-explainer's emphasis on distinctive typography.
+The `--font-display` (serif) is still used for headings to create visual
+contrast, matching the visual-explainer's emphasis on distinctive typography.
 
 ## Mermaid theming
 
-When visual-explainer instructs you to set `themeVariables` in Mermaid config, use Plannotator tokens:
+When visual-explainer instructs you to set `themeVariables` in Mermaid config,
+use Plannotator tokens:
 
 ```javascript
 mermaid.initialize({
   theme: 'base',
   themeVariables: {
-    primaryColor: 'oklch(0.50 0.25 280)',         // --primary
-    primaryTextColor: 'oklch(1 0 0)',              // --primary-foreground
-    primaryBorderColor: 'oklch(0.88 0.01 260)',    // --border
-    lineColor: 'oklch(0.40 0.02 260)',             // --muted-foreground
-    secondaryColor: 'oklch(0.92 0.01 260)',        // --muted
-    tertiaryColor: 'oklch(0.92 0.01 260)',         // --muted
+    primaryColor: 'oklch(0.50 0.25 280)', // --primary
+    primaryTextColor: 'oklch(1 0 0)', // --primary-foreground
+    primaryBorderColor: 'oklch(0.88 0.01 260)', // --border
+    lineColor: 'oklch(0.40 0.02 260)', // --muted-foreground
+    secondaryColor: 'oklch(0.92 0.01 260)', // --muted
+    tertiaryColor: 'oklch(0.92 0.01 260)', // --muted
     fontFamily: "'Inter', system-ui, sans-serif",
     fontSize: '14px',
-  }
+  },
 });
 ```
 
 ## Dark mode
 
-Plannotator handles dark/light via theme classes, not `prefers-color-scheme`. The standalone defaults above are the light theme. When embedded in raw HTML annotation mode, the active theme's tokens override automatically — no media query needed in the generated HTML.
+Plannotator handles dark/light via theme classes, not `prefers-color-scheme`.
+The standalone defaults above are the light theme. When embedded in raw HTML
+annotation mode, the active theme's tokens override automatically — no media
+query needed in the generated HTML.
 
-For standalone viewing, you may optionally add a `prefers-color-scheme: dark` block with the Plannotator dark theme values:
+For standalone viewing, you may optionally add a `prefers-color-scheme: dark`
+block with the Plannotator dark theme values:
 
 ```css
 @media (prefers-color-scheme: dark) {
@@ -118,7 +133,8 @@ For standalone viewing, you may optionally add a `prefers-color-scheme: dark` bl
 
 ## Depth tiers
 
-Visual-explainer defines depth tiers (hero, elevated, default, recessed). Map them using Plannotator tokens:
+Visual-explainer defines depth tiers (hero, elevated, default, recessed). Map
+them using Plannotator tokens:
 
 ```css
 /* Hero — elevated, accent-tinted */
@@ -154,9 +170,20 @@ Visual-explainer defines depth tiers (hero, elevated, default, recessed). Map th
 }
 
 /* Syntax tokens */
-.code-block .kw  { color: var(--primary); }
-.code-block .fn  { color: var(--accent); }
-.code-block .str { color: var(--success); }
-.code-block .cm  { color: var(--muted-foreground); font-style: italic; }
-.code-block .num { color: var(--warning); }
+.code-block .kw {
+  color: var(--primary);
+}
+.code-block .fn {
+  color: var(--accent);
+}
+.code-block .str {
+  color: var(--success);
+}
+.code-block .cm {
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+.code-block .num {
+  color: var(--warning);
+}
 ```

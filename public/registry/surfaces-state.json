@@ -285,13 +285,8 @@
       "project-r-score.pages.dev/portal",
       "score.factory-wager.com/portal"
     ],
-    "pagesProjects": [
-      "project-r-score"
-    ],
-    "apexes": [
-      "factory-wager.com",
-      "pages.dev"
-    ],
+    "pagesProjects": ["project-r-score"],
+    "apexes": ["factory-wager.com", "pages.dev"],
     "crossCheckOk": true
   }
 }

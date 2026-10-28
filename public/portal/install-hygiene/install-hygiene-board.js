@@ -268,7 +268,8 @@ export function buildStatRows(report) {
     },
     {
       k: 'install:verify',
-      v: verify.ok === true ? `pass (${failed} fail)` : verify.ok === false ? `${failed} fail` : '—',
+      v:
+        verify.ok === true ? `pass (${failed} fail)` : verify.ok === false ? `${failed} fail` : '—',
       tone: verify.ok === true ? 'green' : verify.ok === false ? 'red' : 'neutral',
     },
     {
@@ -374,7 +375,13 @@ export function renderInstallHygieneReport(report) {
   const { tone, label, reasons } = toneFromReport(report);
   const badgeTone = toneClass(tone);
   const portalTone =
-    badgeTone === 'green' ? 'ok' : badgeTone === 'yellow' ? 'warn' : badgeTone === 'red' ? 'bad' : 'muted';
+    badgeTone === 'green'
+      ? 'ok'
+      : badgeTone === 'yellow'
+        ? 'warn'
+        : badgeTone === 'red'
+          ? 'bad'
+          : 'muted';
   toneEl.innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(label)}`;
   toneEl.className = `portal-gate ${portalTone}`;
   toneEl.dataset.tone = badgeTone;
@@ -633,7 +640,11 @@ export async function loadInstallHygieneReport() {
     void fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' }).then(r => {
       const statusEl = document.getElementById('ih-fetch-status');
       const lines = [...debugLines, ...describeFetchResultLines(r)];
-      if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+      if (
+        r.ok &&
+        r.data &&
+        /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene'
+      ) {
         const live = /** @type {Record<string, unknown>} */ (r.data);
         const embAt = Date.parse(String(embedded.generatedAt || ''));
         const liveAt = Date.parse(String(live.generatedAt || ''));
@@ -669,12 +680,18 @@ export async function loadInstallHygieneReport() {
       }
       renderFetchDebugPanel(lines);
     });
-    renderFetchDebugPanel(debugLines.concat('[portal-fetch] showing embed first; live refresh in flight'));
+    renderFetchDebugPanel(
+      debugLines.concat('[portal-fetch] showing embed first; live refresh in flight')
+    );
     return withSource(embedded, 'embed');
   }
   const r = await fetchJsonResult(INSTALL_HYGIENE_SOURCE, { timeoutMs: 5000, method: 'GET' });
   const lines = [...debugLines, ...describeFetchResultLines(r)];
-  if (r.ok && r.data && /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene') {
+  if (
+    r.ok &&
+    r.data &&
+    /** @type {Record<string, unknown>} */ (r.data).kind === 'install-hygiene'
+  ) {
     renderFetchDebugPanel(lines.concat('[portal-fetch] applied live (no embed)'));
     return withSource(/** @type {Record<string, unknown>} */ (r.data), 'live');
   }

@@ -66,9 +66,15 @@ export function createShutdown(options: ShutdownOptions): ShutdownState {
   process.on('SIGTERM', onSigterm);
 
   return {
-    get requested() { return requested; },
-    get signal() { return caughtSignal; },
-    onCleanup(fn) { cleanups.push(fn); },
+    get requested() {
+      return requested;
+    },
+    get signal() {
+      return caughtSignal;
+    },
+    onCleanup(fn) {
+      cleanups.push(fn);
+    },
     dispose() {
       process.off('SIGINT', onSigint);
       process.off('SIGTERM', onSigterm);

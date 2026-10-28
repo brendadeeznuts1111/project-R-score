@@ -7,18 +7,10 @@
 import { tryOutId, type OutId } from '../../lib/types/branded.ts';
 
 export type PartnerEnvBindingRole =
-  | 'telegram-bot'
-  | 'partner-api'
-  | 'webhook'
-  | 'signing'
-  | 'other';
+  'telegram-bot' | 'partner-api' | 'webhook' | 'signing' | 'other';
 
 export type PartnerEnvConsumer =
-  | 'partners-board'
-  | 'tennis-hq'
-  | 'factory-bot'
-  | 'seat-desk'
-  | 'account-dossier';
+  'partners-board' | 'tennis-hq' | 'factory-bot' | 'seat-desk' | 'account-dossier';
 
 /** Shared Bun.env keys that power partner / account surfaces. */
 export const PARTNER_SHARED_ENV_BINDINGS: ReadonlyArray<{

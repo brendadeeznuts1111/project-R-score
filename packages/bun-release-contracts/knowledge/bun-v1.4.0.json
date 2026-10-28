@@ -24,9 +24,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 19
     },
@@ -42,9 +40,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 23
     },
@@ -60,9 +56,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 27
     },
@@ -78,9 +72,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 31
     },
@@ -96,9 +88,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 35
     },
@@ -111,17 +101,11 @@
       "language": "sh",
       "code": "bun upgrade",
       "stability": "stable",
-      "api": [
-        "bun upgrade"
-      ],
+      "api": ["bun upgrade"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/blog/bun-v1.3.12#to-upgrade-bun"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/blog/bun-v1.3.12#to-upgrade-bun"],
       "sourceLine": 47
     },
     {
@@ -133,16 +117,10 @@
       "language": "sh",
       "code": "$ bun --cpu-prof-md ./app.ts",
       "stability": "stable",
-      "api": [
-        "--cpu",
-        "--cpu-prof",
-        "--cpu-prof-md"
-      ],
+      "api": ["--cpu", "--cpu-prof", "--cpu-prof-md"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
         "https://bun.com/docs/project/benchmarking#cpu-profiling",
@@ -159,16 +137,10 @@
       "language": "md",
       "code": "# CPU Profile\n\n| Duration | Samples | Interval | Functions |\n| -------- | ------- | -------- | --------- |\n| 304.9ms  | 279     | 1.0ms    | 6         |\n\n**Top 10:** `tokenize` 39.1%, `escapeHtml` 25.6%, `escapeHtml` 19.3%, `render` 15.8%\n\n## Hot Functions (Self Time)\n\n| Self% |    Self | Total% |   Total | Function     | Location    |\n| ----: | ------: | -----: | ------: | ------------ | ----------- |\n| 39.1% | 119.4ms |  39.1% | 119.4ms | `tokenize`   | `app.ts:14` |\n| 25.6% |  78.1ms |  25.6% |  78.1ms | `escapeHtml` | `app.ts:5`  |\n| 19.3% |  58.9ms |  19.3% |  58.9ms | `escapeHtml` | `app.ts:4`  |\n| 15.8% |  48.3ms |  60.8% | 185.3ms | `render`     | `app.ts:21` |\n\n## Call Tree (Total Time)\n\n| Total% |   Total | Self% |    Self | Function     | Location    |\n| -----: | ------: | ----: | ------: | ------------ | ----------- |\n|  60.8% | 185.3ms | 15.8% |  48.3ms | `render`     | `app.ts:21` |\n|  60.8% | 185.3ms |  0.0% |     0us | `(module)`   | `app.ts:30` |\n|  39.1% | 119.4ms | 39.1% | 119.4ms | `tokenize`   | `app.ts:14` |\n|  39.1% | 119.4ms |  0.0% |     0us | `(module)`   | `app.ts:28` |\n|  25.6% |  78.1ms | 25.6% |  78.1ms | `escapeHtml` | `app.ts:5`  |\n|  19.3% |  58.9ms | 19.3% |  58.9ms | `escapeHtml` | `app.ts:4`  |\n\n## Function Details\n\n### `tokenize`\n\n`app.ts:14` | Self: 39.1% (119.4ms) | Total: 39.1% (119.4ms) | Samples: 109\n\n**Called by:**\n\n- `(module)` (109)\n\n### `escapeHtml`\n\n`app.ts:5` | Self: 25.6% (78.1ms) | Total: 25.6% (78.1ms) | Samples: 72\n\n**Called by:**\n\n- `render` (72)\n\n### `escapeHtml`\n\n`app.ts:4` | Self: 19.3% (58.9ms) | Total: 19.3% (58.9ms) | Samples: 54\n\n**Called by:**\n\n- `render` (54)\n\n### `render`\n\n`app.ts:21` | Self: 15.8% (48.3ms) | Total: 60.8% (185.3ms) | Samples: 44\n\n**Called by:**\n\n- `(module)` (170)\n\n**Calls:**\n\n- `escapeHtml` (72)\n- `escapeHtml` (54)\n\n### `(module)`\n\n`app.ts:28` | Self: 0.0% (0us) | Total: 39.1% (119.4ms) | Samples: 0",
       "stability": "stable",
-      "api": [
-        "--cpu",
-        "--cpu-prof",
-        "--cpu-prof-md"
-      ],
+      "api": ["--cpu", "--cpu-prof", "--cpu-prof-md"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
         "https://bun.com/docs/project/benchmarking#cpu-profiling",
@@ -185,18 +157,11 @@
       "language": "sh",
       "code": "$ bun --heap-prof-md ./app.ts",
       "stability": "stable",
-      "api": [
-        "--heap-prof",
-        "--heap-prof-md"
-      ],
+      "api": ["--heap-prof", "--heap-prof-md"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/project/benchmarking#heap-profiling"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/project/benchmarking#heap-profiling"],
       "sourceLine": 283
     },
     {
@@ -208,18 +173,11 @@
       "language": "md",
       "code": "# Bun Heap Profile\n\nGenerated by `bun --heap-prof-md`. This profile contains complete heap data in markdown format.\n\n**Quick Search Commands:**\n\n```bash\ngrep '| `Function`' file.md            # Find all Function objects\ngrep 'gcroot=1' file.md               # Find all GC roots\ngrep '| 12345 |' file.md              # Find object #12345 or edges involving it\n```\n\n---\n\n## Summary\n\n| Metric          |                  Value |\n| --------------- | ---------------------: |\n| Total Heap Size | 4.2 MB (4507930 bytes) |\n| Total Objects   |                 121116 |\n| Total Edges     |                 244084 |\n| Unique Types    |                     67 |\n| GC Roots        |                    427 |\n\n## Top 50 Types by Retained Size\n\n| Rank | Type                         |  Count | Self Size | Retained Size | Largest Instance |\n| ---: | ---------------------------- | -----: | --------: | ------------: | ---------------: |\n|    1 | `<root>`                     |      1 |       0 B |        4.2 MB |           4.2 MB |\n|    2 | `string`                     | 119883 |    4.1 MB |        4.1 MB |             67 B |\n|    3 | `GlobalObject`               |      1 |   10.3 KB |       83.1 KB |          83.1 KB |\n|    4 | `Function`                   |    319 |   10.3 KB |       61.5 KB |          13.9 KB |\n|    5 | `Structure`                  |    216 |   23.6 KB |       35.7 KB |            944 B |\n|    6 | `FunctionExecutable`         |     72 |    9.0 KB |       32.0 KB |          13.9 KB |\n|    7 | `ModuleLoader`               |      1 |      32 B |       20.1 KB |          20.1 KB |\n|    8 | `ModuleRecord`               |      2 |    3.0 KB |       19.4 KB |          15.3 KB |\n|    9 | `NativeExecutable`           |    228 |   17.8 KB |       17.8 KB |             80 B |\n|   10 | `JSModuleEnvironment`        |      2 |     128 B |       16.3 KB |          14.0 KB |\n|   11 | `FunctionCodeBlock`          |      5 |   12.3 KB |       12.3 KB |           4.1 KB |\n|   12 | `ModuleProgramExecutable`    |      2 |     224 B |       10.3 KB |           8.7 KB |\n|   13 | `ModuleProgramCodeBlock`     |      2 |    2.5 KB |       10.1 KB |           8.6 KB |\n|   14 | `UnlinkedFunctionExecutable` |     69 |    6.4 KB |        6.4 KB |             96 B |\n|   15 | `Array`                      |     61 |    1.0 KB |        6.1 KB |           5.1 KB |\n|   16 | `console`                    |      1 |      48 B |        4.4 KB |           4.4 KB |\n|   17 | `String`                     |      1 |      74 B |        4.3 KB |           4.3 KB |\n|   18 | `Map`                        |      3 |     105 B |        4.2 KB |           2.6 KB |\n|   19 | `GetterSetter`               |     29 |     928 B |        3.7 KB |            256 B |\n|   20 | `Iterator`                   |      2 |      54 B |        3.3 KB |           2.7 KB |",
       "stability": "stable",
-      "api": [
-        "--heap-prof",
-        "--heap-prof-md"
-      ],
+      "api": ["--heap-prof", "--heap-prof-md"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/project/benchmarking#heap-profiling"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/project/benchmarking#heap-profiling"],
       "sourceLine": 287
     },
     {
@@ -231,15 +189,10 @@
       "language": "sh",
       "code": "$ bun build ./src/index.ts --outdir ./dist --metafile-md=./dist/meta.md",
       "stability": "stable",
-      "api": [
-        "--metafile-md",
-        "bun build"
-      ],
+      "api": ["--metafile-md", "bun build"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/index#basic-example",
         "https://bun.com/docs/bundler/index#metafile"
@@ -255,15 +208,10 @@
       "language": "md",
       "code": "# Bundle Analysis Report\n\nThis report helps identify bundle size issues, dependency bloat, and optimization opportunities.\n\n## Table of Contents\n\n- [Quick Summary](#quick-summary)\n- [Largest Modules by Output Contribution](#largest-modules-by-output-contribution)\n- [Entry Point Analysis](#entry-point-analysis)\n- [Dependency Chains](#dependency-chains)\n- [Full Module Graph](#full-module-graph)\n- [Raw Data for Searching](#raw-data-for-searching)\n\n---\n\n## Quick Summary\n\n| Metric                    | Value              |\n| ------------------------- | ------------------ |\n| Total output size         | 56.1 KB            |\n| Input modules             | 4                  |\n| Entry points              | 1                  |\n| node_modules contribution | 1 files (55.74 KB) |\n| ESM modules               | 4                  |\n\n## Largest Modules by Output Contribution\n\nModules sorted by bytes contributed to the output bundle. Large modules may indicate bloat.\n\n| Output Bytes | % of Total | Module                                  | Format |\n| ------------ | ---------- | --------------------------------------- | ------ |\n| 55.74 KB     | 99.4%      | `node_modules/marked/lib/marked.esm.js` | esm    |\n| 113 bytes    | 0.2%       | `src/escape.ts`                         | esm    |\n| 76 bytes     | 0.1%       | `src/render.ts`                         | esm    |\n| 52 bytes     | 0.1%       | `src/index.ts`                          | esm    |\n\n## Entry Point Analysis\n\nEach entry point and the total code it loads (including shared chunks).\n\n### Entry: `src/index.ts`\n\n**Output file**: `./index.js`\n**Bundle size**: 56.1 KB\n**Exports**: `main`\n\n**Bundled modules** (sorted by contribution):\n\n| Bytes     | Module                                  |\n| --------- | --------------------------------------- |\n| 55.74 KB  | `node_modules/marked/lib/marked.esm.js` |\n| 113 bytes | `src/escape.ts`                         |\n| 76 bytes  | `src/render.ts`                         |\n| 52 bytes  | `src/index.ts`                          |\n\n## Dependency Chains\n\nFor each module, shows what files import it. Use this to understand why a module is included.\n\n### Most Commonly Imported Modules\n\nModules imported by many files. Extracting these to shared chunks may help.\n\n| Import Count | Module | Imported By |\n| ------------ | ------ | ----------- |\n\n## Full Module Graph\n\nComplete dependency information for each module.\n\n### `node_modules/marked/lib/marked.esm.js`\n\n- **Output contribution**: 55.74 KB\n- **Format**: esm\n- **Imported by** (1 files): `src/index.ts`",
       "stability": "stable",
-      "api": [
-        "--metafile-md",
-        "bun build"
-      ],
+      "api": ["--metafile-md", "bun build"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/index#basic-example",
         "https://bun.com/docs/bundler/index#metafile"
@@ -279,16 +227,11 @@
       "language": "js",
       "code": "process.on(\"memoryPressure\", (level) => {\n  cache.clear();\n  pool.drainIdle();\n});",
       "stability": "stable",
-      "api": [
-        "memoryPressure",
-        "process.on(\"memoryPressure\")"
-      ],
+      "api": ["memoryPressure", "process.on(\"memoryPressure\")"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/blog/bun-v1.4#process-on-memorypressure"
-      ],
+      "docsLinks": ["https://bun.com/blog/bun-v1.4#process-on-memorypressure"],
       "sourceLine": 434
     },
     {
@@ -309,11 +252,7 @@
         "TextDecoderStream",
         "TextEncoderStream"
       ],
-      "dependencies": [
-        "node:child_process",
-        "node:fs",
-        "node:stream"
-      ],
+      "dependencies": ["node:child_process", "node:fs", "node:stream"],
       "runnable": false,
       "requiresSetup": [
         "embedding-context",
@@ -373,15 +312,10 @@
       "language": "js",
       "code": "// Response.clone() and ReadableStream.tee() with fresh 64 KiB buffers. Peak RSS (via /usr/bin/time -v) is the point.\n// Run: bun run response-clone.mjs --scenario=clone-both --bytes=67108864\n//      node response-clone.mjs --scenario=clone-chain --depth=100 --bytes=104857600\n//      deno run -A response-clone.mjs --scenario=tee --bytes=2147483648\n// clone-both:  res.clone(), then read both bodies concurrently.\n// clone-only:  res.clone(), read only the clone; the original is never read.\n// clone-chain: clone a streaming Response N times, read only the last clone.\n// tee:         split a stream and drain both branches concurrently. MB/s is over the source bytes.\nconst MB = 1024 * 1024;\nconst CHUNK = 64 * 1024;\nconst argv = globalThis.process?.argv ?? [];\nconst arg = (k, d) =>\n  argv.find((a) => a.startsWith(`--${k}=`))?.slice(k.length + 3) ?? d;\nconst scenario = arg(\"scenario\", \"clone-chain\");\nconst DEPTH = +arg(\"depth\", 100);\nconst BYTES = +arg(\n  \"bytes\",\n  { \"tee\": 2048 * MB, \"clone-chain\": 100 * MB }[scenario] ?? 1024 * MB,\n);\n\nconst freshSource = (total) => {\n  const count = Math.ceil(total / CHUNK);\n  let i = 0;\n  return new ReadableStream({\n    pull(c) {\n      if (i < count) c.enqueue(new Uint8Array(CHUNK).fill(i++ & 0xff));\n      else c.close();\n    },\n  });\n};\nconst drain = async (rs) => {\n  const r = rs.getReader();\n  let n = 0;\n  for (;;) {\n    const { done, value } = await r.read();\n    if (done) return n;\n    n += value.byteLength;\n  }\n};\n\nconst scenarios = {\n  \"clone-both\": async () => {\n    const res = new Response(freshSource(BYTES));\n    const c = res.clone();\n    const [a, b] = await Promise.all([res.arrayBuffer(), c.arrayBuffer()]);\n    if (a.byteLength !== b.byteLength) throw new Error(\"clone mismatch\");\n    return a.byteLength;\n  },\n  \"clone-only\": async () => {\n    const res = new Response(freshSource(BYTES));\n    const c = res.clone();\n    return (await c.arrayBuffer()).byteLength;\n  },\n  \"clone-chain\": async () => {\n    let cur = new Response(freshSource(BYTES));\n    const chain = [cur];\n    for (let i = 0; i < DEPTH; i++) chain.push((cur = cur.clone()));\n    return (await chain.at(-1).arrayBuffer()).byteLength;\n  },\n  \"tee\": async () => {\n    const [a, b] = freshSource(BYTES).tee();\n    const [x, y] = await Promise.all([drain(a), drain(b)]);\n    if (x !== y) throw new Error(\"branch mismatch\");\n    return x;\n  },\n};\nconst fn = scenarios[scenario];\nif (!fn)\n  throw new Error(\n    `unknown --scenario=${scenario}; clone-both | clone-only | clone-chain | tee`,\n  );\n\nconst rss0 = globalThis.process?.memoryUsage?.().rss ?? 0;\nconst t0 = performance.now();\nconst got = await fn();\nconst ms = performance.now() - t0;\nif (got !== BYTES)\n  throw new Error(`${scenario}: read ${got} bytes, expected ${BYTES}`);\nconst rssDelta = ((globalThis.process?.memoryUsage?.().rss ?? 0) - rss0) / MB;\nconsole.log(\n  `${scenario.padEnd(12)} ${(BYTES / MB / (ms / 1000))\n    .toFixed(0)\n    .padStart(6)} MB/s  ${ms.toFixed(0).padStart(6)} ms  ${\n    BYTES / MB\n  } MiB  rss +${rssDelta.toFixed(0)} MB`,\n);",
       "stability": "stable",
-      "api": [
-        "ReadableStream",
-        "Streams"
-      ],
+      "api": ["ReadableStream", "Streams"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context"
-      ],
+      "requiresSetup": ["embedding-context"],
       "docsLinks": [
         "https://bun.com/docs/runtime",
         "https://bun.com/docs/runtime/streams"
@@ -406,10 +340,7 @@
       ],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context",
-        "external-bindings"
-      ],
+      "requiresSetup": ["embedding-context", "external-bindings"],
       "docsLinks": [
         "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
         "https://bun.com/docs/runtime",
@@ -436,9 +367,7 @@
       ],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context"
-      ],
+      "requiresSetup": ["embedding-context"],
       "docsLinks": [
         "https://bun.com/docs/runtime",
         "https://bun.com/docs/runtime/streams",
@@ -456,16 +385,10 @@
       "language": "ts",
       "code": "Bun.serve({\n  routes: {\n    \"/\": () => {\n      return new Response(\n        new ReadableStream({\n          // pauses when the socket's send buffer fills\n          pull(controller) {\n            controller.enqueue(new Uint8Array(65536));\n          },\n        }),\n      );\n    },\n  },\n});",
       "stability": "stable",
-      "api": [
-        "Bun.serve",
-        "ReadableStream"
-      ],
+      "api": ["Bun.serve", "ReadableStream"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context",
-        "long-running-server"
-      ],
+      "requiresSetup": ["embedding-context", "long-running-server"],
       "docsLinks": [
         "https://bun.com/docs/runtime",
         "https://bun.com/docs/runtime/http/server"
@@ -516,15 +439,10 @@
       "language": "ts",
       "code": "await using view = new Bun.WebView({ width: 800, height: 600 });\nawait view.navigate(\"https://bun.sh\");\nawait view.click(\"a[href='/docs']\");\nconst title = await view.evaluate(\"document.title\");\nawait Bun.write(\"page.png\", await view.screenshot());",
       "stability": "experimental",
-      "api": [
-        "Bun.WebView",
-        "Bun.write"
-      ],
+      "api": ["Bun.WebView", "Bun.write"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "filesystem-fixtures"
-      ],
+      "requiresSetup": ["filesystem-fixtures"],
       "docsLinks": [
         "https://bun.com/docs/runtime/file-io#writing-files-bun-write",
         "https://bun.com/docs/runtime/webview"
@@ -548,9 +466,7 @@
       ],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context"
-      ],
+      "requiresSetup": ["embedding-context"],
       "docsLinks": [
         "https://bun.com/docs/runtime/markdown#bun-markdown-html",
         "https://bun.com/docs/runtime/markdown#bun-markdown-react",
@@ -567,15 +483,11 @@
       "language": "ts",
       "code": "// Register an OS-level cron job\nawait Bun.cron(\"./worker.ts\", \"30 2 * * MON\", \"weekly-report\");\n\n// Parse a cron expression → next matching UTC Date\nconst next = Bun.cron.parse(\"*/15 * * * *\");\n\n// worker.ts\nexport default {\n  async scheduled(controller) {\n    // controller.cron === \"30 2 * * 1\"\n    // controller.scheduledTime === 1737340200000\n    await doWork();\n  },\n};",
       "stability": "stable",
-      "api": [
-        "Bun.cron"
-      ],
+      "api": ["Bun.cron"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/cron"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/cron"],
       "sourceLine": 1191
     },
     {
@@ -587,15 +499,11 @@
       "language": "ts",
       "code": "using job = Bun.cron(\"*/5 * * * *\", async () => {\n  await cleanupTempFiles();\n});\njob.cron; // \"*/5 * * * *\"\njob.unref(); // allow process exit\njob.stop(); // cancel (or let `using` dispose)",
       "stability": "stable",
-      "api": [
-        "Bun.cron"
-      ],
+      "api": ["Bun.cron"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/cron"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/cron"],
       "sourceLine": 1212
     },
     {
@@ -607,10 +515,7 @@
       "language": "ts",
       "code": "const proc = Bun.spawn([\"bash\"], {\n  terminal: {\n    cols: 80,\n    rows: 24,\n    data(term, data) {\n      process.stdout.write(data);\n    },\n  },\n});\n\nproc.terminal.write(\"echo Hello from PTY!\\n\");",
       "stability": "stable",
-      "api": [
-        "Bun.spawn",
-        "Bun.Terminal"
-      ],
+      "api": ["Bun.spawn", "Bun.Terminal"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -629,17 +534,10 @@
       "language": "sh",
       "code": "# Run \"build\" and \"test\" concurrently\n$ bun run --parallel build test\n\n# Glob-matched script names\n$ bun run --parallel \"build:*\"\n\n# Run \"build\" in every workspace package\n$ bun run --parallel --filter '*' build\n\n# Keep going even if one package fails\n$ bun run --parallel --no-exit-on-error --filter '*' test",
       "stability": "stable",
-      "api": [
-        "--filter",
-        "bun run -",
-        "bun run --parallel",
-        "Glob"
-      ],
+      "api": ["--filter", "bun run -", "bun run --parallel", "Glob"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/filter#package-name-filter-pattern",
         "https://bun.com/docs/pm/filter#parallel-and-sequential-mode",
@@ -657,17 +555,11 @@
       "language": "ts",
       "code": "import { dlopen } from \"bun:ffi\";\n\nconst { symbols } = dlopen(\"libhash.so\", {\n  hash: { args: [\"buffer\", \"buffer_length\"], returns: \"cstring\" },\n});\n\nconst digest = symbols.hash(data, data);\ntypeof digest; // \"string\"",
       "stability": "stable",
-      "api": [
-        "bun:ffi"
-      ],
-      "dependencies": [
-        "bun:ffi"
-      ],
+      "api": ["bun:ffi"],
+      "dependencies": ["bun:ffi"],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi"],
       "sourceLine": 1277
     },
     {
@@ -679,11 +571,7 @@
       "language": "ts",
       "code": "Bun.serve({\n  port: 443,\n  tls: { ... },\n  http3: true,        // also listen on UDP/443 for HTTP/3\n  // h1: false,    // optional: serve HTTP/3 only\n  fetch(req) {\n    return new Response(\"hi\");\n  },\n});",
       "stability": "experimental",
-      "api": [
-        "Bun.serve",
-        "http3",
-        "UDP"
-      ],
+      "api": ["Bun.serve", "http3", "UDP"],
       "dependencies": [],
       "runnable": false,
       "requiresSetup": [
@@ -707,17 +595,11 @@
       "language": "ts",
       "code": "const [a, b, c] = await Promise.all([\n  fetch(\"https://api.example.com/a\", { protocol: \"http2\" }),\n  fetch(\"https://api.example.com/b\", { protocol: \"http2\" }),\n  fetch(\"https://api.example.com/c\", { protocol: \"http2\" }),\n]);\n\nconst res = await fetch(\"https://example.com\", { protocol: \"http3\" });",
       "stability": "experimental",
-      "api": [
-        "http3"
-      ],
+      "api": ["http3"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "requiresSetup": ["network-access"],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 1328
     },
     {
@@ -729,17 +611,11 @@
       "language": "ts",
       "code": "Bun.serve({\n  routes: {\n    \"/static/*\": { dir: \"./public\" },\n  },\n});",
       "stability": "experimental",
-      "api": [
-        "Bun.serve"
-      ],
+      "api": ["Bun.serve"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "long-running-server"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "requiresSetup": ["long-running-server"],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 1350
     },
     {
@@ -751,16 +627,10 @@
       "language": "ts",
       "code": "Bun.serve({\n  routes: {\n    \"/video.mp4\": new Response(Bun.file(\"./video.mp4\")),\n    \"/logo.png\": new Response(Bun.file(\"./logo.png\")),\n  },\n});",
       "stability": "experimental",
-      "api": [
-        "Bun.file",
-        "Bun.serve"
-      ],
+      "api": ["Bun.file", "Bun.serve"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "filesystem-fixtures",
-        "long-running-server"
-      ],
+      "requiresSetup": ["filesystem-fixtures", "long-running-server"],
       "docsLinks": [
         "https://bun.com/docs/runtime/file-io",
         "https://bun.com/docs/runtime/http/server"
@@ -779,9 +649,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 1375
     },
@@ -797,9 +665,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 1390
     },
@@ -815,9 +681,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 1399
     },
@@ -833,9 +697,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 1411
     },
@@ -848,16 +710,10 @@
       "language": "toml",
       "code": "# bunfig.toml\n[install]\nlinker = \"isolated\"",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "bunfig.toml",
-        "Global virtual store"
-      ],
+      "api": ["bun install", "bunfig.toml", "Global virtual store"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install",
         "https://bun.com/docs/pm/global-store",
@@ -874,15 +730,10 @@
       "language": "sh",
       "code": "$ bun pm diff react                     # the version in bun.lock → latest\n$ bun pm diff react@18.2.0 19.0.0       # two published versions\n$ bun pm diff ./vendored-pkg pkg@2.1.0  # a folder against a published version\n$ bun pm diff react-dom@18.2.0 18.3.1 '*.min.js'",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "bun pm"
-      ],
+      "api": ["bun install", "bun pm"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install",
         "https://bun.com/docs/pm/cli/pm"
@@ -898,15 +749,10 @@
       "language": "sh",
       "code": "$ bun audit fix\nfixing:\n  ms@0.7.0 → 0.7.1\n  lodash@4.17.20 → 4.17.21\n    package.json: 4.17.20 → 4.17.21\n\nblocked by a dependent's range:\n  minimatch@0.3.0 → 3.0.2\n    express@3.21.2 depends on minimatch@0.3.0\n\nFixed 2 vulnerabilities in 2 packages\n1 vulnerability remaining",
       "stability": "stable",
-      "api": [
-        "bun audit",
-        "bun install"
-      ],
+      "api": ["bun audit", "bun install"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/audit",
         "https://bun.com/docs/pm/cli/install"
@@ -922,16 +768,10 @@
       "language": "sh",
       "code": "$ bun dedupe\nbun dedupe v1.4.0 (abc12345)\n\n↳ esbuild 0.15.10 → 0.15.11\n↳ react 18.2.0 → 18.3.1\n\n2 duplicate versions removed, 3 packages installed (checked 5 packages) [12.00ms]",
       "stability": "stable",
-      "api": [
-        "bun dedupe",
-        "bun install",
-        "esbuild"
-      ],
+      "api": ["bun dedupe", "bun install", "esbuild"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/esbuild",
         "https://bun.com/docs/pm/cli/dedupe",
@@ -948,16 +788,10 @@
       "language": "sh",
       "code": "$ bun prune --production\nbun prune v1.4.0 (abc12345)\n\n- typescript@5.4.0\n- @types/node@20.11.5\n2 packages removed (checked 948) [22.00ms]",
       "stability": "stable",
-      "api": [
-        "--production",
-        "bun install",
-        "bun prune"
-      ],
+      "api": ["--production", "bun install", "bun prune"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/fullstack#production-mode",
         "https://bun.com/docs/pm/cli/install",
@@ -974,16 +808,10 @@
       "language": "dockerfile",
       "code": "COPY package.json bun.lock ./\nRUN bun install --frozen-lockfile\nCOPY . .\nRUN bun run build\nRUN bun prune --production",
       "stability": "stable",
-      "api": [
-        "--production",
-        "bun install",
-        "bun prune"
-      ],
+      "api": ["--production", "bun install", "bun prune"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/fullstack#production-mode",
         "https://bun.com/docs/pm/cli/install",
@@ -1000,15 +828,10 @@
       "language": "sh",
       "code": "$ bun pm licenses --prod --json > licenses.json",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "bun pm"
-      ],
+      "api": ["bun install", "bun pm"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install",
         "https://bun.com/docs/pm/cli/pm"
@@ -1024,16 +847,10 @@
       "language": "sh",
       "code": "$ bun update\n$ bun update zod\n$ bun update '@types/*' --latest",
       "stability": "stable",
-      "api": [
-        "--latest",
-        "bun install",
-        "bun update"
-      ],
+      "api": ["--latest", "bun install", "bun update"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install",
         "https://bun.com/docs/pm/cli/update",
@@ -1050,18 +867,10 @@
       "language": "sh",
       "code": "$ bun add zod --filter api\n$ bun run --filter 'web...' build",
       "stability": "stable",
-      "api": [
-        "--filter",
-        "bun add",
-        "bun install",
-        "bun run -"
-      ],
+      "api": ["--filter", "bun add", "bun install", "bun run -"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime",
-        "placeholders"
-      ],
+      "requiresSetup": ["non-javascript-runtime", "placeholders"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/add",
         "https://bun.com/docs/pm/cli/install",
@@ -1079,15 +888,10 @@
       "language": "sh",
       "code": "$ bun add react --catalog",
       "stability": "stable",
-      "api": [
-        "bun add",
-        "bun install"
-      ],
+      "api": ["bun add", "bun install"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/add",
         "https://bun.com/docs/pm/cli/install"
@@ -1103,17 +907,11 @@
       "language": "json",
       "code": "{\n  \"overrides\": {\n    \"express\": { \"qs\": \"6.13.0\" },\n    \"lodash@<4.17.21\": \"4.17.21\"\n  }\n}",
       "stability": "stable",
-      "api": [
-        "bun install"
-      ],
+      "api": ["bun install"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/pm/cli/install"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/pm/cli/install"],
       "sourceLine": 1600
     },
     {
@@ -1125,16 +923,10 @@
       "language": "json",
       "code": "- [\"pkg@github:user/repo#ref\", {}, \"resolved-commit\"]\n+ [\"pkg@github:user/repo#ref\", {}, \"resolved-commit\", \"sha512-...\"]",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "Lockfile"
-      ],
+      "api": ["bun install", "Lockfile"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime",
-        "placeholders"
-      ],
+      "requiresSetup": ["non-javascript-runtime", "placeholders"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install",
         "https://bun.com/docs/pm/lockfile"
@@ -1150,16 +942,10 @@
       "language": "json",
       "code": "  {\n    \"dependencies\": {\n      \"esbuild\": \"github:some-fork/esbuild#main\"\n    },\n+   \"trustedDependencies\": [\"esbuild\"]\n  }",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "esbuild",
-        "trustedDependencies"
-      ],
+      "api": ["bun install", "esbuild", "trustedDependencies"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/esbuild",
         "https://bun.com/docs/pm/cli/install",
@@ -1176,15 +962,10 @@
       "language": "json",
       "code": "{\n  \"nativeDependencies\": [\"esbuild\", \"my-custom-package\"],\n  \"ignoreScripts\": [\"sharp\", \"another-package\"]\n}",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "esbuild"
-      ],
+      "api": ["bun install", "esbuild"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/esbuild",
         "https://bun.com/docs/pm/cli/install"
@@ -1208,9 +989,7 @@
       ],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
         "https://bun.com/docs/test",
@@ -1228,16 +1007,10 @@
       "language": "sh",
       "code": "$ bun test --parallel\n$ bun test --parallel=4 --isolate",
       "stability": "stable",
-      "api": [
-        "--isolate",
-        "bun test",
-        "bun test --parallel"
-      ],
+      "api": ["--isolate", "bun test", "bun test --parallel"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/test",
         "https://bun.com/docs/test/parallel#isolate",
@@ -1254,15 +1027,10 @@
       "language": "sh",
       "code": "$ bun test --isolate",
       "stability": "stable",
-      "api": [
-        "bun test",
-        "bun test --isolate"
-      ],
+      "api": ["bun test", "bun test --isolate"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/test",
         "https://bun.com/docs/test/parallel#isolate"
@@ -1278,15 +1046,10 @@
       "language": "sh",
       "code": "# In a matrix of 3 jobs:\n$ bun test --shard=1/3\n$ bun test --shard=2/3\n$ bun test --shard=3/3",
       "stability": "stable",
-      "api": [
-        "bun test",
-        "bun test --shard"
-      ],
+      "api": ["bun test", "bun test --shard"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/test",
         "https://bun.com/docs/test/parallel#one-timings-file-per-shard"
@@ -1302,16 +1065,10 @@
       "language": "sh",
       "code": "$ bun test --timings=timings.json --update-timings   # record per-file durations\n$ bun test --shard=1/3 --timings=timings.json        # cut shards by equal time\n$ bun test --parallel --timings=timings.json         # workers start slowest first",
       "stability": "stable",
-      "api": [
-        "bun test",
-        "bun test --parallel",
-        "bun test --shard"
-      ],
+      "api": ["bun test", "bun test --parallel", "bun test --shard"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/test",
         "https://bun.com/docs/test/parallel#one-timings-file-per-shard",
@@ -1328,16 +1085,10 @@
       "language": "sh",
       "code": "$ bun test --changed           # uncommitted (unstaged + staged + untracked)\n$ bun test --changed=HEAD~1    # diff against a commit / branch / tag\n$ bun test --changed=main\n$ bun test --changed --watch   # re-filters on every restart",
       "stability": "stable",
-      "api": [
-        "--watch",
-        "bun test",
-        "bun test --changed"
-      ],
+      "api": ["--watch", "bun test", "bun test --changed"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/blog/bun-v1.3.13#bun-test-changed",
         "https://bun.com/docs/bundler/index#watch-mode",
@@ -1354,17 +1105,11 @@
       "language": "ts",
       "code": "test(\n  \"flaky network call\",\n  async () => {\n    await fetch(\"https://example.com\");\n  },\n  { retry: 5 },\n);\n\ntest(\n  \"stress\",\n  () => {\n    if (Math.random() < 0.1) throw new Error(\"uh oh!\");\n  },\n  { repeats: 20 },\n);",
       "stability": "stable",
-      "api": [
-        "bun test"
-      ],
+      "api": ["bun test"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/test"
-      ],
+      "requiresSetup": ["network-access"],
+      "docsLinks": ["https://bun.com/docs/test"],
       "sourceLine": 1755
     },
     {
@@ -1376,13 +1121,8 @@
       "language": "ts",
       "code": "import { jest, test, expect } from \"bun:test\";\n\ntest(\"debounce\", () => {\n  jest.useFakeTimers();\n  let called = 0;\n  setTimeout(() => called++, 1000);\n  jest.advanceTimersByTime(1000);\n  expect(called).toBe(1);\n  jest.useRealTimers();\n});",
       "stability": "stable",
-      "api": [
-        "bun test",
-        "bun:test"
-      ],
-      "dependencies": [
-        "bun:test"
-      ],
+      "api": ["bun test", "bun:test"],
+      "dependencies": ["bun:test"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -1400,10 +1140,7 @@
       "language": "ts",
       "code": "await Bun.build({\n  entrypoints: [\"./src/index.tsx\"],\n  outdir: \"./dist\",\n  reactCompiler: true,\n});",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "Bun.build"
-      ],
+      "api": ["bun build", "Bun.build"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -1422,10 +1159,7 @@
       "language": "ts",
       "code": "await Bun.build({\n  entrypoints: [\"./src/index.tsx\"],\n  optimizeImports: [\"antd\", \"@mui/material\"],\n});",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "Bun.build"
-      ],
+      "api": ["bun build", "Bun.build"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -1444,14 +1178,8 @@
       "language": "ts",
       "code": "import { feature } from \"bun:bundle\";\n\nif (feature(\"SUPER_SECRET\")) {\n  console.log(\"Secret feature enabled!\");\n}\n\n// bun build --feature=SUPER_SECRET index.ts",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "bun:bundle",
-        "feature"
-      ],
-      "dependencies": [
-        "bun:bundle"
-      ],
+      "api": ["bun build", "bun:bundle", "feature"],
+      "dependencies": ["bun:bundle"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -1470,13 +1198,8 @@
       "language": "ts",
       "code": "await Bun.build({\n  entrypoints: [\"/app/index.ts\"],\n  files: {\n    \"/app/index.ts\": `import { greet } from \"./greet.ts\"; console.log(greet(\"World\"));`,\n    \"/app/greet.ts\": `export function greet(name: string) { return \"Hello, \" + name + \"!\"; }`,\n  },\n});",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "Bun.build"
-      ],
-      "dependencies": [
-        "./greet.ts"
-      ],
+      "api": ["bun build", "Bun.build"],
+      "dependencies": ["./greet.ts"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -1494,15 +1217,10 @@
       "language": "sh",
       "code": "$ bun build ./index.html --compile --target=browser --outdir=dist\n# → dist/index.html (everything inlined, zero external requests)",
       "stability": "stable",
-      "api": [
-        "--compile",
-        "bun build"
-      ],
+      "api": ["--compile", "bun build"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
         "https://bun.com/docs/bundler/index#basic-example"
@@ -1518,10 +1236,7 @@
       "language": "ts",
       "code": "const result = await Bun.build({\n  entrypoints: [\"./index.js\"],\n  metafile: true,\n});\n\nconsole.log(result.metafile.inputs);\nconsole.log(result.metafile.outputs);",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "Bun.build"
-      ],
+      "api": ["bun build", "Bun.build"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -1540,15 +1255,10 @@
       "language": "sh",
       "code": "$ bun build entry.js --metafile-md --outdir=dist\n$ bun build entry.js --metafile-md=analysis.md --outdir=dist\n$ bun build entry.js --metafile=meta.json --metafile-md=meta.md --outdir=dist",
       "stability": "stable",
-      "api": [
-        "--metafile-md",
-        "bun build"
-      ],
+      "api": ["--metafile-md", "bun build"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/index#basic-example",
         "https://bun.com/docs/bundler/index#metafile"
@@ -1564,18 +1274,11 @@
       "language": "ts",
       "code": "function logged(value, { kind, name }) {\n  if (kind === \"method\") {\n    return function (...args) {\n      console.log(`calling ${name}`);\n      return value.call(this, ...args);\n    };\n  }\n}\n\nclass C {\n  @logged\n  greet() {}\n}",
       "stability": "stable",
-      "api": [
-        "bun build"
-      ],
+      "api": ["bun build"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context",
-        "placeholders"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/bundler/index#basic-example"
-      ],
+      "requiresSetup": ["embedding-context", "placeholders"],
+      "docsLinks": ["https://bun.com/docs/bundler/index#basic-example"],
       "sourceLine": 1896
     },
     {
@@ -1587,16 +1290,10 @@
       "language": "sh",
       "code": "$ bun build ./build/index.js --compile \\\n    --asset ./build/client --asset ./build/prerendered \\\n    --outfile server\n$ ./server   # every route + static asset served from the binary",
       "stability": "stable",
-      "api": [
-        "--compile",
-        "--outfile",
-        "bun build"
-      ],
+      "api": ["--compile", "--outfile", "bun build"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
         "https://bun.com/docs/bundler/index#basic-example"
@@ -1613,9 +1310,7 @@
       "code": "import { isbot } from \"isbot\"; // isbot@5.2.1\n\nconst uas = [\n  \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36\",\n  \"Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15\",\n  \"Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148\",\n  \"Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)\",\n  \"curl/8.7.1\",\n  \"Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Mobile Safari/537.36\",\n  \"Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0\",\n  \"Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)\",\n];\n\nlet hits = 0;\nfor (let i = 0; i < 20_000; i++)\n  for (const ua of uas) hits += isbot(ua) ? 1 : 0; // warm up\n\nconst N = 200_000;\nconst t0 = performance.now();\nfor (let i = 0; i < N; i++) for (const ua of uas) hits += isbot(ua) ? 1 : 0;\nconst ms = performance.now() - t0;\nconsole.log(`${((ms * 1e6) / (N * uas.length)).toFixed(0)} ns/call`, hits);",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "isbot"
-      ],
+      "dependencies": ["isbot"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -1631,13 +1326,9 @@
       "code": "// node:zlib benchmark: compress/decompress a JSON-like text buffer, one scenario per process.\n// Usage: <runtime> zlib-bench.mjs <gzip|deflate|brotli|zstd> <sync|async> <compress|decompress> [level] [--bytes=N] [--iters=N]\n//   e.g. bun zlib-bench.mjs gzip sync compress --bytes=1048576 --iters=50\n//        node zlib-bench.mjs brotli async compress\n//        deno run -A zlib-bench.mjs zstd sync decompress 3\n// --bytes: input size (default 64 MiB). --iters: timed iterations (default 1); with >1, warms up\n// 5 iterations and reports the median. Prints one JSON line: {encoding, api, op, level, ms, iters,\n// inputBytes, compressedBytes}. Wrap with `/usr/bin/time -v` to get peak RSS.\nimport * as zlib from \"node:zlib\";\n\nconst flags = Object.fromEntries(\n  process.argv\n    .slice(2)\n    .filter((a) => a.startsWith(\"--\"))\n    .map((a) => a.slice(2).split(\"=\")),\n);\nconst [encoding, api, op, levelArg] = process.argv\n  .slice(2)\n  .filter((a) => !a.startsWith(\"--\"));\nconst level = levelArg === undefined ? undefined : Number(levelArg);\nconst TARGET = Number(flags.bytes ?? 64 * 1024 * 1024);\nconst ITERS = Number(flags.iters ?? 1);\n\n// Deterministic JSON-lines text; a few fields vary per record so it is not trivially repetitive.\nfunction makeInput() {\n  let seed = 0x9e3779b9;\n  const rnd = () => (seed = (seed * 1103515245 + 12345) >>> 0) / 2 ** 32;\n  const cities = [\n    \"Berlin\",\n    \"Tokyo\",\n    \"Austin\",\n    \"Lagos\",\n    \"Lima\",\n    \"Oslo\",\n    \"Pune\",\n    \"Quito\",\n  ];\n  const words = [\n    \"alpha\",\n    \"bravo\",\n    \"charlie\",\n    \"delta\",\n    \"echo\",\n    \"foxtrot\",\n    \"golf\",\n    \"hotel\",\n    \"india\",\n    \"juliet\",\n  ];\n  const parts = [];\n  let size = 0;\n  for (let i = 0; size < TARGET; i++) {\n    const tags = Array.from(\n      { length: 3 },\n      () => words[(rnd() * words.length) | 0],\n    );\n    const rec = {\n      id: i,\n      uuid: `${((rnd() * 2 ** 32) >>> 0)\n        .toString(16)\n        .padStart(8, \"0\")}-4c1e-8a2b-${i.toString(16).padStart(12, \"0\")}`,\n      user: `user_${(rnd() * 50000) | 0}`,\n      email: `person${(rnd() * 1e6) | 0}@example.com`,\n      city: cities[(rnd() * cities.length) | 0],\n      score: Math.round(rnd() * 10000) / 100,\n      active: rnd() > 0.5,\n      tags,\n      ts: 1700000000000 + ((rnd() * 1e9) | 0),\n      note:\n        \"lorem ipsum dolor sit amet, consectetur adipiscing elit \" +\n        words[i % words.length],\n    };\n    const line = JSON.stringify(rec) + \"\\n\";\n    parts.push(line);\n    size += line.length;\n  }\n  return Buffer.from(parts.join(\"\"), \"latin1\");\n}\n\nconst fns = {\n  gzip: [zlib.gzipSync, zlib.gzip, zlib.gunzipSync, zlib.gunzip],\n  deflate: [zlib.deflateSync, zlib.deflate, zlib.inflateSync, zlib.inflate],\n  brotli: [\n    zlib.brotliCompressSync,\n    zlib.brotliCompress,\n    zlib.brotliDecompressSync,\n    zlib.brotliDecompress,\n  ],\n  zstd: [\n    zlib.zstdCompressSync,\n    zlib.zstdCompress,\n    zlib.zstdDecompressSync,\n    zlib.zstdDecompress,\n  ],\n};\nconst [cSync, cAsync, dSync, dAsync] = fns[encoding];\nif (!cSync) {\n  console.log(JSON.stringify({ encoding, api, op, error: \"unsupported\" }));\n  process.exit(0);\n}\n\nconst opts =\n  level === undefined\n    ? {}\n    : encoding === \"brotli\"\n    ? { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: level } }\n    : { level };\n\nconst input = makeInput();\nconst compressed = op === \"decompress\" ? cSync(input, opts) : null;\nconst [syncFn, asyncFn, data] =\n  op === \"decompress\" ? [dSync, dAsync, compressed] : [cSync, cAsync, input];\n\nconst once = () =>\n  new Promise((resolve, reject) => {\n    const t0 = performance.now();\n    if (api === \"sync\")\n      return resolve([syncFn(data, opts), performance.now() - t0]);\n    asyncFn(data, opts, (err, out) =>\n      err ? reject(err) : resolve([out, performance.now() - t0]),\n    );\n  });\n\nlet out,\n  times = [];\nif (ITERS > 1) for (let i = 0; i < 5; i++) await once();\nfor (let i = 0; i < ITERS; i++) {\n  const [o, ms] = await once();\n  out = o;\n  times.push(ms);\n}\ntimes.sort((a, b) => a - b);\nconst ms = times[times.length >> 1];\nconsole.log(\n  JSON.stringify({\n    encoding,\n    api,\n    op,\n    level: level ?? \"default\",\n    ms: Math.round(ms * 1000) / 1000,\n    iters: ITERS,\n    inputBytes: input.length,\n    compressedBytes: op === \"decompress\" ? compressed.length : out.length,\n  }),\n);",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "node:zlib"
-      ],
+      "dependencies": ["node:zlib"],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context"
-      ],
+      "requiresSetup": ["embedding-context"],
       "docsLinks": [],
       "sourceLine": 2022
     },
@@ -1651,13 +1342,9 @@
       "code": "import { Buffer } from \"node:buffer\";\n\nconst sizes = [1024, 128 * 1024, 1024 * 1024];\nconst raw = (n) => {\n  const b = Buffer.alloc(n);\n  for (let i = 0; i < n; i++) b[i] = (i * 2654435761) >>> 24;\n  return b;\n};\n\nfor (const enc of [\"hex\", \"base64\", \"base64url\"]) {\n  for (const n of sizes) {\n    const str = raw(n).toString(enc);\n    let sink = 0;\n    for (let i = 0; i < 200; i++) sink += Buffer.from(str, enc).length; // warm up\n    const iters = n >= 1024 * 1024 ? 300 : n >= 128 * 1024 ? 2000 : 100000;\n    const times = [];\n    for (let rep = 0; rep < 5; rep++) {\n      const t0 = performance.now();\n      for (let i = 0; i < iters; i++) sink += Buffer.from(str, enc).length;\n      times.push(((performance.now() - t0) * 1000) / iters);\n    }\n    times.sort((a, b) => a - b);\n    console.log(enc, n / 1024, \"KiB\", times[2].toFixed(2), \"µs/op\");\n  }\n}",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "node:buffer"
-      ],
+      "dependencies": ["node:buffer"],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context"
-      ],
+      "requiresSetup": ["embedding-context"],
       "docsLinks": [],
       "sourceLine": 2192
     },
@@ -1673,9 +1360,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context"
-      ],
+      "requiresSetup": ["embedding-context"],
       "docsLinks": [],
       "sourceLine": 2252
     },
@@ -1707,10 +1392,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "external-bindings",
-        "network-access"
-      ],
+      "requiresSetup": ["external-bindings", "network-access"],
       "docsLinks": [],
       "sourceLine": 2324
     },
@@ -1726,9 +1408,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 2343
     },
@@ -1741,17 +1421,11 @@
       "language": "sh",
       "code": "$ curl -fsSL https://bun.sh/install | bash\n$ uname -sm\nFreeBSD amd64\n$ bun --version\n1.4.0",
       "stability": "stable",
-      "api": [
-        "--version"
-      ],
+      "api": ["--version"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/bundler/esbuild#cli-api"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/bundler/esbuild#cli-api"],
       "sourceLine": 2374
     },
     {
@@ -1763,17 +1437,11 @@
       "language": "sh",
       "code": "PS> powershell -c \"irm bun.sh/install.ps1|iex\"\nPS> $env:PROCESSOR_ARCHITECTURE\nARM64\nPS> bun --version\n1.4.0",
       "stability": "stable",
-      "api": [
-        "--version"
-      ],
+      "api": ["--version"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/bundler/esbuild#cli-api"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/bundler/esbuild#cli-api"],
       "sourceLine": 2386
     },
     {
@@ -1785,17 +1453,11 @@
       "language": "sh",
       "code": "$ ldd --version\nldd (GNU libc) 2.17\n$ bun --version\n1.4.0",
       "stability": "experimental",
-      "api": [
-        "--version"
-      ],
+      "api": ["--version"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/bundler/esbuild#cli-api"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/bundler/esbuild#cli-api"],
       "sourceLine": 2402
     },
     {
@@ -1810,9 +1472,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 2413
     },
@@ -1828,9 +1488,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 2421
     },
@@ -1859,15 +1517,11 @@
       "language": "js",
       "code": "Bun.deepEquals(\n  Temporal.PlainDate.from(\"2020-01-01\"),\n  Temporal.PlainDate.from(\"1999-12-31\"),\n); // false",
       "stability": "stable",
-      "api": [
-        "Bun.deepEquals"
-      ],
+      "api": ["Bun.deepEquals"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/utils#bun-deepequals"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/utils#bun-deepequals"],
       "sourceLine": 2478
     },
     {
@@ -1879,15 +1533,11 @@
       "language": "js",
       "code": "  const str = new CString(ptr);\n- my_library_free(str.ptr);\n+ my_library_free(ptr);",
       "stability": "stable",
-      "api": [
-        "bun:ffi"
-      ],
+      "api": ["bun:ffi"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/ffi#dlopen-usage-bunffi"],
       "sourceLine": 2496
     },
     {
@@ -1899,15 +1549,10 @@
       "language": "toml",
       "code": "  # bunfig.toml: pin the old behavior if you need it\n  [install]\n+ linker = \"hoisted\"",
       "stability": "stable",
-      "api": [
-        "bun install",
-        "bunfig.toml"
-      ],
+      "api": ["bun install", "bunfig.toml"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install",
         "https://bun.com/docs/runtime/bunfig"
@@ -1926,10 +1571,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime",
-        "placeholders"
-      ],
+      "requiresSetup": ["non-javascript-runtime", "placeholders"],
       "docsLinks": [],
       "sourceLine": 2525
     },
@@ -1942,17 +1584,10 @@
       "language": "json",
       "code": "  \"scripts\": {\n-   \"check\": \"node ./check.js\"\n+   \"check\": \"node --env-file=.env ./check.js\"",
       "stability": "stable",
-      "api": [
-        "--env",
-        "--env-file",
-        ".env",
-        ".env files"
-      ],
+      "api": ["--env", "--env-file", ".env", ".env files"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/html-static#build-for-production",
         "https://bun.com/docs/runtime/environment-variables",
@@ -1970,15 +1605,11 @@
       "language": "js",
       "code": "Bun.YAML.parse(\"on: push\");\n// { on: \"push\" }",
       "stability": "stable",
-      "api": [
-        "Bun.YAML"
-      ],
+      "api": ["Bun.YAML"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/yaml#bun-yaml-parse"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/yaml#bun-yaml-parse"],
       "sourceLine": 2546
     },
     {
@@ -1990,16 +1621,10 @@
       "language": "toml",
       "code": "  [install]\n- linker = isolated\n+ linker = \"isolated\"",
       "stability": "stable",
-      "api": [
-        "Bun.TOML",
-        "Bun.TOML.parse",
-        "bunfig.toml"
-      ],
+      "api": ["Bun.TOML", "Bun.TOML.parse", "bunfig.toml"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/runtime/bunfig",
         "https://bun.com/docs/runtime/toml#bun-toml-parse"
@@ -2016,10 +1641,7 @@
       "code": "- import { e } from \".\";\n+ import { e } from \"../lib\";",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        ".",
-        "../lib"
-      ],
+      "dependencies": [".", "../lib"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -2037,9 +1659,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 2588
     },
@@ -2068,15 +1688,11 @@
       "language": "js",
       "code": "  const m = Bun.mmap(\"data.bin\", { offset: 100 });\n- m[0]; // byte 0 of the file\n+ m[0]; // byte 100 of the file",
       "stability": "stable",
-      "api": [
-        "Bun.mmap"
-      ],
+      "api": ["Bun.mmap"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/bun-apis"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/bun-apis"],
       "sourceLine": 2619
     },
     {
@@ -2088,15 +1704,11 @@
       "language": "js",
       "code": "- Bun.cron(\"0 9 * * *\", handler);\n+ Bun.cron(\"0 9 * * *\", handler, { tz: \"UTC\" });",
       "stability": "stable",
-      "api": [
-        "Bun.cron"
-      ],
+      "api": ["Bun.cron"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/cron"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/cron"],
       "sourceLine": 2629
     },
     {
@@ -2108,15 +1720,11 @@
       "language": "js",
       "code": "- await $`echo ${\"**/\"}*`;\n+ await $`echo **/*`;",
       "stability": "stable",
-      "api": [
-        "Bun.$"
-      ],
+      "api": ["Bun.$"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/shell"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/shell"],
       "sourceLine": 2638
     },
     {
@@ -2147,9 +1755,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [],
       "sourceLine": 2656
     },
@@ -2181,9 +1787,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "filesystem-fixtures"
-      ],
+      "requiresSetup": ["filesystem-fixtures"],
       "docsLinks": [],
       "sourceLine": 2691
     },
@@ -2196,15 +1800,11 @@
       "language": "js",
       "code": "  tls.createServer({\n    key,\n    cert,\n    ca,\n-   requestCert: 1,\n-   rejectUnauthorized: null,\n+   requestCert: true,\n+   rejectUnauthorized: false,\n  });",
       "stability": "stable",
-      "api": [
-        "Server"
-      ],
+      "api": ["Server"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server#reference"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server#reference"],
       "sourceLine": 2708
     },
     {
@@ -2216,15 +1816,11 @@
       "language": "js",
       "code": "  // X-Dup: first\n  // X-Dup: second\n  res.headers.get(\"x-dup\");\n- // \"second\"\n+ // \"first, second\"",
       "stability": "stable",
-      "api": [
-        "Bun.serve"
-      ],
+      "api": ["Bun.serve"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 2724
     },
     {
@@ -2255,9 +1851,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 2747
     },
@@ -2270,17 +1864,11 @@
       "language": "js",
       "code": "- Bun.serve({ inspector: true, fetch });\n+ Bun.serve({ fetch });",
       "stability": "stable",
-      "api": [
-        "Bun.serve"
-      ],
+      "api": ["Bun.serve"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "long-running-server"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "requiresSetup": ["long-running-server"],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 2757
     },
     {
@@ -2292,17 +1880,11 @@
       "language": "sh",
       "code": "$ bun --inspect server.ts",
       "stability": "stable",
-      "api": [
-        "Bun.serve"
-      ],
+      "api": ["Bun.serve"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 2762
     },
     {
@@ -2314,17 +1896,11 @@
       "language": "js",
       "code": "- const ws = new WebSocket(url, { agent });          // global\n+ import WebSocket from \"ws\";\n+ const ws = new WebSocket(url, { agent });          // ws module",
       "stability": "stable",
-      "api": [
-        "WebSocket"
-      ],
-      "dependencies": [
-        "ws"
-      ],
+      "api": ["WebSocket"],
+      "dependencies": ["ws"],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/websockets"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/http/websockets"],
       "sourceLine": 2784
     },
     {
@@ -2336,15 +1912,11 @@
       "language": "js",
       "code": "  ws.close();\n- ws.readyState; // 3, CLOSED\n+ ws.readyState; // 2, CLOSING",
       "stability": "stable",
-      "api": [
-        "WebSocket"
-      ],
+      "api": ["WebSocket"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/websockets"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/http/websockets"],
       "sourceLine": 2802
     },
     {
@@ -2375,9 +1947,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [],
       "sourceLine": 2823
     },
@@ -2390,10 +1960,7 @@
       "language": "js",
       "code": "  await sql`INSERT INTO t (dt) VALUES (${new Date(\"2024-06-15T12:00:00Z\")})`;\n  const [{ dt }] = await sql`SELECT dt FROM t`;\n- dt.toISOString(); // \"2024-06-15T16:00:00.000Z\" under TZ=America/New_York\n+ dt.toISOString(); // \"2024-06-15T12:00:00.000Z\"",
       "stability": "stable",
-      "api": [
-        "Bun.sql",
-        "TZ"
-      ],
+      "api": ["Bun.sql", "TZ"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -2412,15 +1979,11 @@
       "language": "js",
       "code": "  const [row] = await sql`SELECT a FROM t`;\n- const a = JSON.parse(row.a);\n+ const a = row.a; // { b: 1 }",
       "stability": "stable",
-      "api": [
-        "Bun.sql"
-      ],
+      "api": ["Bun.sql"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/reference/bun/SQL"
-      ],
+      "docsLinks": ["https://bun.com/reference/bun/SQL"],
       "sourceLine": 2843
     },
     {
@@ -2435,10 +1998,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access",
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["network-access", "non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 2983
     },
@@ -2454,9 +2014,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 2996
     },
@@ -2469,17 +2027,11 @@
       "language": "ts",
       "code": "import config from \"./config.json5\";\n\nconst data = Bun.JSON5.parse(`{\n  // comments work\n  unquoted: 'single quotes',\n  trailing: [1, 2, 3,],\n}`);",
       "stability": "stable",
-      "api": [
-        "Bun.JSON5"
-      ],
-      "dependencies": [
-        "./config.json5"
-      ],
+      "api": ["Bun.JSON5"],
+      "dependencies": ["./config.json5"],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/reference/bun/JSON5"
-      ],
+      "docsLinks": ["https://bun.com/reference/bun/JSON5"],
       "sourceLine": 3006
     },
     {
@@ -2491,15 +2043,11 @@
       "language": "ts",
       "code": "const results = Bun.JSONL.parse('{\"a\":1}\\n{\"b\":2}\\n');\n// [{ a: 1 }, { b: 2 }]\n\nconst chunk = Bun.JSONL.parseChunk('{\"id\":1}\\n{\"id\":2}\\n{\"id\":3');\nchunk.values; // [{ id: 1 }, { id: 2 }]\nchunk.read; // 17\nchunk.done; // false",
       "stability": "stable",
-      "api": [
-        "Bun.JSONL"
-      ],
+      "api": ["Bun.JSONL"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/reference/bun/JSONL"
-      ],
+      "docsLinks": ["https://bun.com/reference/bun/JSONL"],
       "sourceLine": 3020
     },
     {
@@ -2511,15 +2059,11 @@
       "language": "ts",
       "code": "const config = Bun.JSONC.parse(`{\n  // This is a comment\n  \"name\": \"my-app\",\n  \"dependencies\": {\n    \"react\": \"^18.0.0\", // trailing comma allowed\n  },\n}`);",
       "stability": "stable",
-      "api": [
-        "Bun.JSONC"
-      ],
+      "api": ["Bun.JSONC"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/reference/bun/JSONC"
-      ],
+      "docsLinks": ["https://bun.com/reference/bun/JSONC"],
       "sourceLine": 3034
     },
     {
@@ -2531,17 +2075,10 @@
       "language": "ts",
       "code": "import feed from \"./atom.xml\";\n\nBun.XML.parse(`<order id=\"A1\"><item>Tea</item><item>Mug</item><paid/></order>`);\n// { order: { \"@id\": \"A1\", item: [\"Tea\", \"Mug\"], paid: \"\" } }\n\nBun.XML.parse(`<p>Hi <b>you</b></p>`, { compact: false });\n// { name: \"p\", attributes: {}, children: [\"Hi \", { name: \"b\", ... }] }",
       "stability": "stable",
-      "api": [
-        "Bun.XML",
-        "Bun.XML.parse"
-      ],
-      "dependencies": [
-        "./atom.xml"
-      ],
+      "api": ["Bun.XML", "Bun.XML.parse"],
+      "dependencies": ["./atom.xml"],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [
         "https://bun.com/docs/runtime/xml",
         "https://bun.com/reference/bun/XML/parse"
@@ -2557,17 +2094,11 @@
       "language": "ts",
       "code": "const cfg = Bun.TOML.parse(`\nreleased = 2026-08-10T12:00:00Z\n\n[package]\nname = \"app\"\n`);\ncfg.released; // \"2026-08-10T12:00:00Z\"\n\nBun.TOML.stringify({ name: \"app\", deps: { bun: \"1.4.0\" } });\n// name = \"app\"\n//\n// [deps]\n// bun = \"1.4.0\"",
       "stability": "stable",
-      "api": [
-        "Bun.TOML",
-        "Bun.TOML.parse",
-        "Bun.TOML.stringify"
-      ],
+      "api": ["Bun.TOML", "Bun.TOML.parse", "Bun.TOML.stringify"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/toml#bun-toml-parse"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/toml#bun-toml-parse"],
       "sourceLine": 3062
     },
     {
@@ -2579,15 +2110,11 @@
       "language": "ts",
       "code": "const archive = Bun.Archive.from({\n  \"hello.txt\": \"Hello, World!\",\n  \"data.json\": JSON.stringify({ foo: \"bar\" }),\n});\n\nawait Bun.Archive.write(\"archive.tar.gz\", archive, \"gzip\");\n\n// Extract to a directory\nawait archive.extract(\"./out\");",
       "stability": "stable",
-      "api": [
-        "Bun.Archive"
-      ],
+      "api": ["Bun.Archive"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/archive#quickstart"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/archive#quickstart"],
       "sourceLine": 3082
     },
     {
@@ -2599,11 +2126,7 @@
       "language": "ts",
       "code": "const stream = new Blob([data])\n  .stream()\n  .pipeThrough(new CompressionStream(\"gzip\"));\n\nconst compressed = await new Response(stream).arrayBuffer();",
       "stability": "stable",
-      "api": [
-        "Blob",
-        "CompressionStream",
-        "DecompressionStream"
-      ],
+      "api": ["Blob", "CompressionStream", "DecompressionStream"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -2666,13 +2189,9 @@
       "code": "import { generateKeyPairSync, sign, verify } from \"node:crypto\";\n\nconst { publicKey, privateKey } = generateKeyPairSync(\"ml-dsa-65\");\n\nconst sig = sign(undefined, Buffer.from(\"hello\"), privateKey);\nverify(undefined, Buffer.from(\"hello\"), publicKey, sig); // true\n\npublicKey.export({ format: \"jwk\" });\n// { kty: \"AKP\", alg: \"ML-DSA-65\", pub: \"...\" }",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "node:crypto"
-      ],
+      "dependencies": ["node:crypto"],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [],
       "sourceLine": 3159
     },
@@ -2688,9 +2207,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 3175
     },
@@ -2703,16 +2220,11 @@
       "language": "ts",
       "code": "process.on(\"memoryPressure\", (level: \"warning\" | \"critical\") => {\n  cache.clear();\n});",
       "stability": "stable",
-      "api": [
-        "memoryPressure",
-        "process.on(\"memoryPressure\")"
-      ],
+      "api": ["memoryPressure", "process.on(\"memoryPressure\")"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/blog/bun-v1.4#process-on-memorypressure"
-      ],
+      "docsLinks": ["https://bun.com/blog/bun-v1.4#process-on-memorypressure"],
       "sourceLine": 3188
     },
     {
@@ -2724,15 +2236,11 @@
       "language": "ts",
       "code": "// slice-ansi replacement\nBun.sliceAnsi(\"\\x1b[31mhello\\x1b[39m\", 1, 4); // \"\\x1b[31mell\\x1b[39m\"\n\n// cli-truncate replacement\nBun.sliceAnsi(\"unicorn\", 0, 4, \"…\"); // \"uni…\"\nBun.sliceAnsi(\"unicorn\", -4, undefined, \"…\"); // \"…orn\"",
       "stability": "stable",
-      "api": [
-        "Bun.sliceAnsi"
-      ],
+      "api": ["Bun.sliceAnsi"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/reference/bun/sliceAnsi"
-      ],
+      "docsLinks": ["https://bun.com/reference/bun/sliceAnsi"],
       "sourceLine": 3200
     },
     {
@@ -2744,15 +2252,11 @@
       "language": "ts",
       "code": "const wrapped = Bun.wrapAnsi(\"\\x1b[31mThe quick brown fox\\x1b[39m\", 10);\nconsole.log(wrapped);\n// \\x1b[31mThe quick\\x1b[39m\n// \\x1b[31mbrown fox\\x1b[39m",
       "stability": "stable",
-      "api": [
-        "Bun.wrapAnsi"
-      ],
+      "api": ["Bun.wrapAnsi"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/utils#bun-wrapansi"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/utils#bun-wrapansi"],
       "sourceLine": 3213
     },
     {
@@ -2764,15 +2268,11 @@
       "language": "ts",
       "code": "Bun.stringWidth(\"hello\"); // 5\nBun.stringWidth(\"\\x1b[31mhello\\x1b[0m\"); // 5  (ANSI color)\nBun.stringWidth(\"\\x1b[5A\"); // 0  (cursor movement)\nBun.stringWidth(\"👨‍👩‍👧\"); // 2  (ZWJ sequence, one grapheme)\nBun.stringWidth(\"🇺🇸\"); // 2  (regional indicator pair)\nBun.stringWidth(\"\\x1b]8;;https://bun.sh\\x07Bun\\x1b]8;;\\x07\"); // 3 (terminal hyperlink)",
       "stability": "stable",
-      "api": [
-        "Bun.stringWidth"
-      ],
+      "api": ["Bun.stringWidth"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/utils#bun-stringwidth"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/utils#bun-stringwidth"],
       "sourceLine": 3224
     },
     {
@@ -2784,17 +2284,11 @@
       "language": "ts",
       "code": "import { mkdirSync, writeFileSync } from \"node:fs\";\n\nconst dir = \"/sys/fs/cgroup/build-jobs\";\nmkdirSync(dir, { recursive: true });\nwriteFileSync(`${dir}/memory.max`, String(2 * 1024 ** 3));\n\nconst proc = Bun.spawn({ cmd: [\"make\", \"-j8\"], cgroup: dir });",
       "stability": "stable",
-      "api": [
-        "Bun.spawn"
-      ],
-      "dependencies": [
-        "node:fs"
-      ],
+      "api": ["Bun.spawn"],
+      "dependencies": ["node:fs"],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/child-process"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/child-process"],
       "sourceLine": 3245
     },
     {
@@ -2822,16 +2316,10 @@
       "language": "sh",
       "code": "$ bun --cpu-prof ./app.ts\n# Writes CPU.20260615.120000.12345.0.001.cpuprofile\n\n$ bun --cpu-prof-md ./app.ts",
       "stability": "stable",
-      "api": [
-        "--cpu",
-        "--cpu-prof",
-        "--cpu-prof-md"
-      ],
+      "api": ["--cpu", "--cpu-prof", "--cpu-prof-md"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/install#cpu-and-os-flags",
         "https://bun.com/docs/project/benchmarking#cpu-profiling",
@@ -2848,16 +2336,10 @@
       "language": "sh",
       "code": "# V8-compatible heap snapshot (opens in Chrome DevTools)\n$ bun --heap-prof script.js\n\n# Markdown heap profile for CLI analysis\n$ bun --heap-prof-md script.js",
       "stability": "stable",
-      "api": [
-        "--heap-prof",
-        "--heap-prof-md",
-        "Markdown"
-      ],
+      "api": ["--heap-prof", "--heap-prof-md", "Markdown"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/project/benchmarking#heap-profiling",
         "https://bun.com/docs/runtime/markdown"
@@ -2873,15 +2355,10 @@
       "language": "sh",
       "code": "$ bun --no-env-file server.ts",
       "stability": "stable",
-      "api": [
-        "--no-env-file",
-        "env"
-      ],
+      "api": ["--no-env-file", "env"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/runtime/bunfig#env",
         "https://bun.com/docs/runtime/environment-variables#disabling-automatic-env-loading"
@@ -2897,16 +2374,10 @@
       "language": "toml",
       "code": "# bunfig.toml\nenv = false",
       "stability": "stable",
-      "api": [
-        "--no-env-file",
-        "bunfig.toml",
-        "env"
-      ],
+      "api": ["--no-env-file", "bunfig.toml", "env"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/runtime/bunfig",
         "https://bun.com/docs/runtime/bunfig#env",
@@ -2923,14 +2394,10 @@
       "language": "sh",
       "code": "$ bun --no-orphans run dev",
       "stability": "stable",
-      "api": [
-        "--no-orphans"
-      ],
+      "api": ["--no-orphans"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies"
       ],
@@ -2945,15 +2412,11 @@
       "language": "ts",
       "code": "new WebSocket(\"wss://example.com\", { proxy: \"http://user:pass@proxy:8080\" });\n\nnew WebSocket(\"ws+unix:///tmp/app.sock:/api/stream?x=1\");",
       "stability": "stable",
-      "api": [
-        "WebSocket"
-      ],
+      "api": ["WebSocket"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/websockets"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/http/websockets"],
       "sourceLine": 3343
     },
     {
@@ -2965,11 +2428,7 @@
       "language": "ts",
       "code": "await crypto.subtle.digest(\"SHA3-256\", new TextEncoder().encode(\"hello\"));\n\nconst bits = await crypto.subtle.deriveBits(\n  { name: \"X25519\", public: bobPublicKey },\n  alicePrivateKey,\n  256,\n);",
       "stability": "stable",
-      "api": [
-        "SHA-3",
-        "SHA3",
-        "SHA3-256"
-      ],
+      "api": ["SHA-3", "SHA3", "SHA3-256"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -2987,15 +2446,11 @@
       "language": "ts",
       "code": "const s3 = new Bun.S3Client({\n  bucket: \"hl-mainnet-evm-blocks\",\n  requestPayer: true,\n});\nconst data = await s3.file(\"0/0/1.rmp.lz4\").arrayBuffer();",
       "stability": "stable",
-      "api": [
-        "S3Client"
-      ],
+      "api": ["S3Client"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/s3#bun-s3client-bun-s3"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/s3#bun-s3client-bun-s3"],
       "sourceLine": 3387
     },
     {
@@ -3007,10 +2462,7 @@
       "language": "ts",
       "code": "const sql = new Bun.SQL({ prepare: false });\nawait sql`SELECT 1`; // now safe behind PgBouncer transaction pooling",
       "stability": "stable",
-      "api": [
-        "Bun.sql",
-        "SQL"
-      ],
+      "api": ["Bun.sql", "SQL"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -3032,9 +2484,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 3437
     },
@@ -3047,19 +2497,11 @@
       "language": "ts",
       "code": "import { test, onTestFinished } from \"bun:test\";\n\ntest(\"uses a temp resource\", () => {\n  const handle = open();\n  onTestFinished(() => handle.close());\n  // ...\n});",
       "stability": "stable",
-      "api": [
-        "bun:test"
-      ],
-      "dependencies": [
-        "bun:test"
-      ],
+      "api": ["bun:test"],
+      "dependencies": ["bun:test"],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/test/index#run-tests"
-      ],
+      "requiresSetup": ["placeholders"],
+      "docsLinks": ["https://bun.com/docs/test/index#run-tests"],
       "sourceLine": 3468
     },
     {
@@ -3071,17 +2513,11 @@
       "language": "sh",
       "code": "$ bun test --only-failures\n\ntest/example.test.ts:\n(fail) failing test\nerror: expect(received).toBe(expected)\n\nExpected: 3\nReceived: 2\n\n5 pass\n1 skip\n1 fail\nRan 7 tests across 1 file.",
       "stability": "stable",
-      "api": [
-        "bun test"
-      ],
+      "api": ["bun test"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/test"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/test"],
       "sourceLine": 3482
     },
     {
@@ -3093,16 +2529,10 @@
       "language": "sh",
       "code": "$ bun build --compile ./app.ts --outfile=app\n$ chmod 111 ./app\n$ ./app   # works, no read permission needed",
       "stability": "stable",
-      "api": [
-        "--outfile",
-        "bun build",
-        "bun build --compile"
-      ],
+      "api": ["--outfile", "bun build", "bun build --compile"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/bundler/bytecode#with-standalone-executables",
         "https://bun.com/docs/bundler/executables",
@@ -3122,9 +2552,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [],
       "sourceLine": 3542
     },
@@ -3138,9 +2566,7 @@
       "code": "import http from \"node:http\";\n\nconst agent = new http.Agent({ keepAlive: true, maxSockets: 4 });\n\nconst req = http.request({ host: \"example.com\", agent }, (res) => {\n  res.on(\"data\", (chunk) => process.stdout.write(chunk));\n});\nreq.on(\"information\", (info) => console.log(\"1xx:\", info.statusCode));\nreq.end();",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "node:http"
-      ],
+      "dependencies": ["node:http"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3156,9 +2582,7 @@
       "code": "import http from \"node:http\";\n\nconst server = http.createServer((req, res) => res.end(\"ok\"));\nserver.headersTimeout = 10_000; // 408 if headers not complete in 10s\nserver.requestTimeout = 30_000; // 408 if request not complete in 30s\nserver.keepAliveTimeout = 5_000; // close idle keep-alive sockets after 5s\nserver.listen(3000);",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "node:http"
-      ],
+      "dependencies": ["node:http"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3174,9 +2598,7 @@
       "code": "import http2 from \"node:http2\";\n\nconst server = http2.createSecureServer({ key, cert });\nserver.on(\"stream\", (stream, headers) => {\n  stream.pushStream({ \":path\": \"/app.css\" }, (err, push) => {\n    push.respondWithFile(\"./public/app.css\", { \"content-type\": \"text/css\" });\n  });\n  stream.respond({ \":status\": 200, \"content-type\": \"text/html\" });\n  stream.end(\"<link rel=stylesheet href=/app.css>\");\n});",
       "stability": "unknown",
       "api": [],
-      "dependencies": [
-        "node:http2"
-      ],
+      "dependencies": ["node:http2"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3191,18 +2613,10 @@
       "language": "js",
       "code": "import tls from \"node:tls\";\nimport { appendFileSync } from \"node:fs\";\n\nconst socket = tls.connect(443, \"example.com\", { servername: \"example.com\" });\nsocket.on(\"keylog\", (line) => appendFileSync(\"keys.log\", line)); // for Wireshark decryption\nsocket.on(\"session\", (session) => {\n  // Session ticket for TLS resumption\n});",
       "stability": "stable",
-      "api": [
-        "node:tls",
-        "TLS"
-      ],
-      "dependencies": [
-        "node:fs",
-        "node:tls"
-      ],
+      "api": ["node:tls", "TLS"],
+      "dependencies": ["node:fs", "node:tls"],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [
         "https://bun.com/docs/runtime/http/tls",
         "https://bun.com/reference/node/tls/getCACertificates"
@@ -3218,14 +2632,8 @@
       "language": "js",
       "code": "import { Worker, SHARE_ENV } from \"node:worker_threads\";\n\nconst w = new Worker(\"./worker.js\", {\n  env: SHARE_ENV, // live, write-through process.env\n  stdout: true, // captured stdio\n});\nw.stdout.pipe(process.stdout);\n\nconst stats = await w.getHeapStatistics();",
       "stability": "stable",
-      "api": [
-        "new Worker",
-        "process.env",
-        "worker_threads"
-      ],
-      "dependencies": [
-        "node:worker_threads"
-      ],
+      "api": ["new Worker", "process.env", "worker_threads"],
+      "dependencies": ["node:worker_threads"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -3244,12 +2652,8 @@
       "language": "js",
       "code": "import { watch } from \"node:fs/promises\";\n\nconst ac = new AbortController();\nfor await (const { eventType, filename } of watch(\"./src\", {\n  recursive: true,\n  ignore: (path) => path.includes(\"node_modules\"),\n  signal: ac.signal,\n})) {\n  console.log(eventType, filename);\n}",
       "stability": "stable",
-      "api": [
-        "AbortController"
-      ],
-      "dependencies": [
-        "node:fs/promises"
-      ],
+      "api": ["AbortController"],
+      "dependencies": ["node:fs/promises"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -3267,10 +2671,7 @@
       "code": "// bun --experimental-stream-iter app.js\nimport { map, filter } from \"node:stream/iter\";\nimport { createReadStream } from \"node:fs\";\n\nconst lines = createReadStream(\"access.log\", \"utf8\");\nfor await (const hit of filter(\n  map(lines, (l) => l.trim()),\n  (l) => l.includes(\"POST\"),\n)) {\n  console.log(hit);\n}",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:fs",
-        "node:stream/iter"
-      ],
+      "dependencies": ["node:fs", "node:stream/iter"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3285,11 +2686,7 @@
       "language": "js",
       "code": "const now = new Date();\nprocess.env.TZ = \"America/Los_Angeles\";\nconsole.log(now.toString()); // existing Date reflects the new timezone\n\nprocess.env.PORT = 3000;\nconsole.log(process.env.PORT); // \"3000\" (coerced to string)",
       "stability": "experimental",
-      "api": [
-        "process.env",
-        "timezone",
-        "TZ"
-      ],
+      "api": ["process.env", "timezone", "TZ"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -3310,9 +2707,7 @@
       "code": "import { AsyncLocalStorage } from \"node:async_hooks\";\n\nconst requestId = new AsyncLocalStorage({\n  name: \"requestId\",\n  defaultValue: \"-\",\n});\n\n{\n  using scope = requestId.withScope(crypto.randomUUID());\n  console.log(requestId.getStore()); // the UUID\n}\nconsole.log(requestId.getStore()); // \"-\"",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:async_hooks"
-      ],
+      "dependencies": ["node:async_hooks"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3328,9 +2723,7 @@
       "code": "import vm from \"node:vm\";\n\nconst ctx = vm.createContext({ console }, { microtaskMode: \"afterEvaluate\" });\nconst mod = new vm.SourceTextModule(\n  `export const n = await Promise.resolve(42);`,\n  { context: ctx },\n);\nawait mod.linkRequests(() => {});\nmod.instantiate();\nawait mod.evaluate();\nconsole.log(mod.namespace.n); // 42",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:vm"
-      ],
+      "dependencies": ["node:vm"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3346,11 +2739,7 @@
       "code": "import cluster from \"node:cluster\";\nimport http from \"node:http\";\nimport { availableParallelism } from \"node:os\";\n\nif (cluster.isPrimary) {\n  for (let i = 0; i < availableParallelism(); i++) cluster.fork();\n} else {\n  http\n    .createServer((req, res) => res.end(`hello from ${process.pid}`))\n    .listen(3000);\n}",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:cluster",
-        "node:http",
-        "node:os"
-      ],
+      "dependencies": ["node:cluster", "node:http", "node:os"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3365,14 +2754,10 @@
       "language": "sh",
       "code": "$ bun --bun vitest run --coverage\n % Coverage report from v8\n-----------|---------|----------|---------|---------|-------------------\nFile       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s\n-----------|---------|----------|---------|---------|-------------------\nAll files  |   87.43 |    76.19 |   88.88 |   87.43 |",
       "stability": "experimental",
-      "api": [
-        "--coverage"
-      ],
+      "api": ["--coverage"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/test/code-coverage#enabling-coverage"
       ],
@@ -3388,13 +2773,9 @@
       "code": "import inspector from \"node:inspector\";\n\ninspector.open(9229, \"127.0.0.1\");\nconsole.log(inspector.url()); // ws://127.0.0.1:9229/...\ninspector.waitForDebugger(); // blocks until DevTools attaches",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:inspector"
-      ],
+      "dependencies": ["node:inspector"],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [],
       "sourceLine": 3799
     },
@@ -3408,9 +2789,7 @@
       "code": "import { test } from \"node:test\";\n\ntest(\"parent\", async (t) => {\n  t.plan(2);\n  await t.test(\"a\", () => {});\n  await t.test(\"b\", () => {});\n});\n\ntest(\"timers\", (t) => {\n  t.mock.timers.enable({ apis: [\"setTimeout\", \"Date\"] });\n  let fired = false;\n  setTimeout(() => (fired = true), 1000);\n  t.mock.timers.tick(1000);\n  t.assert.strictEqual(fired, true);\n});",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:test"
-      ],
+      "dependencies": ["node:test"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3426,9 +2805,7 @@
       "code": "import { run } from \"node:test\";\n\nconst stream = run({ files: [\"./a.test.js\", \"./b.test.js\"] });\nstream.on(\"test:fail\", ({ name, details }) =>\n  console.error(name, details.error.message),\n);",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:test"
-      ],
+      "dependencies": ["node:test"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3444,9 +2821,7 @@
       "code": "import { listen } from \"node:quic\";\n\nconst endpoint = await listen(\n  (session) => {\n    session.onstream = (stream) => stream.closed.catch(() => {});\n  },\n  {\n    sni: { \"*\": { keys: [key], certs: [cert] } },\n    onheaders() {\n      this.sendHeaders({ \":status\": \"200\" });\n      this.writer.endSync();\n    },\n  },\n);",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:quic"
-      ],
+      "dependencies": ["node:quic"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3462,9 +2837,7 @@
       "code": "import { DatabaseSync } from \"node:sqlite\";\n\nconst db = new DatabaseSync(\":memory:\");\ndb.exec(`CREATE TABLE data(key INTEGER PRIMARY KEY, value TEXT) STRICT`);\n\nconst insert = db.prepare(\"INSERT INTO data (key, value) VALUES (?, ?)\");\ninsert.run(1, \"hello\");\ninsert.run(2, \"world\");\n\nconsole.log(db.prepare(\"SELECT * FROM data ORDER BY key\").all());\n// [ { key: 1, value: 'hello' }, { key: 2, value: 'world' } ]",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:sqlite"
-      ],
+      "dependencies": ["node:sqlite"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3482,10 +2855,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access",
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["network-access", "non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 3922
     },
@@ -3501,9 +2871,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 3933
     },
@@ -3517,9 +2885,7 @@
       "code": "import domain from \"node:domain\";\n\nconst d = domain.create();\nd.on(\"error\", (err) => console.error(\"caught by domain:\", err.message));\nd.run(() => {\n  setTimeout(() => {\n    throw new Error(\"boom\");\n  }, 10);\n});",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:domain"
-      ],
+      "dependencies": ["node:domain"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3567,9 +2933,7 @@
       "code": "import { spawnSync } from \"node:child_process\";\n\n// as root:\nspawnSync(\"id\", { uid: 65534, gid: 65534 });\n// child reports uid=65534 gid=65534, supplementary groups dropped",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "node:child_process"
-      ],
+      "dependencies": ["node:child_process"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [],
@@ -3587,9 +2951,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 3992
     },
@@ -3603,13 +2965,9 @@
       "code": "import { time } from \"@datadog/pprof\";\n\ntime.start({ intervalMicros: 1000 });\n// ... code to profile ...\nconst profile = await time.stop(); // pprof-format profile",
       "stability": "experimental",
       "api": [],
-      "dependencies": [
-        "@datadog/pprof"
-      ],
+      "dependencies": ["@datadog/pprof"],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [],
       "sourceLine": 4000
     },
@@ -3622,14 +2980,8 @@
       "language": "js",
       "code": "import { Worker } from \"node:worker_threads\";\n\nconst w = new Worker(\"./heavy.js\");\nconst code = await w.terminate(); // resolves 1 for a running worker\n// the thread and its nested workers are gone",
       "stability": "experimental",
-      "api": [
-        "new Worker",
-        "worker_threads",
-        "worker.terminate"
-      ],
-      "dependencies": [
-        "node:worker_threads"
-      ],
+      "api": ["new Worker", "worker_threads", "worker.terminate"],
+      "dependencies": ["node:worker_threads"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -3648,17 +3000,11 @@
       "language": "json",
       "code": "  {\n+   \"lockfileVersion\": 2,\n+   \"configVersion\": 1,\n    \"workspaces\": {",
       "stability": "experimental",
-      "api": [
-        "configVersion"
-      ],
+      "api": ["configVersion"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/pm/isolated-installs"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/pm/isolated-installs"],
       "sourceLine": 4086
     },
     {
@@ -3673,9 +3019,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 4097
     },
@@ -3688,16 +3032,10 @@
       "language": "sh",
       "code": "bun update --recursive --latest\nbun update --filter 'pkg-*' --filter '!pkg-c'",
       "stability": "experimental",
-      "api": [
-        "--filter",
-        "--latest",
-        "bun update"
-      ],
+      "api": ["--filter", "--latest", "bun update"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/docs/pm/cli/update",
         "https://bun.com/docs/pm/cli/update#latest",
@@ -3730,18 +3068,11 @@
       "language": "ts",
       "code": "const suspending = new WebAssembly.Suspending(async (url) => {\n  const res = await fetch(url);\n  return res.arrayBuffer();\n});\n\nconst { instance } = await WebAssembly.instantiate(module, {\n  env: { fetch: suspending },\n});\nawait WebAssembly.promising(instance.exports.run)();",
       "stability": "experimental",
-      "api": [
-        "env"
-      ],
+      "api": ["env"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context",
-        "network-access"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/bunfig#env"
-      ],
+      "requiresSetup": ["embedding-context", "network-access"],
+      "docsLinks": ["https://bun.com/docs/runtime/bunfig#env"],
       "sourceLine": 4182
     }
   ],
@@ -3817,12 +3148,8 @@
         "sourceLine": 12,
         "endLine": 12,
         "directive": "iframe",
-        "sourceUrls": [
-          "https://www.youtube.com/embed/i38DgEuaJwM"
-        ],
-        "assetIds": [
-          "bun-1.4-youtube-overview"
-        ],
+        "sourceUrls": ["https://www.youtube.com/embed/i38DgEuaJwM"],
+        "assetIds": ["bun-1.4-youtube-overview"],
         "metadata": {
           "allow": "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
           "frameborder": "0",
@@ -3998,12 +3325,8 @@
         "sourceLine": 54,
         "endLine": 54,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/node-test-suite-progress.png"
-        ],
-        "assetIds": [
-          "bun-1.4-node-test-suite-progress"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/node-test-suite-progress.png"],
+        "assetIds": ["bun-1.4-node-test-suite-progress"],
         "metadata": {
           "alt": "Chart of Node.js test suite files passing in Bun, from 1,450 at v1.2.0 to 3,743 in v1.4.0",
           "src": "/images/blog/bun-1.4/node-test-suite-progress.png"
@@ -4040,9 +3363,7 @@
         "id": "bun-1.4.0-heading-306d6a1b",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-af4e1821",
-        "childIds": [
-          "bun-1.4.0-paragraph-f6f97eb3"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-f6f97eb3"],
         "sourceLine": 62,
         "endLine": 65,
         "depth": 3,
@@ -4062,9 +3383,7 @@
         "id": "bun-1.4.0-heading-0090bd60",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-af4e1821",
-        "childIds": [
-          "bun-1.4.0-paragraph-4e886e22"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-4e886e22"],
         "sourceLine": 66,
         "endLine": 69,
         "depth": 3,
@@ -4084,9 +3403,7 @@
         "id": "bun-1.4.0-heading-b359fc45",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-af4e1821",
-        "childIds": [
-          "bun-1.4.0-paragraph-4c28f74b"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-4c28f74b"],
         "sourceLine": 70,
         "endLine": 73,
         "depth": 3,
@@ -4106,9 +3423,7 @@
         "id": "bun-1.4.0-heading-51cf7ad6",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-af4e1821",
-        "childIds": [
-          "bun-1.4.0-paragraph-408fa092"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-408fa092"],
         "sourceLine": 74,
         "endLine": 77,
         "depth": 3,
@@ -4128,9 +3443,7 @@
         "id": "bun-1.4.0-heading-4c3c8253",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-af4e1821",
-        "childIds": [
-          "bun-1.4.0-paragraph-13330c42"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-13330c42"],
         "sourceLine": 78,
         "endLine": 81,
         "depth": 3,
@@ -4455,12 +3768,8 @@
         "sourceLine": 117,
         "endLine": 117,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/cpu-usage-cc.jpeg"
-        ],
-        "assetIds": [
-          "bun-1.4-cpu-usage-cc"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/cpu-usage-cc.jpeg"],
+        "assetIds": ["bun-1.4-cpu-usage-cc"],
         "metadata": {
           "alt": "Claude Code production CPU usage before and after Bun 1.4: p99 24% to 10%, p50 5.8% to 2.5%",
           "src": "/images/blog/bun-1.4/tweets/cpu-usage-cc.jpeg"
@@ -4483,12 +3792,8 @@
         "sourceLine": 121,
         "endLine": 121,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/idle-cpu.png"
-        ],
-        "assetIds": [
-          "bun-1.4-idle-cpu"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/idle-cpu.png"],
+        "assetIds": ["bun-1.4-idle-cpu"],
         "metadata": {
           "alt": "Idle CPU usage of a hello world server, Bun 1.3 vs Bun 1.4: 5x lower",
           "src": "/images/blog/bun-1.4/tweets/idle-cpu.png"
@@ -4554,12 +3859,8 @@
         "sourceLine": 143,
         "endLine": 143,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/nextjs-ssr-fetch-leak.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-nextjs-ssr-fetch-leak"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/nextjs-ssr-fetch-leak.jpg"],
+        "assetIds": ["bun-1.4-nextjs-ssr-fetch-leak"],
         "metadata": {
           "alt": "Memory over 4,000 Next.js App Router SSR pages: Bun 1.4 settles at 238 MB, Node at 410 MB, Bun 1.3 grows without bound",
           "caption": "Next.js App Router SSR, 4,000 pages: Bun 1.4 settles at 238 MB, under Node's 410 MB.",
@@ -5449,9 +4750,7 @@
         "id": "bun-1.4.0-heading-834e20aa",
         "type": "heading",
         "parentId": "bun-1.4.0-document-0b032dd2",
-        "childIds": [
-          "bun-1.4.0-paragraph-3b9bec3d"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-3b9bec3d"],
         "sourceLine": 1101,
         "endLine": 1104,
         "depth": 2,
@@ -6004,12 +5303,8 @@
         "sourceLine": 1291,
         "endLine": 1291,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/ffi-3x.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-ffi-3x"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/ffi-3x.jpg"],
+        "assetIds": ["bun-1.4-ffi-3x"],
         "metadata": {
           "alt": "bun:ffi gets up to 3x faster",
           "caption": "bun:ffi gets up to 3x faster",
@@ -6452,9 +5747,7 @@
         "id": "bun-1.4.0-heading-62bd462e",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-8e9b97fc",
-        "childIds": [
-          "bun-1.4.0-paragraph-6b15eb7c"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-6b15eb7c"],
         "sourceLine": 1419,
         "endLine": 1422,
         "depth": 3,
@@ -6474,9 +5767,7 @@
         "id": "bun-1.4.0-heading-90e1fafd",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-8e9b97fc",
-        "childIds": [
-          "bun-1.4.0-paragraph-f8d0855a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-f8d0855a"],
         "sourceLine": 1423,
         "endLine": 1426,
         "depth": 3,
@@ -6927,10 +6218,7 @@
           "/images/blog/bun-1.4/tweets/bun-audit-fix.mp4",
           "/images/blog/bun-1.4/tweets/bun-audit-fix-poster.jpg"
         ],
-        "assetIds": [
-          "bun-1.4-bun-audit-fix",
-          "bun-1.4-bun-audit-fix-poster"
-        ],
+        "assetIds": ["bun-1.4-bun-audit-fix", "bun-1.4-bun-audit-fix-poster"],
         "metadata": {
           "height": "1200",
           "label": "bun audit fix updating vulnerable dependencies",
@@ -6997,10 +6285,7 @@
           "/images/blog/bun-1.4/tweets/bun-dedupe.mp4",
           "/images/blog/bun-1.4/tweets/bun-dedupe-poster.jpg"
         ],
-        "assetIds": [
-          "bun-1.4-bun-dedupe",
-          "bun-1.4-bun-dedupe-poster"
-        ],
+        "assetIds": ["bun-1.4-bun-dedupe", "bun-1.4-bun-dedupe-poster"],
         "metadata": {
           "height": "1200",
           "label": "bun dedupe deduplicating semver-compatible resolved package versions",
@@ -7080,10 +6365,7 @@
           "/images/blog/bun-1.4/tweets/bun-prune.mp4",
           "/images/blog/bun-1.4/tweets/bun-prune-poster.jpg"
         ],
-        "assetIds": [
-          "bun-1.4-bun-prune",
-          "bun-1.4-bun-prune-poster"
-        ],
+        "assetIds": ["bun-1.4-bun-prune", "bun-1.4-bun-prune-poster"],
         "metadata": {
           "height": "900",
           "label": "bun prune cleaning unnecessary folders from node_modules",
@@ -7877,12 +7159,8 @@
         "sourceLine": 1729,
         "endLine": 1729,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/test-timings.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-test-timings"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/test-timings.jpg"],
+        "assetIds": ["bun-1.4-test-timings"],
         "metadata": {
           "alt": "bun test --timings and --parallel --shard using longest-processing-time-first scheduling",
           "caption": "`bun test --timings` records how long each test file takes; `bun test --parallel --shard=i/N` uses timings to split CI shards via longest-processing-time-first scheduling, making large test suites run faster",
@@ -8133,12 +7411,8 @@
         "sourceLine": 1809,
         "endLine": 1809,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/react-compiler.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-react-compiler"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/react-compiler.jpg"],
+        "assetIds": ["bun-1.4-react-compiler"],
         "metadata": {
           "alt": "bun build --react-compiler is 19x faster than the Babel plugin on a large React codebase",
           "caption": "`bun build --react-compiler` runs the React Compiler in Rust. On a large React codebase, it's 19x faster than the Babel plugin",
@@ -8511,9 +7785,7 @@
         "id": "bun-1.4.0-heading-90d6fddf",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-a048642d",
-        "childIds": [
-          "bun-1.4.0-paragraph-2844a048"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-2844a048"],
         "sourceLine": 1930,
         "endLine": 1933,
         "depth": 3,
@@ -8533,9 +7805,7 @@
         "id": "bun-1.4.0-heading-02cea530",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-a048642d",
-        "childIds": [
-          "bun-1.4.0-paragraph-eea399d5"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-eea399d5"],
         "sourceLine": 1934,
         "endLine": 1937,
         "depth": 3,
@@ -8877,12 +8147,8 @@
         "sourceLine": 2225,
         "endLine": 2225,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/sourcemap-decoding.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-sourcemap-decoding"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/sourcemap-decoding.jpg"],
+        "assetIds": ["bun-1.4-sourcemap-decoding"],
         "metadata": {
           "alt": "new SourceMap(payload) decoding is up to 3x faster",
           "caption": "`new SourceMap(payload)` & sourcemap decoding gets up to 3x faster",
@@ -9091,9 +8357,7 @@
         "id": "bun-1.4.0-heading-60a01804",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-c2e26519",
-        "childIds": [
-          "bun-1.4.0-paragraph-4b329531"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-4b329531"],
         "sourceLine": 2351,
         "endLine": 2354,
         "depth": 3,
@@ -9113,9 +8377,7 @@
         "id": "bun-1.4.0-heading-2501a6a0",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-c2e26519",
-        "childIds": [
-          "bun-1.4.0-paragraph-3955065a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-3955065a"],
         "sourceLine": 2355,
         "endLine": 2358,
         "depth": 3,
@@ -9135,9 +8397,7 @@
         "id": "bun-1.4.0-heading-766f2678",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-c2e26519",
-        "childIds": [
-          "bun-1.4.0-paragraph-394b1648"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-394b1648"],
         "sourceLine": 2359,
         "endLine": 2362,
         "depth": 3,
@@ -9157,9 +8417,7 @@
         "id": "bun-1.4.0-heading-76ba508f",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-c2e26519",
-        "childIds": [
-          "bun-1.4.0-paragraph-2c66131a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-2c66131a"],
         "sourceLine": 2363,
         "endLine": 2366,
         "depth": 3,
@@ -9269,9 +8527,7 @@
         "id": "bun-1.4.0-heading-0a637f61",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-e5c77fd2",
-        "childIds": [
-          "bun-1.4.0-paragraph-f0d5059d"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-f0d5059d"],
         "sourceLine": 2393,
         "endLine": 2396,
         "depth": 3,
@@ -9423,12 +8679,8 @@
         "sourceLine": 2432,
         "endLine": 2432,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/windows-timers.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-windows-timers"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/windows-timers.jpg"],
+        "assetIds": ["bun-1.4-windows-timers"],
         "metadata": {
           "alt": "Improved timer accuracy on Windows makes Bun.sleep faster",
           "caption": "Improved timer accuracy on Windows makes `Bun.sleep` faster",
@@ -9697,9 +8949,7 @@
         "id": "bun-1.4.0-heading-f092fd7f",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-5261f2e5"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-5261f2e5"],
         "sourceLine": 2469,
         "endLine": 2472,
         "depth": 3,
@@ -9847,9 +9097,7 @@
         "id": "bun-1.4.0-heading-2fece9c2",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-21ec92a6"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-21ec92a6"],
         "sourceLine": 2501,
         "endLine": 2504,
         "depth": 3,
@@ -10124,9 +9372,7 @@
         "id": "bun-1.4.0-heading-f4541746",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-d7a52046"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-d7a52046"],
         "sourceLine": 2566,
         "endLine": 2569,
         "depth": 3,
@@ -10181,9 +9427,7 @@
         "id": "bun-1.4.0-heading-8a047475",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-9a514bca"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-9a514bca"],
         "sourceLine": 2579,
         "endLine": 2582,
         "depth": 3,
@@ -10595,9 +9839,7 @@
         "id": "bun-1.4.0-heading-630bcc02",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-398f716d"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-398f716d"],
         "sourceLine": 2682,
         "endLine": 2685,
         "depth": 3,
@@ -10980,9 +10222,7 @@
         "id": "bun-1.4.0-heading-680801f7",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-eceaa9a9"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-eceaa9a9"],
         "sourceLine": 2775,
         "endLine": 2778,
         "depth": 3,
@@ -11037,9 +10277,7 @@
         "id": "bun-1.4.0-heading-fe77af86",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-15a73ccc"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-15a73ccc"],
         "sourceLine": 2789,
         "endLine": 2792,
         "depth": 3,
@@ -11059,9 +10297,7 @@
         "id": "bun-1.4.0-heading-8a06b0fd",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-89efb245",
-        "childIds": [
-          "bun-1.4.0-paragraph-b14d5573"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-b14d5573"],
         "sourceLine": 2793,
         "endLine": 2796,
         "depth": 3,
@@ -12564,9 +11800,7 @@
         "id": "bun-1.4.0-heading-cfb3458c",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-6fd6021c"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-6fd6021c"],
         "sourceLine": 2961,
         "endLine": 2964,
         "depth": 4,
@@ -13283,12 +12517,8 @@
         "sourceLine": 3193,
         "endLine": 3193,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/memory-pressure.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-memory-pressure"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/memory-pressure.jpg"],
+        "assetIds": ["bun-1.4-memory-pressure"],
         "metadata": {
           "alt": "process 'memoryPressure' event",
           "caption": "`process` emits a 'memoryPressure' event when the system runs low on memory (thanks @codebytere!)",
@@ -13441,12 +12671,8 @@
         "sourceLine": 3238,
         "endLine": 3238,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/stringwidth-cjk.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-stringwidth-cjk"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/stringwidth-cjk.jpg"],
+        "assetIds": ["bun-1.4-stringwidth-cjk"],
         "metadata": {
           "alt": "Bun.stringWidth() is 7-56x faster on Chinese, Japanese, and Korean characters",
           "caption": "Bun.stringWidth() 处理中文、日文、韩文字符的速度提升了 7~56 倍 Bun.stringWidth() が中国語・日本語・韓国語の文字で 7〜56 倍高速化されました Bun.stringWidth()가 중국어·일본어·한국어 문자에서 7~56배 빨라졌습니다",
@@ -13513,10 +12739,7 @@
           "/images/blog/bun-1.4/tweets/spawn-cgroup.mp4",
           "/images/blog/bun-1.4/tweets/spawn-cgroup-poster.jpg"
         ],
-        "assetIds": [
-          "bun-1.4-spawn-cgroup",
-          "bun-1.4-spawn-cgroup-poster"
-        ],
+        "assetIds": ["bun-1.4-spawn-cgroup", "bun-1.4-spawn-cgroup-poster"],
         "metadata": {
           "height": "1080",
           "label": "The cgroup option in Bun.spawn limiting cpu and memory usage of a spawned process on Linux",
@@ -13615,12 +12838,8 @@
         "sourceLine": 3280,
         "endLine": 3280,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/cpu-prof-devtools.png"
-        ],
-        "assetIds": [
-          "bun-1.4-cpu-prof-devtools"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/cpu-prof-devtools.png"],
+        "assetIds": ["bun-1.4-cpu-prof-devtools"],
         "metadata": {
           "alt": "Chrome DevTools Performance panel showing a bun --cpu-prof profile with the Call tree expanded: render > escapeHtml at 42.3% self time, tokenize at 14.9%.",
           "caption": "A `bun --cpu-prof` profile opened in Chrome DevTools.",
@@ -13763,12 +12982,8 @@
         "sourceLine": 3317,
         "endLine": 3317,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/no-orphans.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-no-orphans"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/no-orphans.jpg"],
+        "assetIds": ["bun-1.4-no-orphans"],
         "metadata": {
           "alt": "bun --no-orphans terminating lingering child processes on exit",
           "caption": "`bun --no-orphans <file|script>` recursively terminates lingering processes on exit",
@@ -13781,9 +12996,7 @@
         "id": "bun-1.4.0-heading-efc77d56",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-94b2a683"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-94b2a683"],
         "sourceLine": 3319,
         "endLine": 3322,
         "depth": 4,
@@ -13912,12 +13125,8 @@
         "sourceLine": 3336,
         "endLine": 3336,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/yaml-cyclic-anchors.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-yaml-cyclic-anchors"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/yaml-cyclic-anchors.jpg"],
+        "assetIds": ["bun-1.4-yaml-cyclic-anchors"],
         "metadata": {
           "alt": "Bun.YAML.parse supports cyclic anchors and aliases",
           "caption": "`Bun.YAML.parse` supports cyclic anchors & aliases",
@@ -13965,9 +13174,7 @@
         "id": "bun-1.4.0-heading-697db8e8",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-cdd45f50"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-cdd45f50"],
         "sourceLine": 3348,
         "endLine": 3351,
         "depth": 4,
@@ -14022,9 +13229,7 @@
         "id": "bun-1.4.0-heading-7d9d6b23",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-62b74826"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-62b74826"],
         "sourceLine": 3366,
         "endLine": 3369,
         "depth": 4,
@@ -14044,9 +13249,7 @@
         "id": "bun-1.4.0-heading-3015da2e",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-21646da0"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-21646da0"],
         "sourceLine": 3370,
         "endLine": 3373,
         "depth": 4,
@@ -14066,9 +13269,7 @@
         "id": "bun-1.4.0-heading-95c4e821",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-4420ebe7"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-4420ebe7"],
         "sourceLine": 3374,
         "endLine": 3377,
         "depth": 4,
@@ -14088,9 +13289,7 @@
         "id": "bun-1.4.0-heading-02b6c9e5",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-d671c5a5"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-d671c5a5"],
         "sourceLine": 3378,
         "endLine": 3381,
         "depth": 4,
@@ -14274,9 +13473,7 @@
         "id": "bun-1.4.0-heading-bce9c6f0",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-3d68df55"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-3d68df55"],
         "sourceLine": 3414,
         "endLine": 3417,
         "depth": 4,
@@ -14296,9 +13493,7 @@
         "id": "bun-1.4.0-heading-c898b46b",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-feba025c"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-feba025c"],
         "sourceLine": 3418,
         "endLine": 3421,
         "depth": 4,
@@ -14318,9 +13513,7 @@
         "id": "bun-1.4.0-heading-a12e6499",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-f33e5202"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-f33e5202"],
         "sourceLine": 3422,
         "endLine": 3425,
         "depth": 4,
@@ -14340,9 +13533,7 @@
         "id": "bun-1.4.0-heading-52788c65",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-b5333d9a",
-        "childIds": [
-          "bun-1.4.0-paragraph-09a3c922"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-09a3c922"],
         "sourceLine": 3426,
         "endLine": 3429,
         "depth": 4,
@@ -14414,9 +13605,7 @@
         "id": "bun-1.4.0-heading-b086de0c",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-8f0299d7",
-        "childIds": [
-          "bun-1.4.0-paragraph-1900ed3c"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-1900ed3c"],
         "sourceLine": 3445,
         "endLine": 3448,
         "depth": 4,
@@ -14436,9 +13625,7 @@
         "id": "bun-1.4.0-heading-b7f509d5",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-8f0299d7",
-        "childIds": [
-          "bun-1.4.0-paragraph-c1d00e2f"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-c1d00e2f"],
         "sourceLine": 3449,
         "endLine": 3452,
         "depth": 4,
@@ -14458,9 +13645,7 @@
         "id": "bun-1.4.0-heading-df3e5d57",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-8f0299d7",
-        "childIds": [
-          "bun-1.4.0-paragraph-b7c52a92"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-b7c52a92"],
         "sourceLine": 3453,
         "endLine": 3456,
         "depth": 4,
@@ -14480,9 +13665,7 @@
         "id": "bun-1.4.0-heading-8c264d54",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-8f0299d7",
-        "childIds": [
-          "bun-1.4.0-paragraph-aaebe5bb"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-aaebe5bb"],
         "sourceLine": 3457,
         "endLine": 3460,
         "depth": 4,
@@ -14592,9 +13775,7 @@
         "id": "bun-1.4.0-heading-dc6d7ae5",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-6b6fb6d1",
-        "childIds": [
-          "bun-1.4.0-paragraph-39f6b84a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-39f6b84a"],
         "sourceLine": 3497,
         "endLine": 3500,
         "depth": 4,
@@ -14614,9 +13795,7 @@
         "id": "bun-1.4.0-heading-9a4abe1a",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-6b6fb6d1",
-        "childIds": [
-          "bun-1.4.0-paragraph-6b7c0e4a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-6b7c0e4a"],
         "sourceLine": 3501,
         "endLine": 3504,
         "depth": 4,
@@ -14636,9 +13815,7 @@
         "id": "bun-1.4.0-heading-1d352c02",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-6b6fb6d1",
-        "childIds": [
-          "bun-1.4.0-paragraph-99d50c55"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-99d50c55"],
         "sourceLine": 3505,
         "endLine": 3508,
         "depth": 4,
@@ -14658,9 +13835,7 @@
         "id": "bun-1.4.0-heading-056ab059",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-6b6fb6d1",
-        "childIds": [
-          "bun-1.4.0-paragraph-834c07e2"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-834c07e2"],
         "sourceLine": 3509,
         "endLine": 3512,
         "depth": 4,
@@ -14680,9 +13855,7 @@
         "id": "bun-1.4.0-heading-19445c88",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-6b6fb6d1",
-        "childIds": [
-          "bun-1.4.0-paragraph-a4b6555f"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-a4b6555f"],
         "sourceLine": 3513,
         "endLine": 3516,
         "depth": 4,
@@ -14702,9 +13875,7 @@
         "id": "bun-1.4.0-heading-c119e6da",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-6b6fb6d1",
-        "childIds": [
-          "bun-1.4.0-paragraph-df00d173"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-df00d173"],
         "sourceLine": 3517,
         "endLine": 3520,
         "depth": 4,
@@ -14779,9 +13950,7 @@
         "id": "bun-1.4.0-heading-ae30751b",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-0e186f1a",
-        "childIds": [
-          "bun-1.4.0-paragraph-1b196c0a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-1b196c0a"],
         "sourceLine": 3533,
         "endLine": 3536,
         "depth": 4,
@@ -14836,9 +14005,7 @@
         "id": "bun-1.4.0-heading-7854ef5e",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-0e186f1a",
-        "childIds": [
-          "bun-1.4.0-paragraph-9e5a080f"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-9e5a080f"],
         "sourceLine": 3554,
         "endLine": 3557,
         "depth": 4,
@@ -14858,9 +14025,7 @@
         "id": "bun-1.4.0-heading-52ae1c90",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-0e186f1a",
-        "childIds": [
-          "bun-1.4.0-paragraph-38c7379b"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-38c7379b"],
         "sourceLine": 3558,
         "endLine": 3561,
         "depth": 4,
@@ -14938,9 +14103,7 @@
         "id": "bun-1.4.0-heading-6a1c7ff2",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-0e186f1a",
-        "childIds": [
-          "bun-1.4.0-paragraph-251803c3"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-251803c3"],
         "sourceLine": 3570,
         "endLine": 3573,
         "depth": 4,
@@ -14960,9 +14123,7 @@
         "id": "bun-1.4.0-heading-c4bb1d78",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-0e186f1a",
-        "childIds": [
-          "bun-1.4.0-paragraph-17033ce8"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-17033ce8"],
         "sourceLine": 3574,
         "endLine": 3577,
         "depth": 4,
@@ -16099,12 +15260,8 @@
         "sourceLine": 3911,
         "endLine": 3911,
         "directive": "image",
-        "sourceUrls": [
-          "/images/blog/bun-1.4/tweets/node-sqlite.jpg"
-        ],
-        "assetIds": [
-          "bun-1.4-node-sqlite"
-        ],
+        "sourceUrls": ["/images/blog/bun-1.4/tweets/node-sqlite.jpg"],
+        "assetIds": ["bun-1.4-node-sqlite"],
         "metadata": {
           "alt": "node:sqlite is fully implemented and passes 100% of Node.js's test suite",
           "caption": "node:sqlite is fully implemented and passes 100% of Node.js’ test suite",
@@ -16495,9 +15652,7 @@
         "id": "bun-1.4.0-heading-3de46cd5",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-7c896416"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-7c896416"],
         "sourceLine": 4023,
         "endLine": 4026,
         "depth": 4,
@@ -16517,9 +15672,7 @@
         "id": "bun-1.4.0-heading-0bd5b922",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-76fb5394"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-76fb5394"],
         "sourceLine": 4027,
         "endLine": 4030,
         "depth": 4,
@@ -16539,9 +15692,7 @@
         "id": "bun-1.4.0-heading-f304d806",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-8bf5f8a5"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-8bf5f8a5"],
         "sourceLine": 4031,
         "endLine": 4034,
         "depth": 4,
@@ -16561,9 +15712,7 @@
         "id": "bun-1.4.0-heading-da00c52e",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-5c1259a9"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-5c1259a9"],
         "sourceLine": 4035,
         "endLine": 4038,
         "depth": 4,
@@ -16583,9 +15732,7 @@
         "id": "bun-1.4.0-heading-fdefb7a0",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-811f3a22"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-811f3a22"],
         "sourceLine": 4039,
         "endLine": 4042,
         "depth": 4,
@@ -16605,9 +15752,7 @@
         "id": "bun-1.4.0-heading-2d5a097f",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-eee0ade4"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-eee0ade4"],
         "sourceLine": 4043,
         "endLine": 4046,
         "depth": 4,
@@ -16627,9 +15772,7 @@
         "id": "bun-1.4.0-heading-5a15444d",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-0e6bb605"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-0e6bb605"],
         "sourceLine": 4047,
         "endLine": 4050,
         "depth": 4,
@@ -16649,9 +15792,7 @@
         "id": "bun-1.4.0-heading-9d79d20a",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-3a903056"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-3a903056"],
         "sourceLine": 4051,
         "endLine": 4054,
         "depth": 4,
@@ -16671,9 +15812,7 @@
         "id": "bun-1.4.0-heading-db8ca321",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-34c0e811"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-34c0e811"],
         "sourceLine": 4055,
         "endLine": 4058,
         "depth": 4,
@@ -16693,9 +15832,7 @@
         "id": "bun-1.4.0-heading-2d3467fb",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-a3d9a594"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-a3d9a594"],
         "sourceLine": 4059,
         "endLine": 4062,
         "depth": 4,
@@ -16715,9 +15852,7 @@
         "id": "bun-1.4.0-heading-34c5d84e",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-56411a13"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-56411a13"],
         "sourceLine": 4063,
         "endLine": 4066,
         "depth": 4,
@@ -16737,9 +15872,7 @@
         "id": "bun-1.4.0-heading-4c630c5a",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5779b467",
-        "childIds": [
-          "bun-1.4.0-paragraph-dcd5f5e0"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-dcd5f5e0"],
         "sourceLine": 4067,
         "endLine": 4070,
         "depth": 4,
@@ -16898,9 +16031,7 @@
         "id": "bun-1.4.0-heading-019960a1",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-7aab9feb"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-7aab9feb"],
         "sourceLine": 4102,
         "endLine": 4105,
         "depth": 4,
@@ -16955,9 +16086,7 @@
         "id": "bun-1.4.0-heading-533da7b2",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-7491747a"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-7491747a"],
         "sourceLine": 4115,
         "endLine": 4118,
         "depth": 4,
@@ -16977,9 +16106,7 @@
         "id": "bun-1.4.0-heading-3fe07f81",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-0d69e853"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-0d69e853"],
         "sourceLine": 4119,
         "endLine": 4122,
         "depth": 4,
@@ -16999,9 +16126,7 @@
         "id": "bun-1.4.0-heading-fa1049de",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-ac73faff"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-ac73faff"],
         "sourceLine": 4123,
         "endLine": 4126,
         "depth": 4,
@@ -17021,9 +16146,7 @@
         "id": "bun-1.4.0-heading-2f7ac7a8",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-d05f6295"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-d05f6295"],
         "sourceLine": 4127,
         "endLine": 4130,
         "depth": 4,
@@ -17043,9 +16166,7 @@
         "id": "bun-1.4.0-heading-38200559",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-ebf5bb48"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-ebf5bb48"],
         "sourceLine": 4131,
         "endLine": 4134,
         "depth": 4,
@@ -17065,9 +16186,7 @@
         "id": "bun-1.4.0-heading-3b8ee1fc",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-9a16d16d"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-9a16d16d"],
         "sourceLine": 4135,
         "endLine": 4138,
         "depth": 4,
@@ -17087,9 +16206,7 @@
         "id": "bun-1.4.0-heading-986db34a",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-f4f0f576"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-f4f0f576"],
         "sourceLine": 4139,
         "endLine": 4142,
         "depth": 4,
@@ -17109,9 +16226,7 @@
         "id": "bun-1.4.0-heading-c8465b79",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-75dced6b"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-75dced6b"],
         "sourceLine": 4143,
         "endLine": 4146,
         "depth": 4,
@@ -17131,9 +16246,7 @@
         "id": "bun-1.4.0-heading-81cd7925",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-d5062dfb"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-d5062dfb"],
         "sourceLine": 4147,
         "endLine": 4150,
         "depth": 4,
@@ -17153,9 +16266,7 @@
         "id": "bun-1.4.0-heading-796efdc0",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-2c338859",
-        "childIds": [
-          "bun-1.4.0-paragraph-e7881955"
-        ],
+        "childIds": ["bun-1.4.0-paragraph-e7881955"],
         "sourceLine": 4151,
         "endLine": 4154,
         "depth": 4,
@@ -28794,9 +27905,7 @@
         "id": "bun-1.4.0-heading-8e0f4139",
         "type": "heading",
         "parentId": "bun-1.4.0-heading-5f599297",
-        "childIds": [
-          "bun-1.4.0-listitem-8e574f2d"
-        ],
+        "childIds": ["bun-1.4.0-listitem-8e574f2d"],
         "sourceLine": 5275,
         "endLine": 5278,
         "depth": 3,

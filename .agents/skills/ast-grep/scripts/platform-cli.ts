@@ -7,7 +7,7 @@
  *   bun scripts/platform-cli.ts resolve cross-linux-x64
  */
 
-import { resolve } from "node:path";
+import { resolve } from 'node:path';
 import {
   CPU_VALUES,
   OS_VALUES,
@@ -17,31 +17,31 @@ import {
   resolveInstallProfile,
   resolveScanPlatform,
   type PlatformTarget,
-} from "./scan/transpiler/platform-matcher.ts";
+} from './scan/transpiler/platform-matcher.ts';
 
-const SKILL_ROOT = resolve(import.meta.dir, "..");
+const SKILL_ROOT = resolve(import.meta.dir, '..');
 
 function parseArgs(argv: string[]): Record<string, string | boolean> {
-  const out: Record<string, string | boolean> = { action: "list" };
-  if (argv[0] === "check") {
-    out.action = "check";
-    out.cpu = argv[1] ?? "";
-    out.os = argv[2] ?? "";
+  const out: Record<string, string | boolean> = { action: 'list' };
+  if (argv[0] === 'check') {
+    out.action = 'check';
+    out.cpu = argv[1] ?? '';
+    out.os = argv[2] ?? '';
     for (const a of argv.slice(3)) {
-      if (a === "--json") out.json = true;
+      if (a === '--json') out.json = true;
     }
     return out;
   }
-  if (argv[0] === "resolve") {
-    out.action = "resolve";
-    out.profile = argv[1] ?? "";
+  if (argv[0] === 'resolve') {
+    out.action = 'resolve';
+    out.profile = argv[1] ?? '';
     for (const a of argv.slice(2)) {
-      if (a === "--json") out.json = true;
+      if (a === '--json') out.json = true;
     }
     return out;
   }
   for (const a of argv) {
-    if (a === "--json") out.json = true;
+    if (a === '--json') out.json = true;
   }
   return out;
 }
@@ -50,17 +50,17 @@ async function listPlatform(opts: Record<string, string | boolean>): Promise<voi
   const host = PlatformMatcher.detectHost();
   const envTarget = PlatformMatcher.fromEnv();
   const profiles = await loadInstallProfiles(SKILL_ROOT);
-  const crossProfiles = profiles.filter((p) => p.target);
+  const crossProfiles = profiles.filter(p => p.target);
 
   const payload = {
-    layer: "5",
-    command: "platform",
+    layer: '5',
+    command: 'platform',
     docs: PLATFORM_DOCS,
     host,
     envTarget,
     cpuValues: CPU_VALUES,
     osValues: OS_VALUES,
-    installProfiles: crossProfiles.map((p) => ({
+    installProfiles: crossProfiles.map(p => ({
       name: p.name,
       description: p.description,
       target: p.target,
@@ -73,37 +73,39 @@ async function listPlatform(opts: Record<string, string | boolean>): Promise<voi
     return;
   }
 
-  console.log(`host: ${host.cpu}/${host.os} (${host.rawArch} · ${host.rawPlatform} ${host.release})`);
+  console.log(
+    `host: ${host.cpu}/${host.os} (${host.rawArch} · ${host.rawPlatform} ${host.release})`
+  );
   console.log(`bun: ${host.bunVersion}`);
   if (envTarget) console.log(`env target: ${envTarget.cpu}/${envTarget.os}`);
-  console.log(`\ncpu: ${CPU_VALUES.join(", ")}`);
-  console.log(`os: ${OS_VALUES.join(", ")}`);
-  console.log("\n[cross-target install profiles]");
+  console.log(`\ncpu: ${CPU_VALUES.join(', ')}`);
+  console.log(`os: ${OS_VALUES.join(', ')}`);
+  console.log('\n[cross-target install profiles]');
   for (const p of crossProfiles) {
     const t = p.target!;
-    console.log(`  ${p.name}: ${t.cpu}/${t.os} — bun install ${p.args.join(" ")}`);
+    console.log(`  ${p.name}: ${t.cpu}/${t.os} — bun install ${p.args.join(' ')}`);
   }
-  console.log("\nrun: bun scripts/platform-cli.ts check x64 linux");
+  console.log('\nrun: bun scripts/platform-cli.ts check x64 linux');
 }
 
 async function checkPlatform(opts: Record<string, string | boolean>): Promise<number> {
-  const cpu = String(opts.cpu ?? "");
-  const osName = String(opts.os ?? "");
+  const cpu = String(opts.cpu ?? '');
+  const osName = String(opts.os ?? '');
   if (!cpu || !osName) {
-    console.error("Usage: bun scripts/platform-cli.ts check <cpu> <os> [--json]");
+    console.error('Usage: bun scripts/platform-cli.ts check <cpu> <os> [--json]');
     return 1;
   }
 
   const normalized: PlatformTarget = {
-    cpu: PlatformMatcher.normalizeCpu(cpu) ?? cpu as PlatformTarget["cpu"],
-    os: PlatformMatcher.normalizeOs(osName) ?? osName as PlatformTarget["os"],
+    cpu: PlatformMatcher.normalizeCpu(cpu) ?? (cpu as PlatformTarget['cpu']),
+    os: PlatformMatcher.normalizeOs(osName) ?? (osName as PlatformTarget['os']),
   };
   const valid = PlatformMatcher.isValidTarget(normalized);
   const ctx = resolveScanPlatform({ cliTarget: valid ? normalized : null });
 
   const payload = {
-    layer: "5",
-    command: "platform check",
+    layer: '5',
+    command: 'platform check',
     valid,
     requested: { cpu, os: osName },
     target: normalized,
@@ -118,21 +120,23 @@ async function checkPlatform(opts: Record<string, string | boolean>): Promise<nu
   }
 
   if (!valid) {
-    console.error(`invalid target ${cpu}/${osName} — cpu: ${CPU_VALUES.join("|")} os: ${OS_VALUES.join("|")}`);
+    console.error(
+      `invalid target ${cpu}/${osName} — cpu: ${CPU_VALUES.join('|')} os: ${OS_VALUES.join('|')}`
+    );
     return 1;
   }
 
-  const status = ctx.crossTarget ? "CROSS-TARGET" : "NATIVE";
+  const status = ctx.crossTarget ? 'CROSS-TARGET' : 'NATIVE';
   console.log(`${normalized.cpu}/${normalized.os} — ${status}`);
   console.log(`  host: ${ctx.host.cpu}/${ctx.host.os}`);
-  console.log(`  install: bun install ${ctx.installArgs.join(" ")}`);
+  console.log(`  install: bun install ${ctx.installArgs.join(' ')}`);
   return 0;
 }
 
 async function resolveProfile(opts: Record<string, string | boolean>): Promise<number> {
-  const name = String(opts.profile ?? "");
+  const name = String(opts.profile ?? '');
   if (!name) {
-    console.error("Usage: bun scripts/platform-cli.ts resolve <install-profile> [--json]");
+    console.error('Usage: bun scripts/platform-cli.ts resolve <install-profile> [--json]');
     return 1;
   }
 
@@ -144,8 +148,8 @@ async function resolveProfile(opts: Record<string, string | boolean>): Promise<n
 
   const ctx = resolveScanPlatform({ installProfile: spec });
   const payload = {
-    layer: "5",
-    command: "platform resolve",
+    layer: '5',
+    command: 'platform resolve',
     profile: spec.name,
     description: spec.description,
     args: spec.args,
@@ -159,28 +163,30 @@ async function resolveProfile(opts: Record<string, string | boolean>): Promise<n
     return 0;
   }
 
-  console.log(`${spec.name}: ${spec.description ?? ""}`);
-  console.log(`  bun install ${spec.args.join(" ")}`);
+  console.log(`${spec.name}: ${spec.description ?? ''}`);
+  console.log(`  bun install ${spec.args.join(' ')}`);
   if (spec.target) {
-    console.log(`  target: ${spec.target.cpu}/${spec.target.os} (${ctx.crossTarget ? "cross" : "native"})`);
+    console.log(
+      `  target: ${spec.target.cpu}/${spec.target.os} (${ctx.crossTarget ? 'cross' : 'native'})`
+    );
   }
   return 0;
 }
 
 async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
-  if (opts.action === "check") {
+  if (opts.action === 'check') {
     process.exit(await checkPlatform(opts));
     return;
   }
-  if (opts.action === "resolve") {
+  if (opts.action === 'resolve') {
     process.exit(await resolveProfile(opts));
     return;
   }
   await listPlatform(opts);
 }
 
-main().catch((e) => {
+main().catch(e => {
   console.error(e);
   process.exit(1);
 });

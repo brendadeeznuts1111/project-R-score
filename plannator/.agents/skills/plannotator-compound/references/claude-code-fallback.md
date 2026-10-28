@@ -1,9 +1,11 @@
 # Claude Code Fallback
 
-Read this file only when the user does **not** have a usable Plannotator archive.
+Read this file only when the user does **not** have a usable Plannotator
+archive.
 
 This is the secondary path for ordinary Claude Code users whose denial history
-exists in `~/.claude/projects/` rather than the Plannotator plans directory (`$PLANNOTATOR_DATA_DIR/plans/` or `~/.plannotator/plans/`).
+exists in `~/.claude/projects/` rather than the Plannotator plans directory
+(`$PLANNOTATOR_DATA_DIR/plans/` or `~/.plannotator/plans/`).
 
 The goal is the same as the main skill:
 
@@ -19,8 +21,9 @@ Use the bundled parser at:
 
 Resolve that script path relative to this skill directory before running it.
 
-This script normalizes `ExitPlanMode` outcomes from Claude Code JSONL transcripts
-and emits clean JSON parts containing only human-authored denial reasons by default.
+This script normalizes `ExitPlanMode` outcomes from Claude Code JSONL
+transcripts and emits clean JSON parts containing only human-authored denial
+reasons by default.
 
 Do **not** read raw `~/.claude/projects/**/*.jsonl` directly unless:
 
@@ -57,7 +60,8 @@ Expected output:
 - part files:
   `/tmp/compound-planning/claude-code-human-reasons/claude-code-human-reasons.part-XXXX-of-XXXX.json`
 
-The script prints how many records were detected and how many JSON part files were emitted.
+The script prints how many records were detected and how many JSON part files
+were emitted.
 
 ## What To Read First
 
@@ -75,7 +79,8 @@ Use the part files only after you understand the overall dataset shape.
 
 ## Inventory In Fallback Mode
 
-In Claude Code fallback mode, report this dataset instead of the Plannotator file counts:
+In Claude Code fallback mode, report this dataset instead of the Plannotator
+file counts:
 
 - human denial reasons found
 - total `ExitPlanMode` attempts scanned
@@ -101,16 +106,17 @@ Do **not** fabricate Plannotator-only inventory fields in fallback mode:
 - no `*.diff.md` counts
 - no approved-plan line-count analysis
 
-If the user asks for those specifically, state that Claude Code log fallback mode
-does not contain those artifacts.
+If the user asks for those specifically, state that Claude Code log fallback
+mode does not contain those artifacts.
 
 ### Previous Report Detection In Fallback Mode
 
-Previous report detection still applies. Check the user's home directory or
-the Plannotator plans directory (`${PLANNOTATOR_DATA_DIR:-~/.plannotator}/plans/`) for existing `compound-planning-report*.html` files. If
-found, offer the same incremental vs full choice as Plannotator mode. In
-incremental mode, filter the parser output by timestamp rather than by filename
-date — use the `timestamp` field in each JSON record.
+Previous report detection still applies. Check the user's home directory or the
+Plannotator plans directory (`${PLANNOTATOR_DATA_DIR:-~/.plannotator}/plans/`)
+for existing `compound-planning-report*.html` files. If found, offer the same
+incremental vs full choice as Plannotator mode. In incremental mode, filter the
+parser output by timestamp rather than by filename date — use the `timestamp`
+field in each JSON record.
 
 If no previous report exists, use the first-report naming convention
 (`compound-planning-report.html`). Otherwise use the next version number.
@@ -121,15 +127,18 @@ Treat the emitted JSON part files as the clean source dataset.
 
 ### Batching
 
-- **Small datasets (< 200 records):** read the part files directly without extra agents
-- **Medium datasets (200-800 records):** split by part file or time range into 2-4 agents
-- **Large datasets (800+ records):** split by part file groups or balanced time ranges
+- **Small datasets (< 200 records):** read the part files directly without extra
+  agents
+- **Medium datasets (200-800 records):** split by part file or time range into
+  2-4 agents
+- **Large datasets (800+ records):** split by part file groups or balanced time
+  ranges
 
-All extraction agents should use `model: "haiku"` — they're doing straightforward
-file reading and structured extraction, not reasoning.
+All extraction agents should use `model: "haiku"` — they're doing
+straightforward file reading and structured extraction, not reasoning.
 
-Each extraction agent should read every record in its assigned part files and write
-clean markdown output to:
+Each extraction agent should read every record in its assigned part files and
+write clean markdown output to:
 
 ```text
 /tmp/compound-planning/extraction-{batch-name}.md
@@ -137,7 +146,8 @@ clean markdown output to:
 
 ### Extraction Prompt For Claude Code Denial Records
 
-Use this prompt for each fallback extraction batch (adapt the part files and output path):
+Use this prompt for each fallback extraction batch (adapt the part files and
+output path):
 
 ```text
 You are extracting structured data from Claude Code ExitPlanMode denial records.
@@ -214,8 +224,8 @@ Use the same template and the same section order as the main skill.
 
 In fallback mode:
 
-- explicitly state in the header/meta that the source is Claude Code `ExitPlanMode`
-  denial reasons
+- explicitly state in the header/meta that the source is Claude Code
+  `ExitPlanMode` denial reasons
 - keep the same narrative-first editorial style
 - keep the same 7 major sections
 - use real denial-reason counts, dates, phrases, and percentages only
@@ -239,15 +249,18 @@ denial reasons rather than Plannotator markdown archives.
 
 ### Important Limitation To State
 
-If `human_reasons_total < total denials`, mention in the narrative or footer note
-that some denials in the transcript did not contain recoverable human-authored
-feedback and therefore could not contribute to the pattern analysis.
+If `human_reasons_total < total denials`, mention in the narrative or footer
+note that some denials in the transcript did not contain recoverable
+human-authored feedback and therefore could not contribute to the pattern
+analysis.
 
 ### Versioned Report Naming
 
 Versioned naming (`v2`, `v3`, etc.) applies to fallback mode too. Save reports
-to the Plannotator plans directory (`${PLANNOTATOR_DATA_DIR:-~/.plannotator}/plans/`, create the directory if it doesn't exist) so that
-all compound planning reports live in the same location regardless of data source.
+to the Plannotator plans directory
+(`${PLANNOTATOR_DATA_DIR:-~/.plannotator}/plans/`, create the directory if it
+doesn't exist) so that all compound planning reports live in the same location
+regardless of data source.
 
 ## Summary In Fallback Mode
 
@@ -279,4 +292,5 @@ python3 [RESOLVED SKILL PATH]/scripts/extract_exit_plan_mode_outcomes.py \
   --show-samples 0
 ```
 
-Do not use this audit-mode output for the normal report unless the user asks for it.
+Do not use this audit-mode output for the normal report unless the user asks for
+it.

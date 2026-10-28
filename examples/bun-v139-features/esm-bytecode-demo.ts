@@ -8,10 +8,10 @@
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 
-console.info("📦 Bun v1.3.9: ESM Bytecode Compilation Demo\n");
-console.info("=" .repeat(70));
+console.info('📦 Bun v1.3.9: ESM Bytecode Compilation Demo\n');
+console.info('='.repeat(70));
 
-const demoDir = `${Bun.env.TMPDIR ?? "/tmp"}/bun-esm-bytecode-demo-${Date.now()}`;
+const demoDir = `${Bun.env.TMPDIR ?? '/tmp'}/bun-esm-bytecode-demo-${Date.now()}`;
 
 // Example ESM CLI source code
 const cliSource = `#!/usr/bin/env bun
@@ -110,15 +110,16 @@ await main();
 
 // Package.json for the demo
 const packageJson = {
-  name: "esm-bytecode-demo",
-  version: "1.0.0",
-  type: "module",  // ESM mode
+  name: 'esm-bytecode-demo',
+  version: '1.0.0',
+  type: 'module', // ESM mode
   scripts: {
-    "build:esm": "bun build --compile --bytecode --format=esm ./cli.ts --outfile ./dist/cli-esm",
-    "build:cjs": "bun build --compile --bytecode --format=cjs ./cli.ts --outfile ./dist/cli-cjs",
-    "build:smol": "bun build --compile --bytecode --format=esm --minify --sourcemap ./cli.ts --outfile ./dist/cli-smol",
-    "run:esm": "./dist/cli-esm greet 'ESM World'",
-    "run:cjs": "./dist/cli-cjs greet 'CJS World'",
+    'build:esm': 'bun build --compile --bytecode --format=esm ./cli.ts --outfile ./dist/cli-esm',
+    'build:cjs': 'bun build --compile --bytecode --format=cjs ./cli.ts --outfile ./dist/cli-cjs',
+    'build:smol':
+      'bun build --compile --bytecode --format=esm --minify --sourcemap ./cli.ts --outfile ./dist/cli-smol',
+    'run:esm': "./dist/cli-esm greet 'ESM World'",
+    'run:cjs': "./dist/cli-cjs greet 'CJS World'",
   },
 };
 
@@ -133,15 +134,24 @@ async function cleanup() {
 }
 
 async function buildESM() {
-  console.info("\n📦 Building ESM Bytecode Binary");
-  console.info("Command: bun build --compile --bytecode --format=esm ./cli.ts");
-  console.info("-".repeat(70));
+  console.info('\n📦 Building ESM Bytecode Binary');
+  console.info('Command: bun build --compile --bytecode --format=esm ./cli.ts');
+  console.info('-'.repeat(70));
 
   const proc = Bun.spawn({
-    cmd: ["bun", "build", "--compile", "--bytecode", "--format=esm", "./cli.ts", "--outfile", "./dist/cli-esm"],
+    cmd: [
+      'bun',
+      'build',
+      '--compile',
+      '--bytecode',
+      '--format=esm',
+      './cli.ts',
+      '--outfile',
+      './dist/cli-esm',
+    ],
     cwd: demoDir,
-    stdout: "inherit",
-    stderr: "inherit",
+    stdout: 'inherit',
+    stderr: 'inherit',
   });
 
   const exitCode = await proc.exited;
@@ -149,15 +159,24 @@ async function buildESM() {
 }
 
 async function buildCJS() {
-  console.info("\n📦 Building CJS Bytecode Binary (for comparison)");
-  console.info("Command: bun build --compile --bytecode --format=cjs ./cli.ts");
-  console.info("-".repeat(70));
+  console.info('\n📦 Building CJS Bytecode Binary (for comparison)');
+  console.info('Command: bun build --compile --bytecode --format=cjs ./cli.ts');
+  console.info('-'.repeat(70));
 
   const proc = Bun.spawn({
-    cmd: ["bun", "build", "--compile", "--bytecode", "--format=cjs", "./cli.ts", "--outfile", "./dist/cli-cjs"],
+    cmd: [
+      'bun',
+      'build',
+      '--compile',
+      '--bytecode',
+      '--format=cjs',
+      './cli.ts',
+      '--outfile',
+      './dist/cli-cjs',
+    ],
     cwd: demoDir,
-    stdout: "inherit",
-    stderr: "inherit",
+    stdout: 'inherit',
+    stderr: 'inherit',
   });
 
   const exitCode = await proc.exited;
@@ -167,23 +186,23 @@ async function buildCJS() {
 async function runBinary(binary: string, args: string[]) {
   const binaryPath = `${demoDir}/dist/${binary}`;
 
-  console.info(`\n▶️ Running: ./dist/${binary} ${args.join(" ")}`);
-  console.info("-".repeat(70));
+  console.info(`\n▶️ Running: ./dist/${binary} ${args.join(' ')}`);
+  console.info('-'.repeat(70));
 
   const proc = Bun.spawn({
     cmd: [binaryPath, ...args],
     cwd: demoDir,
-    stdout: "inherit",
-    stderr: "inherit",
+    stdout: 'inherit',
+    stderr: 'inherit',
   });
 
   return await proc.exited;
 }
 
 async function compareBinaries() {
-  console.info("\n" + "=".repeat(70));
-  console.info("📊 Binary Comparison");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('📊 Binary Comparison');
+  console.info('='.repeat(70));
 
   const esmFile = Bun.file(`${demoDir}/dist/cli-esm`);
   const cjsFile = Bun.file(`${demoDir}/dist/cli-cjs`);
@@ -191,15 +210,19 @@ async function compareBinaries() {
   const esmExists = await esmFile.exists();
   const cjsExists = await cjsFile.exists();
 
-  console.info("\nBinary files:");
-  console.info(`  ESM: ${esmExists ? `${(await esmFile.size()).toLocaleString()} bytes` : "Not found"}`);
-  console.info(`  CJS: ${cjsExists ? `${(await cjsFile.size()).toLocaleString()} bytes` : "Not found"}`);
+  console.info('\nBinary files:');
+  console.info(
+    `  ESM: ${esmExists ? `${(await esmFile.size()).toLocaleString()} bytes` : 'Not found'}`
+  );
+  console.info(
+    `  CJS: ${cjsExists ? `${(await cjsFile.size()).toLocaleString()} bytes` : 'Not found'}`
+  );
 }
 
 function showBuildConfigurations() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🔧 Build Configuration Examples");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🔧 Build Configuration Examples');
+  console.info('='.repeat(70));
   console.info(`
 # ESM Bytecode (NEW in v1.3.9)
 bun build --compile --bytecode --format=esm ./cli.ts --outfile ./dist/my-cli
@@ -221,9 +244,9 @@ bun build --compile --bytecode --format=esm --target=bun-windows-x64 ./cli.ts
 }
 
 function showPackageJsonExample() {
-  console.info("\n" + "=".repeat(70));
-  console.info("📦 Recommended package.json Setup");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('📦 Recommended package.json Setup');
+  console.info('='.repeat(70));
   console.info(`
 {
   "name": "my-cli-tool",
@@ -256,22 +279,22 @@ async function main() {
     const cjsBuilt = await buildCJS();
 
     if (esmBuilt) {
-      await runBinary("cli-esm", ["greet", "ESM Bytecode World"]);
-      await runBinary("cli-esm", ["info"]);
-      await runBinary("cli-esm", ["--verbose", "greet", "Verbose"]);
+      await runBinary('cli-esm', ['greet', 'ESM Bytecode World']);
+      await runBinary('cli-esm', ['info']);
+      await runBinary('cli-esm', ['--verbose', 'greet', 'Verbose']);
     }
 
     if (cjsBuilt) {
-      await runBinary("cli-cjs", ["greet", "CJS Bytecode World"]);
+      await runBinary('cli-cjs', ['greet', 'CJS Bytecode World']);
     }
 
     await compareBinaries();
     showBuildConfigurations();
     showPackageJsonExample();
 
-    console.info("\n✅ ESM Bytecode demo complete!\n");
+    console.info('\n✅ ESM Bytecode demo complete!\n');
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error('❌ Error:', error);
   } finally {
     await cleanup();
   }

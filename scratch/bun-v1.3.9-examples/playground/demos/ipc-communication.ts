@@ -1,16 +1,19 @@
 #!/usr/bin/env bun
 /**
  * Demo: IPC Communication with Bun.spawn()
- * 
+ *
  * Spawn child processes and communicate via IPC
  */
 
-console.info("📡 Bun IPC Communication Demo\n");
-console.info("=".repeat(70));
+console.info('📡 Bun IPC Communication Demo\n');
+console.info('='.repeat(70));
 
 // Create a child process with IPC
 const child = Bun.spawn({
-  cmd: [process.execPath, "--eval", `
+  cmd: [
+    process.execPath,
+    '--eval',
+    `
     // Child process code
     console.info("Child: Started");
     
@@ -31,29 +34,30 @@ const child = Bun.spawn({
       // Exit after response (give parent time to send second message)
       setTimeout(() => process.exit(0), 500);
     });
-  `],
+  `,
+  ],
   ipc(message) {
-    console.info("Parent received:", message);
+    console.info('Parent received:', message);
   },
-  stdout: "inherit",
-  stderr: "inherit",
+  stdout: 'inherit',
+  stderr: 'inherit',
 });
 
-console.info("Parent: Child spawned with PID", child.pid);
+console.info('Parent: Child spawned with PID', child.pid);
 
 // Send messages to child
 setTimeout(() => {
-  console.info("\nParent: Sending hello...");
-  child.send("Hello from parent!");
+  console.info('\nParent: Sending hello...');
+  child.send('Hello from parent!');
 }, 100);
 
 setTimeout(() => {
-  console.info("Parent: Sending object...");
-  child.send({ type: "command", action: "doSomething", data: [1, 2, 3] });
+  console.info('Parent: Sending object...');
+  child.send({ type: 'command', action: 'doSomething', data: [1, 2, 3] });
 }, 300);
 
 // Wait for child to finish
 setTimeout(() => {
-  console.info("\n✅ IPC demo complete!");
+  console.info('\n✅ IPC demo complete!');
   process.exit(0);
 }, 1000);

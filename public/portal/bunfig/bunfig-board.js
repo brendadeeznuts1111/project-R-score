@@ -126,7 +126,8 @@ function filteredScopes() {
   return (state?.scopes ?? []).filter(s => {
     if (planeFilter && s.plane !== planeFilter) return false;
     if (!q) return true;
-    const hay = `${s.scope} ${s.url} ${s.plane} ${(s.usedBy ?? []).join(' ')} ${s.tokenEnv}`.toLowerCase();
+    const hay =
+      `${s.scope} ${s.url} ${s.plane} ${(s.usedBy ?? []).join(' ')} ${s.tokenEnv}`.toLowerCase();
     return hay.includes(q);
   });
 }
@@ -138,7 +139,9 @@ function gateFailCount() {
 function showSkeletons() {
   const stats = $('bf-stats');
   if (stats) {
-    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join('');
+    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join(
+      ''
+    );
   }
   const gate = $('bf-gate');
   if (gate) {

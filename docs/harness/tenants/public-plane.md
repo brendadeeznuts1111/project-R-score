@@ -31,21 +31,21 @@ edge behavior in `functions/`.
 
 ## Gap map
 
-| Gap                                           | Status                | Evidence                                                                                                                                                                 |
-| --------------------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Portal shells include `data.js` + `topbar.js` | **Closed**            | `verify:portal:static` · `public-discovery` `portal-chrome-missing`                                                                                                      |
-| No inline `/api/health` on client pages       | **Closed**            | `verify:portal:static` · `portal-inline-health`                                                                                                                          |
-| Browser `.js` free of TS annotations          | **Closed**            | `portal-typescript-leak` · `public/portal/app.js` history                                                                                                                |
-| `/registry/` fetches resolve to baked JSON    | **Closed (ops loop)** | `ops:snapshot` · `broken-registry-ref` gate                                                                                                                              |
-| Proof taxonomy panel on ops dashboard         | **Closed**            | `verify-portal.ts` taxonomy chrome check                                                                                                                                 |
-| Live `/api/health` schema v1 on Pages         | **Partial**           | `verify:portal` live probe · env-dependent                                                                                                                               |
-| Orphan registry JSON without portal link      | **Closed**            | weave SSOT (`PORTAL_WEAVE_ARTIFACTS`) · `content-type-matrix` · `formdata-proof` · `package-info` · **`install-hygiene-report.json`** + board `/portal/install-hygiene/` |
+| Gap                                           | Status                | Evidence                                                                                                                                                                                                                                                        |
+| --------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Portal shells include `data.js` + `topbar.js` | **Closed**            | `verify:portal:static` · `public-discovery` `portal-chrome-missing`                                                                                                                                                                                             |
+| No inline `/api/health` on client pages       | **Closed**            | `verify:portal:static` · `portal-inline-health`                                                                                                                                                                                                                 |
+| Browser `.js` free of TS annotations          | **Closed**            | `portal-typescript-leak` · `public/portal/app.js` history                                                                                                                                                                                                       |
+| `/registry/` fetches resolve to baked JSON    | **Closed (ops loop)** | `ops:snapshot` · `broken-registry-ref` gate                                                                                                                                                                                                                     |
+| Proof taxonomy panel on ops dashboard         | **Closed**            | `verify-portal.ts` taxonomy chrome check                                                                                                                                                                                                                        |
+| Live `/api/health` schema v1 on Pages         | **Partial**           | `verify:portal` live probe · env-dependent                                                                                                                                                                                                                      |
+| Orphan registry JSON without portal link      | **Closed**            | weave SSOT (`PORTAL_WEAVE_ARTIFACTS`) · `content-type-matrix` · `formdata-proof` · `package-info` · **`install-hygiene-report.json`** + board `/portal/install-hygiene/`                                                                                        |
 | Documented bake orphans (allowlisted)         | **Documented**        | `partner-profile-coverage.json` · `partner-ledger.json` · `stale-anchors.json` · `portal-theme.json` (edge + local health proof) — no standalone portal board; code SSOT `DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS` in `lib/public-discovery.ts` (keep in lockstep) |
-| Shared mark, head metadata, and proof footer  | **Closed**            | `site.webmanifest` · `icons/factory` · `portal:chrome:apply` · footer `portal-weave.json`                                                                                |
-| Limit raises bake + board                     | **Closed**            | `/portal/limits/` · `limit-raises.json` · health `artifacts.limitRaises` · tenant `partner-limits.md`                                                                    |
-| `skills-catalog.json` scope                   | **Closed**            | Kimi Daimon (`PORTAL_SKILLS_DIR`) · harness plane baked separately as `harness-skills-catalog.json`                                                                      |
-| GitHub issue taxonomy registry projection     | **Closed**            | `/registry/github-issue-taxonomy.json` · `bun run github-issue-taxonomy:check` · portal weave + bake manifest                                                            |
-| GitHub issue taxonomy static board            | **Closed**            | `/portal/issues/` · baked registry + manifest only · accessible non-color cues · explicit degraded state                                                               |
+| Shared mark, head metadata, and proof footer  | **Closed**            | `site.webmanifest` · `icons/factory` · `portal:chrome:apply` · footer `portal-weave.json`                                                                                                                                                                       |
+| Limit raises bake + board                     | **Closed**            | `/portal/limits/` · `limit-raises.json` · health `artifacts.limitRaises` · tenant `partner-limits.md`                                                                                                                                                           |
+| `skills-catalog.json` scope                   | **Closed**            | Kimi Daimon (`PORTAL_SKILLS_DIR`) · harness plane baked separately as `harness-skills-catalog.json`                                                                                                                                                             |
+| GitHub issue taxonomy registry projection     | **Closed**            | `/registry/github-issue-taxonomy.json` · `bun run github-issue-taxonomy:check` · portal weave + bake manifest                                                                                                                                                   |
+| GitHub issue taxonomy static board            | **Closed**            | `/portal/issues/` · baked registry + manifest only · accessible non-color cues · explicit degraded state                                                                                                                                                        |
 
 ## Skill catalog domains
 
@@ -64,13 +64,15 @@ every catalog skill to be loop-capable.
 
 ## Compose
 
-| Layer             | Gate                                                            |
-| ----------------- | --------------------------------------------------------------- | -------- | -------------------------- |
-| CI (`ci:harness`) | `public:discover:check` ∥ cheap ratchets                        |
-| Pre-commit        | staged `public/portal                                           | registry | …`→`public:discover:check` |
-| Proof catalog     | `public-plane-discovery-v1` · `freshRerun: public:audit:verify` |
-| Portal weave      | operator scripts on `/registry/portal-weave.json`               |
-| Combined agents   | `discover:compose:check` = harness + public planes              |
+| Layer | Gate | | ----------------- |
+--------------------------------------------------------------- | -------- |
+-------------------------- | | CI (`ci:harness`) | `public:discover:check` ∥
+cheap ratchets | | Pre-commit | staged
+`public/portal                                           | registry | …`→`public:discover:check`
+| | Proof catalog | `public-plane-discovery-v1` ·
+`freshRerun: public:audit:verify` | | Portal weave | operator scripts on
+`/registry/portal-weave.json` | | Combined agents | `discover:compose:check` =
+harness + public planes |
 
 - Harness naming/planes → `reference-discovery` ·
   `bun run reference:discover:check`

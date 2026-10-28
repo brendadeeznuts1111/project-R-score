@@ -1,12 +1,7 @@
-import { join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
-import {
-  AlertEffect,
-  FixEffect,
-  LogEffect,
-  ReportEffect,
-} from "./builtins/index.ts";
-import type { EffectConfig, EffectContext, EffectPlugin } from "./plugin.ts";
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { AlertEffect, FixEffect, LogEffect, ReportEffect } from './builtins/index.ts';
+import type { EffectConfig, EffectContext, EffectPlugin } from './plugin.ts';
 
 export class EffectRegistry {
   private readonly plugins = new Map<string, EffectPlugin>();
@@ -47,15 +42,15 @@ export class EffectRegistry {
   private resolveEnabled(id: string, plugin: EffectPlugin): boolean {
     const config = this.configs.get(id);
     if (config !== undefined) return config.enabled;
-    if (id === "log") return true;
+    if (id === 'log') return true;
     return false;
   }
 
   async runAll(
-    ctx: Omit<EffectContext, "options" | "deps"> & {
+    ctx: Omit<EffectContext, 'options' | 'deps'> & {
       options?: Record<string, unknown>;
-      deps?: EffectContext["deps"];
-    },
+      deps?: EffectContext['deps'];
+    }
   ): Promise<void> {
     const promises: Promise<void>[] = [];
 
@@ -83,9 +78,9 @@ export class EffectRegistry {
       if (plugin.condition && !plugin.condition(pluginCtx)) continue;
 
       promises.push(
-        plugin.run(pluginCtx).catch((err) => {
+        plugin.run(pluginCtx).catch(err => {
           console.error(`[${ctx.domain}] effect ${id} failed:`, err);
-        }),
+        })
       );
     }
 
@@ -94,18 +89,18 @@ export class EffectRegistry {
 
   async loadFromDirectory(dir: string): Promise<number> {
     const abs = resolve(dir);
-    const glob = new Bun.Glob("*.ts");
+    const glob = new Bun.Glob('*.ts');
     let loaded = 0;
 
     for await (const rel of glob.scan({ cwd: abs, absolute: false })) {
-      if (rel.startsWith("_") || rel.endsWith(".test.ts")) continue;
+      if (rel.startsWith('_') || rel.endsWith('.test.ts')) continue;
       const file = join(abs, rel);
-      const mod = await import(pathToFileURL(file).href) as {
+      const mod = (await import(pathToFileURL(file).href)) as {
         default?: EffectPlugin;
         plugin?: EffectPlugin;
       };
       const plugin = mod.default ?? mod.plugin;
-      if (plugin?.id && typeof plugin.run === "function") {
+      if (plugin?.id && typeof plugin.run === 'function') {
         this.register(plugin);
         loaded++;
       }

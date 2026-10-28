@@ -1,10 +1,10 @@
-import { stat } from "node:fs/promises";
-import { resolve } from "node:path";
-import { collectScanFiles } from "./bundle-scanner.ts";
-import type { ScanProfile } from "./types.ts";
+import { stat } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { collectScanFiles } from './bundle-scanner.ts';
+import type { ScanProfile } from './types.ts';
 
 const WATCH_PROFILE: ScanProfile = {
-  min_severity: "info",
+  min_severity: 'info',
   transform_output: false,
   use_scan_imports: true,
   max_file_kb: 2048,
@@ -36,7 +36,7 @@ export async function collectWatchPaths(options: {
   const files = await collectScanFiles(options.repo, rel, WATCH_PROFILE);
   const extra: string[] = [];
   if (options.includeLockfiles !== false) {
-    for (const name of ["package.json", "bun.lock", "bun.lockb"]) {
+    for (const name of ['package.json', 'bun.lock', 'bun.lockb']) {
       const full = resolve(options.repo, rel, name);
       if (await fileMtime(full)) extra.push(full);
       const rootFull = resolve(options.repo, name);
@@ -56,7 +56,7 @@ export async function runWatchLoop(options: WatchOptions): Promise<void> {
   const mtimes = new Map<string, number>();
   for (const p of paths) mtimes.set(p, await fileMtime(p));
 
-  await options.onEvent("initial");
+  await options.onEvent('initial');
 
   const tick = async () => {
     const nextPaths = await collectWatchPaths({
@@ -78,20 +78,20 @@ export async function runWatchLoop(options: WatchOptions): Promise<void> {
       }
     }
     if (changed.length) {
-      const rel = changed.map((p) =>
-        p.startsWith(options.repo) ? p.slice(options.repo.length + 1) : p,
+      const rel = changed.map(p =>
+        p.startsWith(options.repo) ? p.slice(options.repo.length + 1) : p
       );
-      await options.onEvent(rel.slice(0, 3).join(", ") + (rel.length > 3 ? "…" : ""));
+      await options.onEvent(rel.slice(0, 3).join(', ') + (rel.length > 3 ? '…' : ''));
     }
   };
 
   if (options.signal?.aborted) return;
   const handle = setInterval(() => void tick(), interval);
-  options.signal?.addEventListener("abort", () => clearInterval(handle), { once: true });
+  options.signal?.addEventListener('abort', () => clearInterval(handle), { once: true });
 
   if (options.signal) {
     try {
-      const { waitUntilAborted } = await import("./native-loop.ts");
+      const { waitUntilAborted } = await import('./native-loop.ts');
       await waitUntilAborted(options.signal);
     } catch {
       // aborted

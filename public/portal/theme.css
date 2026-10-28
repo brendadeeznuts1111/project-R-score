@@ -222,10 +222,9 @@
   --bun14-danger: var(--fw-bun-14-color-danger);
   --bun14-info: var(--fw-bun-14-color-info);
   --bun14-focus-ring: var(--fw-bun-14-color-focus-ring);
-
 }
 
-html[data-theme='light'] {
+html[data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff;
   --surface: #f6f8fa;
@@ -264,4 +263,6 @@ html[data-theme='light'] {
 }
 
 /* Toggle helper: html[data-theme="light"|"dark"] */
-html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"] {
+  color-scheme: dark;
+}

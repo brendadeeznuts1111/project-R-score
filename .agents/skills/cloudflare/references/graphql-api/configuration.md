@@ -4,13 +4,14 @@
 
 ### API Token (Recommended)
 
-| Permission | Scope | Use Case |
-|------------|-------|----------|
-| **Account Analytics: Read** | Account-wide | Workers, R2, KV, D1, DO, AI, Network Analytics |
-| **Zone Analytics: Read** | Per-zone | HTTP requests, Firewall, DNS, Load Balancing |
-| **All zones - Analytics: Read** | All zones | Multi-zone HTTP/Firewall/DNS queries |
+| Permission                      | Scope        | Use Case                                       |
+| ------------------------------- | ------------ | ---------------------------------------------- |
+| **Account Analytics: Read**     | Account-wide | Workers, R2, KV, D1, DO, AI, Network Analytics |
+| **Zone Analytics: Read**        | Per-zone     | HTTP requests, Firewall, DNS, Load Balancing   |
+| **All zones - Analytics: Read** | All zones    | Multi-zone HTTP/Firewall/DNS queries           |
 
-Create tokens at: [dash.cloudflare.com > Account API Tokens](https://dash.cloudflare.com/?to=/:account/api-tokens)
+Create tokens at:
+[dash.cloudflare.com > Account API Tokens](https://dash.cloudflare.com/?to=/:account/api-tokens)
 
 ```bash
 # Verify token
@@ -22,7 +23,8 @@ curl -s https://api.cloudflare.com/client/v4/graphql \
 
 ### API Key + Email (Legacy)
 
-Not recommended. Use `X-Auth-Email` + `X-Auth-Key` headers instead of `Authorization: Bearer`.
+Not recommended. Use `X-Auth-Email` + `X-Auth-Key` headers instead of
+`Authorization: Bearer`.
 
 ## Client Setup
 
@@ -41,17 +43,28 @@ curl -s https://api.cloudflare.com/client/v4/graphql \
 ### TypeScript / JavaScript
 
 ```typescript
-const GRAPHQL_ENDPOINT = "https://api.cloudflare.com/client/v4/graphql";
+const GRAPHQL_ENDPOINT = 'https://api.cloudflare.com/client/v4/graphql';
 
-async function queryGraphQL<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
+async function queryGraphQL<T>(
+  query: string,
+  variables: Record<string, unknown> = {}
+): Promise<T> {
   const response = await fetch(GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${process.env.CF_API_TOKEN}`, "Content-Type": "application/json" },
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.CF_API_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({ query, variables }),
   });
-  if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-  const json = await response.json() as { data: T | null; errors?: { message: string }[] };
-  if (json.errors?.length) throw new Error(json.errors.map((e) => e.message).join("; "));
+  if (!response.ok)
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  const json = (await response.json()) as {
+    data: T | null;
+    errors?: { message: string }[];
+  };
+  if (json.errors?.length)
+    throw new Error(json.errors.map(e => e.message).join('; '));
   return json.data!;
 }
 ```
@@ -74,30 +87,66 @@ def query_graphql(query: str, variables: dict = None) -> dict:
 
 ### From a Cloudflare Worker
 
-Store the API token as a secret (`CF_API_TOKEN`). Use standard `fetch` to POST to `https://api.cloudflare.com/client/v4/graphql` with the same JSON body format as above. Always check `response.errors` — GraphQL returns 200 even on query failures.
+Store the API token as a secret (`CF_API_TOKEN`). Use standard `fetch` to POST
+to `https://api.cloudflare.com/client/v4/graphql` with the same JSON body format
+as above. Always check `response.errors` — GraphQL returns 200 even on query
+failures.
 
 ## GraphQL API Explorer
 
-Interactive explorer at [graphql.cloudflare.com](https://graphql.cloudflare.com/) — provides schema docs, autocomplete, variable panel, and shareable queries. Authenticates via your Cloudflare dashboard session.
+Interactive explorer at
+[graphql.cloudflare.com](https://graphql.cloudflare.com/) — provides schema
+docs, autocomplete, variable panel, and shareable queries. Authenticates via
+your Cloudflare dashboard session.
 
 ## Schema Introspection
 
 ```graphql
 # List zone-scoped datasets
-{ __type(name: "zone") { fields { name description } } }
+{
+  __type(name: "zone") {
+    fields {
+      name
+      description
+    }
+  }
+}
 
 # List account-scoped datasets
-{ __type(name: "account") { fields { name description } } }
+{
+  __type(name: "account") {
+    fields {
+      name
+      description
+    }
+  }
+}
 
 # Discover dimensions for a dataset
-{ __type(name: "ZoneHttpRequestsAdaptiveGroupsDimensions") {
-  fields { name type { name kind } }
-} }
+{
+  __type(name: "ZoneHttpRequestsAdaptiveGroupsDimensions") {
+    fields {
+      name
+      type {
+        name
+        kind
+      }
+    }
+  }
+}
 
 # Discover filter operators for a dataset
-{ __type(name: "ZoneHttpRequestsAdaptiveGroupsFilter_InputObject") {
-  inputFields { name type { name kind } }
-} }
+{
+  __type(name: "ZoneHttpRequestsAdaptiveGroupsFilter_InputObject") {
+    inputFields {
+      name
+      type {
+        name
+        kind
+      }
+    }
+  }
+}
 ```
 
 ## Finding Your Zone and Account IDs
@@ -114,5 +163,6 @@ curl -s https://api.cloudflare.com/client/v4/accounts -H "Authorization: Bearer 
 
 - [README.md](README.md) - Overview, decision tree, dataset index
 - [api.md](api.md) - Query structure, aggregation fields, filtering operators
-- [patterns.md](patterns.md) - Common query patterns (time-series, top-N, per-product)
+- [patterns.md](patterns.md) - Common query patterns (time-series, top-N,
+  per-product)
 - [gotchas.md](gotchas.md) - Rate limits, sampling, troubleshooting

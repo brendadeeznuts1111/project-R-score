@@ -12,10 +12,7 @@ export type PagesEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
 };
 
-async function loadBoard(
-  env: PagesEnv,
-  origin: string
-): Promise<Record<string, unknown> | null> {
+async function loadBoard(env: PagesEnv, origin: string): Promise<Record<string, unknown> | null> {
   const url = new URL('/registry/compliance-board.json', origin);
   try {
     let res: Response;

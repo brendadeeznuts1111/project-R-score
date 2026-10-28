@@ -57,11 +57,5 @@
       "samples": 2
     }
   ],
-  "registryUnused": [
-    "betmgm",
-    "caesars",
-    "draftkings",
-    "fanduel",
-    "pinnacle"
-  ]
+  "registryUnused": ["betmgm", "caesars", "draftkings", "fanduel", "pinnacle"]
 }

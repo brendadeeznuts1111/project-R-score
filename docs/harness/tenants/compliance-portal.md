@@ -1,7 +1,8 @@
 # Compliance portal board
 
 **Plane:** public Pages + local Bun mock  
-**Artifacts:** `public/registry/compliance-*.json` · portal `/portal/compliance/`  
+**Artifacts:** `public/registry/compliance-*.json` · portal
+`/portal/compliance/`  
 **Secrets:** bake offline-safe; deploy via Proton Pass `CLOUDFLARE_API_TOKEN`
 
 ## Architecture
@@ -45,39 +46,48 @@ bun run compliance:bake:vault
 bun run proton:deploy:pages
 ```
 
-Board bake includes a ZIP day-window proof (`deepAudit.zipWindow`) aligned with `ZipEnrichmentRepo` (`enriched_at` / `plays.sent_at`).
+Board bake includes a ZIP day-window proof (`deepAudit.zipWindow`) aligned with
+`ZipEnrichmentRepo` (`enriched_at` / `plays.sent_at`).
+
 ## One board → many projections
 
-Single SSOT bake: `public/registry/compliance-board.json` (`bun run compliance:bake` / ops-snapshot companion).
-Projectors live in [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts).
+Single SSOT bake: `public/registry/compliance-board.json`
+(`bun run compliance:bake` / ops-snapshot companion). Projectors live in
+[`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts).
 
-| Projection | Field / surface | Loader |
-|------------|-----------------|--------|
-| Ops summary | `ops-summary.compliance` (`OpsSummaryCompliance`) | `loadComplianceSummarySliceSync` → [`ops-summary.ts`](../../../lib/operations/ops-summary.ts) |
-| Monitoring | `monitoring.compliance` tile · `/monitoring/` | `loadComplianceMonitoringSlice` |
-| Health artifact | `/api/health` → `artifacts.complianceBoard` | `projectComplianceHealthArtifact` |
-| Portal UI | `/portal/compliance/` embed + board | bake embed · `GET /api/compliance` |
-| Adjacent cards | `/portal/ops/` panel · dashboard KPI · TOC “State compliance” | same board / summary slice |
+| Projection      | Field / surface                                               | Loader                                                                                        |
+| --------------- | ------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Ops summary     | `ops-summary.compliance` (`OpsSummaryCompliance`)             | `loadComplianceSummarySliceSync` → [`ops-summary.ts`](../../../lib/operations/ops-summary.ts) |
+| Monitoring      | `monitoring.compliance` tile · `/monitoring/`                 | `loadComplianceMonitoringSlice`                                                               |
+| Health artifact | `/api/health` → `artifacts.complianceBoard`                   | `projectComplianceHealthArtifact`                                                             |
+| Portal UI       | `/portal/compliance/` embed + board                           | bake embed · `GET /api/compliance`                                                            |
+| Adjacent cards  | `/portal/ops/` panel · dashboard KPI · TOC “State compliance” | same board / summary slice                                                                    |
 
-Write path (DB, not board): `applyPartnerComplianceOnboard` / `parseComplianceOnboardFields` / `splitComplianceKvTokens` from [`lib/operations`](../../../lib/operations/index.ts) (barrel). Ops-facing type: `OpsSummaryCompliance` (same barrel). Full slice loaders + `ComplianceSummarySlice` / `ComplianceHealthArtifact` — import from `lib/monitoring` (or `compliance-slice.ts`).
+Write path (DB, not board): `applyPartnerComplianceOnboard` /
+`parseComplianceOnboardFields` / `splitComplianceKvTokens` from
+[`lib/operations`](../../../lib/operations/index.ts) (barrel). Ops-facing type:
+`OpsSummaryCompliance` (same barrel). Full slice loaders +
+`ComplianceSummarySlice` / `ComplianceHealthArtifact` — import from
+`lib/monitoring` (or `compliance-slice.ts`).
 
-- Edge health: missing bake → `exists:false` (no degrade); present + fail → `ok:false` (**degrades**).
+- Edge health: missing bake → `exists:false` (no degrade); present + fail →
+  `ok:false` (**degrades**).
 - Route SSOT: `PORTAL_HTML_ROUTES` · `public-routes` · `/api/compliance`.
 
 ## Env (non-secret)
 
-| Name | Role |
-|------|------|
-| `COMPLIANCE_URL` | Optional remote mock base for shadow bake (default: embed mock) |
-| `COMPLIANCE_MOCK_PORT` | Local mock listen port (default 8787) |
-| `CLOUDFLARE_API_TOKEN` | **Vaulted** — Pages deploy only |
+| Name                   | Role                                                            |
+| ---------------------- | --------------------------------------------------------------- |
+| `COMPLIANCE_URL`       | Optional remote mock base for shadow bake (default: embed mock) |
+| `COMPLIANCE_MOCK_PORT` | Local mock listen port (default 8787)                           |
+| `CLOUDFLARE_API_TOKEN` | **Vaulted** — Pages deploy only                                 |
 
 ## Env (signing — mintable / vault)
 
-| Name | Role | Vault path (when wired) |
-|------|------|-------------------------|
+| Name                    | Role                        | Vault path (when wired)                              |
+| ----------------------- | --------------------------- | ---------------------------------------------------- |
 | `REPORT_SIGNING_SECRET` | Board + deep-audit **HMAC** | `pass://factorywager/Report Signing Secret/password` |
-| `PLAY_SIGNING_SECRET` | Play **HMAC** (PlaySigner) | `pass://factorywager/Play Signing Secret/password` |
+| `PLAY_SIGNING_SECRET`   | Play **HMAC** (PlaySigner)  | `pass://factorywager/Play Signing Secret/password`   |
 
 ```bash
 # Local mint (no Pass create required)
@@ -103,7 +113,7 @@ applyPartnerOnboardPackage(db, plan, {
   compliance: {
     stateCode: 'NJ',
     age: 28,
-    location: 'Newark',      // locality only — never pack ZIP
+    location: 'Newark', // locality only — never pack ZIP
     zipCode: '07102',
     identityVerified: true,
   },
@@ -114,10 +124,12 @@ applyPartnerOnboardPackage(db, plan, {
 
 ## Related
 
-- [`lib/operations/index.ts`](../../../lib/operations/index.ts) — public barrel (onboard write + `OpsSummaryCompliance`)
+- [`lib/operations/index.ts`](../../../lib/operations/index.ts) — public barrel
+  (onboard write + `OpsSummaryCompliance`)
 - [`lib/operations/state-compliance-http.ts`](../../../lib/operations/state-compliance-http.ts)
 - [`lib/operations/partner-compliance-onboard.ts`](../../../lib/operations/partner-compliance-onboard.ts)
-- [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts) — board → projections
+- [`lib/monitoring/compliance-slice.ts`](../../../lib/monitoring/compliance-slice.ts)
+  — board → projections
 - [`lib/security/report-proof.ts`](../../../lib/security/report-proof.ts)
 - [`tools/show-enhancements.ts`](../../../tools/show-enhancements.ts)
 - [`tools/deep-audit-report.ts`](../../../tools/deep-audit-report.ts)

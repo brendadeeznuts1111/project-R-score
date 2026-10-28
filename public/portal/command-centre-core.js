@@ -114,9 +114,8 @@ export function buildDoctorWidget(doctorState) {
           ? 'yellow'
           : 'yellow';
   const summary = doctorState?.summary ?? {};
-  const byGroup = doctorState?.byGroup && typeof doctorState.byGroup === 'object'
-    ? doctorState.byGroup
-    : {};
+  const byGroup =
+    doctorState?.byGroup && typeof doctorState.byGroup === 'object' ? doctorState.byGroup : {};
   const failedGroups = Object.entries(byGroup)
     .filter(([, v]) => (v?.failed ?? 0) > 0)
     .map(([g, v]) => ({
@@ -189,8 +188,7 @@ export function pickAttentionPackages(packagesGraph, limit = 3) {
  * @param {object|null|undefined} monitoring
  */
 export function buildRegistryWidget(packagesGraph, monitoring) {
-  const packageCount =
-    pickPackagesBadge(packagesGraph) ?? monitoring?.packageCount ?? null;
+  const packageCount = pickPackagesBadge(packagesGraph) ?? monitoring?.packageCount ?? null;
   const graphGrade = packagesGraph?.grade ?? '—';
   const graphScore = packagesGraph?.score ?? null;
   const dodFlagged = monitoring?.dodByStatus?.flagged ?? monitoring?.dodQueue ?? 0;
@@ -290,8 +288,7 @@ export function buildSnapshotWidget(indexEntries, catalogSnapshot, limit = 5) {
       if (rows.length >= limit) break;
     }
   }
-  const source =
-    rows.length > 0 ? 'local-index' : catalogSnapshot ? 'catalog-fallback' : 'none';
+  const source = rows.length > 0 ? 'local-index' : catalogSnapshot ? 'catalog-fallback' : 'none';
   if (rows.length === 0 && catalogSnapshot) {
     rows.push({
       scope: 'catalog',
@@ -492,8 +489,7 @@ export function aggregateCommandCentre(input) {
       ? buildBakeFreshnessFromPayloads(bakePayloads)
       : buildBakeFreshnessWidget([]);
   const doctor =
-    doctorState ??
-    (bakePayloads != null ? bakePayloads['doctor-state'] ?? null : null);
+    doctorState ?? (bakePayloads != null ? (bakePayloads['doctor-state'] ?? null) : null);
   return {
     schemaVersion: 1,
     generatedAt: new Date().toISOString(),

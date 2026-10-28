@@ -1,11 +1,11 @@
-import { Schema } from "effect";
+import { Schema } from 'effect';
 
 export const CloseLoopStepIdSchema = Schema.Literal(
-  "seed",
-  "ground-truth",
-  "bench-snapshot",
-  "baseline-diff",
-  "baseline-write",
+  'seed',
+  'ground-truth',
+  'bench-snapshot',
+  'baseline-diff',
+  'baseline-write'
 );
 
 export const CloseLoopStepSchema = Schema.Struct({
@@ -17,7 +17,7 @@ export const CloseLoopStepSchema = Schema.Struct({
 
 export const CloseLoopSummarySchema = Schema.Struct({
   schemaVersion: Schema.Literal(1),
-  tool: Schema.Literal("skill-loop-close-loop"),
+  tool: Schema.Literal('skill-loop-close-loop'),
   domain: Schema.String,
   scanPath: Schema.optional(Schema.String),
   steps: Schema.Array(CloseLoopStepSchema),
@@ -30,7 +30,7 @@ export const CloseLoopSummarySchema = Schema.Struct({
 export type CloseLoopSummaryEncoded = Schema.Schema.Type<typeof CloseLoopSummarySchema>;
 
 export function decodeCloseLoopSummary(
-  input: unknown,
+  input: unknown
 ): Schema.Schema.Type<typeof CloseLoopSummarySchema> {
   return Schema.decodeUnknownSync(CloseLoopSummarySchema)(input);
 }

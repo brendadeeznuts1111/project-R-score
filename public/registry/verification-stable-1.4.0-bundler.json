@@ -17,9 +17,7 @@
     "arch": "arm64",
     "channelResolveSource": "runtime",
     "githubAuthSource": "none",
-    "subsystems": [
-      "bundler"
-    ]
+    "subsystems": ["bundler"]
   },
   "results": [
     {
@@ -32,11 +30,7 @@
       "canonical": "https://bun.com/docs/bundler/loaders#css",
       "canonicalKey": "loader:css",
       "subsystem": "bundler",
-      "features": [
-        "bundler",
-        "loaders",
-        "css"
-      ],
+      "features": ["bundler", "loaders", "css"],
       "_links": {
         "docs": "https://bun.com/docs/bundler/loaders#css",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
@@ -54,11 +48,7 @@
       "canonical": "https://bun.com/docs/bundler#content-types",
       "canonicalKey": "Asset Processing",
       "subsystem": "bundler",
-      "features": [
-        "bundler",
-        "loaders",
-        "css"
-      ],
+      "features": ["bundler", "loaders", "css"],
       "_links": {
         "docs": "https://bun.com/docs/bundler#content-types",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
@@ -76,11 +66,7 @@
       "canonical": "https://bun.com/docs/bundler/loaders#jsonc",
       "canonicalKey": "loader:jsonc",
       "subsystem": "bundler",
-      "features": [
-        "bundler",
-        "loaders",
-        "jsonc"
-      ],
+      "features": ["bundler", "loaders", "jsonc"],
       "_links": {
         "docs": "https://bun.com/docs/bundler/loaders#jsonc",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
@@ -98,11 +84,7 @@
       "canonical": "https://bun.com/docs/bundler/loaders#text",
       "canonicalKey": "loader:text",
       "subsystem": "bundler",
-      "features": [
-        "bundler",
-        "loaders",
-        "text"
-      ],
+      "features": ["bundler", "loaders", "text"],
       "_links": {
         "docs": "https://bun.com/docs/bundler/loaders#text",
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
@@ -134,13 +116,7 @@
     "softwareVersion": "1.4.0",
     "dateModified": "2026-07-24T04:24:21.351Z",
     "identifier": "1.4.0",
-    "featureList": [
-      "bundler",
-      "loaders",
-      "css",
-      "jsonc",
-      "text"
-    ],
+    "featureList": ["bundler", "loaders", "css", "jsonc", "text"],
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": 5,

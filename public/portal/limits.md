@@ -4,33 +4,34 @@ Multi-factor **account limit raises** for partners — handle, CLV, KYC,
 violations, chargebacks, volatility, profitability. Board is snapshot-first on
 Pages; record/analyze mutations need local Bun + SQLite.
 
-**Tenant SSOT:** [`docs/harness/tenants/partner-limits.md`](../../docs/harness/tenants/partner-limits.md)
+**Tenant SSOT:**
+[`docs/harness/tenants/partner-limits.md`](../../docs/harness/tenants/partner-limits.md)
 
-| Surface | Path |
-|---------|------|
-| Portal UI | [`/portal/limits/`](./limits/) |
-| Limits lab (forecast) | [`/portal/limits-lab/`](./limits-lab/) |
-| Registry bake | [`/registry/limit-raises.json`](../registry/limit-raises.json) (`bun run ops:snapshot`) |
-| Forecast bake | [`/registry/limit-forecast-lab.json`](../registry/limit-forecast-lab.json) |
-| Scraped observed | [`/registry/scraped-limits-observed.json`](../registry/scraped-limits-observed.json) |
-| Live ops summary | `ops-summary.limitChanges` · `/api/operations/summary` |
-| Agent raises | `/api/agents/v1/limits/raises?node_id=…` · `?format=table` |
-| Public summary | `/api/limits/summary` · `?format=table` |
-| Record (local) | `POST /api/agents/v1/limits/record` (Pages → 503 stub) |
-| Analyze / predict (local) | `/api/limits/analyze` · `/api/limits/predictions` |
-| Routing audit | [routing.md](./routing.md) |
+| Surface                   | Path                                                                                    |
+| ------------------------- | --------------------------------------------------------------------------------------- |
+| Portal UI                 | [`/portal/limits/`](./limits/)                                                          |
+| Limits lab (forecast)     | [`/portal/limits-lab/`](./limits-lab/)                                                  |
+| Registry bake             | [`/registry/limit-raises.json`](../registry/limit-raises.json) (`bun run ops:snapshot`) |
+| Forecast bake             | [`/registry/limit-forecast-lab.json`](../registry/limit-forecast-lab.json)              |
+| Scraped observed          | [`/registry/scraped-limits-observed.json`](../registry/scraped-limits-observed.json)    |
+| Live ops summary          | `ops-summary.limitChanges` · `/api/operations/summary`                                  |
+| Agent raises              | `/api/agents/v1/limits/raises?node_id=…` · `?format=table`                              |
+| Public summary            | `/api/limits/summary` · `?format=table`                                                 |
+| Record (local)            | `POST /api/agents/v1/limits/record` (Pages → 503 stub)                                  |
+| Analyze / predict (local) | `/api/limits/analyze` · `/api/limits/predictions`                                       |
+| Routing audit             | [routing.md](./routing.md)                                                              |
 
 ## Related partner domain
 
-| Concern | Where |
-|---------|--------|
-| Book / sportsbook SSOT | [Bookmakers](./bookmakers/) · [bookmakers.md](./bookmakers.md) · `bookmakers.json` (v0.4.1 · `id === slug` · `fetcher` · `urls.web`) |
-| Partner outs · max bet · rails | [Partners](./partners/) · seat-capital-desk · [partners.md](./partners.md) |
-| Per-account dossier | [Account](./account/) · partner-history |
-| Slip / balance **image proof** | [DOD](./dod/) · [dod.md](./dod.md) (confirm amount in Telegram Accounting) |
-| Telegram package forums | [telegram.md](./telegram.md) · [factory.md](./factory.md) handshake |
-| Soft plays / weeks | Soft export · Partners Soft tables |
-| Ops pulse | [ops.md](./ops.md) · `ops-summary.limitChanges` |
+| Concern                        | Where                                                                                                                                |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Book / sportsbook SSOT         | [Bookmakers](./bookmakers/) · [bookmakers.md](./bookmakers.md) · `bookmakers.json` (v0.4.1 · `id === slug` · `fetcher` · `urls.web`) |
+| Partner outs · max bet · rails | [Partners](./partners/) · seat-capital-desk · [partners.md](./partners.md)                                                           |
+| Per-account dossier            | [Account](./account/) · partner-history                                                                                              |
+| Slip / balance **image proof** | [DOD](./dod/) · [dod.md](./dod.md) (confirm amount in Telegram Accounting)                                                           |
+| Telegram package forums        | [telegram.md](./telegram.md) · [factory.md](./factory.md) handshake                                                                  |
+| Soft plays / weeks             | Soft export · Partners Soft tables                                                                                                   |
+| Ops pulse                      | [ops.md](./ops.md) · `ops-summary.limitChanges`                                                                                      |
 
 Limit raises often key by **node / book** — keep book ids aligned with the
 bookmakers registry (`id === slug`) when correlating coverage. Desk free-text
@@ -51,14 +52,14 @@ bun run bookmakers:desk-coverage    # book id / max-bet alignment
 
 ## Audit · failure paths
 
-| Symptom | Fix |
-|---------|-----|
-| Pages agent raises **503** / empty `byNode` | Rebake `limit-raises.json` · demo seed · check lookback window |
-| Board metrics zero after deploy | Stale bake · `ops:snapshot` · Pages cache |
-| Predict / analyze 503 on Pages | Expected — run local `serve:public` or lab board |
-| Book id mismatch vs outs | [bookmakers.md](./bookmakers.md) · seat desk BOOK column · desk coverage |
-| Coverage % incomplete | Bind more accounts · `ops:limits:capture` · partners-ops |
-| Routing probe miss | [routing.md](./routing.md) · `bun run check:routes` · catalog row present |
+| Symptom                                     | Fix                                                                       |
+| ------------------------------------------- | ------------------------------------------------------------------------- |
+| Pages agent raises **503** / empty `byNode` | Rebake `limit-raises.json` · demo seed · check lookback window            |
+| Board metrics zero after deploy             | Stale bake · `ops:snapshot` · Pages cache                                 |
+| Predict / analyze 503 on Pages              | Expected — run local `serve:public` or lab board                          |
+| Book id mismatch vs outs                    | [bookmakers.md](./bookmakers.md) · seat desk BOOK column · desk coverage  |
+| Coverage % incomplete                       | Bind more accounts · `ops:limits:capture` · partners-ops                  |
+| Routing probe miss                          | [routing.md](./routing.md) · `bun run check:routes` · catalog row present |
 
 ## Tests
 

@@ -1,680 +1,1304 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- @see docs/portal-foundation.md — CLI tools hub; nav SSOT lib/portal/chrome-catalog.ts -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="portal-poll-ms" content="60000" />
-  <title>CLI Tools · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <style>
-    /* Tools hub — consumes theme.jsonc design-system tokens (portal:theme:sync) */
-    .tools-wrap {
-      max-width: var(--layout-max-width, var(--layout-max, 75rem));
-      margin: 0 auto;
-      padding: 0 var(--space-6, 1.5rem) var(--space-12, 3rem);
-    }
-    .tools-panel {
-      background: var(--bg-card, var(--surface));
-      border: 1px solid var(--layer-border, var(--border));
-      border-radius: var(--radius-md, var(--radius));
-      padding: var(--space-4, 1rem) calc(var(--space-4, 1rem) + 2px);
-      margin-bottom: var(--space-4, 1rem);
-      box-shadow: var(--shadow-sm);
-      transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
-    }
-    .tools-panel h2 {
-      font-size: var(--text-sm, 0.75rem);
-      font-weight: var(--font-weight-semibold, 600);
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--text-dim);
-      margin: 0 0 var(--space-3, 0.75rem);
-      line-height: var(--leading-tight, 1.25);
-    }
-    /* Base chrome from .portal-table — keep uppercase headers + denser code */
-    .tools-table th {
-      font-size: var(--text-xs, 0.625rem);
-      text-transform: uppercase; letter-spacing: .04em;
-    }
-    .tools-table td { line-height: var(--leading-normal, 1.45); }
-    .tools-table code { font-size: var(--text-xs, 0.625rem); font-family: var(--font-mono); }
-    .dim { color: var(--text-dim); font-size: var(--text-sm, 0.75rem); }
-    .group-tag {
-      font-size: var(--text-xs, 0.625rem);
-      text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
-    }
-    .quick-actions {
-      display: flex; flex-wrap: wrap;
-      gap: var(--space-2, 0.5rem);
-      margin: var(--space-2, 0.5rem) 0 0;
-    }
-    .copy-cli, .qa-btn {
-      font: inherit;
-      font-size: var(--text-xs, 0.625rem);
-      font-family: var(--font-mono);
-      font-weight: var(--font-weight-medium, 500);
-      padding: 6px 10px;
-      border-radius: var(--radius-sm, 4px);
-      border: 1px solid var(--border);
-      background: var(--bg-canvas, var(--bg));
-      color: var(--text);
-      cursor: pointer;
-      transition:
-        border-color var(--duration-fast, 150ms) var(--ease-out, ease),
-        color var(--duration-fast, 150ms) var(--ease-out, ease),
-        background var(--duration-fast, 150ms) var(--ease-out, ease),
-        box-shadow var(--duration-fast, 150ms) var(--ease-out, ease);
-    }
-    .copy-cli:hover, .qa-btn:hover {
-      border-color: var(--link-hover, var(--accent));
-      color: var(--link-hover, var(--accent));
-      background: var(--badge-hover, var(--surface-hover));
-    }
-    .copy-cli[data-copy-state="copied"] {
-      color: var(--status-fresh);
-      border-color: color-mix(in srgb, var(--status-fresh) 50%, var(--border));
-      background: var(--status-fresh-bg);
-      box-shadow: 0 0 0 1px color-mix(in srgb, var(--status-fresh) 25%, transparent);
-    }
-    .copy-cli[data-copy-state="failed"] {
-      color: var(--status-critical);
-      border-color: color-mix(in srgb, var(--status-critical) 50%, var(--border));
-      background: var(--status-critical-bg);
-    }
-    .snap-list { margin: 0; padding-inline-start: 18px; font-size: var(--text-sm, 0.75rem); }
-    #capability-filter, .cli-ref-search {
-      width: 100%; max-width: 320px;
-      margin-bottom: var(--space-3, 0.75rem);
-      padding: 6px 10px;
-      border-radius: var(--radius-sm, 4px);
-      border: 1px solid var(--border);
-      background: var(--bg-canvas, transparent);
-      color: var(--text);
-      font-size: var(--text-base, 0.8125rem);
-      font-family: var(--font-sans);
-      transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
-    }
-    #capability-filter:focus, .cli-ref-search:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-    tr.warn td { color: var(--status-stale); }
-    tr.missing td { color: var(--status-critical); }
-    tr.stale td { color: var(--status-stale); }
-    a.cap-source {
-      display: inline-block; margin-left: var(--space-1, 0.25rem);
-      font-size: var(--text-xs, 0.625rem);
-      color: var(--link-default, var(--accent)); text-decoration: none; opacity: .85;
-    }
-    a.cap-source:hover { opacity: 1; text-decoration: underline; color: var(--link-hover, var(--accent)); }
-    .bake-filters {
-      display: flex; flex-wrap: wrap;
-      gap: 6px;
-      margin: 0 0 var(--space-3, 0.75rem);
-    }
-    .bake-filter-btn {
-      font: inherit;
-      font-size: var(--text-xs, 0.625rem);
-      font-weight: var(--font-weight-medium, 500);
-      padding: 4px 10px;
-      border-radius: var(--radius-full, 999px);
-      border: 1px solid var(--border);
-      background: var(--badge-default, transparent);
-      color: var(--text-dim);
-      cursor: pointer;
-      transition:
-        border-color var(--duration-fast, 150ms) var(--ease-out, ease),
-        color var(--duration-fast, 150ms) var(--ease-out, ease),
-        background var(--duration-fast, 150ms) var(--ease-out, ease);
-    }
-    .bake-filter-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--badge-hover, var(--surface-hover));
-    }
-    .bake-filter-btn.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: var(--badge-active, var(--accent-glow));
-    }
-    .bake-filter-btn[data-group="registry"].active { border-color: var(--group-registry); color: var(--group-registry); }
-    .bake-filter-btn[data-group="ops"].active { border-color: var(--group-ops); color: var(--group-ops); }
-    .bake-filter-btn[data-group="harness"].active { border-color: var(--group-harness); color: var(--group-harness); }
-    .bake-filter-btn[data-group="secrets"].active { border-color: var(--group-secrets); color: var(--group-secrets); }
-    /* Status pills — semantic status tokens from theme.jsonc */
-    .bake-status-pill {
-      display: inline-block;
-      font-size: var(--text-xs, 0.625rem);
-      font-weight: var(--font-weight-semibold, 600);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      padding: 2px 7px;
-      border-radius: var(--radius-full, 999px);
-      border: 1px solid var(--border);
-      background: transparent;
-      line-height: var(--leading-tight, 1.25);
-    }
-    .bake-status-pill.ok {
-      color: var(--status-fresh);
-      background: var(--status-fresh-bg);
-      border-color: color-mix(in srgb, var(--status-fresh) 45%, var(--border));
-    }
-    .bake-status-pill.stale {
-      color: var(--status-stale);
-      background: var(--status-stale-bg);
-      border-color: color-mix(in srgb, var(--status-stale) 45%, var(--border));
-    }
-    .bake-status-pill.old {
-      color: var(--status-old);
-      background: var(--status-old-bg);
-      border-color: color-mix(in srgb, var(--status-old) 45%, var(--border));
-    }
-    .bake-status-pill.missing {
-      color: var(--status-critical);
-      background: var(--status-critical-bg);
-      border-color: color-mix(in srgb, var(--status-critical) 45%, var(--border));
-    }
-    .bake-group-tag {
-      font-size: var(--text-xs, 0.625rem);
-      text-transform: uppercase; letter-spacing: .04em; color: var(--text-dim);
-    }
-    /* Operator verticals + profile tiers — semantic.vertical / semantic.tier tokens */
-    .vt-chip, .tier-badge {
-      display: inline-block;
-      font-size: var(--text-xs, 0.625rem);
-      font-weight: var(--font-weight-semibold, 600);
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      padding: 2px 8px;
-      border-radius: var(--radius-full, 999px);
-      border: 1px solid var(--border);
-      line-height: var(--leading-tight, 1.25);
-    }
-    .vt-chip.sportsbook { color: var(--vertical-sportsbook); border-color: color-mix(in srgb, var(--vertical-sportsbook) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-sportsbook) 10%, transparent); }
-    .vt-chip.crypto { color: var(--vertical-crypto); border-color: color-mix(in srgb, var(--vertical-crypto) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-crypto) 10%, transparent); }
-    .vt-chip.pph { color: var(--vertical-pph); border-color: color-mix(in srgb, var(--vertical-pph) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-pph) 10%, transparent); }
-    .vt-chip.sweepstakes { color: var(--vertical-sweepstakes); border-color: color-mix(in srgb, var(--vertical-sweepstakes) 45%, var(--border)); background: color-mix(in srgb, var(--vertical-sweepstakes) 10%, transparent); }
-    .tier-badge.retail { color: var(--tier-retail); border-color: color-mix(in srgb, var(--tier-retail) 45%, var(--border)); background: color-mix(in srgb, var(--tier-retail) 10%, transparent); }
-    .tier-badge.vip { color: var(--tier-vip); border-color: color-mix(in srgb, var(--tier-vip) 45%, var(--border)); background: color-mix(in srgb, var(--tier-vip) 10%, transparent); }
-    .tier-badge.sharp { color: var(--tier-sharp); border-color: color-mix(in srgb, var(--tier-sharp) 45%, var(--border)); background: color-mix(in srgb, var(--tier-sharp) 10%, transparent); }
-    .bake-status-table code.bake-cli {
-      display: inline-block; max-width: 22rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-      vertical-align: middle; font-size: var(--text-xs, 0.625rem);
-    }
-    #bake-status-meta strong { color: var(--text); }
-    /* Age / summary panel */
-    .bake-age-table td.bake-age-cell {
-      white-space: nowrap;
-      font-family: var(--font-mono);
-      font-size: var(--text-sm, 0.75rem);
-      font-weight: var(--font-weight-medium, 500);
-    }
-    .bake-age-table td.bake-summary-cell {
-      font-family: var(--font-mono);
-      font-size: var(--text-xs, 0.625rem);
-      color: var(--text-dim);
-      max-width: 28rem;
-      word-break: break-word;
-    }
-    .bake-age-table tr[data-status="ok"] td.bake-age-cell { color: var(--status-fresh); }
-    .bake-age-table tr[data-status="stale"] td.bake-age-cell { color: var(--status-stale); }
-    .bake-age-table tr[data-status="old"] td.bake-age-cell { color: var(--status-old); }
-    .bake-age-table tr[data-status="missing"] td.bake-age-cell { color: var(--status-critical); }
-    .bake-age-legend {
-      display: flex; flex-wrap: wrap;
-      gap: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
-      margin: 0 0 var(--space-3, 0.75rem);
-      font-size: var(--text-xs, 0.625rem);
-      color: var(--text-dim);
-    }
-    .bake-age-legend span { display: inline-flex; align-items: center; gap: 5px; }
-    .bake-age-legend .dot {
-      width: 7px; height: 7px; border-radius: var(--radius-full, 50%); background: currentColor;
-    }
-    .bake-age-legend .leg-ok { color: var(--status-fresh); }
-    .bake-age-legend .leg-stale { color: var(--status-stale); }
-    .bake-age-legend .leg-old { color: var(--status-old); }
-    .bake-age-legend .leg-missing { color: var(--status-critical); }
-    /* Bun CLI reference */
-    .cli-ref-header {
-      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
-      gap: var(--space-2, 0.5rem); margin-bottom: var(--space-3, 0.75rem);
-    }
-    .cli-group {
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md, 8px);
-      margin-bottom: var(--space-2, 0.5rem);
-      overflow: hidden;
-      background: color-mix(in srgb, var(--bg-card, var(--surface)) 85%, transparent);
-      transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
-    }
-    .cli-group-header {
-      padding: 10px 12px; cursor: pointer;
-      display: flex; justify-content: space-between; gap: var(--space-3, 0.75rem);
-      font-size: var(--text-base, 0.8125rem);
-      font-weight: var(--font-weight-semibold, 600);
-      color: var(--text); user-select: none;
-      transition: background var(--duration-fast, 150ms) var(--ease-out, ease);
-    }
-    .cli-group-header:hover { background: var(--badge-active, var(--accent-glow)); }
-    .cli-group-header .chev { opacity: .7; font-family: var(--font-mono); width: 1rem; }
-    .cli-group-body { display: none; padding: 0 var(--space-2, 0.5rem) 10px; border-top: 1px solid var(--border); }
-    .cli-group-body.open { display: block; }
-    /* Base chrome from .portal-table */
-    .cli-table th {
-      font-size: var(--text-xs, 0.625rem);
-      text-transform: uppercase; letter-spacing: .04em;
-    }
-    .cli-table tr:last-child td { border-bottom: none; }
-    .flag-badge {
-      font-family: var(--font-mono);
-      font-size: var(--text-xs, 0.625rem);
-      background: var(--tone-info-bg, var(--accent-glow));
-      color: var(--accent);
-      padding: 2px 6px;
-      border-radius: var(--radius-sm, 4px);
-      white-space: nowrap;
-    }
-    .type-badge {
-      font-size: var(--text-xs, 0.625rem);
-      text-transform: uppercase; letter-spacing: .03em;
-      background: var(--bg-canvas, var(--bg));
-      border: 1px solid var(--border);
-      padding: 1px 6px;
-      border-radius: var(--radius-full, 999px);
-      color: var(--text-dim);
-    }
-    .default-val {
-      font-family: var(--font-mono);
-      font-size: var(--text-xs, 0.625rem);
-      color: var(--text-dim);
-    }
-    @media (max-width: 768px) {
-      .tools-wrap { padding-inline: var(--space-4, 1rem); }
-      .bake-status-table code.bake-cli { max-width: 10rem; }
-    }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">CLI Tools</span>
-      </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
-        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
-            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
-            <a href="/portal/desk/" class="nav-link" title="morning board · logins · limits · balances · soft net · telegram · freezes · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Desk</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Partners</a>
-            <a href="/portal/partner/" class="nav-link" title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:health:bake" data-registry="/registry/partner-health.json" role="menuitem">Partner health</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-dashboard.json" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
-            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
-            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop) · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
-            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
-            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="/portal/dashboard/" class="nav-link" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
-            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
-            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <title>CLI Tools · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      /* Tools hub — consumes theme.jsonc design-system tokens (portal:theme:sync) */
+      .tools-wrap {
+        max-width: var(--layout-max-width, var(--layout-max, 75rem));
+        margin: 0 auto;
+        padding: 0 var(--space-6, 1.5rem) var(--space-12, 3rem);
+      }
+      .tools-panel {
+        background: var(--bg-card, var(--surface));
+        border: 1px solid var(--layer-border, var(--border));
+        border-radius: var(--radius-md, var(--radius));
+        padding: var(--space-4, 1rem) calc(var(--space-4, 1rem) + 2px);
+        margin-bottom: var(--space-4, 1rem);
+        box-shadow: var(--shadow-sm);
+        transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+      }
+      .tools-panel h2 {
+        font-size: var(--text-sm, 0.75rem);
+        font-weight: var(--font-weight-semibold, 600);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--text-dim);
+        margin: 0 0 var(--space-3, 0.75rem);
+        line-height: var(--leading-tight, 1.25);
+      }
+      /* Base chrome from .portal-table — keep uppercase headers + denser code */
+      .tools-table th {
+        font-size: var(--text-xs, 0.625rem);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .tools-table td {
+        line-height: var(--leading-normal, 1.45);
+      }
+      .tools-table code {
+        font-size: var(--text-xs, 0.625rem);
+        font-family: var(--font-mono);
+      }
+      .dim {
+        color: var(--text-dim);
+        font-size: var(--text-sm, 0.75rem);
+      }
+      .group-tag {
+        font-size: var(--text-xs, 0.625rem);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-dim);
+      }
+      .quick-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2, 0.5rem);
+        margin: var(--space-2, 0.5rem) 0 0;
+      }
+      .copy-cli,
+      .qa-btn {
+        font: inherit;
+        font-size: var(--text-xs, 0.625rem);
+        font-family: var(--font-mono);
+        font-weight: var(--font-weight-medium, 500);
+        padding: 6px 10px;
+        border-radius: var(--radius-sm, 4px);
+        border: 1px solid var(--border);
+        background: var(--bg-canvas, var(--bg));
+        color: var(--text);
+        cursor: pointer;
+        transition:
+          border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+          color var(--duration-fast, 150ms) var(--ease-out, ease),
+          background var(--duration-fast, 150ms) var(--ease-out, ease),
+          box-shadow var(--duration-fast, 150ms) var(--ease-out, ease);
+      }
+      .copy-cli:hover,
+      .qa-btn:hover {
+        border-color: var(--link-hover, var(--accent));
+        color: var(--link-hover, var(--accent));
+        background: var(--badge-hover, var(--surface-hover));
+      }
+      .copy-cli[data-copy-state='copied'] {
+        color: var(--status-fresh);
+        border-color: color-mix(in srgb, var(--status-fresh) 50%, var(--border));
+        background: var(--status-fresh-bg);
+        box-shadow: 0 0 0 1px color-mix(in srgb, var(--status-fresh) 25%, transparent);
+      }
+      .copy-cli[data-copy-state='failed'] {
+        color: var(--status-critical);
+        border-color: color-mix(in srgb, var(--status-critical) 50%, var(--border));
+        background: var(--status-critical-bg);
+      }
+      .snap-list {
+        margin: 0;
+        padding-inline-start: 18px;
+        font-size: var(--text-sm, 0.75rem);
+      }
+      #capability-filter,
+      .cli-ref-search {
+        width: 100%;
+        max-width: 320px;
+        margin-bottom: var(--space-3, 0.75rem);
+        padding: 6px 10px;
+        border-radius: var(--radius-sm, 4px);
+        border: 1px solid var(--border);
+        background: var(--bg-canvas, transparent);
+        color: var(--text);
+        font-size: var(--text-base, 0.8125rem);
+        font-family: var(--font-sans);
+        transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+      }
+      #capability-filter:focus,
+      .cli-ref-search:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-glow);
+      }
+      tr.warn td {
+        color: var(--status-stale);
+      }
+      tr.missing td {
+        color: var(--status-critical);
+      }
+      tr.stale td {
+        color: var(--status-stale);
+      }
+      a.cap-source {
+        display: inline-block;
+        margin-left: var(--space-1, 0.25rem);
+        font-size: var(--text-xs, 0.625rem);
+        color: var(--link-default, var(--accent));
+        text-decoration: none;
+        opacity: 0.85;
+      }
+      a.cap-source:hover {
+        opacity: 1;
+        text-decoration: underline;
+        color: var(--link-hover, var(--accent));
+      }
+      .bake-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin: 0 0 var(--space-3, 0.75rem);
+      }
+      .bake-filter-btn {
+        font: inherit;
+        font-size: var(--text-xs, 0.625rem);
+        font-weight: var(--font-weight-medium, 500);
+        padding: 4px 10px;
+        border-radius: var(--radius-full, 999px);
+        border: 1px solid var(--border);
+        background: var(--badge-default, transparent);
+        color: var(--text-dim);
+        cursor: pointer;
+        transition:
+          border-color var(--duration-fast, 150ms) var(--ease-out, ease),
+          color var(--duration-fast, 150ms) var(--ease-out, ease),
+          background var(--duration-fast, 150ms) var(--ease-out, ease);
+      }
+      .bake-filter-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--badge-hover, var(--surface-hover));
+      }
+      .bake-filter-btn.active {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: var(--badge-active, var(--accent-glow));
+      }
+      .bake-filter-btn[data-group='registry'].active {
+        border-color: var(--group-registry);
+        color: var(--group-registry);
+      }
+      .bake-filter-btn[data-group='ops'].active {
+        border-color: var(--group-ops);
+        color: var(--group-ops);
+      }
+      .bake-filter-btn[data-group='harness'].active {
+        border-color: var(--group-harness);
+        color: var(--group-harness);
+      }
+      .bake-filter-btn[data-group='secrets'].active {
+        border-color: var(--group-secrets);
+        color: var(--group-secrets);
+      }
+      /* Status pills — semantic status tokens from theme.jsonc */
+      .bake-status-pill {
+        display: inline-block;
+        font-size: var(--text-xs, 0.625rem);
+        font-weight: var(--font-weight-semibold, 600);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 2px 7px;
+        border-radius: var(--radius-full, 999px);
+        border: 1px solid var(--border);
+        background: transparent;
+        line-height: var(--leading-tight, 1.25);
+      }
+      .bake-status-pill.ok {
+        color: var(--status-fresh);
+        background: var(--status-fresh-bg);
+        border-color: color-mix(in srgb, var(--status-fresh) 45%, var(--border));
+      }
+      .bake-status-pill.stale {
+        color: var(--status-stale);
+        background: var(--status-stale-bg);
+        border-color: color-mix(in srgb, var(--status-stale) 45%, var(--border));
+      }
+      .bake-status-pill.old {
+        color: var(--status-old);
+        background: var(--status-old-bg);
+        border-color: color-mix(in srgb, var(--status-old) 45%, var(--border));
+      }
+      .bake-status-pill.missing {
+        color: var(--status-critical);
+        background: var(--status-critical-bg);
+        border-color: color-mix(in srgb, var(--status-critical) 45%, var(--border));
+      }
+      .bake-group-tag {
+        font-size: var(--text-xs, 0.625rem);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-dim);
+      }
+      /* Operator verticals + profile tiers — semantic.vertical / semantic.tier tokens */
+      .vt-chip,
+      .tier-badge {
+        display: inline-block;
+        font-size: var(--text-xs, 0.625rem);
+        font-weight: var(--font-weight-semibold, 600);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        padding: 2px 8px;
+        border-radius: var(--radius-full, 999px);
+        border: 1px solid var(--border);
+        line-height: var(--leading-tight, 1.25);
+      }
+      .vt-chip.sportsbook {
+        color: var(--vertical-sportsbook);
+        border-color: color-mix(in srgb, var(--vertical-sportsbook) 45%, var(--border));
+        background: color-mix(in srgb, var(--vertical-sportsbook) 10%, transparent);
+      }
+      .vt-chip.crypto {
+        color: var(--vertical-crypto);
+        border-color: color-mix(in srgb, var(--vertical-crypto) 45%, var(--border));
+        background: color-mix(in srgb, var(--vertical-crypto) 10%, transparent);
+      }
+      .vt-chip.pph {
+        color: var(--vertical-pph);
+        border-color: color-mix(in srgb, var(--vertical-pph) 45%, var(--border));
+        background: color-mix(in srgb, var(--vertical-pph) 10%, transparent);
+      }
+      .vt-chip.sweepstakes {
+        color: var(--vertical-sweepstakes);
+        border-color: color-mix(in srgb, var(--vertical-sweepstakes) 45%, var(--border));
+        background: color-mix(in srgb, var(--vertical-sweepstakes) 10%, transparent);
+      }
+      .tier-badge.retail {
+        color: var(--tier-retail);
+        border-color: color-mix(in srgb, var(--tier-retail) 45%, var(--border));
+        background: color-mix(in srgb, var(--tier-retail) 10%, transparent);
+      }
+      .tier-badge.vip {
+        color: var(--tier-vip);
+        border-color: color-mix(in srgb, var(--tier-vip) 45%, var(--border));
+        background: color-mix(in srgb, var(--tier-vip) 10%, transparent);
+      }
+      .tier-badge.sharp {
+        color: var(--tier-sharp);
+        border-color: color-mix(in srgb, var(--tier-sharp) 45%, var(--border));
+        background: color-mix(in srgb, var(--tier-sharp) 10%, transparent);
+      }
+      .bake-status-table code.bake-cli {
+        display: inline-block;
+        max-width: 22rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        vertical-align: middle;
+        font-size: var(--text-xs, 0.625rem);
+      }
+      #bake-status-meta strong {
+        color: var(--text);
+      }
+      /* Age / summary panel */
+      .bake-age-table td.bake-age-cell {
+        white-space: nowrap;
+        font-family: var(--font-mono);
+        font-size: var(--text-sm, 0.75rem);
+        font-weight: var(--font-weight-medium, 500);
+      }
+      .bake-age-table td.bake-summary-cell {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs, 0.625rem);
+        color: var(--text-dim);
+        max-width: 28rem;
+        word-break: break-word;
+      }
+      .bake-age-table tr[data-status='ok'] td.bake-age-cell {
+        color: var(--status-fresh);
+      }
+      .bake-age-table tr[data-status='stale'] td.bake-age-cell {
+        color: var(--status-stale);
+      }
+      .bake-age-table tr[data-status='old'] td.bake-age-cell {
+        color: var(--status-old);
+      }
+      .bake-age-table tr[data-status='missing'] td.bake-age-cell {
+        color: var(--status-critical);
+      }
+      .bake-age-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2, 0.5rem) var(--space-3, 0.75rem);
+        margin: 0 0 var(--space-3, 0.75rem);
+        font-size: var(--text-xs, 0.625rem);
+        color: var(--text-dim);
+      }
+      .bake-age-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .bake-age-legend .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: var(--radius-full, 50%);
+        background: currentColor;
+      }
+      .bake-age-legend .leg-ok {
+        color: var(--status-fresh);
+      }
+      .bake-age-legend .leg-stale {
+        color: var(--status-stale);
+      }
+      .bake-age-legend .leg-old {
+        color: var(--status-old);
+      }
+      .bake-age-legend .leg-missing {
+        color: var(--status-critical);
+      }
+      /* Bun CLI reference */
+      .cli-ref-header {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: var(--space-2, 0.5rem);
+        margin-bottom: var(--space-3, 0.75rem);
+      }
+      .cli-group {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md, 8px);
+        margin-bottom: var(--space-2, 0.5rem);
+        overflow: hidden;
+        background: color-mix(in srgb, var(--bg-card, var(--surface)) 85%, transparent);
+        transition: border-color var(--duration-fast, 150ms) var(--ease-out, ease);
+      }
+      .cli-group-header {
+        padding: 10px 12px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-3, 0.75rem);
+        font-size: var(--text-base, 0.8125rem);
+        font-weight: var(--font-weight-semibold, 600);
+        color: var(--text);
+        user-select: none;
+        transition: background var(--duration-fast, 150ms) var(--ease-out, ease);
+      }
+      .cli-group-header:hover {
+        background: var(--badge-active, var(--accent-glow));
+      }
+      .cli-group-header .chev {
+        opacity: 0.7;
+        font-family: var(--font-mono);
+        width: 1rem;
+      }
+      .cli-group-body {
+        display: none;
+        padding: 0 var(--space-2, 0.5rem) 10px;
+        border-top: 1px solid var(--border);
+      }
+      .cli-group-body.open {
+        display: block;
+      }
+      /* Base chrome from .portal-table */
+      .cli-table th {
+        font-size: var(--text-xs, 0.625rem);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .cli-table tr:last-child td {
+        border-bottom: none;
+      }
+      .flag-badge {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs, 0.625rem);
+        background: var(--tone-info-bg, var(--accent-glow));
+        color: var(--accent);
+        padding: 2px 6px;
+        border-radius: var(--radius-sm, 4px);
+        white-space: nowrap;
+      }
+      .type-badge {
+        font-size: var(--text-xs, 0.625rem);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        background: var(--bg-canvas, var(--bg));
+        border: 1px solid var(--border);
+        padding: 1px 6px;
+        border-radius: var(--radius-full, 999px);
+        color: var(--text-dim);
+      }
+      .default-val {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs, 0.625rem);
+        color: var(--text-dim);
+      }
+      @media (max-width: 768px) {
+        .tools-wrap {
+          padding-inline: var(--space-4, 1rem);
+        }
+        .bake-status-table code.bake-cli {
+          max-width: 10rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">CLI Tools</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a
+            href="/"
+            class="nav-link"
+            title="public lander · portal entry"
+            data-group="other"
+            data-domain="platform"
+            >Home</a
+          >
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot"
+            data-group="ops"
+            data-domain="control"
+            data-cli="bun run ops:snapshot"
+            data-registry="/registry/ops-summary.json"
+            >Ops</a
+          >
+          <a
+            href="/portal/"
+            class="nav-link"
+            title="portal hub · board index · weave surfaces"
+            data-group="registry"
+            data-domain="platform"
+            >Registry</a
+          >
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-domain="platform"
+            data-cli="bun run monorepo:health:bake"
+            data-registry="/registry/monorepo-health.json"
+            >Health</a
+          >
+          <a
+            href="/portal/dod/"
+            class="nav-link"
+            title="visual proof review · public-plane gate · bun run public:audit:verify"
+            data-group="plane"
+            data-domain="platform"
+            data-cli="bun run public:audit:verify"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · shadow matrix · bun run compliance:bake"
+            data-group="ops"
+            data-domain="control"
+            data-cli="bun run compliance:bake"
+            data-registry="/registry/compliance-board.json"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+                <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+                <a
+                  href="/portal/desk/"
+                  class="nav-link"
+                  title="morning board · logins · limits · balances · soft net · telegram · freezes · bun run partner:dashboard:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:dashboard:bake"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Desk</a
+                >
+                <a
+                  href="/portal/partners/"
+                  class="nav-link"
+                  title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:dashboard:bake"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Partners</a
+                >
+                <a
+                  href="/portal/partner/"
+                  class="nav-link"
+                  title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:health:bake"
+                  data-registry="/registry/partner-health.json"
+                  role="menuitem"
+                  >Partner health</a
+                >
+                <a
+                  href="/portal/account/"
+                  class="nav-link"
+                  title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:dossier:seed"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Account</a
+                >
+                <a
+                  href="/portal/partner-history/"
+                  class="nav-link"
+                  title="per-partner limit history board · bun run ops:limits:demo"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:demo"
+                  data-registry="/registry/limit-raises.json"
+                  role="menuitem"
+                  >Partner history</a
+                >
+                <a
+                  href="/portal/limits/"
+                  class="nav-link"
+                  title="multi-factor partner limit raises · CLV · bun run ops:limits:demo"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:demo"
+                  data-registry="/registry/limit-raises.json"
+                  role="menuitem"
+                  >Limits</a
+                >
+                <a
+                  href="/portal/limits-lab/"
+                  class="nav-link"
+                  title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:predict"
+                  data-registry="/registry/limit-forecast-lab.json"
+                  role="menuitem"
+                  >Limits lab</a
+                >
+                <a
+                  href="/portal/bookmakers/"
+                  class="nav-link"
+                  title="@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop) · bun run bookmakers:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run bookmakers:bake"
+                  data-registry="/registry/bookmakers.json"
+                  role="menuitem"
+                  >Bookmakers</a
+                >
+                <a
+                  href="/portal/factory/"
+                  class="nav-link"
+                  title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run telegram:verify"
+                  data-registry="/registry/telegram-handshake.json"
+                  role="menuitem"
+                  >Factory</a
+                >
+                <a
+                  href="/portal/tennis/"
+                  class="nav-link"
+                  title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake"
+                  data-group="ops"
+                  data-domain="trading"
+                  data-cli="bun run tennis:board:bake"
+                  data-registry="/registry/tennis/agent-auth.json"
+                  role="menuitem"
+                  >Tennis</a
+                >
+                <a
+                  href="/registry/prediction/report/"
+                  class="nav-link"
+                  title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                  data-group="ops"
+                  data-domain="trading"
+                  data-cli="bun run portal-cli snapshot last --scope prediction"
+                  role="menuitem"
+                  >Prediction</a
+                >
+                <a
+                  href="/portal/dashboard/"
+                  class="nav-link"
+                  title="KPIs · TOC · compliance plane · proof-index pins"
+                  data-group="ops"
+                  data-domain="control"
+                  role="menuitem"
+                  >Dashboard</a
+                >
+                <a
+                  href="/portal/toc/"
+                  class="nav-link"
+                  title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc"
+                  data-group="ops"
+                  data-domain="control"
+                  data-cli="bun run ops:seed:toc"
+                  data-registry="/registry/toc-ops.json"
+                  role="menuitem"
+                  >TOC</a
+                >
+                <a
+                  href="/monitoring/"
+                  class="nav-link"
+                  title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed"
+                  data-group="ops"
+                  data-domain="control"
+                  data-cli="bun run ops:snapshot --no-seed"
+                  data-registry="/registry/monitoring.json"
+                  role="menuitem"
+                  >Monitoring</a
+                >
+                <a
+                  href="/portal/identity/"
+                  class="nav-link"
+                  title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts"
+                  data-group="ops"
+                  data-domain="identity"
+                  data-cli="bun test tests/identity-*.test.ts"
+                  data-registry="/registry/identity-board.json"
+                  role="menuitem"
+                  >Identity</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+                <div class="nav-group-label" aria-hidden="true">Secrets</div>
+                <a
+                  href="/portal/vault/"
+                  class="nav-link"
+                  title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                  data-group="secrets"
+                  data-domain="identity"
+                  data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                  data-registry="/registry/vault-health.json"
+                  role="menuitem"
+                  >Vault</a
+                >
+                <a
+                  href="/portal/env/"
+                  class="nav-link"
+                  title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                  data-group="secrets"
+                  data-domain="identity"
+                  data-cli="bun run portal-cli secret map  # no secret values printed"
+                  role="menuitem"
+                  >Env</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+                <div class="nav-group-label" aria-hidden="true">Registry</div>
+                <a
+                  href="/portal/catalog/"
+                  class="nav-link"
+                  title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run bake:scrape-wire-taxonomy"
+                  role="menuitem"
+                  >Catalog</a
+                >
+                <a
+                  href="/portal/packages/"
+                  class="nav-link"
+                  title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save"
+                  data-group="registry"
+                  data-domain="platform"
+                  data-cli="bun run ssot:flow:soft && bun run verify:pm:save"
+                  data-registry="/registry/packages-graph-map.json"
+                  role="menuitem"
+                  >Packages</a
+                >
+                <a
+                  href="/portal/brands/"
+                  class="nav-link"
+                  title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run brand:keymap"
+                  role="menuitem"
+                  >Brands</a
+                >
+                <a
+                  href="/portal/glossary/"
+                  class="nav-link"
+                  title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run glossary:portal"
+                  data-registry="/registry/domain-glossary.json"
+                  role="menuitem"
+                  >Glossary</a
+                >
+                <a
+                  href="/portal/lanes/"
+                  class="nav-link"
+                  title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run workspace-taxonomy:bake"
+                  data-registry="/registry/workspace-lane-map.json"
+                  role="menuitem"
+                  >Lanes</a
+                >
+                <a
+                  href="/portal/issues/"
+                  class="nav-link"
+                  title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run github-issue-taxonomy:check"
+                  data-registry="/registry/github-issue-taxonomy.json"
+                  role="menuitem"
+                  >Issues</a
+                >
+                <a
+                  href="/portal/surfaces/"
+                  class="nav-link"
+                  title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                  data-registry="/registry/surfaces-state.json"
+                  role="menuitem"
+                  >Surfaces</a
+                >
+                <a
+                  href="/portal/skills/"
+                  class="nav-link"
+                  title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run skills:validate"
+                  data-registry="/registry/harness-skills-catalog.json"
+                  role="menuitem"
+                  >Skills</a
+                >
+                <a
+                  href="/portal/concepts/"
+                  class="nav-link"
+                  title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run concepts:bake  # → /registry/concepts-state.json"
+                  role="menuitem"
+                  >Concepts</a
+                >
+                <a
+                  href="/portal/concepts/graph/"
+                  class="nav-link"
+                  title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                  role="menuitem"
+                  >Concept graph</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="More" data-group="other">
+                <div class="nav-group-label" aria-hidden="true">More</div>
+                <a
+                  href="https://wiki.factory-wager.com/wiki-index.html"
+                  class="nav-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="GitHub Pages hub · wiki-index"
+                  data-group="other"
+                  data-domain="platform"
+                  role="menuitem"
+                  >Wiki</a
+                >
+              </div>
+            </div>
           </div>
-          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
-            <div class="nav-group-label" aria-hidden="true">Secrets</div>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
-          </div>
-          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
-            <div class="nav-group-label" aria-hidden="true">Registry</div>
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
-            <a href="/portal/lanes/" class="nav-link" title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake" data-group="registry" data-domain="knowledge" data-cli="bun run workspace-taxonomy:bake" data-registry="/registry/workspace-lane-map.json" role="menuitem">Lanes</a>
-            <a href="/portal/issues/" class="nav-link" title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check" data-group="registry" data-domain="knowledge" data-cli="bun run github-issue-taxonomy:check" data-registry="/registry/github-issue-taxonomy.json" role="menuitem">Issues</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-          </div>
-          <div class="nav-group" role="group" aria-label="More" data-group="other">
-            <div class="nav-group-label" aria-hidden="true">More</div>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
-          </div>
-          </div>
+        </nav>
+      </div>
+    </header>
+    <main class="tools-wrap">
+      <p class="dim">
+        Control plane for real boards + real <code>portal-cli</code> commands. No phantom routes ·
+        no browser-side spawn (copy CLI instead).
+      </p>
+      <p class="dim">
+        Launcher: <code>bun run portal-cli dashboard</code> ·
+        <code>portal-cli dashboard --view=vault --open</code>
+      </p>
+
+      <div class="tools-panel" id="quick-actions">
+        <h2>Quick actions (copy)</h2>
+        <p class="dim">
+          Run these in a trusted shell (agent session for vault ops). Buttons only copy — Pages
+          cannot spawn your CLI.
+        </p>
+        <div class="quick-actions">
+          <button
+            type="button"
+            class="copy-cli qa-btn"
+            data-cli="bun run portal-cli snapshot run --scope portal"
+          >
+            snapshot run
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot list">
+            snapshot list
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run portal:doctor --verbose">
+            portal doctor
+          </button>
+          <button
+            type="button"
+            class="copy-cli qa-btn"
+            data-cli="bun run portal:doctor --group bunfig"
+          >
+            doctor bunfig
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run bake:doctor">
+            bake doctor
+          </button>
+          <a
+            class="qa-btn"
+            href="/portal/doctor/"
+            style="display: inline-flex; align-items: center; text-decoration: none"
+            >Doctor board</a
+          >
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli vault health">
+            vault health gate
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run vault:health:bake">
+            vault health bake
+          </button>
+          <button
+            type="button"
+            class="copy-cli qa-btn"
+            data-cli="bun run portal-cli scanner doctor"
+          >
+            scanner doctor
+          </button>
+          <button
+            type="button"
+            class="copy-cli qa-btn"
+            data-cli="bun run portal-cli scanner status"
+          >
+            scanner status
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner vault">
+            scanner vault
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner scan">
+            scanner scan
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli pm graph">
+            pm graph
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run failures:bake">
+            failures bake
+          </button>
+          <button
+            type="button"
+            class="copy-cli qa-btn"
+            data-cli="bun run ops:snapshot --no-routing"
+          >
+            ops snapshot
+          </button>
+          <button type="button" class="copy-cli qa-btn" data-cli="bun run monorepo:health:bake">
+            monorepo health bake
+          </button>
+          <button
+            type="button"
+            class="copy-cli qa-btn"
+            data-cli="source scripts/agent-env.sh factorywager &amp;&amp; bun run portal-cli secret autofill --vault factorywager -- bun run cloudflare:env:validate"
+          >
+            secret autofill (example)
+          </button>
         </div>
-      </nav>
-    </div>
-  </header>
-  <main class="tools-wrap">
-    <p class="dim">Control plane for real boards + real <code>portal-cli</code> commands. No phantom routes · no browser-side spawn (copy CLI instead).</p>
-    <p class="dim">Launcher: <code>bun run portal-cli dashboard</code> · <code>portal-cli dashboard --view=vault --open</code></p>
-
-    <div class="tools-panel" id="quick-actions">
-      <h2>Quick actions (copy)</h2>
-      <p class="dim">Run these in a trusted shell (agent session for vault ops). Buttons only copy — Pages cannot spawn your CLI.</p>
-      <div class="quick-actions">
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot run --scope portal">snapshot run</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli snapshot list">snapshot list</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal:doctor --verbose">portal doctor</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal:doctor --group bunfig">doctor bunfig</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run bake:doctor">bake doctor</button>
-        <a class="qa-btn" href="/portal/doctor/" style="display:inline-flex;align-items:center;text-decoration:none">Doctor board</a>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli vault health">vault health gate</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run vault:health:bake">vault health bake</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner doctor">scanner doctor</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner status">scanner status</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner vault">scanner vault</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli scanner scan">scanner scan</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run portal-cli pm graph">pm graph</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run failures:bake">failures bake</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run ops:snapshot --no-routing">ops snapshot</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="bun run monorepo:health:bake">monorepo health bake</button>
-        <button type="button" class="copy-cli qa-btn" data-cli="source scripts/agent-env.sh factorywager &amp;&amp; bun run portal-cli secret autofill --vault factorywager -- bun run cloudflare:env:validate">secret autofill (example)</button>
       </div>
-    </div>
 
-    <div class="tools-panel" id="bake-status-panel">
-      <h2 id="bakes">Baked data status</h2>
-      <p class="dim" id="bake-status-meta">Freshness from public registry artifacts (same sources as nav badges) · CLI = copy rebake.</p>
-      <div class="bake-filters" id="bake-filters" aria-label="Filter bakes by group"></div>
-      <table class="portal-table tools-table bake-status-table">
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Group</th>
-            <th>Artifact</th>
-            <th>Board</th>
-            <th>CLI</th>
-          </tr>
-        </thead>
-        <tbody id="bake-status-body"><tr><td colspan="5" class="dim">Loading…</td></tr></tbody>
-      </table>
-    </div>
+      <div class="tools-panel" id="bake-status-panel">
+        <h2 id="bakes">Baked data status</h2>
+        <p class="dim" id="bake-status-meta">
+          Freshness from public registry artifacts (same sources as nav badges) · CLI = copy rebake.
+        </p>
+        <div class="bake-filters" id="bake-filters" aria-label="Filter bakes by group"></div>
+        <table class="portal-table tools-table bake-status-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Group</th>
+              <th>Artifact</th>
+              <th>Board</th>
+              <th>CLI</th>
+            </tr>
+          </thead>
+          <tbody id="bake-status-body">
+            <tr>
+              <td colspan="5" class="dim">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <div class="tools-panel" id="theme-tokens-panel">
-      <h2 id="theme-tokens">Theme tokens</h2>
-      <p class="dim">
-        Operator verticals + profile tiers from <code>theme.jsonc</code>
-        (<code>--vertical-*</code> · <code>--tier-*</code>) — closed-palette aliases, gated by
-        <code>validate:colors</code> component plane.
+      <div class="tools-panel" id="theme-tokens-panel">
+        <h2 id="theme-tokens">Theme tokens</h2>
+        <p class="dim">
+          Operator verticals + profile tiers from <code>theme.jsonc</code> (<code
+            >--vertical-*</code
+          >
+          · <code>--tier-*</code>) — closed-palette aliases, gated by
+          <code>validate:colors</code> component plane.
+        </p>
+        <div class="theme-token-strip" aria-label="Operator vertical chips">
+          <span class="vt-chip sportsbook">Sportsbook</span>
+          <span class="vt-chip crypto">Crypto</span>
+          <span class="vt-chip pph">PPH</span>
+          <span class="vt-chip sweepstakes">Sweepstakes</span>
+        </div>
+        <div class="theme-token-strip" aria-label="Profile tier badges">
+          <span class="tier-badge retail">Retail</span>
+          <span class="tier-badge vip">VIP</span>
+          <span class="tier-badge sharp">Sharp</span>
+        </div>
+      </div>
+
+      <div class="tools-panel" id="bake-age-panel">
+        <h2 id="bake-age">Age / summary</h2>
+        <p class="dim">
+          Per-artifact age + payload highlights · shared group filter above · semantic status from
+          <code>theme.jsonc</code> (<code>--status-fresh</code> · <code>--status-stale</code> ·
+          <code>--status-old</code> · <code>--status-critical</code>).
+        </p>
+        <div class="bake-age-legend" aria-label="Freshness legend">
+          <span class="leg-ok"><span class="dot" aria-hidden="true"></span>fresh &lt;24h</span>
+          <span class="leg-stale"><span class="dot" aria-hidden="true"></span>stale &lt;7d</span>
+          <span class="leg-old"><span class="dot" aria-hidden="true"></span>old ≥7d</span>
+          <span class="leg-missing"><span class="dot" aria-hidden="true"></span>missing</span>
+        </div>
+        <table class="portal-table tools-table bake-age-table">
+          <thead>
+            <tr>
+              <th>Status</th>
+              <th>Artifact</th>
+              <th>Age</th>
+              <th>Summary</th>
+            </tr>
+          </thead>
+          <tbody id="bake-age-body">
+            <tr>
+              <td colspan="4" class="dim">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tools-panel" id="surface-map-panel">
+        <h2 id="surfaces-map">Board → artifact map</h2>
+        <p class="dim" id="surface-map-meta">
+          From weave <code>surfaces[]</code> optional fields (<code>artifact</code> ·
+          <code>category</code> · <code>description</code>) · schema v2 non-breaking.
+        </p>
+        <table class="portal-table tools-table">
+          <thead>
+            <tr>
+              <th>Board</th>
+              <th>Category</th>
+              <th>Artifact</th>
+              <th>CLI</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody id="surface-map-body">
+            <tr>
+              <td colspan="5" class="dim">Loading…</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tools-panel">
+        <h2 id="snapshots">Last snapshot (widget)</h2>
+        <div id="snapshot-widget"><p class="dim">Loading…</p></div>
+      </div>
+
+      <div class="tools-panel" id="bun-cli-panel">
+        <div class="cli-ref-header">
+          <h2 id="bun-cli" style="margin: 0">Bun CLI reference</h2>
+          <span class="dim" id="bun-cli-meta">Loading flags…</span>
+        </div>
+        <p class="dim">
+          Live-grouped flags from <code>bun --help</code> bake ·
+          <a href="/registry/bun-cli-reference.json">JSON</a> · rebake
+          <button type="button" class="copy-cli" data-cli="bun tools/bake-bun-cli-reference.ts">
+            copy
+          </button>
+          <code>bun tools/bake-bun-cli-reference.ts</code>
+        </p>
+        <input
+          type="search"
+          class="cli-ref-search"
+          id="bun-cli-filter"
+          placeholder="Filter flags…"
+          aria-label="Filter Bun CLI flags"
+        />
+        <div id="bun-cli-accordion"><p class="dim">Loading…</p></div>
+      </div>
+
+      <div class="tools-panel">
+        <h2>portal-cli → board</h2>
+        <table class="portal-table tools-table">
+          <thead>
+            <tr>
+              <th>Board</th>
+              <th>CLI</th>
+              <th>What you get</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <a href="/portal/packages/">Packages</a> <span class="group-tag">registry</span>
+              </td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">
+                  copy
+                </button>
+                <code>portal-cli pm graph</code><br />
+                <code>portal-cli pm ls</code>
+              </td>
+              <td>packages-graph-map bake · bun pm passthrough</td>
+            </tr>
+            <tr>
+              <td><a href="/portal/vault/">Vault</a> <span class="group-tag">secrets</span></td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run portal-cli vault health">
+                  copy
+                </button>
+                <code>portal-cli vault health</code><br />
+                <code>bun run vault:health:bake</code>
+              </td>
+              <td>Offline inventory snapshots (CI) · live bake board</td>
+            </tr>
+            <tr>
+              <td><a href="/portal/env/">Env</a> <span class="group-tag">secrets</span></td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run portal-cli secret map">
+                  copy
+                </button>
+                <code>portal-cli secret map</code>
+              </td>
+              <td>vault-map display + pass:// paths (no secret values)</td>
+            </tr>
+            <tr>
+              <td><a href="/portal/health/">Health</a> <span class="group-tag">harness</span></td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run monorepo:health:bake">
+                  copy
+                </button>
+                <code>monorepo:health:bake</code>
+              </td>
+              <td>Health dashboard · monorepo score</td>
+            </tr>
+            <tr>
+              <td><a href="/portal/doctor/">Doctor</a> <span class="group-tag">harness</span></td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run portal:doctor --verbose">
+                  copy
+                </button>
+                <code>portal:doctor</code><br />
+                <code>portal:doctor --group bunfig</code><br />
+                <code>bake:doctor</code>
+              </td>
+              <td>Unified doctor · bunfig/catalog/linker · doctor-state bake</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="/portal/failures/">Failures</a> <span class="group-tag">harness</span>
+              </td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run failures:bake">
+                  copy
+                </button>
+                <code>failures:bake</code>
+              </td>
+              <td>JUnit / test-failures board · nav badge = failure count</td>
+            </tr>
+            <tr>
+              <td><a href="/portal/ops/">Ops</a> <span class="group-tag">ops</span></td>
+              <td>
+                <button type="button" class="copy-cli" data-cli="bun run ops:snapshot --no-routing">
+                  copy
+                </button>
+                <code>ops:snapshot</code>
+              </td>
+              <td>ops-summary rollup · scope snapshots</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="/registry/prediction/report/">Prediction report</a>
+                <span class="group-tag">ops</span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="copy-cli"
+                  data-cli="bun run portal-cli snapshot last --scope prediction"
+                >
+                  copy
+                </button>
+                <code>snapshot last --scope prediction</code>
+              </td>
+              <td>Latest prediction report HTML</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tools-panel" id="capabilities">
+        <h2>Grounded capability map (subset)</h2>
+        <p class="dim">
+          Full matrix:
+          <a
+            href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/capability-map.md#grounded-capability-map"
+            >Harness grounded capability map</a
+          >
+          · decision tables:
+          <a
+            href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/packages/README.md"
+            >docs/packages</a
+          >
+        </p>
+        <p class="dim" id="capability-meta">Loading capability subset…</p>
+        <input
+          id="capability-filter"
+          type="search"
+          placeholder="Filter capabilities…"
+          autocomplete="off"
+        />
+        <table class="portal-table tools-table">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Type</th>
+              <th>Protocol</th>
+              <th>Version</th>
+              <th>API</th>
+              <th>Status</th>
+              <th>Used in</th>
+            </tr>
+          </thead>
+          <tbody id="capability-body"></tbody>
+        </table>
+      </div>
+
+      <div class="tools-panel">
+        <h2>Command groups</h2>
+        <table class="portal-table tools-table">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Commands</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>snapshot</td>
+              <td>
+                <code>portal-cli snapshot run|list|grep|last|config</code> · scopes: prediction,
+                portal, gaps, limits
+              </td>
+            </tr>
+            <tr>
+              <td>secret</td>
+              <td>
+                <code>portal-cli secret which|vaults|items|get|run|inject|autofill|map|…</code> ·
+                real pass-cli only
+              </td>
+            </tr>
+            <tr>
+              <td>vault</td>
+              <td><code>portal-cli vault health [--update]</code> · offline SSOT gate</td>
+            </tr>
+            <tr>
+              <td>pm</td>
+              <td>
+                <code>portal-cli pm ls|pack|pkg|graph|…</code> · bun pm passthrough + FW graph
+              </td>
+            </tr>
+            <tr>
+              <td>dashboard</td>
+              <td><code>portal-cli dashboard [--view=packages|vault|tools|…] [--open]</code></td>
+            </tr>
+            <tr>
+              <td>probe</td>
+              <td><code>portal-cli probe [lockfile|…]</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/tools/tools-hub.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/desk/">Desk</a> · <a href="/portal/partners/">Partners</a> ·
+        <a href="/portal/tennis/">Tennis</a> · <a href="/portal/bookmakers/">Bookmakers</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/glossary/">Glossary</a> · <a href="/portal/issues/">Issues</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/compliance/">Compliance</a> · <a href="/portal/limits/">Limits</a> ·
+        <a href="/portal/dod/">DOD</a> · <a href="/portal/env/">Env</a> ·
+        <a href="/portal/vault/">Vault</a> ·
+        <a
+          href="https://wiki.factory-wager.com/wiki-index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Wiki</a
+        >
+        · <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
       </p>
-      <div class="theme-token-strip" aria-label="Operator vertical chips">
-        <span class="vt-chip sportsbook">Sportsbook</span>
-        <span class="vt-chip crypto">Crypto</span>
-        <span class="vt-chip pph">PPH</span>
-        <span class="vt-chip sweepstakes">Sweepstakes</span>
-      </div>
-      <div class="theme-token-strip" aria-label="Profile tier badges">
-        <span class="tier-badge retail">Retail</span>
-        <span class="tier-badge vip">VIP</span>
-        <span class="tier-badge sharp">Sharp</span>
-      </div>
-    </div>
-
-    <div class="tools-panel" id="bake-age-panel">
-      <h2 id="bake-age">Age / summary</h2>
-      <p class="dim">
-        Per-artifact age + payload highlights · shared group filter above · semantic status from
-        <code>theme.jsonc</code> (<code>--status-fresh</code> · <code>--status-stale</code> · <code>--status-old</code> · <code>--status-critical</code>).
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-bun></span> · <span data-footer-ts>…</span>
       </p>
-      <div class="bake-age-legend" aria-label="Freshness legend">
-        <span class="leg-ok"><span class="dot" aria-hidden="true"></span>fresh &lt;24h</span>
-        <span class="leg-stale"><span class="dot" aria-hidden="true"></span>stale &lt;7d</span>
-        <span class="leg-old"><span class="dot" aria-hidden="true"></span>old ≥7d</span>
-        <span class="leg-missing"><span class="dot" aria-hidden="true"></span>missing</span>
-      </div>
-      <table class="portal-table tools-table bake-age-table">
-        <thead>
-          <tr>
-            <th>Status</th>
-            <th>Artifact</th>
-            <th>Age</th>
-            <th>Summary</th>
-          </tr>
-        </thead>
-        <tbody id="bake-age-body"><tr><td colspan="4" class="dim">Loading…</td></tr></tbody>
-      </table>
-    </div>
-
-    <div class="tools-panel" id="surface-map-panel">
-      <h2 id="surfaces-map">Board → artifact map</h2>
-      <p class="dim" id="surface-map-meta">From weave <code>surfaces[]</code> optional fields (<code>artifact</code> · <code>category</code> · <code>description</code>) · schema v2 non-breaking.</p>
-      <table class="portal-table tools-table">
-        <thead>
-          <tr>
-            <th>Board</th>
-            <th>Category</th>
-            <th>Artifact</th>
-            <th>CLI</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody id="surface-map-body"><tr><td colspan="5" class="dim">Loading…</td></tr></tbody>
-      </table>
-    </div>
-
-    <div class="tools-panel">
-      <h2 id="snapshots">Last snapshot (widget)</h2>
-      <div id="snapshot-widget"><p class="dim">Loading…</p></div>
-    </div>
-
-    <div class="tools-panel" id="bun-cli-panel">
-      <div class="cli-ref-header">
-        <h2 id="bun-cli" style="margin:0">Bun CLI reference</h2>
-        <span class="dim" id="bun-cli-meta">Loading flags…</span>
-      </div>
-      <p class="dim">
-        Live-grouped flags from <code>bun --help</code> bake ·
-        <a href="/registry/bun-cli-reference.json">JSON</a> ·
-        rebake <button type="button" class="copy-cli" data-cli="bun tools/bake-bun-cli-reference.ts">copy</button>
-        <code>bun tools/bake-bun-cli-reference.ts</code>
-      </p>
-      <input type="search" class="cli-ref-search" id="bun-cli-filter" placeholder="Filter flags…" aria-label="Filter Bun CLI flags" />
-      <div id="bun-cli-accordion"><p class="dim">Loading…</p></div>
-    </div>
-
-    <div class="tools-panel">
-      <h2>portal-cli → board</h2>
-      <table class="portal-table tools-table">
-        <thead>
-          <tr><th>Board</th><th>CLI</th><th>What you get</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><a href="/portal/packages/">Packages</a> <span class="group-tag">registry</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run portal-cli pm graph">copy</button>
-              <code>portal-cli pm graph</code><br />
-              <code>portal-cli pm ls</code>
-            </td>
-            <td>packages-graph-map bake · bun pm passthrough</td>
-          </tr>
-          <tr>
-            <td><a href="/portal/vault/">Vault</a> <span class="group-tag">secrets</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run portal-cli vault health">copy</button>
-              <code>portal-cli vault health</code><br />
-              <code>bun run vault:health:bake</code>
-            </td>
-            <td>Offline inventory snapshots (CI) · live bake board</td>
-          </tr>
-          <tr>
-            <td><a href="/portal/env/">Env</a> <span class="group-tag">secrets</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run portal-cli secret map">copy</button>
-              <code>portal-cli secret map</code>
-            </td>
-            <td>vault-map display + pass:// paths (no secret values)</td>
-          </tr>
-          <tr>
-            <td><a href="/portal/health/">Health</a> <span class="group-tag">harness</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run monorepo:health:bake">copy</button>
-              <code>monorepo:health:bake</code>
-            </td>
-            <td>Health dashboard · monorepo score</td>
-          </tr>
-          <tr>
-            <td><a href="/portal/doctor/">Doctor</a> <span class="group-tag">harness</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run portal:doctor --verbose">copy</button>
-              <code>portal:doctor</code><br />
-              <code>portal:doctor --group bunfig</code><br />
-              <code>bake:doctor</code>
-            </td>
-            <td>Unified doctor · bunfig/catalog/linker · doctor-state bake</td>
-          </tr>
-          <tr>
-            <td><a href="/portal/failures/">Failures</a> <span class="group-tag">harness</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run failures:bake">copy</button>
-              <code>failures:bake</code>
-            </td>
-            <td>JUnit / test-failures board · nav badge = failure count</td>
-          </tr>
-          <tr>
-            <td><a href="/portal/ops/">Ops</a> <span class="group-tag">ops</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run ops:snapshot --no-routing">copy</button>
-              <code>ops:snapshot</code>
-            </td>
-            <td>ops-summary rollup · scope snapshots</td>
-          </tr>
-          <tr>
-            <td><a href="/registry/prediction/report/">Prediction report</a> <span class="group-tag">ops</span></td>
-            <td>
-              <button type="button" class="copy-cli" data-cli="bun run portal-cli snapshot last --scope prediction">copy</button>
-              <code>snapshot last --scope prediction</code>
-            </td>
-            <td>Latest prediction report HTML</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="tools-panel" id="capabilities">
-      <h2>Grounded capability map (subset)</h2>
-      <p class="dim">
-        Full matrix:
-        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/harness/capability-map.md#grounded-capability-map">Harness grounded capability map</a>
-        · decision tables:
-        <a href="https://github.com/brendadeeznuts1111/project-R-score/blob/main/docs/packages/README.md">docs/packages</a>
-      </p>
-      <p class="dim" id="capability-meta">Loading capability subset…</p>
-      <input id="capability-filter" type="search" placeholder="Filter capabilities…" autocomplete="off" />
-      <table class="portal-table tools-table">
-        <thead>
-          <tr>
-            <th>Capability</th>
-            <th>Type</th>
-            <th>Protocol</th>
-            <th>Version</th>
-            <th>API</th>
-            <th>Status</th>
-            <th>Used in</th>
-          </tr>
-        </thead>
-        <tbody id="capability-body"></tbody>
-      </table>
-    </div>
-
-    <div class="tools-panel">
-      <h2>Command groups</h2>
-      <table class="portal-table tools-table">
-        <thead><tr><th>Group</th><th>Commands</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>snapshot</td>
-            <td><code>portal-cli snapshot run|list|grep|last|config</code> · scopes: prediction, portal, gaps, limits</td>
-          </tr>
-          <tr>
-            <td>secret</td>
-            <td><code>portal-cli secret which|vaults|items|get|run|inject|autofill|map|…</code> · real pass-cli only</td>
-          </tr>
-          <tr>
-            <td>vault</td>
-            <td><code>portal-cli vault health [--update]</code> · offline SSOT gate</td>
-          </tr>
-          <tr>
-            <td>pm</td>
-            <td><code>portal-cli pm ls|pack|pkg|graph|…</code> · bun pm passthrough + FW graph</td>
-          </tr>
-          <tr>
-            <td>dashboard</td>
-            <td><code>portal-cli dashboard [--view=packages|vault|tools|…] [--open]</code></td>
-          </tr>
-          <tr>
-            <td>probe</td>
-            <td><code>portal-cli probe [lockfile|…]</code></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </main>
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/tools/tools-hub.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/desk/">Desk</a> ·
-      <a href="/portal/partners/">Partners</a> ·
-      <a href="/portal/tennis/">Tennis</a> ·
-      <a href="/portal/bookmakers/">Bookmakers</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/issues/">Issues</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-bun></span>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-</body>
+    </footer>
+  </body>
 </html>
 <!-- force-upload 1785619313 -->
 <!-- force 1785619491 -->

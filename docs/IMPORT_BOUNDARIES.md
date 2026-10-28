@@ -5,9 +5,11 @@ This repository enforces **package import** boundaries with:
 - `bun run imports:verify`
 - `scripts/verify-package-import-boundaries.ts`
 
-The goal is to keep package type-check scope predictable and avoid accidental coupling to unrelated modules.
+The goal is to keep package type-check scope predictable and avoid accidental
+coupling to unrelated modules.
 
-**Not the same as the wire/type boundary.** For parse-once / `unknown` / `decodeUnknown*` rules, see [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md).
+**Not the same as the wire/type boundary.** For parse-once / `unknown` /
+`decodeUnknown*` rules, see [`WIRE_BOUNDARY.md`](./WIRE_BOUNDARY.md).
 
 ## Allowed Roots
 
@@ -20,12 +22,12 @@ Rules are currently enforced for package `src/` imports:
 - `packages/docs-tools/src/**`
   - may import from:
     - `packages/docs-tools/src/**`
-    - `lib/docs/**`
-Only relative imports are validated by the guard script.
+    - `lib/docs/**` Only relative imports are validated by the guard script.
 
 ## CI Enforcement
 
-`imports:verify` runs in `.github/workflows/typescript-checks.yml` before type-check jobs.
+`imports:verify` runs in `.github/workflows/typescript-checks.yml` before
+type-check jobs.
 
 ## Local Usage
 

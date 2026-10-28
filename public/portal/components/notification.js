@@ -60,7 +60,8 @@ export class NotificationCenter extends HTMLElement {
         try {
           const msg = JSON.parse(ev.data);
           const seq = msg.seq ?? 0;
-          if (this.sinceByTopic) this.sinceByTopic.set(topic, Math.max(this.sinceByTopic.get(topic) ?? 0, seq));
+          if (this.sinceByTopic)
+            this.sinceByTopic.set(topic, Math.max(this.sinceByTopic.get(topic) ?? 0, seq));
           this.since = Math.max(this.since, seq);
           this.showToast(this.formatEvent(msg), this.toastType(msg));
         } catch {
@@ -91,7 +92,8 @@ export class NotificationCenter extends HTMLElement {
       const data = await res.json();
       for (const ev of data.events ?? []) {
         const seq = ev.seq ?? 0;
-        if (this.sinceByTopic) this.sinceByTopic.set(topic, Math.max(this.sinceByTopic.get(topic) ?? 0, seq));
+        if (this.sinceByTopic)
+          this.sinceByTopic.set(topic, Math.max(this.sinceByTopic.get(topic) ?? 0, seq));
         this.since = Math.max(this.since, seq);
         this.showToast(this.formatEvent(ev), this.toastType(ev));
       }
@@ -115,20 +117,27 @@ export class NotificationCenter extends HTMLElement {
 
   formatEvent(ev) {
     const p = ev.payload ?? {};
-    if (p.event === 'account.created') return `New user: ${p.account?.email ?? p.email ?? 'unknown'}`;
+    if (p.event === 'account.created')
+      return `New user: ${p.account?.email ?? p.email ?? 'unknown'}`;
     if (p.event === 'deploy.requested') return `Deploy requested by ${p.by ?? 'user'}`;
     if (p.event === 'alert.set') return `Alert: ${p.market} @ ${p.price}`;
-    if (p.eventType === 'partner.bound') return `Partner bound: ${p.profileKey ?? p.treeNodeId ?? 'node'}`;
-    if (p.eventType === 'play.dispatched') return `Play dispatched · ${String(p.playId ?? '').slice(0, 8)}`;
-    if (p.eventType === 'play.gate.denied') return `Play gated (deny) · ${String(p.playId ?? '').slice(0, 8)}`;
+    if (p.eventType === 'partner.bound')
+      return `Partner bound: ${p.profileKey ?? p.treeNodeId ?? 'node'}`;
+    if (p.eventType === 'play.dispatched')
+      return `Play dispatched · ${String(p.playId ?? '').slice(0, 8)}`;
+    if (p.eventType === 'play.gate.denied')
+      return `Play gated (deny) · ${String(p.playId ?? '').slice(0, 8)}`;
     if (p.eventType === 'play.gate.defer') {
       const w = p.weightedScore != null ? ` w=${Number(p.weightedScore).toFixed(2)}` : '';
       return `Play TOC defer${w} · ${String(p.playId ?? '').slice(0, 8)}`;
     }
-    if (p.eventType === 'play.gate.adjusted') return `Play gated (adjust) · ${String(p.playId ?? '').slice(0, 8)}`;
+    if (p.eventType === 'play.gate.adjusted')
+      return `Play gated (adjust) · ${String(p.playId ?? '').slice(0, 8)}`;
     if (p.eventType === 'play.settled') return `Play settled · ${p.result} · pnl $${p.pnl ?? 0}`;
-    if (p.kind === 'limit_raise') return `🚀 Limit raised: ${p.sportsbook} ${p.sport_id}/${p.market_id} $${p.previous_max}→$${p.new_limit}`;
-    if (p.kind === 'limit_decrease' || p.event === 'limit_decrease') return `⬇️ Limit decreased: ${p.sportsbook} ${p.sport_id}/${p.market_id} $${p.previous_max}→$${p.new_limit}`;
+    if (p.kind === 'limit_raise')
+      return `🚀 Limit raised: ${p.sportsbook} ${p.sport_id}/${p.market_id} $${p.previous_max}→$${p.new_limit}`;
+    if (p.kind === 'limit_decrease' || p.event === 'limit_decrease')
+      return `⬇️ Limit decreased: ${p.sportsbook} ${p.sport_id}/${p.market_id} $${p.previous_max}→$${p.new_limit}`;
     return JSON.stringify(p);
   }
 

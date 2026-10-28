@@ -7,9 +7,13 @@
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { userId, reportType } = await request.json();
-    await env.REPORT_QUEUE.send({ userId, reportType, requestedAt: Date.now() });
+    await env.REPORT_QUEUE.send({
+      userId,
+      reportType,
+      requestedAt: Date.now(),
+    });
     return Response.json({ message: 'Report queued', status: 'pending' });
-  }
+  },
 };
 
 // Consumer: Process reports
@@ -21,7 +25,7 @@ export default {
       await env.REPORTS_BUCKET.put(`${userId}/${reportType}.pdf`, report);
       msg.ack();
     }
-  }
+  },
 };
 ```
 
@@ -76,7 +80,7 @@ export default {
       }
       msg.ack();
     }
-  }
+  },
 };
 ```
 
@@ -94,7 +98,7 @@ export default {
         console.error(`Failed after ${msg.attempts} attempts:`, error);
       }
     }
-  }
+  },
 };
 
 // DLQ consumer: Log and store failed messages
@@ -104,13 +108,14 @@ export default {
       await env.FAILED_KV.put(msg.id, JSON.stringify(msg.body));
       msg.ack();
     }
-  }
+  },
 };
 ```
 
 ## Priority Queues
 
-High priority: `max_batch_size: 5, max_batch_timeout: 1`. Low priority: `max_batch_size: 100, max_batch_timeout: 30`.
+High priority: `max_batch_size: 5, max_batch_timeout: 1`. Low priority:
+`max_batch_size: 100, max_batch_timeout: 30`.
 
 ## Delayed Job Processing
 

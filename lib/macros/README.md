@@ -2,74 +2,84 @@
 
 Bundle-time Bun macros (`bun build` + `with { type: "macro" }`).
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API
+surface.
 
-| Entry | Purpose |
-|-------|---------|
-| [`git-commit.ts`](./git-commit.ts) | `getGitCommitHash` / `getGitBranch` via `git rev-parse` |
+| Entry                                            | Purpose                                                                                               |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------------- |
+| [`git-commit.ts`](./git-commit.ts)               | `getGitCommitHash` / `getGitBranch` via `git rev-parse`                                               |
 | [`github-repository.ts`](./github-repository.ts) | `getGitHubRepositoryParts` (+ derived `url`) · frozen `GITHUB_ORIGIN` / `getGitHubCanonicalConstants` |
-| [`index.ts`](./index.ts) | Re-exports |
+| [`index.ts`](./index.ts)                         | Re-exports                                                                                            |
 
-**Claim** `macros-embed-boundaries` · *Fresh-rerun* → `bun test tests/macros/embed-commit.test.ts`
+**Claim** `macros-embed-boundaries` · _Fresh-rerun_ →
+`bun test tests/macros/embed-commit.test.ts`
 
-| Kind | References |
-|------|------------|
-| Repo | this README · [`AUTHORITY.md`](../../docs/harness/AUTHORITY.md) (bundle vs runtime) · [`PROOF.md` Lib surface](../../docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) · `tests/macros/embed-commit.test.ts` · `tests/bundler-nav.test.ts` · `bun tools/bun-doc-refs.ts bundler` |
-| Bun | [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [plugins](https://bun.com/docs/bundler/plugins) (unused here) |
-| Other external | — |
+| Kind           | References                                                                                                                                                                                                                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Repo           | this README · [`AUTHORITY.md`](../../docs/harness/AUTHORITY.md) (bundle vs runtime) · [`PROOF.md` Lib surface](../../docs/harness/PROOF.md#lib-surface--docs-vs-bun-vs-other-external) · `tests/macros/embed-commit.test.ts` · `tests/bundler-nav.test.ts` · `bun tools/bun-doc-refs.ts bundler` |
+| Bun            | [bundler](https://bun.com/docs/bundler/index) · [macros](https://bun.com/docs/bundler/macros) · [serializability](https://bun.com/docs/bundler/macros#serializability) · [plugins](https://bun.com/docs/bundler/plugins) (unused here)                                                           |
+| Other external | —                                                                                                                                                                                                                                                                                                |
 
-Runtime scripts (`bun scripts/*.ts`) keep [`../github-repository-ref.ts`](../github-repository-ref.ts) — macros do not substitute outside `bun build`.
+Runtime scripts (`bun scripts/*.ts`) keep
+[`../github-repository-ref.ts`](../github-repository-ref.ts) — macros do not
+substitute outside `bun build`.
 
 ## Bundler docs nav (token map)
 
-SSOT: [`../docs/bundler-nav.ts`](../docs/bundler-nav.ts) · gaps: [`../docs/bundler-gaps.ts`](../docs/bundler-gaps.ts) · CLI: `bun tools/bun-doc-refs.ts bundler` · `bundler --anchors` · `bundler --gaps [--json]` · `bundler --tokens` · suggest: `bun tools/bun-doc-refs.ts suggest "<label>"` · catalog: `bun tools/bun-docs-catalog.ts list -s bundler`.
+SSOT: [`../docs/bundler-nav.ts`](../docs/bundler-nav.ts) · gaps:
+[`../docs/bundler-gaps.ts`](../docs/bundler-gaps.ts) · CLI:
+`bun tools/bun-doc-refs.ts bundler` · `bundler --anchors` ·
+`bundler --gaps [--json]` · `bundler --tokens` · suggest:
+`bun tools/bun-doc-refs.ts suggest "<label>"` · catalog:
+`bun tools/bun-docs-catalog.ts list -s bundler`.
 
 ### Core
 
-| Nav | Doc |
-|-----|-----|
+| Nav     | Doc                                                 |
+| ------- | --------------------------------------------------- |
 | Bundler | [bundler/index](https://bun.com/docs/bundler/index) |
 
 ### Development Server
 
-| Nav | Doc |
-|-----|-----|
-| Fullstack dev server | [bundler/fullstack](https://bun.com/docs/bundler/fullstack) |
-| Hot reloading | [bundler/hot-reloading](https://bun.com/docs/bundler/hot-reloading) |
+| Nav                  | Doc                                                                 |
+| -------------------- | ------------------------------------------------------------------- |
+| Fullstack dev server | [bundler/fullstack](https://bun.com/docs/bundler/fullstack)         |
+| Hot reloading        | [bundler/hot-reloading](https://bun.com/docs/bundler/hot-reloading) |
 
 ### Asset Processing
 
-| Nav | Doc |
-|-----|-----|
-| HTML & static sites | [bundler/html-static](https://bun.com/docs/bundler/html-static) |
-| Standalone HTML | [bundler/standalone-html](https://bun.com/docs/bundler/standalone-html) |
-| CSS | [bundler/css](https://bun.com/docs/bundler/css) |
-| Loaders | [bundler/loaders](https://bun.com/docs/bundler/loaders) |
+| Nav                 | Doc                                                                     |
+| ------------------- | ----------------------------------------------------------------------- |
+| HTML & static sites | [bundler/html-static](https://bun.com/docs/bundler/html-static)         |
+| Standalone HTML     | [bundler/standalone-html](https://bun.com/docs/bundler/standalone-html) |
+| CSS                 | [bundler/css](https://bun.com/docs/bundler/css)                         |
+| Loaders             | [bundler/loaders](https://bun.com/docs/bundler/loaders)                 |
 
 ### Single File Executable
 
-| Nav | Doc |
-|-----|-----|
+| Nav                    | Doc                                                             |
+| ---------------------- | --------------------------------------------------------------- |
 | Single-file executable | [bundler/executables](https://bun.com/docs/bundler/executables) |
 
 ### Extensions
 
-| Nav | Doc |
-|-----|-----|
+| Nav     | Doc                                                     |
+| ------- | ------------------------------------------------------- |
 | Plugins | [bundler/plugins](https://bun.com/docs/bundler/plugins) |
-| Macros | [bundler/macros](https://bun.com/docs/bundler/macros) |
+| Macros  | [bundler/macros](https://bun.com/docs/bundler/macros)   |
 
 ### Optimization
 
-| Nav | Doc |
-|-----|-----|
+| Nav              | Doc                                                       |
+| ---------------- | --------------------------------------------------------- |
 | Bytecode Caching | [bundler/bytecode](https://bun.com/docs/bundler/bytecode) |
-| Minifier | [bundler/minifier](https://bun.com/docs/bundler/minifier) |
+| Minifier         | [bundler/minifier](https://bun.com/docs/bundler/minifier) |
 
 ### Migration
 
-| Nav | Doc |
-|-----|-----|
+| Nav     | Doc                                                     |
+| ------- | ------------------------------------------------------- |
 | esbuild | [bundler/esbuild](https://bun.com/docs/bundler/esbuild) |
 
-Harness macros cover **Extensions → Macros** only. No `Bun.plugin` hooks or bundle-time `fetch` in this kit.
+Harness macros cover **Extensions → Macros** only. No `Bun.plugin` hooks or
+bundle-time `fetch` in this kit.

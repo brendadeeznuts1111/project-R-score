@@ -200,9 +200,7 @@
       "since": "unknown",
       "description": "The console object in Bun",
       "examples": [],
-      "related": [
-        "Bun.stdin"
-      ],
+      "related": ["Bun.stdin"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -451,9 +449,7 @@
       "stability": "stable",
       "since": "unknown",
       "description": "Send HTTP requests with Bun’s fetch API",
-      "examples": [
-        "bun --fetch-preconnect https://bun.com:443 ./my-script.ts"
-      ],
+      "examples": ["bun --fetch-preconnect https://bun.com:443 ./my-script.ts"],
       "related": [
         "AbortController",
         "BUN_CONFIG_MAX_HTTP_REQUESTS",
@@ -474,10 +470,7 @@
       "since": "unknown",
       "description": "Select packages by pattern in a monorepo using the —filter flag",
       "examples": [],
-      "related": [
-        "bun run --parallel",
-        "bun run --sequential"
-      ],
+      "related": ["bun run --parallel", "bun run --sequential"],
       "meta": {
         "catalogHit": true,
         "section": "pm",
@@ -791,10 +784,7 @@
       "since": "unknown",
       "description": "Configure Bun’s behavior using its configuration file bunfig.toml",
       "examples": [],
-      "related": [
-        "--silent",
-        "globalStore"
-      ],
+      "related": ["--silent", "globalStore"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1270,10 +1260,7 @@
       "since": "unknown",
       "description": "Configure Bun’s behavior using its configuration file bunfig.toml",
       "examples": [],
-      "related": [
-        "--linker",
-        "globalStore"
-      ],
+      "related": ["--linker", "globalStore"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1545,10 +1532,7 @@
       "since": "unknown",
       "description": "Generate and verify CSRF tokens with Bun’s built-in API",
       "examples": [],
-      "related": [
-        "Bun.CSRF.generate",
-        "Bun.CSRF.verify"
-      ],
+      "related": ["Bun.CSRF.generate", "Bun.CSRF.verify"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1563,10 +1547,7 @@
       "since": "unknown",
       "description": "Generate and verify CSRF tokens with Bun’s built-in API",
       "examples": [],
-      "related": [
-        "Bun.CSRF",
-        "Bun.CSRF.verify"
-      ],
+      "related": ["Bun.CSRF", "Bun.CSRF.verify"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1581,10 +1562,7 @@
       "since": "unknown",
       "description": "Generate and verify CSRF tokens with Bun’s built-in API",
       "examples": [],
-      "related": [
-        "Bun.CSRF",
-        "Bun.CSRF.generate"
-      ],
+      "related": ["Bun.CSRF", "Bun.CSRF.generate"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1599,10 +1577,7 @@
       "since": "unknown",
       "description": "Use Bun’s native APIs for working with HTTP cookies",
       "examples": [],
-      "related": [
-        "Bun.CookieMap",
-        "CookieMap"
-      ],
+      "related": ["Bun.CookieMap", "CookieMap"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1617,10 +1592,7 @@
       "since": "unknown",
       "description": "Use Bun’s native APIs for working with HTTP cookies",
       "examples": [],
-      "related": [
-        "Bun.Cookie",
-        "CookieMap"
-      ],
+      "related": ["Bun.Cookie", "CookieMap"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1688,9 +1660,7 @@
       "since": "unknown",
       "description": "Bun now ships with native headless browser automation built into the runtime. Two backends, one API:",
       "examples": [],
-      "related": [
-        "bun upgrade"
-      ],
+      "related": ["bun upgrade"],
       "meta": {
         "catalogHit": true,
         "section": "other",
@@ -1807,10 +1777,7 @@
       "since": "unknown",
       "description": "Package manager",
       "examples": [],
-      "related": [
-        "Bun.redis",
-        "RedisClient"
-      ],
+      "related": ["Bun.redis", "RedisClient"],
       "meta": {
         "catalogHit": true,
         "section": "reference",
@@ -1825,9 +1792,7 @@
       "since": "unknown",
       "description": "Postgres and MySQL client with connection pooling",
       "examples": [],
-      "related": [
-        "bun:sql"
-      ],
+      "related": ["bun:sql"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1842,10 +1807,7 @@
       "since": "unknown",
       "description": "Use Bun’s built-in support for TOML files through both runtime APIs and bundler integration",
       "examples": [],
-      "related": [
-        "Bun.TOML.stringify",
-        "Bun.TOML.parse"
-      ],
+      "related": ["Bun.TOML.stringify", "Bun.TOML.parse"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1860,10 +1822,7 @@
       "since": "unknown",
       "description": "Parse a TOML string into a JavaScript object.",
       "examples": [],
-      "related": [
-        "Bun.TOML",
-        "Bun.TOML.stringify"
-      ],
+      "related": ["Bun.TOML", "Bun.TOML.stringify"],
       "meta": {
         "catalogHit": true,
         "section": "reference",
@@ -1878,10 +1837,7 @@
       "since": "unknown",
       "description": "Use Bun’s built-in support for TOML files through both runtime APIs and bundler integration",
       "examples": [],
-      "related": [
-        "Bun.TOML",
-        "Bun.TOML.parse"
-      ],
+      "related": ["Bun.TOML", "Bun.TOML.parse"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1896,11 +1852,7 @@
       "since": "1.3.5",
       "description": "Built-in PTY API (new Bun.Terminal + Bun.spawn terminal option); POSIX only at ship",
       "examples": [],
-      "related": [
-        "Bun.spawn",
-        "Bun.spawn terminal (PTY)",
-        "Bun.spawnSync"
-      ],
+      "related": ["Bun.spawn", "Bun.spawn terminal (PTY)", "Bun.spawnSync"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1966,9 +1918,7 @@
       "since": "1.4.0",
       "description": "Headless browser automation",
       "examples": [],
-      "related": [
-        "WebView"
-      ],
+      "related": ["WebView"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -1983,9 +1933,7 @@
       "since": "unknown",
       "description": "Use Bun’s built-in support for YAML files through both runtime APIs and bundler integration",
       "examples": [],
-      "related": [
-        "YAML"
-      ],
+      "related": ["YAML"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2030,13 +1978,7 @@
       "since": "unknown",
       "description": "Bundler and compile-to-binary",
       "examples": [],
-      "related": [
-        "--watch",
-        "bun build",
-        "bun:bundle",
-        "Bundler",
-        "Core"
-      ],
+      "related": ["--watch", "bun build", "bun:bundle", "Bundler", "Core"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",
@@ -2051,9 +1993,7 @@
       "since": "unknown",
       "description": "Bun’s bundler has built-in support for CSS with modern features",
       "examples": [],
-      "related": [
-        "CSS"
-      ],
+      "related": ["CSS"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",
@@ -2098,9 +2038,7 @@
       "since": "unknown",
       "description": "Use Bun’s native TCP API to implement performance-sensitive systems like database clients, game servers, or anything that needs to communicate over TCP (instead of HTTP)",
       "examples": [],
-      "related": [
-        "Bun.listen"
-      ],
+      "related": ["Bun.listen"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2191,11 +2129,7 @@
       "since": "unknown",
       "description": "Use Bun’s DNS module to resolve DNS records",
       "examples": [],
-      "related": [
-        "Bun.dns",
-        "Bun.dns.lookup",
-        "Bun.dns.prefetch"
-      ],
+      "related": ["Bun.dns", "Bun.dns.lookup", "Bun.dns.prefetch"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2210,11 +2144,7 @@
       "since": "unknown",
       "description": "Use Bun’s DNS module to resolve DNS records",
       "examples": [],
-      "related": [
-        "Bun.dns",
-        "Bun.dns.getCacheStats",
-        "Bun.dns.prefetch"
-      ],
+      "related": ["Bun.dns", "Bun.dns.getCacheStats", "Bun.dns.prefetch"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2229,11 +2159,7 @@
       "since": "unknown",
       "description": "Use Bun’s DNS module to resolve DNS records",
       "examples": [],
-      "related": [
-        "Bun.dns",
-        "Bun.dns.getCacheStats",
-        "Bun.dns.lookup"
-      ],
+      "related": ["Bun.dns", "Bun.dns.getCacheStats", "Bun.dns.lookup"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2360,9 +2286,7 @@
       "since": "unknown",
       "description": "Lazy file I/O API",
       "examples": [],
-      "related": [
-        "Bun.write"
-      ],
+      "related": ["Bun.write"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2712,12 +2636,7 @@
       "examples": [
         "if (Bun.isMainThread) {\n  console.log(\"I'm the main thread\");\n} else {\n  console.log(\"I'm in a worker\");\n}"
       ],
-      "related": [
-        "Worker",
-        "worker.ref",
-        "Concurrency",
-        "Workers"
-      ],
+      "related": ["Worker", "worker.ref", "Concurrency", "Workers"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -2753,9 +2672,7 @@
       "since": "unknown",
       "description": "Use Bun’s native TCP API to implement performance-sensitive systems like database clients, game servers, or anything that needs to communicate over TCP (instead of HTTP)",
       "examples": [],
-      "related": [
-        "Bun.connect"
-      ],
+      "related": ["Bun.connect"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3166,10 +3083,7 @@
       "since": "unknown",
       "description": "Universal plugin API for extending Bun’s runtime and bundler",
       "examples": [],
-      "related": [
-        "Extensions",
-        "Plugins"
-      ],
+      "related": ["Extensions", "Plugins"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",
@@ -3248,10 +3162,7 @@
       "since": "unknown",
       "description": "Redis/Valkey client",
       "examples": [],
-      "related": [
-        "RedisClient",
-        "Bun.RedisClient"
-      ],
+      "related": ["RedisClient", "Bun.RedisClient"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3308,9 +3219,7 @@
       "since": "unknown",
       "description": "S3-compatible object storage client",
       "examples": [],
-      "related": [
-        "S3Client"
-      ],
+      "related": ["S3Client"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3340,10 +3249,7 @@
       "since": "unknown",
       "description": "Use Bun’s semantic versioning API",
       "examples": [],
-      "related": [
-        "Bun.semver.order",
-        "Bun.semver.satisfies"
-      ],
+      "related": ["Bun.semver.order", "Bun.semver.satisfies"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3358,10 +3264,7 @@
       "since": "unknown",
       "description": "Returns 0 if the versions are equal, 1 if v1 is greater, or -1 if v2 is greater. Throws an error if either version is invalid.",
       "examples": [],
-      "related": [
-        "Bun.semver",
-        "Bun.semver.satisfies"
-      ],
+      "related": ["Bun.semver", "Bun.semver.satisfies"],
       "meta": {
         "catalogHit": true,
         "section": "reference",
@@ -3376,10 +3279,7 @@
       "since": "unknown",
       "description": "Test if the version satisfies the range. Stringifies both arguments. Returns true or false .",
       "examples": [],
-      "related": [
-        "Bun.semver",
-        "Bun.semver.order"
-      ],
+      "related": ["Bun.semver", "Bun.semver.order"],
       "meta": {
         "catalogHit": true,
         "section": "reference",
@@ -3645,11 +3545,7 @@
       "examples": [
         "import { sliceAnsi } from \"bun\";\n\n// Plain slice (replaces the `slice-ansi` npm package)\nsliceAnsi(\"hello\", 1, 4);                              // \"ell\"\nsliceAnsi(\"\\u001b[31mhello\\u001b[39m\", 1, 4);          // \"\\u001b[31mell\\u001b[39m\"\nsliceAnsi(\"\\u5b89\\u5b81\\u54c8\", 0, 4);                 // \"\\u5b89\\u5b81\" (CJK: width 2 each)\n\n// Truncation (replaces the `cli-truncate` npm package)\nsliceAnsi(\"unicorn\", 0, 4, \"\\u2026\");           // \"uni\\u2026\"\nsliceAnsi(\"unicorn\", -4, undefined, \"\\u2026\");  // \"\\u2026orn\""
       ],
-      "related": [
-        "Bun.stringWidth",
-        "Bun.stripANSI",
-        "Bun.wrapAnsi"
-      ],
+      "related": ["Bun.stringWidth", "Bun.stripANSI", "Bun.wrapAnsi"],
       "meta": {
         "catalogHit": true,
         "section": "reference",
@@ -3664,11 +3560,7 @@
       "since": "unknown",
       "description": "Spawn subprocesses with pipes and terminals",
       "examples": [],
-      "related": [
-        "Bun.spawn terminal (PTY)",
-        "Bun.spawnSync",
-        "Bun.Terminal"
-      ],
+      "related": ["Bun.spawn terminal (PTY)", "Bun.spawnSync", "Bun.Terminal"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3683,11 +3575,7 @@
       "since": "1.3.5",
       "description": "Spawn child processes with Bun.spawn or Bun.spawnSync",
       "examples": [],
-      "related": [
-        "Bun.spawn",
-        "Bun.spawnSync",
-        "Bun.Terminal"
-      ],
+      "related": ["Bun.spawn", "Bun.spawnSync", "Bun.Terminal"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3702,11 +3590,7 @@
       "since": "unknown",
       "description": "Spawn child processes with Bun.spawn or Bun.spawnSync",
       "examples": [],
-      "related": [
-        "Bun.spawn",
-        "Bun.spawn terminal (PTY)",
-        "Bun.Terminal"
-      ],
+      "related": ["Bun.spawn", "Bun.spawn terminal (PTY)", "Bun.Terminal"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3721,9 +3605,7 @@
       "since": "unknown",
       "description": "Postgres and MySQL client with connection pooling",
       "examples": [],
-      "related": [
-        "bun:sql"
-      ],
+      "related": ["bun:sql"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3738,9 +3620,7 @@
       "since": "unknown",
       "description": "The console object in Bun",
       "examples": [],
-      "related": [
-        "--console-depth"
-      ],
+      "related": ["--console-depth"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -3886,9 +3766,7 @@
       "since": "unknown",
       "description": "Bun provides a set of optimized APIs for reading and writing files.",
       "examples": [],
-      "related": [
-        "Bun.file"
-      ],
+      "related": ["Bun.file"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4050,10 +3928,7 @@
       "since": "unknown",
       "description": "Use Bun’s native APIs for working with HTTP cookies",
       "examples": [],
-      "related": [
-        "Bun.Cookie",
-        "Bun.CookieMap"
-      ],
+      "related": ["Bun.Cookie", "Bun.CookieMap"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4141,10 +4016,7 @@
       "since": "unknown",
       "description": "Use Bun’s native Redis client with a Promise-based API",
       "examples": [],
-      "related": [
-        "Bun.redis",
-        "Bun.RedisClient"
-      ],
+      "related": ["Bun.redis", "Bun.RedisClient"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4172,9 +4044,7 @@
       "since": "unknown",
       "description": "Bun provides fast, native bindings for interacting with S3-compatible object storage services.",
       "examples": [],
-      "related": [
-        "Bun.s3"
-      ],
+      "related": ["Bun.s3"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4238,9 +4108,7 @@
       "since": "unknown",
       "description": "Server-side WebSockets in Bun",
       "examples": [],
-      "related": [
-        "WebSocket"
-      ],
+      "related": ["WebSocket"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4348,11 +4216,7 @@
         "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
         "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
       ],
-      "related": [
-        "URLPatternInit",
-        "URLPatternInput",
-        "URLPatternResult"
-      ],
+      "related": ["URLPatternInit", "URLPatternInput", "URLPatternResult"],
       "meta": {
         "catalogHit": true,
         "section": "other",
@@ -4371,11 +4235,7 @@
         "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
         "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
       ],
-      "related": [
-        "URLPattern",
-        "URLPatternInput",
-        "URLPatternResult"
-      ],
+      "related": ["URLPattern", "URLPatternInput", "URLPatternResult"],
       "meta": {
         "catalogHit": true,
         "section": "other",
@@ -4394,11 +4254,7 @@
         "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
         "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
       ],
-      "related": [
-        "URLPattern",
-        "URLPatternInit",
-        "URLPatternResult"
-      ],
+      "related": ["URLPattern", "URLPatternInit", "URLPatternResult"],
       "meta": {
         "catalogHit": true,
         "section": "other",
@@ -4417,11 +4273,7 @@
         "- **Constructor**: Create patterns from strings or `URLPatternInit` dictionaries\n- **`test()`**: Check if a URL matches the pattern (returns boolean)\n- **`exec()`**: Extract matched groups from a URL (returns `URLPatternResult` or null)\n- **Pattern properties**: `protocol`, `username`, `password`, `hostname`, `port`, `pathname`, `search`, `hash`\n- **`hasRegExpGroups`**: Detect if the pattern uses custom regular expressions",
         "408 Web Platform Tests pass for this implementation. Thanks to the WebKit team for implementing this!"
       ],
-      "related": [
-        "URLPattern",
-        "URLPatternInit",
-        "URLPatternInput"
-      ],
+      "related": ["URLPattern", "URLPatternInit", "URLPatternInput"],
       "meta": {
         "catalogHit": true,
         "section": "other",
@@ -4459,9 +4311,7 @@
       "since": "unknown",
       "description": "Control a headless browser from Bun for automation, testing, and scraping — zero dependencies on macOS, Chrome DevTools Protocol everywhere else",
       "examples": [],
-      "related": [
-        "Bun.WebView"
-      ],
+      "related": ["Bun.WebView"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4524,9 +4374,7 @@
       "since": "unknown",
       "description": "Use Bun's built-in support for YAML files through both runtime APIs and bundler integration",
       "examples": [],
-      "related": [
-        "Bun.YAML"
-      ],
+      "related": ["Bun.YAML"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4541,13 +4389,7 @@
       "since": "1.3.5",
       "description": "Bun’s fast native bundler for JavaScript, TypeScript, JSX, and more",
       "examples": [],
-      "related": [
-        "--watch",
-        "bun build",
-        "Bun.build",
-        "Bundler",
-        "Core"
-      ],
+      "related": ["--watch", "bun build", "Bun.build", "Bundler", "Core"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",
@@ -4562,10 +4404,7 @@
       "since": "unknown",
       "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "examples": [],
-      "related": [
-        "bun:invalidate",
-        "bun:ws"
-      ],
+      "related": ["bun:invalidate", "bun:ws"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",
@@ -4595,10 +4434,7 @@
       "since": "unknown",
       "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "examples": [],
-      "related": [
-        "bun:error",
-        "bun:ws"
-      ],
+      "related": ["bun:error", "bun:ws"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",
@@ -4613,9 +4449,7 @@
       "since": "unknown",
       "description": "Bun provides native bindings for working with SQL databases through a unified Promise-based API that supports PostgreSQL, MySQL, and SQLite.",
       "examples": [],
-      "related": [
-        "Bun.sql"
-      ],
+      "related": ["Bun.sql"],
       "meta": {
         "catalogHit": true,
         "section": "runtime",
@@ -4645,9 +4479,7 @@
       "since": "unknown",
       "description": "Bun’s fast, built-in, Jest-compatible test runner with TypeScript support, lifecycle hooks, mocking, and watch mode",
       "examples": [],
-      "related": [
-        "bun test"
-      ],
+      "related": ["bun test"],
       "meta": {
         "catalogHit": true,
         "section": "test",
@@ -4677,10 +4509,7 @@
       "since": "unknown",
       "description": "Hot Module Replacement (HMR) for Bun’s development server",
       "examples": [],
-      "related": [
-        "bun:error",
-        "bun:invalidate"
-      ],
+      "related": ["bun:error", "bun:invalidate"],
       "meta": {
         "catalogHit": true,
         "section": "bundler",

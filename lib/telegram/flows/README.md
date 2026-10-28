@@ -1,6 +1,7 @@
 # Telegram flow cards
 
-Input → handler → `FlowOutput` → `deliverFlowOutput` (send or edit + inline keyboard).
+Input → handler → `FlowOutput` → `deliverFlowOutput` (send or edit + inline
+keyboard).
 
 ## Layout
 
@@ -23,11 +24,11 @@ lib/telegram/templates/
 
 ## Callback contract
 
-| Pattern | Example |
-|---------|---------|
-| `f:menu` | Open menu card |
-| `f:balances:r` | Refresh balances (edit in place) |
-| `play:{id}:{node}:placed` | Play ack (existing) |
+| Pattern                   | Example                          |
+| ------------------------- | -------------------------------- |
+| `f:menu`                  | Open menu card                   |
+| `f:balances:r`            | Refresh balances (edit in place) |
+| `play:{id}:{node}:placed` | Play ack (existing)              |
 
 ## Rules
 
@@ -38,9 +39,11 @@ lib/telegram/templates/
 ## Wire points
 
 - [`ops-bot.ts`](../ops-bot.ts) — long-poll; full keyboards + edit
-- [`ops-commands.ts`](../ops-commands.ts) — webhook text fallback (`flowOutputToPlainText`)
+- [`ops-commands.ts`](../ops-commands.ts) — webhook text fallback
+  (`flowOutputToPlainText`)
 - [`bot.ts`](../bot.ts) — factory webhook callbacks
-- [`outbox.ts`](../../channels/outbox.ts) — `playAckReplyMarkup` → `playAckKeyboard`
+- [`outbox.ts`](../../channels/outbox.ts) — `playAckReplyMarkup` →
+  `playAckKeyboard`
 
 ## Related
 

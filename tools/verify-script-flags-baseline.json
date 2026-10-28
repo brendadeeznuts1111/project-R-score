@@ -1,7 +1,9 @@
 {
   "description": "Grandfathered package.json scripts with bun run --watch|--hot. Root monorepo (portal, dev, serve:public) must stay clean — not listed here.",
   "scanScope": {
-    "includes": ["**/package.json (excludes node_modules, dist, build, coverage)"],
+    "includes": [
+      "**/package.json (excludes node_modules, dist, build, coverage)"
+    ],
     "excludesFromBaseline": [
       "Root package.json — portal via serve:public:hot|watch, dev fixed in 8e8cec833",
       "Kalshi-bot/ — submodule at repo root; serve uses bun --hot (already correct)",

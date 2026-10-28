@@ -92,7 +92,9 @@ function fillSelect(el, values, allLabel) {
 function showSkeletons() {
   const stats = $('cf-stats');
   if (stats) {
-    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join('');
+    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join(
+      ''
+    );
   }
   const gate = $('cf-gate');
   if (gate) {
@@ -215,9 +217,7 @@ function renderStats() {
       const disabled = item.filter == null ? ' disabled' : '';
       const activeCls = active ? ' active' : '';
       const dataAttr =
-        item.filter?.kind === 'pattern'
-          ? ` data-pattern-filter="${esc(item.filter.value)}"`
-          : '';
+        item.filter?.kind === 'pattern' ? ` data-pattern-filter="${esc(item.filter.value)}"` : '';
       return (
         `<button type="button" class="portal-stat ${item.cls}${activeCls}"${disabled}${dataAttr}>` +
         `<span class="k">${esc(item.label)}</span>` +

@@ -7,18 +7,18 @@
  * @see https://bun.sh/docs/runtime/sqlite — bun:sqlite
  */
 
-import { Database } from "bun:sqlite";
+import { Database } from 'bun:sqlite';
 import { DEFAULT_OPS_DB_PATH } from '../../../lib/operations/db.ts';
 
 export async function onRequest({ request }: { request: Request }) {
   const url = new URL(request.url);
-  const search = url.searchParams.get("search") || "";
-  const category = url.searchParams.get("category") || "";
-  const status = url.searchParams.get("status") || "";
+  const search = url.searchParams.get('search') || '';
+  const category = url.searchParams.get('category') || '';
+  const status = url.searchParams.get('status') || '';
 
   try {
     const db = new Database(Bun.env.OPS_DB_PATH || DEFAULT_OPS_DB_PATH);
-    db.run("PRAGMA journal_mode=WAL");
+    db.run('PRAGMA journal_mode=WAL');
 
     let sql = `
       SELECT
@@ -50,16 +50,16 @@ export async function onRequest({ request }: { request: Request }) {
     sql += ` ORDER BY p.category, p.name`;
 
     const rows = db.query(sql).all(...params);
-    return Response.json({ source: "live", accounts: rows });
+    return Response.json({ source: 'live', accounts: rows });
   } catch {
     // Fallback to static snapshot
-    const file = Bun.file("public/registry/catalog-snapshot.json");
+    const file = Bun.file('public/registry/catalog-snapshot.json');
     if (await file.exists()) {
       return Response.json(await file.json());
     }
     return Response.json(
-      { error: "No live database or snapshot available", source: "none", accounts: [] },
-      { status: 503 },
+      { error: 'No live database or snapshot available', source: 'none', accounts: [] },
+      { status: 503 }
     );
   }
 }

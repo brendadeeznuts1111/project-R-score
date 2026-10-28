@@ -1,14 +1,14 @@
 #!/usr/bin/env bun
 /**
  * Demo: Bun Test Filtering
- * 
+ *
  * https://bun.com/docs/test#test-filtering
  */
 
-console.info("🔍 Bun Test Filtering Demo\n");
-console.info("=".repeat(70));
+console.info('🔍 Bun Test Filtering Demo\n');
+console.info('='.repeat(70));
 
-console.info("\n📋 CLI Filtering Options:\n");
+console.info('\n📋 CLI Filtering Options:\n');
 
 const cliExamples = `# Filter by test name pattern
 bun test --test-name-pattern="auth"
@@ -26,7 +26,7 @@ bun test --test-name-pattern="^(?!.*skip).*"`;
 
 console.info(cliExamples);
 
-console.info("\n📁 Filter in Configuration:\n");
+console.info('\n📁 Filter in Configuration:\n');
 
 const configExample = `// bunfig.toml
 [test]
@@ -44,7 +44,7 @@ testNamePattern = "API"
 
 console.info(configExample);
 
-console.info("\n📝 Code-Level Filtering:\n");
+console.info('\n📝 Code-Level Filtering:\n');
 
 const codeExample = `import { test, describe } from "bun:test";
 
@@ -74,13 +74,13 @@ describe.only("new module", () => {
 
 console.info(codeExample);
 
-console.info("\n✅ Key Points:");
-console.info("  • CLI: --test-name-pattern or -t for name filtering");
-console.info("  • Code: test.skip(), test.only(), test.todo()");
-console.info("  • describe.skip() / describe.only() for groups");
-console.info("  • File patterns work as positional arguments");
+console.info('\n✅ Key Points:');
+console.info('  • CLI: --test-name-pattern or -t for name filtering');
+console.info('  • Code: test.skip(), test.only(), test.todo()');
+console.info('  • describe.skip() / describe.only() for groups');
+console.info('  • File patterns work as positional arguments');
 
-console.info("\n🚀 Run examples:");
-console.info("  bun test -t \"auth\"");
-console.info("  bun test --test-name-pattern=\"API\"");
-console.info("  bun test tests/unit/*.test.ts");
+console.info('\n🚀 Run examples:');
+console.info('  bun test -t "auth"');
+console.info('  bun test --test-name-pattern="API"');
+console.info('  bun test tests/unit/*.test.ts');

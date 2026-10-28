@@ -1,8 +1,8 @@
 # Bun capability × FactoryWager brand map
 
-Portal: [/portal/brands/](/portal/brands/)
-Relationship artifact: [/registry/bun-brand-map.json](/registry/bun-brand-map.json)
-Glossary artifact: [/registry/brand-keymap.json](/registry/brand-keymap.json)
+Portal: [/portal/brands/](/portal/brands/) Relationship artifact:
+[/registry/bun-brand-map.json](/registry/bun-brand-map.json) Glossary artifact:
+[/registry/brand-keymap.json](/registry/brand-keymap.json)
 
 The relationship map joins canonical Bun API tokens with reviewed wrappers,
 branded domain values, tracked projects, and exact runtime proof. The glossary

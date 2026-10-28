@@ -1,6 +1,10 @@
 # R2 SQL API Reference
 
-Read-only SQL over Iceberg (Apache DataFusion). Query templates only. For the authoritative list of supported syntax, functions, data types, and limitations, pull the SQL reference (`sql-reference/`, `.../aggregate-functions/`, `.../scalar-functions/`, `.../complex-types/`) and `reference/limitations-best-practices/`.
+Read-only SQL over Iceberg (Apache DataFusion). Query templates only. For the
+authoritative list of supported syntax, functions, data types, and limitations,
+pull the SQL reference (`sql-reference/`, `.../aggregate-functions/`,
+`.../scalar-functions/`, `.../complex-types/`) and
+`reference/limitations-best-practices/`.
 
 ## Query Endpoint
 
@@ -11,7 +15,8 @@ Content-Type: application/json
 Body: {"query": "<SQL>"}
 ```
 
-CLI: `npx wrangler r2 sql query "{WAREHOUSE}" "<SQL>"` (with `WRANGLER_R2_SQL_AUTH_TOKEN`).
+CLI: `npx wrangler r2 sql query "{WAREHOUSE}" "<SQL>"` (with
+`WRANGLER_R2_SQL_AUTH_TOKEN`).
 
 ## Response Format
 
@@ -19,15 +24,28 @@ CLI: `npx wrangler r2 sql query "{WAREHOUSE}" "<SQL>"` (with `WRANGLER_R2_SQL_AU
 {
   "result": {
     "request_id": "dqe-prod-01...",
-    "schema": [{"name": "cnt", "descriptor": {"type": {"name": "int64"}, "nullable": false}}],
-    "rows": [{"category": "Electronics", "cnt": 12345}],
-    "metrics": {"r2_requests_count": 5, "files_scanned": 29, "bytes_scanned": 12345678, "cache_hits": 0}
+    "schema": [
+      {
+        "name": "cnt",
+        "descriptor": { "type": { "name": "int64" }, "nullable": false }
+      }
+    ],
+    "rows": [{ "category": "Electronics", "cnt": 12345 }],
+    "metrics": {
+      "r2_requests_count": 5,
+      "files_scanned": 29,
+      "bytes_scanned": 12345678,
+      "cache_hits": 0
+    }
   },
-  "success": true, "errors": []
+  "success": true,
+  "errors": []
 }
 ```
 
-Error: `{"result": null, "success": false, "errors": [{"code": 40003, "message": "..."}]}`. `bytes_scanned` ≈ billable data.
+Error:
+`{"result": null, "success": false, "errors": [{"code": 40003, "message": "..."}]}`.
+`bytes_scanned` ≈ billable data.
 
 ## Query Structure
 
@@ -75,7 +93,8 @@ UNION SELECT zone_id FROM ns.http_requests WHERE risk_score > 0.8;
 
 ## Window Functions
 
-Use inline `OVER (...)`. See the SQL reference for the full list of supported window functions and frame syntax.
+Use inline `OVER (...)`. See the SQL reference for the full list of supported
+window functions and frame syntax.
 
 ```sql
 SELECT event_id,
@@ -93,11 +112,16 @@ QUALIFY ROW_NUMBER() OVER (PARTITION BY mag_type ORDER BY magnitude DESC) = 1;
 
 ## Functions
 
-Aggregate, scalar, JSON, and array/map function catalogs are in the docs — pull `sql-reference/aggregate-functions/` and `.../scalar-functions/`. JSON functions accept variadic paths, e.g. `json_get_int(doc, 'user', 'profile', 'level')`.
+Aggregate, scalar, JSON, and array/map function catalogs are in the docs — pull
+`sql-reference/aggregate-functions/` and `.../scalar-functions/`. JSON functions
+accept variadic paths, e.g. `json_get_int(doc, 'user', 'profile', 'level')`.
 
 ## Data Types
 
-`integer`, `float`, `string` (single quotes), `boolean`, `timestamp` (RFC3339 **with timezone**), `date` (ISO 8601), `struct`, `array` (1-indexed), `map`. No implicit conversions — quote strings, include timezone on timestamps, don't quote integers. Full type docs: `sql-reference/`.
+`integer`, `float`, `string` (single quotes), `boolean`, `timestamp` (RFC3339
+**with timezone**), `date` (ISO 8601), `struct`, `array` (1-indexed), `map`. No
+implicit conversions — quote strings, include timezone on timestamps, don't
+quote integers. Full type docs: `sql-reference/`.
 
 ```sql
 WHERE status = 200 AND method = 'GET'              -- not '200', not GET
@@ -114,8 +138,12 @@ SELECT map_keys(meta), map_extract(meta, 'source') FROM ns.t;                   
 
 ## Errors
 
-Failed queries return `{"success": false, "errors": [{"code": ..., "message": ...}]}`. For error codes and troubleshooting, see `https://developers.cloudflare.com/r2-sql/troubleshooting/`.
+Failed queries return
+`{"success": false, "errors": [{"code": ..., "message": ...}]}`. For error codes
+and troubleshooting, see
+`https://developers.cloudflare.com/r2-sql/troubleshooting/`.
 
 ## See Also
 
-- [patterns.md](patterns.md) — query examples · [gotchas.md](gotchas.md) — limits & workarounds · [configuration.md](configuration.md)
+- [patterns.md](patterns.md) — query examples · [gotchas.md](gotchas.md) —
+  limits & workarounds · [configuration.md](configuration.md)

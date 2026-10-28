@@ -13,7 +13,8 @@
 └────────────────────────────────────────────────────────────────┘
 ```
 
-Cache Reserve is a **zone-level configuration**, not a per-request API. It works automatically when enabled for the zone:
+Cache Reserve is a **zone-level configuration**, not a per-request API. It works
+automatically when enabled for the zone:
 
 ### Standard Fetch (Recommended)
 
@@ -23,13 +24,14 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     // Standard fetch uses Cache Reserve automatically
     return await fetch(request);
-  }
+  },
 };
 ```
 
 ### Cache API Limitations
 
-**IMPORTANT**: `cache.put()` is **NOT compatible** with Cache Reserve or Tiered Cache.
+**IMPORTANT**: `cache.put()` is **NOT compatible** with Cache Reserve or Tiered
+Cache.
 
 ```typescript
 // ❌ WRONG: cache.put() bypasses Cache Reserve
@@ -68,10 +70,10 @@ const purgeCacheReserveByURL = async (
     {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiToken}`,
+        Authorization: `Bearer ${apiToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ files: urls })
+      body: JSON.stringify({ files: urls }),
     }
   );
   return await response.json();
@@ -80,7 +82,7 @@ const purgeCacheReserveByURL = async (
 // Example usage
 await purgeCacheReserveByURL('zone123', 'token456', [
   'https://example.com/image.jpg',
-  'https://example.com/video.mp4'
+  'https://example.com/video.mp4',
 ]);
 ```
 
@@ -92,15 +94,20 @@ await fetch(
   `https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`,
   {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ tags: ['tag1', 'tag2'] })
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ tags: ['tag1', 'tag2'] }),
   }
 );
 ```
 
 **Purge behavior:**
+
 - **By URL**: Immediate removal from Cache Reserve + edge cache
-- **By tag/host/prefix**: Revalidation only, assets remain in storage (costs continue)
+- **By tag/host/prefix**: Revalidation only, assets remain in storage (costs
+  continue)
 
 ### Clear All Cache Reserve Data
 
@@ -108,13 +115,14 @@ await fetch(
 // Requires Cache Reserve OFF first
 await fetch(
   `https://api.cloudflare.com/client/v4/zones/${zoneId}/cache/cache_reserve_clear`,
-  { method: 'POST', headers: { 'Authorization': `Bearer ${apiToken}` } }
+  { method: 'POST', headers: { Authorization: `Bearer ${apiToken}` } }
 );
 
 // Check status: GET same endpoint returns { state: "In-progress" | "Completed" }
 ```
 
-**Process**: Disable Cache Reserve → Call clear endpoint → Wait up to 24hr → Re-enable
+**Process**: Disable Cache Reserve → Call clear endpoint → Wait up to 24hr →
+Re-enable
 
 ## Monitoring and Analytics
 
@@ -122,7 +130,8 @@ await fetch(
 
 Navigate to **Caching > Cache Reserve** to view:
 
-- **Egress Savings**: Total bytes served from Cache Reserve vs origin egress cost saved
+- **Egress Savings**: Total bytes served from Cache Reserve vs origin egress
+  cost saved
 - **Requests Served**: Cache Reserve hits vs misses breakdown
 - **Storage Used**: Current GB stored in Cache Reserve (billed monthly)
 - **Operations**: Class A (writes) and Class B (reads) operation counts
@@ -166,7 +175,9 @@ query CacheReserveAnalytics($zoneTag: string, $since: string, $until: string) {
         filter: { datetime_geq: $since, datetime_leq: $until }
         limit: 1000
       ) {
-        dimensions { date }
+        dimensions {
+          date
+        }
         sum {
           cachedBytes
           cachedRequests

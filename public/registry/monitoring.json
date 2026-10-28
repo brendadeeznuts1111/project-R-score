@@ -39,10 +39,7 @@
     "hmac": true,
     "zipWindowOk": true,
     "scoreHint": "integrity+hmac",
-    "states": [
-      "MA",
-      "NJ"
-    ],
+    "states": ["MA", "NJ"],
     "generatedAt": "2026-08-01T21:28:29.678Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"

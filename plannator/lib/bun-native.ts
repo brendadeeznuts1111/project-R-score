@@ -5,7 +5,7 @@
  * Prefer them over ad-hoc `node:fs` / `node:crypto` / `Buffer` usage.
  */
 
-import { join } from "node:path";
+import { join } from 'node:path';
 
 /**
  * Read a small text file.
@@ -54,19 +54,16 @@ export async function fileExists(path: string): Promise<boolean> {
  * Exact signature: (input: string) => string
  */
 export function hashSha256(input: string): string {
-  const hasher = new Bun.CryptoHasher("sha256");
+  const hasher = new Bun.CryptoHasher('sha256');
   hasher.update(input);
-  return hasher.digest("hex");
+  return hasher.digest('hex');
 }
 
 /**
  * List files matching a glob under a directory.
  * Exact signature: (cwd: string, pattern: string) => AsyncIterable<string>
  */
-export async function* globFiles(
-  cwd: string,
-  pattern: string
-): AsyncIterable<string> {
+export async function* globFiles(cwd: string, pattern: string): AsyncIterable<string> {
   const glob = new Bun.Glob(pattern);
   for await (const file of glob.scan(cwd)) {
     yield join(cwd, file);
@@ -89,7 +86,7 @@ export async function archiveFiles(
   if (!Archive) {
     throw new ArchiveNotSupportedError();
   }
-  const archive = new Archive(files as Bun.ArchiveInput, { compress: "gzip", level });
+  const archive = new Archive(files as Bun.ArchiveInput, { compress: 'gzip', level });
   return archive.bytes();
 }
 
@@ -146,7 +143,7 @@ export async function readArchiveFileText(
 
 export class ArchiveNotSupportedError extends Error {
   constructor() {
-    super("Bun.Archive is not available in this Bun version");
+    super('Bun.Archive is not available in this Bun version');
   }
 }
 
@@ -154,9 +151,6 @@ export class ArchiveNotSupportedError extends Error {
  * Format rows as a table using Bun.inspect.table.
  * Exact signature: <T extends Record<string, unknown>>(rows: T[], options?: Bun.InspectOptions) => string
  */
-export function inspectTable<T extends Record<string, unknown>>(
-  rows: T[],
-  colors = true
-): string {
+export function inspectTable<T extends Record<string, unknown>>(rows: T[], colors = true): string {
   return Bun.inspect.table(rows, { colors });
 }

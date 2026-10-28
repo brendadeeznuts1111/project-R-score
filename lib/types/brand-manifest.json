@@ -77,16 +77,8 @@
     {
       "name": "SessionId",
       "domain": "session",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "user-input", "wire-input"],
       "description": "Interactive terminal / agent session identity",
       "kind": "id",
       "module": "lib/types/branded/session.ts",
@@ -106,15 +98,8 @@
     {
       "name": "TerminalId",
       "domain": "session",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "PTY / terminal instance identity",
       "kind": "id",
       "module": "lib/types/branded/session.ts",
@@ -134,15 +119,8 @@
     {
       "name": "RequestId",
       "domain": "session",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "HTTP or RPC request correlation handle",
       "kind": "id",
       "module": "lib/types/branded/session.ts",
@@ -162,15 +140,8 @@
     {
       "name": "CorrelationId",
       "domain": "session",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Cross-service distributed trace correlation",
       "kind": "id",
       "module": "lib/types/branded/session.ts",
@@ -190,15 +161,8 @@
     {
       "name": "SnapshotId",
       "domain": "session",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Point-in-time state snapshot identity",
       "kind": "id",
       "module": "lib/types/branded/session.ts",
@@ -218,16 +182,8 @@
     {
       "name": "UserId",
       "domain": "identity",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "user-input",
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["user-input", "wire-input", "system-internal"],
       "description": "Human or agent principal identity",
       "kind": "id",
       "module": "lib/types/branded/identity.ts",
@@ -247,15 +203,8 @@
     {
       "name": "AccountId",
       "domain": "identity",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "user-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "user-input"],
       "description": "Cloud account (e.g. Cloudflare/R2 account) — env/wire only, never empty forge",
       "kind": "id",
       "module": "lib/types/branded/identity.ts",
@@ -275,15 +224,8 @@
     {
       "name": "IdentityId",
       "domain": "identity",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Zero-trust / federated identity record",
       "kind": "id",
       "module": "lib/types/branded/identity.ts",
@@ -303,14 +245,8 @@
     {
       "name": "OidcClientId",
       "domain": "identity",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input"],
       "description": "OIDC relying-party client identifier parsed from deployment configuration",
       "kind": "id",
       "module": "lib/types/branded/identity.ts",
@@ -330,15 +266,8 @@
     {
       "name": "AccessKeyId",
       "domain": "identity",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "S3/R2 access key id (not the secret material)",
       "kind": "id",
       "module": "lib/types/branded/identity.ts",
@@ -358,15 +287,8 @@
     {
       "name": "TokenId",
       "domain": "identity",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Opaque token handle (not the token secret)",
       "kind": "id",
       "module": "lib/types/branded/identity.ts",
@@ -386,15 +308,8 @@
     {
       "name": "DocumentId",
       "domain": "documents",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Wiki / collab document identity",
       "kind": "id",
       "module": "lib/types/branded/documents.ts",
@@ -414,14 +329,8 @@
     {
       "name": "ZoneId",
       "domain": "documents",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input"],
       "description": "DNS / Cloudflare zone — mint from wire via parseZoneId",
       "kind": "id",
       "module": "lib/types/branded/documents.ts",
@@ -441,15 +350,8 @@
     {
       "name": "DocTokenId",
       "domain": "documents",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Bun documentation token identity (catalog / TokenRef northstar)",
       "kind": "id",
       "module": "lib/types/branded/documents.ts",
@@ -469,15 +371,8 @@
     {
       "name": "ReleaseKnowledgeExampleId",
       "domain": "documents",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Normalized Bun release knowledge example identity",
       "kind": "id",
       "module": "lib/types/branded/documents.ts",
@@ -497,15 +392,8 @@
     {
       "name": "ReleaseKnowledgeNodeId",
       "domain": "documents",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Structural Bun release knowledge document node identity",
       "kind": "id",
       "module": "lib/types/branded/documents.ts",
@@ -525,15 +413,8 @@
     {
       "name": "ChallengeId",
       "domain": "security",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Auth challenge / proof-of-possession handle",
       "kind": "id",
       "module": "lib/types/branded/security.ts",
@@ -553,15 +434,8 @@
     {
       "name": "PolicyId",
       "domain": "security",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Access policy identity",
       "kind": "id",
       "module": "lib/types/branded/security.ts",
@@ -581,15 +455,8 @@
     {
       "name": "DeploymentId",
       "domain": "deployment",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Release / deployment instance identity",
       "kind": "id",
       "module": "lib/types/branded/deployment.ts",
@@ -609,15 +476,8 @@
     {
       "name": "VersionId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Secret or config version identity",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -637,15 +497,8 @@
     {
       "name": "AuditId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Audit log entry identity",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -665,15 +518,8 @@
     {
       "name": "AuditFindingId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "FactoryWager audit-finding SSOT primary key",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -693,15 +539,8 @@
     {
       "name": "AuditConceptId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "FactoryWager audit-concept SSOT primary key",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -721,15 +560,8 @@
     {
       "name": "AuditEntryId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Polymorphic audit SSOT ref (finding or concept id)",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -749,15 +581,8 @@
     {
       "name": "EvidenceId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Screenshot / image evidence row (UUID v7 via Bun.randomUUIDv7)",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -777,15 +602,8 @@
     {
       "name": "DodId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "DOD (proof-of-deposit) submission identity",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -805,15 +623,8 @@
     {
       "name": "RuleId",
       "domain": "audit",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Anomaly-detection rule identity",
       "kind": "id",
       "module": "lib/types/branded/audit.ts",
@@ -833,15 +644,8 @@
     {
       "name": "GithubIssueArtifactId",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine artifact identity governed by the repository taxonomy",
       "validation": {
         "shape": "pattern",
@@ -862,15 +666,8 @@
     {
       "name": "GithubIssueConceptId",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Optional glossary concept identity carried by issue-spine metadata",
       "validation": {
         "shape": "pattern",
@@ -891,15 +688,8 @@
     {
       "name": "GithubIssueLabelKey",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Semantic dimension.value key for a governed GitHub issue label",
       "validation": {
         "shape": "pattern",
@@ -920,15 +710,8 @@
     {
       "name": "GithubIssueLabelNameKey",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "GitHub-facing label name projected from the semantic taxonomy",
       "validation": {
         "shape": "pattern",
@@ -949,15 +732,8 @@
     {
       "name": "GithubIssueDimensionCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue taxonomy dimension code",
       "validation": {
         "shape": "pattern",
@@ -978,15 +754,8 @@
     {
       "name": "GithubIssueTypeCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine type value",
       "validation": {
         "shape": "pattern",
@@ -1007,15 +776,8 @@
     {
       "name": "GithubIssuePriorityCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine priority value",
       "validation": {
         "shape": "pattern",
@@ -1036,15 +798,8 @@
     {
       "name": "GithubIssuePlaneCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine ownership plane",
       "validation": {
         "shape": "pattern",
@@ -1065,15 +820,8 @@
     {
       "name": "GithubIssueRuntimeCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine runtime ownership value",
       "validation": {
         "shape": "pattern",
@@ -1094,15 +842,8 @@
     {
       "name": "GithubIssueTeamCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine owning team value",
       "validation": {
         "shape": "pattern",
@@ -1123,15 +864,8 @@
     {
       "name": "GithubIssueStatusCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Issue-spine lifecycle status",
       "validation": {
         "shape": "pattern",
@@ -1152,15 +886,8 @@
     {
       "name": "GithubIssueUrgencyCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Optional issue urgency facet",
       "validation": {
         "shape": "pattern",
@@ -1181,15 +908,8 @@
     {
       "name": "GithubIssueConcernCode",
       "domain": "governance",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Optional issue concern facet",
       "validation": {
         "shape": "pattern",
@@ -1210,15 +930,8 @@
     {
       "name": "OperationId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Batch or async operation handle",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1238,15 +951,8 @@
     {
       "name": "ResourceId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Generic resource pointer (errors, ACL subjects)",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1266,15 +972,8 @@
     {
       "name": "ProjectId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["user-input", "wire-input"],
       "description": "Project / workspace identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1294,15 +993,8 @@
     {
       "name": "PipelineId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Transform or CI pipeline identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1322,15 +1014,8 @@
     {
       "name": "JobId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Scheduled or queued job identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1350,15 +1035,8 @@
     {
       "name": "StepId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Pipeline step identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1378,15 +1056,8 @@
     {
       "name": "WebhookId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Webhook registration identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1406,15 +1077,8 @@
     {
       "name": "FeedId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "RSS / event feed identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1434,15 +1098,8 @@
     {
       "name": "ReleaseAssetId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Version-scoped release media asset identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1462,15 +1119,8 @@
     {
       "name": "ReleaseCapabilityId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Version-scoped release capability identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1490,14 +1140,8 @@
     {
       "name": "RunId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Benchmark / search-loop run identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1517,15 +1161,8 @@
     {
       "name": "DecisionId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Decision evidence record identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1545,14 +1182,8 @@
     {
       "name": "LoopId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Search / maintenance loop identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1572,15 +1203,8 @@
     {
       "name": "TreeNodeId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Ops tree node (partner / agent / sub_agent) identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1600,15 +1224,8 @@
     {
       "name": "RailId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Funding rail identity for treasury transfers",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1628,14 +1245,8 @@
     {
       "name": "FundingId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Funding transfer row identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1655,15 +1266,8 @@
     {
       "name": "CommandId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "AI / automation optimization command handle",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1683,16 +1287,8 @@
     {
       "name": "ExperimentId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "user-input", "wire-input"],
       "description": "Factorial or multi-variant experiment identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1712,14 +1308,8 @@
     {
       "name": "ExperimentVariantId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "One design cell (factor combination) in an experiment",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1739,14 +1329,8 @@
     {
       "name": "ExperimentAssignmentId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Sticky partner-to-variant assignment row",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1766,14 +1350,8 @@
     {
       "name": "PartnerProfileKey",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Partner profile binding key for tree node ↔ template",
       "kind": "key",
       "module": "lib/types/branded/operations.ts",
@@ -1793,15 +1371,8 @@
     {
       "name": "PartnerCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Canonical uppercase partner business join key",
       "validation": {
         "shape": "pattern",
@@ -1822,15 +1393,8 @@
     {
       "name": "PartnerCallSignCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Canonical partner operator call sign",
       "validation": {
         "shape": "pattern",
@@ -1851,15 +1415,8 @@
     {
       "name": "PartnerProfileVersionCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Canonical partner profile document version",
       "kind": "code",
       "module": "lib/types/branded/operations.ts",
@@ -1879,15 +1436,8 @@
     {
       "name": "PartnerTemplateId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["user-input", "wire-input"],
       "description": "Partner onboarding template identifier",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1907,14 +1457,8 @@
     {
       "name": "OutId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Canonical partner out identity (for example out-SPEN-1)",
       "validation": {
         "shape": "pattern",
@@ -1935,15 +1479,8 @@
     {
       "name": "LedgerEntryId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Immutable partner ledger entry identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -1963,15 +1500,8 @@
     {
       "name": "CurrencyCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "ISO-style currency code for minor-unit money",
       "validation": {
         "shape": "pattern",
@@ -1992,15 +1522,8 @@
     {
       "name": "AttentionReasonCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Stable machine-readable operator attention reason",
       "validation": {
         "shape": "pattern",
@@ -2021,15 +1544,8 @@
     {
       "name": "SourceSystemId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Source-qualified system identity for provenance",
       "validation": {
         "shape": "pattern",
@@ -2050,15 +1566,8 @@
     {
       "name": "AdapterId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Adapter implementation identity for provenance",
       "validation": {
         "shape": "pattern",
@@ -2079,14 +1588,8 @@
     {
       "name": "ExternalPartnerId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input"],
       "description": "Source-owned non-canonical partner identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2106,14 +1609,8 @@
     {
       "name": "ExternalAccountId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input"],
       "description": "Source-owned non-canonical account identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2133,14 +1630,8 @@
     {
       "name": "GateDecisionId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Policy gate decision row for play dispatch",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2160,14 +1651,8 @@
     {
       "name": "OpsChannelEventId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Unified ops channel outbox event id",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2187,14 +1672,8 @@
     {
       "name": "LimitForecastIssueId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Immutable issued limit forecast identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2214,15 +1693,8 @@
     {
       "name": "EventId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Synthetic or live odds event identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2242,15 +1714,8 @@
     {
       "name": "EdgeId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Detected betting-edge opportunity identity",
       "kind": "id",
       "module": "lib/types/branded/operations.ts",
@@ -2270,15 +1735,8 @@
     {
       "name": "SportsbookId",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal", "wire-input"],
       "description": "Canonical sportsbook slug for limits, policy, and scrape registries",
       "validation": {
         "shape": "pattern",
@@ -2299,15 +1757,8 @@
     {
       "name": "StateCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["user-input", "wire-input"],
       "description": "US state jurisdiction code for regulatory scoping (MA, NJ, …)",
       "validation": {
         "shape": "pattern",
@@ -2328,15 +1779,8 @@
     {
       "name": "ZipCode",
       "domain": "operations",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["user-input", "wire-input"],
       "description": "US ZIP or ZIP+4 postal code (discrete geo column)",
       "validation": {
         "shape": "pattern",
@@ -2357,15 +1801,8 @@
     {
       "name": "PortalTenantId",
       "domain": "portal",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "user-input",
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["user-input", "wire-input"],
       "description": "Multi-tenant portal tenant key (factory | science | tennis)",
       "kind": "id",
       "module": "lib/types/branded/portal.ts",
@@ -2385,14 +1822,8 @@
     {
       "name": "TelegramUserId",
       "domain": "portal",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input"],
       "description": "Telegram user id from Bot API",
       "kind": "id",
       "module": "lib/types/branded/portal.ts",
@@ -2412,14 +1843,8 @@
     {
       "name": "TelegramChatId",
       "domain": "portal",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input"],
       "description": "Telegram chat_id from Bot API (msg.chat.id / callback query)",
       "kind": "id",
       "module": "lib/types/branded/portal.ts",
@@ -2439,14 +1864,8 @@
     {
       "name": "PortalAccountId",
       "domain": "portal",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Portal user account primary key (UUID v7)",
       "kind": "id",
       "module": "lib/types/branded/portal.ts",
@@ -2466,14 +1885,8 @@
     {
       "name": "LinkNonceId",
       "domain": "portal",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Telegram link nonce for account binding",
       "kind": "id",
       "module": "lib/types/branded/portal.ts",
@@ -2493,14 +1906,8 @@
     {
       "name": "DomId",
       "domain": "portal",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["system-internal"],
       "description": "Owned portal DOM mount id used by glossary section routing",
       "kind": "id",
       "module": "lib/types/branded/portal.ts",
@@ -2520,15 +1927,8 @@
     {
       "name": "HostId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Public edge FQDN (no scheme/path) — config/surfaces.toml host",
       "validation": {
         "shape": "pattern",
@@ -2550,15 +1950,8 @@
     {
       "name": "ApexDomainId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Zone apex FQDN (factory-wager.com) — split from HostId",
       "validation": {
         "shape": "pattern",
@@ -2580,15 +1973,8 @@
     {
       "name": "SubdomainId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "DNS labels under apex (score, www) or @ for bare apex host",
       "validation": {
         "shape": "pattern",
@@ -2610,15 +1996,8 @@
     {
       "name": "SurfaceId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Surface inventory key (ledger, score, pages_dev, …)",
       "validation": {
         "shape": "pattern",
@@ -2640,15 +2019,8 @@
     {
       "name": "PagesProjectId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Cloudflare Pages project shortcode (project-r-score) — not operations ProjectId",
       "validation": {
         "shape": "pattern",
@@ -2670,15 +2042,8 @@
     {
       "name": "AccessDomainId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Cloudflare Access app domain field (host or host/path)",
       "validation": {
         "shape": "pattern",
@@ -2700,15 +2065,8 @@
     {
       "name": "SurfaceStatusCode",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Surface status vocabulary (live|vanity|broken|dangling|staged|placeholder|external|retired)",
       "validation": {
         "shape": "pattern",
@@ -2730,15 +2088,8 @@
     {
       "name": "SurfaceAccessCode",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Surface Access posture (public|allowlist|applied|staged|bearer (intended)|…)",
       "validation": {
         "shape": "pattern",
@@ -2760,15 +2111,8 @@
     {
       "name": "SurfaceBackendCode",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Backend family shortcode (cloudflare-pages|cloudflare-worker|cloudflared|github-pages|helpscout|none|unknown)",
       "validation": {
         "shape": "pattern",
@@ -2790,15 +2134,8 @@
     {
       "name": "PublishLaneId",
       "domain": "surfaces",
-      "tiers": [
-        "as",
-        "try",
-        "parse"
-      ],
-      "mint": [
-        "wire-input",
-        "system-internal"
-      ],
+      "tiers": ["as", "try", "parse"],
+      "mint": ["wire-input", "system-internal"],
       "description": "Publish-lane shortcode (prod-write, local-gateway, local-npm) — ADR-0002",
       "validation": {
         "shape": "pattern",

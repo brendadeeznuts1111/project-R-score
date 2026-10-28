@@ -1,28 +1,30 @@
 # Workflows Integration
 
-Fetch https://developers.cloudflare.com/agents/api-reference/run-workflows/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/api-reference/run-workflows/ for
+complete documentation.
 
 ## Overview
 
-Agents handle real-time communication; Workflows handle durable execution. Together they enable:
+Agents handle real-time communication; Workflows handle durable execution.
+Together they enable:
 
 - Long-running background tasks with automatic retries
 - Human-in-the-loop approval flows
 - Multi-step pipelines that survive failures
 
-| Use Case | Recommendation |
-|----------|----------------|
-| Chat/messaging | Agent only |
-| Quick API calls (<30s) | Agent only |
-| Background processing (<30s) | Agent `queue()` |
-| Long-running tasks (>30s) | Agent + Workflow |
-| Human approval flows | Agent + Workflow |
+| Use Case                     | Recommendation   |
+| ---------------------------- | ---------------- |
+| Chat/messaging               | Agent only       |
+| Quick API calls (<30s)       | Agent only       |
+| Background processing (<30s) | Agent `queue()`  |
+| Long-running tasks (>30s)    | Agent + Workflow |
+| Human approval flows         | Agent + Workflow |
 
 ## AgentWorkflow Base Class
 
 ```typescript
-import { AgentWorkflow } from "agents/workflows";
-import type { AgentWorkflowEvent, AgentWorkflowStep } from "agents/workflows";
+import { AgentWorkflow } from 'agents/workflows';
+import type { AgentWorkflowEvent, AgentWorkflowStep } from 'agents/workflows';
 
 type TaskParams = { taskId: string; data: string };
 
@@ -31,15 +33,15 @@ export class ProcessingWorkflow extends AgentWorkflow<MyAgent, TaskParams> {
     const params = event.payload;
 
     // Durable step - retries on failure
-    const result = await step.do("process", async () => {
+    const result = await step.do('process', async () => {
       return processData(params.data);
     });
 
     // Non-durable: progress reporting
-    await this.reportProgress({ step: "process", percent: 0.5 });
+    await this.reportProgress({ step: 'process', percent: 0.5 });
 
     // Non-durable: broadcast to connected clients
-    this.broadcastToClients({ type: "update", taskId: params.taskId });
+    this.broadcastToClients({ type: 'update', taskId: params.taskId });
 
     // Durable: merge state via step
     await step.mergeAgentState({ lastProcessed: params.taskId });
@@ -57,12 +59,16 @@ export class ProcessingWorkflow extends AgentWorkflow<MyAgent, TaskParams> {
 ```jsonc
 {
   "workflows": [
-    { "name": "processing-workflow", "binding": "PROCESSING_WORKFLOW", "class_name": "ProcessingWorkflow" }
+    {
+      "name": "processing-workflow",
+      "binding": "PROCESSING_WORKFLOW",
+      "class_name": "ProcessingWorkflow",
+    },
   ],
   "durable_objects": {
-    "bindings": [{ "name": "MyAgent", "class_name": "MyAgent" }]
+    "bindings": [{ "name": "MyAgent", "class_name": "MyAgent" }],
   },
-  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["MyAgent"] }]
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["MyAgent"] }],
 }
 ```
 
@@ -95,20 +101,36 @@ await this.deleteWorkflows({ status: "complete", before: new Date(...) });
 
 ```typescript
 export class MyAgent extends Agent<Env, State> {
-  async onWorkflowProgress(workflowName: string, workflowId: string, progress: unknown) {
+  async onWorkflowProgress(
+    workflowName: string,
+    workflowId: string,
+    progress: unknown
+  ) {
     // Workflow reported progress via this.reportProgress()
-    this.broadcast({ type: "progress", workflowId, progress });
+    this.broadcast({ type: 'progress', workflowId, progress });
   }
 
-  async onWorkflowComplete(workflowName: string, workflowId: string, result?: unknown) {
+  async onWorkflowComplete(
+    workflowName: string,
+    workflowId: string,
+    result?: unknown
+  ) {
     // Workflow finished successfully
   }
 
-  async onWorkflowError(workflowName: string, workflowId: string, error: Error) {
+  async onWorkflowError(
+    workflowName: string,
+    workflowId: string,
+    error: Error
+  ) {
     // Workflow failed
   }
 
-  async onWorkflowEvent(workflowName: string, workflowId: string, event: unknown) {
+  async onWorkflowEvent(
+    workflowName: string,
+    workflowId: string,
+    event: unknown
+  ) {
     // Workflow received an event via sendWorkflowEvent()
   }
 }
@@ -118,15 +140,15 @@ export class MyAgent extends Agent<Env, State> {
 
 ```typescript
 // In workflow: wait for approval
-const approved = await step.waitForEvent<{ approved: boolean }>("approval", {
-  timeout: "7d"
+const approved = await step.waitForEvent<{ approved: boolean }>('approval', {
+  timeout: '7d',
 });
 
 if (!approved.approved) {
-  throw new Error("Rejected");
+  throw new Error('Rejected');
 }
 
 // From agent: approve or reject
-await this.approveWorkflow(workflowId);  // Sends { approved: true }
-await this.rejectWorkflow(workflowId);   // Sends { approved: false }
+await this.approveWorkflow(workflowId); // Sends { approved: true }
+await this.rejectWorkflow(workflowId); // Sends { approved: false }
 ```

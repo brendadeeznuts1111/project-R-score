@@ -1,10 +1,15 @@
 # SVG Diagram Patterns
 
-Building blocks for creating diagrams in implementation plans. All SVGs are inline — no external dependencies. Compose these patterns to build architecture diagrams, data flow visualizations, flowcharts, and charts.
+Building blocks for creating diagrams in implementation plans. All SVGs are
+inline — no external dependencies. Compose these patterns to build architecture
+diagrams, data flow visualizations, flowcharts, and charts.
 
-All colors reference Plannotator theme tokens. In SVG, use the CSS custom property values directly via `style` attributes or the corresponding CSS classes.
+All colors reference Plannotator theme tokens. In SVG, use the CSS custom
+property values directly via `style` attributes or the corresponding CSS
+classes.
 
 ## Table of Contents
+
 1. [Arrow Markers](#arrow-markers)
 2. [Architecture Diagrams](#architecture-diagrams)
 3. [Flowcharts](#flowcharts)
@@ -14,7 +19,8 @@ All colors reference Plannotator theme tokens. In SVG, use the CSS custom proper
 
 ## Arrow markers
 
-Define reusable markers in `<defs>`. Reference them via `marker-end="url(#arrow)"`.
+Define reusable markers in `<defs>`. Reference them via
+`marker-end="url(#arrow)"`.
 
 ```svg
 <defs>
@@ -40,7 +46,9 @@ Define reusable markers in `<defs>`. Reference them via `marker-end="url(#arrow)
 </defs>
 ```
 
-**Note on CSS vars in SVG:** `fill="var(--primary)"` works in inline SVG within an HTML document. For broader compatibility, you can also style via CSS classes instead of inline attributes.
+**Note on CSS vars in SVG:** `fill="var(--primary)"` works in inline SVG within
+an HTML document. For broader compatibility, you can also style via CSS classes
+instead of inline attributes.
 
 ## Architecture diagrams
 
@@ -322,11 +330,14 @@ For routing flow from a decision to a side branch:
 ## Positioning & layout
 
 ### SVG container sizing
-- Use `viewBox` with fixed coordinates; set `style="width:100%;max-width:NNNpx"` for responsive scaling
+
+- Use `viewBox` with fixed coordinates; set `style="width:100%;max-width:NNNpx"`
+  for responsive scaling
 - Standard widths: `720px` full-width, `480px` half-width, `360px` sidebar
 - Standard heights: `180–320px` for most diagrams
 
 ### Box sizing
+
 - Standard node: `120–160px` wide, `48–56px` tall
 - Minimum gap between nodes: `60px` horizontal, `40px` vertical
 - Arrow label offset: `8–12px` above the line
@@ -334,18 +345,18 @@ For routing flow from a decision to a side branch:
 
 ### Color roles in diagrams
 
-| Element | Fill / stroke | Token |
-|---------|---------------|-------|
-| Box background | fill | `var(--card)` |
-| Box stroke | stroke | `var(--border)` |
-| Highlighted box bg | fill | `color-mix(in oklab, var(--primary) 8%, transparent)` |
-| Highlighted box stroke | stroke | `var(--primary)` |
-| Arrow / connector | stroke | `var(--muted-foreground)` |
-| Title text | fill | `var(--foreground)` |
-| Subtitle / label text | fill | `var(--muted-foreground)` |
-| Success path | stroke | `var(--success)` |
-| Error path | stroke | `var(--destructive)` |
-| Warning | fill | `var(--warning)` |
+| Element                | Fill / stroke | Token                                                 |
+| ---------------------- | ------------- | ----------------------------------------------------- |
+| Box background         | fill          | `var(--card)`                                         |
+| Box stroke             | stroke        | `var(--border)`                                       |
+| Highlighted box bg     | fill          | `color-mix(in oklab, var(--primary) 8%, transparent)` |
+| Highlighted box stroke | stroke        | `var(--primary)`                                      |
+| Arrow / connector      | stroke        | `var(--muted-foreground)`                             |
+| Title text             | fill          | `var(--foreground)`                                   |
+| Subtitle / label text  | fill          | `var(--muted-foreground)`                             |
+| Success path           | stroke        | `var(--success)`                                      |
+| Error path             | stroke        | `var(--destructive)`                                  |
+| Warning                | fill          | `var(--warning)`                                      |
 
 ### Using CSS classes in SVG
 

@@ -7,26 +7,26 @@
  *   bun scripts/workflow-cli.ts start --effects-dir ./effects --effect custom
  */
 
-import { resolve } from "node:path";
+import { resolve } from 'node:path';
 import {
   WorkflowLoop,
   type WorkflowEffects,
   type WorkflowOptions,
-} from "./scan/transpiler/workflow-loop.ts";
+} from './scan/transpiler/workflow-loop.ts';
 import {
   defaultWorkflowReportPath,
   legacyEffectsToConfigs,
   mergeEffectConfigs,
   parseEffectFlags,
-} from "./scan/transpiler/workflow-effects/config.ts";
+} from './scan/transpiler/workflow-effects/config.ts';
 import {
   captureBunRuntime,
   defaultWorkflowRuntimeSeedPath,
-} from "./scan/transpiler/workflow-effects/runtime.ts";
-import type { Severity } from "./scan/transpiler/types.ts";
+} from './scan/transpiler/workflow-effects/runtime.ts';
+import type { Severity } from './scan/transpiler/types.ts';
 
-const SKILL_ROOT = resolve(import.meta.dir, "..");
-const REPO_ROOT = resolve(SKILL_ROOT, "../../..");
+const SKILL_ROOT = resolve(import.meta.dir, '..');
+const REPO_ROOT = resolve(SKILL_ROOT, '../../..');
 
 type Parsed = Record<string, string | boolean | number | string[] | undefined>;
 
@@ -79,149 +79,151 @@ Examples:
 }
 
 function parseArgs(argv: string[]): Parsed {
-  const out: Parsed = { action: argv[0] ?? "help", effect: [] };
+  const out: Parsed = { action: argv[0] ?? 'help', effect: [] };
   for (let i = 1; i < argv.length; i++) {
     const a = argv[i];
-    if (a === "--help" || a === "-h") return { action: "help" };
-    if (a === "--watch") out.watch = true;
-    else if (a === "--dry-run" || a === "-n") out["dry-run"] = true;
-    else if (a === "--fail-on-issue") out["fail-on-issue"] = true;
-    else if (a === "--fail-on-drift") out["fail-on-drift"] = true;
-    else if (a === "--no-color") out["no-color"] = true;
-    else if (a === "--fix") out.fix = true;
-    else if (a === "--log") out.log = true;
-    else if (a === "--no-log") out.log = false;
-    else if (a === "--report") {
+    if (a === '--help' || a === '-h') return { action: 'help' };
+    if (a === '--watch') out.watch = true;
+    else if (a === '--dry-run' || a === '-n') out['dry-run'] = true;
+    else if (a === '--fail-on-issue') out['fail-on-issue'] = true;
+    else if (a === '--fail-on-drift') out['fail-on-drift'] = true;
+    else if (a === '--no-color') out['no-color'] = true;
+    else if (a === '--fix') out.fix = true;
+    else if (a === '--log') out.log = true;
+    else if (a === '--no-log') out.log = false;
+    else if (a === '--report') {
       const next = argv[i + 1];
-      if (next && !next.startsWith("--")) {
+      if (next && !next.startsWith('--')) {
         out.report = next;
         i++;
       } else {
         out.report = true;
       }
-    }
-    else if (a.startsWith("--effect=")) {
-      (out.effect as string[]).push(a.slice("--effect=".length));
-    }
-    else if (a === "--effect" && argv[i + 1] && !argv[i + 1].startsWith("--")) {
+    } else if (a.startsWith('--effect=')) {
+      (out.effect as string[]).push(a.slice('--effect='.length));
+    } else if (a === '--effect' && argv[i + 1] && !argv[i + 1].startsWith('--')) {
       (out.effect as string[]).push(argv[++i]);
-    }
-    else if (a.startsWith("--domain=")) out.domain = a.slice("--domain=".length);
-    else if (a === "--domain" && argv[i + 1]) out.domain = argv[++i];
-    else if (a.startsWith("--scan-path=")) out["scan-path"] = a.slice("--scan-path=".length);
-    else if (a === "--scan-path" && argv[i + 1]) out["scan-path"] = argv[++i];
-    else if (a.startsWith("--scanners=")) out.scanners = a.slice("--scanners=".length);
-    else if (a === "--scanners" && argv[i + 1]) out.scanners = argv[++i];
-    else if (a.startsWith("--interval=")) out.interval = Number(a.slice("--interval=".length));
-    else if (a === "--interval" && argv[i + 1]) out.interval = Number(argv[++i]);
-    else if (a.startsWith("--output=")) out.output = a.slice("--output=".length);
-    else if (a === "--output" && argv[i + 1]) out.output = argv[++i];
-    else if (a.startsWith("--fail-on-severity=")) out["fail-on-severity"] = a.slice("--fail-on-severity=".length);
-    else if (a === "--fail-on-severity" && argv[i + 1]) out["fail-on-severity"] = argv[++i];
-    else if (a.startsWith("--seed=")) out.seed = a.slice("--seed=".length);
-    else if (a === "--seed") {
+    } else if (a.startsWith('--domain=')) out.domain = a.slice('--domain='.length);
+    else if (a === '--domain' && argv[i + 1]) out.domain = argv[++i];
+    else if (a.startsWith('--scan-path=')) out['scan-path'] = a.slice('--scan-path='.length);
+    else if (a === '--scan-path' && argv[i + 1]) out['scan-path'] = argv[++i];
+    else if (a.startsWith('--scanners=')) out.scanners = a.slice('--scanners='.length);
+    else if (a === '--scanners' && argv[i + 1]) out.scanners = argv[++i];
+    else if (a.startsWith('--interval=')) out.interval = Number(a.slice('--interval='.length));
+    else if (a === '--interval' && argv[i + 1]) out.interval = Number(argv[++i]);
+    else if (a.startsWith('--output=')) out.output = a.slice('--output='.length);
+    else if (a === '--output' && argv[i + 1]) out.output = argv[++i];
+    else if (a.startsWith('--fail-on-severity='))
+      out['fail-on-severity'] = a.slice('--fail-on-severity='.length);
+    else if (a === '--fail-on-severity' && argv[i + 1]) out['fail-on-severity'] = argv[++i];
+    else if (a.startsWith('--seed=')) out.seed = a.slice('--seed='.length);
+    else if (a === '--seed') {
       const next = argv[i + 1];
-      if (next && !next.startsWith("--")) {
+      if (next && !next.startsWith('--')) {
         out.seed = next;
         i++;
       } else {
         out.seed = true;
       }
-    }
-    else if (a.startsWith("--seed-write=")) out["seed-write"] = a.slice("--seed-write=".length);
-    else if (a === "--seed-write" && argv[i + 1]) out["seed-write"] = argv[++i];
-    else if (a.startsWith("--effects-dir=")) out["effects-dir"] = a.slice("--effects-dir=".length);
-    else if (a === "--effects-dir" && argv[i + 1]) out["effects-dir"] = argv[++i];
-    else if (a.startsWith("--alert-url=")) out["alert-url"] = a.slice("--alert-url=".length);
-    else if (a === "--alert-url" && argv[i + 1]) out["alert-url"] = argv[++i];
-    else if (a.startsWith("--alert=")) out.alert = a.slice("--alert=".length);
-    else if (a === "--alert" && argv[i + 1]) out.alert = argv[++i];
-    else if (a.startsWith("--tls-ca=")) out["tls-ca"] = a.slice("--tls-ca=".length);
-    else if (a === "--tls-ca" && argv[i + 1]) out["tls-ca"] = argv[++i];
-    else if (a.startsWith("--tls-cert=")) out["tls-cert"] = a.slice("--tls-cert=".length);
-    else if (a === "--tls-cert" && argv[i + 1]) out["tls-cert"] = argv[++i];
-    else if (a.startsWith("--tls-key=")) out["tls-key"] = a.slice("--tls-key=".length);
-    else if (a === "--tls-key" && argv[i + 1]) out["tls-key"] = argv[++i];
-    else if (a.startsWith("--tls-reject-unauthorized=")) {
-      out["tls-reject-unauthorized"] = a.slice("--tls-reject-unauthorized=".length) === "true";
-    }
-    else if (a === "--tls-reject-unauthorized" && argv[i + 1]) {
-      out["tls-reject-unauthorized"] = argv[++i] === "true";
-    }
-    else if (a === "--no-include-bun-version") out["include-bun-version"] = false;
-    else if (a === "--bun-seed-write") {
+    } else if (a.startsWith('--seed-write=')) out['seed-write'] = a.slice('--seed-write='.length);
+    else if (a === '--seed-write' && argv[i + 1]) out['seed-write'] = argv[++i];
+    else if (a.startsWith('--effects-dir=')) out['effects-dir'] = a.slice('--effects-dir='.length);
+    else if (a === '--effects-dir' && argv[i + 1]) out['effects-dir'] = argv[++i];
+    else if (a.startsWith('--alert-url=')) out['alert-url'] = a.slice('--alert-url='.length);
+    else if (a === '--alert-url' && argv[i + 1]) out['alert-url'] = argv[++i];
+    else if (a.startsWith('--alert=')) out.alert = a.slice('--alert='.length);
+    else if (a === '--alert' && argv[i + 1]) out.alert = argv[++i];
+    else if (a.startsWith('--tls-ca=')) out['tls-ca'] = a.slice('--tls-ca='.length);
+    else if (a === '--tls-ca' && argv[i + 1]) out['tls-ca'] = argv[++i];
+    else if (a.startsWith('--tls-cert=')) out['tls-cert'] = a.slice('--tls-cert='.length);
+    else if (a === '--tls-cert' && argv[i + 1]) out['tls-cert'] = argv[++i];
+    else if (a.startsWith('--tls-key=')) out['tls-key'] = a.slice('--tls-key='.length);
+    else if (a === '--tls-key' && argv[i + 1]) out['tls-key'] = argv[++i];
+    else if (a.startsWith('--tls-reject-unauthorized=')) {
+      out['tls-reject-unauthorized'] = a.slice('--tls-reject-unauthorized='.length) === 'true';
+    } else if (a === '--tls-reject-unauthorized' && argv[i + 1]) {
+      out['tls-reject-unauthorized'] = argv[++i] === 'true';
+    } else if (a === '--no-include-bun-version') out['include-bun-version'] = false;
+    else if (a === '--bun-seed-write') {
       const next = argv[i + 1];
-      if (next && !next.startsWith("--")) {
-        out["bun-seed-write"] = next;
+      if (next && !next.startsWith('--')) {
+        out['bun-seed-write'] = next;
         i++;
       } else {
-        out["bun-seed-write"] = true;
+        out['bun-seed-write'] = true;
       }
-    }
-    else if (a.startsWith("--bun-seed-write=")) out["bun-seed-write"] = a.slice("--bun-seed-write=".length);
+    } else if (a.startsWith('--bun-seed-write='))
+      out['bun-seed-write'] = a.slice('--bun-seed-write='.length);
   }
   return out;
 }
 
 function buildWorkflowOptions(opts: Parsed): WorkflowOptions {
-  const domainId = String(opts.domain ?? "sports-terminal-os");
-  const scanPath = typeof opts["scan-path"] === "string" ? opts["scan-path"] : undefined;
+  const domainId = String(opts.domain ?? 'sports-terminal-os');
+  const scanPath = typeof opts['scan-path'] === 'string' ? opts['scan-path'] : undefined;
 
   const legacyEffects: WorkflowEffects = {
     log: opts.log !== false,
-    alert: typeof opts["alert-url"] === "string"
-      ? opts["alert-url"]
-      : typeof opts.alert === "string"
-        ? opts.alert
-        : undefined,
+    alert:
+      typeof opts['alert-url'] === 'string'
+        ? opts['alert-url']
+        : typeof opts.alert === 'string'
+          ? opts.alert
+          : undefined,
     fix: opts.fix === true,
-    report: opts.report === true
-      ? defaultWorkflowReportPath(SKILL_ROOT, domainId)
-      : typeof opts.report === "string"
-        ? opts.report
-        : undefined,
+    report:
+      opts.report === true
+        ? defaultWorkflowReportPath(SKILL_ROOT, domainId)
+        : typeof opts.report === 'string'
+          ? opts.report
+          : undefined,
   };
 
   const effectFlags = Array.isArray(opts.effect) ? opts.effect : [];
   const effectsConfig = mergeEffectConfigs(
     legacyEffectsToConfigs(legacyEffects, SKILL_ROOT, domainId),
-    parseEffectFlags(effectFlags),
+    parseEffectFlags(effectFlags)
   );
 
   let seedPath: string | undefined;
-  if (typeof opts.seed === "string") {
+  if (typeof opts.seed === 'string') {
     seedPath = resolve(REPO_ROOT, opts.seed);
   } else if (opts.seed === true) {
-    seedPath = resolve(SKILL_ROOT, "baselines", domainId, "network-baseline.json5");
+    seedPath = resolve(SKILL_ROOT, 'baselines', domainId, 'network-baseline.json5');
   }
 
   let seedWritePath: string | undefined;
-  if (typeof opts["seed-write"] === "string") {
-    seedWritePath = resolve(REPO_ROOT, opts["seed-write"]);
-  } else if (opts["seed-write"] === true) {
-    seedWritePath = resolve(SKILL_ROOT, "baselines", domainId, "network-baseline.json5");
+  if (typeof opts['seed-write'] === 'string') {
+    seedWritePath = resolve(REPO_ROOT, opts['seed-write']);
+  } else if (opts['seed-write'] === true) {
+    seedWritePath = resolve(SKILL_ROOT, 'baselines', domainId, 'network-baseline.json5');
   }
 
   let effectsDir: string | undefined;
-  if (typeof opts["effects-dir"] === "string") {
-    effectsDir = opts["effects-dir"];
+  if (typeof opts['effects-dir'] === 'string') {
+    effectsDir = opts['effects-dir'];
   }
 
-  const tlsPaths = (opts["tls-ca"] || opts["tls-cert"] || opts["tls-key"] || opts["tls-reject-unauthorized"] !== undefined)
-    ? {
-        ca: typeof opts["tls-ca"] === "string" ? opts["tls-ca"] : undefined,
-        cert: typeof opts["tls-cert"] === "string" ? opts["tls-cert"] : undefined,
-        key: typeof opts["tls-key"] === "string" ? opts["tls-key"] : undefined,
-        rejectUnauthorized: typeof opts["tls-reject-unauthorized"] === "boolean"
-          ? opts["tls-reject-unauthorized"]
-          : undefined,
-      }
-    : undefined;
+  const tlsPaths =
+    opts['tls-ca'] ||
+    opts['tls-cert'] ||
+    opts['tls-key'] ||
+    opts['tls-reject-unauthorized'] !== undefined
+      ? {
+          ca: typeof opts['tls-ca'] === 'string' ? opts['tls-ca'] : undefined,
+          cert: typeof opts['tls-cert'] === 'string' ? opts['tls-cert'] : undefined,
+          key: typeof opts['tls-key'] === 'string' ? opts['tls-key'] : undefined,
+          rejectUnauthorized:
+            typeof opts['tls-reject-unauthorized'] === 'boolean'
+              ? opts['tls-reject-unauthorized']
+              : undefined,
+        }
+      : undefined;
 
   let bunSeedWritePath: string | undefined;
-  if (typeof opts["bun-seed-write"] === "string") {
-    bunSeedWritePath = resolve(REPO_ROOT, opts["bun-seed-write"]);
-  } else if (opts["bun-seed-write"] === true) {
+  if (typeof opts['bun-seed-write'] === 'string') {
+    bunSeedWritePath = resolve(REPO_ROOT, opts['bun-seed-write']);
+  } else if (opts['bun-seed-write'] === true) {
     bunSeedWritePath = defaultWorkflowRuntimeSeedPath(SKILL_ROOT, domainId);
   }
 
@@ -229,60 +231,70 @@ function buildWorkflowOptions(opts: Parsed): WorkflowOptions {
     skillRoot: SKILL_ROOT,
     repo: REPO_ROOT,
     domain: { id: domainId, scanPath },
-    scanners: typeof opts.scanners === "string"
-      ? opts.scanners.split(",").map((s) => s.trim()).filter(Boolean)
-      : undefined,
-    intervalMs: typeof opts.interval === "number" ? opts.interval : 60_000,
+    scanners:
+      typeof opts.scanners === 'string'
+        ? opts.scanners
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean)
+        : undefined,
+    intervalMs: typeof opts.interval === 'number' ? opts.interval : 60_000,
     watch: opts.watch === true,
-    dryRun: opts["dry-run"] === true,
-    output: (typeof opts.output === "string" ? opts.output : "table") as WorkflowOptions["output"],
-    failOnSeverity: (typeof opts["fail-on-severity"] === "string"
-      ? opts["fail-on-severity"]
-      : "error") as Severity,
-    failOnIssue: opts["fail-on-issue"] === true,
-    failOnDrift: opts["fail-on-drift"] === true,
+    dryRun: opts['dry-run'] === true,
+    output: (typeof opts.output === 'string' ? opts.output : 'table') as WorkflowOptions['output'],
+    failOnSeverity: (typeof opts['fail-on-severity'] === 'string'
+      ? opts['fail-on-severity']
+      : 'error') as Severity,
+    failOnIssue: opts['fail-on-issue'] === true,
+    failOnDrift: opts['fail-on-drift'] === true,
     seedPath,
     seedWritePath,
     effects: legacyEffects,
     effectsConfig,
     effectsDir,
     tlsPaths,
-    includeBunVersion: opts["include-bun-version"] !== false,
+    includeBunVersion: opts['include-bun-version'] !== false,
     bunSeedWritePath,
   };
 }
 
 async function cmdStart(opts: Parsed): Promise<number> {
   if (!opts.domain) {
-    console.error("error: --domain is required");
+    console.error('error: --domain is required');
     return 1;
   }
 
   const wf = buildWorkflowOptions(opts);
 
-  if (opts["dry-run"] === true) {
+  if (opts['dry-run'] === true) {
     const loop = new WorkflowLoop(wf);
     let customCount = 0;
     if (wf.effectsDir) {
       customCount = await loop.loadCustomEffects(wf.effectsDir);
     }
-    console.log(JSON.stringify({
-      dry_run: true,
-      domain: wf.domain,
-      scanners: wf.scanners,
-      watch: wf.watch,
-      intervalMs: wf.intervalMs,
-      effectsConfig: wf.effectsConfig,
-      effectsDir: wf.effectsDir,
-      customEffectsLoaded: customCount,
-      registeredEffects: loop.registry.list().map((p) => p.id),
-      seedPath: wf.seedPath,
-      seedWritePath: wf.seedWritePath,
-      tlsPaths: wf.tlsPaths,
-      includeBunVersion: wf.includeBunVersion,
-      bun: captureBunRuntime(),
-      bunSeedWritePath: wf.bunSeedWritePath,
-    }, null, 2));
+    console.log(
+      JSON.stringify(
+        {
+          dry_run: true,
+          domain: wf.domain,
+          scanners: wf.scanners,
+          watch: wf.watch,
+          intervalMs: wf.intervalMs,
+          effectsConfig: wf.effectsConfig,
+          effectsDir: wf.effectsDir,
+          customEffectsLoaded: customCount,
+          registeredEffects: loop.registry.list().map(p => p.id),
+          seedPath: wf.seedPath,
+          seedWritePath: wf.seedWritePath,
+          tlsPaths: wf.tlsPaths,
+          includeBunVersion: wf.includeBunVersion,
+          bun: captureBunRuntime(),
+          bunSeedWritePath: wf.bunSeedWritePath,
+        },
+        null,
+        2
+      )
+    );
     return 0;
   }
 
@@ -295,10 +307,10 @@ async function main(): Promise<void> {
   const opts = parseArgs(process.argv.slice(2));
   let code = 0;
   switch (opts.action) {
-    case "help":
+    case 'help':
       printHelp();
       break;
-    case "start":
+    case 'start':
       code = await cmdStart(opts);
       break;
     default:
@@ -308,7 +320,7 @@ async function main(): Promise<void> {
   process.exit(code);
 }
 
-main().catch((e) => {
+main().catch(e => {
   console.error(e);
   process.exit(1);
 });

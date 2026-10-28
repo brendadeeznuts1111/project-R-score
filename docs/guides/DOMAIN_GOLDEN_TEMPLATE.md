@@ -30,6 +30,7 @@ FACTORY_WAGER_TOKEN_API=replace_me
 ```
 
 Set the real value later in secret stores:
+
 - Bun secrets: `FACTORY_WAGER_TOKEN_API`
 - Wrangler secrets: `FACTORY_WAGER_TOKEN_API`
 
@@ -38,6 +39,7 @@ Set the real value later in secret stores:
 `FACTORY_WAGER_TOKEN_<DOMAIN_LABEL>`
 
 Examples:
+
 - `api.factory-wager.com` -> `FACTORY_WAGER_TOKEN_API`
 - `docs.factory-wager.com` -> `FACTORY_WAGER_TOKEN_DOCS`
 - `factory-wager.com` -> `FACTORY_WAGER_TOKEN_ROOT`
@@ -51,6 +53,7 @@ bun run search:domain:doctor -- --json
 ```
 
 Check:
+
 - `bucketMapped` includes the new domain
 - `headerConfigured` includes the new domain
 - `tokenPresent` becomes `true` after real secret is set
@@ -67,6 +70,7 @@ bun run search:domain:doctor -- --emit-secrets-commands
 ```
 
 What doctor checks:
+
 - registry file exists and has domain entries
 - env scaffold keys exist
 - domain-to-bucket mapping completeness
@@ -74,10 +78,12 @@ What doctor checks:
 - token secret completeness
 
 What `--fix` can auto-set safely:
+
 - add missing non-secret env scaffold keys
 - add missing token env var placeholders as `replace_me`
 
 What `--fix` cannot set:
+
 - real token secret values
 - Bun secrets / Wrangler secrets content
 

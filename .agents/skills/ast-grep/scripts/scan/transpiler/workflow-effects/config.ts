@@ -1,16 +1,16 @@
-import { join } from "node:path";
-import type { WorkflowEffects } from "../workflow-loop.ts";
-import type { EffectConfig } from "./plugin.ts";
+import { join } from 'node:path';
+import type { WorkflowEffects } from '../workflow-loop.ts';
+import type { EffectConfig } from './plugin.ts';
 
 export function defaultWorkflowReportPath(skillRoot: string, domainId: string): string {
-  return join(skillRoot, "reports", `${domainId}-workflow.md`);
+  return join(skillRoot, 'reports', `${domainId}-workflow.md`);
 }
 
 /** Map legacy CLI flags (--fix, --alert-url, etc.) to registry configs. */
 export function legacyEffectsToConfigs(
   effects: WorkflowEffects | undefined,
   skillRoot: string,
-  domainId: string,
+  domainId: string
 ): Record<string, EffectConfig> {
   const e = effects ?? {};
   const out: Record<string, EffectConfig> = {
@@ -23,9 +23,8 @@ export function legacyEffectsToConfigs(
     out.alert = { enabled: true, params: { url: e.alert } };
   }
   if (e.report) {
-    const path = typeof e.report === "string"
-      ? e.report
-      : defaultWorkflowReportPath(skillRoot, domainId);
+    const path =
+      typeof e.report === 'string' ? e.report : defaultWorkflowReportPath(skillRoot, domainId);
     out.report = { enabled: true, params: { path } };
   }
   return out;
@@ -41,9 +40,9 @@ export function parseEffectFlags(flags: string[]): Record<string, EffectConfig> 
   const partial = new Map<string, { enabled?: boolean; params: Record<string, unknown> }>();
 
   for (const raw of flags) {
-    const eq = raw.indexOf("=");
+    const eq = raw.indexOf('=');
     if (eq === -1) {
-      const id = raw.split(".")[0] ?? raw;
+      const id = raw.split('.')[0] ?? raw;
       const entry = partial.get(id) ?? { params: {} };
       if (raw === id) entry.enabled = true;
       partial.set(id, entry);
@@ -52,17 +51,17 @@ export function parseEffectFlags(flags: string[]): Record<string, EffectConfig> 
 
     const key = raw.slice(0, eq);
     const value = raw.slice(eq + 1);
-    const dot = key.indexOf(".");
+    const dot = key.indexOf('.');
     const id = dot === -1 ? key : key.slice(0, dot);
-    const paramKey = dot === -1 ? "" : key.slice(dot + 1);
+    const paramKey = dot === -1 ? '' : key.slice(dot + 1);
     const entry = partial.get(id) ?? { params: {} };
 
-    if (paramKey === "enabled") {
-      entry.enabled = value === "true";
+    if (paramKey === 'enabled') {
+      entry.enabled = value === 'true';
     } else if (paramKey) {
       entry.params[paramKey] = value;
     } else {
-      entry.enabled = value === "true";
+      entry.enabled = value === 'true';
     }
     partial.set(id, entry);
   }

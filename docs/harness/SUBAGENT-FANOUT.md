@@ -1,17 +1,21 @@
 # Subagent fanout board — multi-lane execute
 
 **Created:** 2026-08-05\
-**Parent goal:** Close dual-plane residuals (Tennis edge **R2-only**, monorepo tip docs, operator-research agent tooling) without crossing lanes.\
-**Policy:** **No D1** on Workers. Durable edge snapshots = **R2** (+ embed fallback). Auth planes stay `PARTNER_API_TOKEN` / `FACTORY_WAGER_TOKEN` — do **not** invent parallel public API-key stacks on Tennis.\
-**Orchestrator:** one parent session; spawn **general-purpose** subagents with the spawn prompts below; merge via worktree PRs (squash).
+**Parent goal:** Close dual-plane residuals (Tennis edge **R2-only**, monorepo
+tip docs, operator-research agent tooling) without crossing lanes.\
+**Policy:** **No D1** on Workers. Durable edge snapshots = **R2** (+ embed
+fallback). Auth planes stay `PARTNER_API_TOKEN` / `FACTORY_WAGER_TOKEN` — do
+**not** invent parallel public API-key stacks on Tennis.\
+**Orchestrator:** one parent session; spawn **general-purpose** subagents with
+the spawn prompts below; merge via worktree PRs (squash).
 
 ## Status legend
 
-| Status | Meaning |
-| ------ | ------- |
-| **DONE** | Merged + live proof or green verify |
-| **READY** | Spec clear; safe to spawn |
-| **SERIAL** | Wait for dependency lane |
+| Status      | Meaning                                            |
+| ----------- | -------------------------------------------------- |
+| **DONE**    | Merged + live proof or green verify                |
+| **READY**   | Spec clear; safe to spawn                          |
+| **SERIAL**  | Wait for dependency lane                           |
 | **BLOCKED** | Needs secret / operator machine / pass-cli session |
 
 ## Live anchors (re-probe before spawn)
@@ -43,44 +47,52 @@ WAVE 0 (parallel)          WAVE 1 (after 0)           WAVE 2 (optional product)
 └──────────────┘
 ```
 
-| ID | Lane | Repo | Status | Depends |
-| -- | ---- | ---- | ------ | ------- |
-| **T1** | Tennis tip pin `8f21bf2` + R2-first wording | monorepo `project-R-score` | **READY** | — |
-| **T2** | Strip residual “D1 dual-driver” from tennis docs | monorepo | **READY** | — (can merge with T1) |
-| **T3** | Partner snapshot R2 cron (no redeploy) | producer `plum-spruce-dawn-dune1` | **READY** | T1 optional |
-| **P1** | Poly join hydrate residual | producer | **READY** | — |
-| **O1** | `operator-research` doctor CLI | monorepo | **READY** | — |
-| **O2** | Optional `Bun.password` API keys for research HTTP only | monorepo | **SERIAL** | O3 design decision |
-| **O3** | Optional `Bun.serve` for research agent | monorepo | **SERIAL** | product yes |
-| **O4** | Fetch backoff `Bun.sleep` in classify | monorepo | **READY** | — |
-| **H1** | Handoff / release: deploy:verify + monorepo tip PR | either | **SERIAL** | T1 + T3 |
+| ID     | Lane                                                    | Repo                              | Status     | Depends               |
+| ------ | ------------------------------------------------------- | --------------------------------- | ---------- | --------------------- |
+| **T1** | Tennis tip pin `8f21bf2` + R2-first wording             | monorepo `project-R-score`        | **READY**  | —                     |
+| **T2** | Strip residual “D1 dual-driver” from tennis docs        | monorepo                          | **READY**  | — (can merge with T1) |
+| **T3** | Partner snapshot R2 cron (no redeploy)                  | producer `plum-spruce-dawn-dune1` | **READY**  | T1 optional           |
+| **P1** | Poly join hydrate residual                              | producer                          | **READY**  | —                     |
+| **O1** | `operator-research` doctor CLI                          | monorepo                          | **READY**  | —                     |
+| **O2** | Optional `Bun.password` API keys for research HTTP only | monorepo                          | **SERIAL** | O3 design decision    |
+| **O3** | Optional `Bun.serve` for research agent                 | monorepo                          | **SERIAL** | product yes           |
+| **O4** | Fetch backoff `Bun.sleep` in classify                   | monorepo                          | **READY**  | —                     |
+| **H1** | Handoff / release: deploy:verify + monorepo tip PR      | either                            | **SERIAL** | T1 + T3               |
 
-**Do not spawn O2/O3 unless the parent explicitly greenlights an HTTP agent surface.**
+**Do not spawn O2/O3 unless the parent explicitly greenlights an HTTP agent
+surface.**
 
 ---
 
 ## Global rules (every subagent)
 
 1. **One lane’s files only.** Pathspec commits. Never sweep foreign dirty trees.
-2. **Primary `~/Projects` stays on `main`.** Feature work in `git worktree` / producer clone.
-3. **Delivery:** conventional commit → `git push -u origin HEAD:refs/heads/<lane>` → `gh pr create` → `gh pr merge --squash`.
-4. **No D1.** No `wrangler` `d1_databases` bindings. Edge durable = R2 JSON objects.
-5. **No second Tennis auth.** Do not add `X-API-Key` / `data/auth.json` on `tennis.factory-wager.com`.
+2. **Primary `~/Projects` stays on `main`.** Feature work in `git worktree` /
+   producer clone.
+3. **Delivery:** conventional commit →
+   `git push -u origin HEAD:refs/heads/<lane>` → `gh pr create` →
+   `gh pr merge --squash`.
+4. **No D1.** No `wrangler` `d1_databases` bindings. Edge durable = R2 JSON
+   objects.
+5. **No second Tennis auth.** Do not add `X-API-Key` / `data/auth.json` on
+   `tennis.factory-wager.com`.
 6. **Secrets:** Proton Pass only; never paste tokens into PRs or logs.
-7. **Verify:** every lane lists a green command; paste evidence in PR body Claim table.
-8. **Bun APIs:** add `// @see <canonical-url>` when introducing `Bun.*` (pre-commit annotator).
+7. **Verify:** every lane lists a green command; paste evidence in PR body Claim
+   table.
+8. **Bun APIs:** add `// @see <canonical-url>` when introducing `Bun.*`
+   (pre-commit annotator).
 
 ---
 
 ## T1 — Monorepo tennis tip pin (R2 live)
 
-| | |
-| -- | -- |
-| **Status** | READY |
-| **Repo** | `~/Projects` worktree off `origin/main` |
-| **Branch** | `docs/tennis-tip-8f21bf2-r2` |
+|                 |                                                                                                                                                                                                                        |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | READY                                                                                                                                                                                                                  |
+| **Repo**        | `~/Projects` worktree off `origin/main`                                                                                                                                                                                |
+| **Branch**      | `docs/tennis-tip-8f21bf2-r2`                                                                                                                                                                                           |
 | **Owner files** | `docs/harness/tenants/tennis-hq-ui-audit.md` · `docs/harness/tenants/tennis-hq-registry.md` · `public/portal/tennis.md` · `config/surfaces.toml` · `public/registry/surfaces-state.json` (via `bun run surfaces:bake`) |
-| **Goal** | Pin production tip to live `8f21bf2` / current Worker deploymentId; document R2-first `meta.cache=url` for ledger + executions |
+| **Goal**        | Pin production tip to live `8f21bf2` / current Worker deploymentId; document R2-first `meta.cache=url` for ledger + executions                                                                                         |
 
 **Verify**
 
@@ -102,11 +114,11 @@ Update tennis-hq-ui-audit.md, tennis-hq-registry.md, public/portal/tennis.md, co
 
 ## T2 — De-D1 residual prose (can combine with T1)
 
-| | |
-| -- | -- |
-| **Status** | READY (merge into T1 PR if same worktree) |
-| **Owner files** | same tennis docs as T1 |
-| **Goal** | Remove “D1 dual-driver” residuals; residual = **R2 cron + optional JSONL writes**, POST ledger still 503 by design |
+|                 |                                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Status**      | READY (merge into T1 PR if same worktree)                                                                          |
+| **Owner files** | same tennis docs as T1                                                                                             |
+| **Goal**        | Remove “D1 dual-driver” residuals; residual = **R2 cron + optional JSONL writes**, POST ledger still 503 by design |
 
 **Spawn prompt**
 
@@ -118,19 +130,21 @@ Lane T2 (or fold into T1). In monorepo tennis-hq-ui-audit / registry remediation
 
 ## T3 — Producer partner R2 cron (zero-redeploy)
 
-| | |
-| -- | -- |
-| **Status** | READY |
-| **Repo** | `~/Projects/plum-spruce-dawn-dune1` |
-| **Branch** | `feat/partner-snapshot-cron` |
+|                 |                                                                                                                                                                                  |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Status**      | READY                                                                                                                                                                            |
+| **Repo**        | `~/Projects/plum-spruce-dawn-dune1`                                                                                                                                              |
+| **Branch**      | `feat/partner-snapshot-cron`                                                                                                                                                     |
 | **Owner files** | `scripts/partner-snapshot-watch.ts` (new) · `package.json` scripts · `docs/SUBAGENT-TASKS.md` · optionally reuse `edge-archive-watch.ts` patterns · **do not** change route auth |
-| **Goal** | Bun.cron (or watch script) every 5m: `partner-ledger:publish` + `partner-executions:publish` → R2; document operator runbook |
+| **Goal**        | Bun.cron (or watch script) every 5m: `partner-ledger:publish` + `partner-executions:publish` → R2; document operator runbook                                                     |
 
 **Constraints**
 
 - Reuse `scripts/lib/edge-snapshot-r2.ts` / existing publish scripts.
-- Default `EDGE_ARCHIVE_R2_OPTIONAL=0` in prod operator docs; optional skip only for dry machines.
-- No D1. No redeploy required for data refresh once Worker has `EDGE_PARTNER_*_URL`.
+- Default `EDGE_ARCHIVE_R2_OPTIONAL=0` in prod operator docs; optional skip only
+  for dry machines.
+- No D1. No redeploy required for data refresh once Worker has
+  `EDGE_PARTNER_*_URL`.
 
 **Verify**
 
@@ -152,13 +166,13 @@ Add scripts/partner-snapshot-watch.ts modeled on edge-archive-watch (Bun.cron */
 
 ## P1 — Poly join hydrate residual
 
-| | |
-| -- | -- |
-| **Status** | READY |
-| **Repo** | producer |
-| **Branch** | `fix/poly-join-hydrate` |
+|                 |                                                                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------- |
+| **Status**      | READY                                                                                                   |
+| **Repo**        | producer                                                                                                |
+| **Branch**      | `fix/poly-join-hydrate`                                                                                 |
 | **Owner files** | poly volume cache / live-enrichment / poly-* tests only (see producer `docs/SUBAGENT-TASKS.md` Agent C) |
-| **Goal** | Cold start poly miss chip not stuck 100%; hydrate before first enrich |
+| **Goal**        | Cold start poly miss chip not stuck 100%; hydrate before first enrich                                   |
 
 **Verify**
 
@@ -176,18 +190,19 @@ Lane P1 only. plum-spruce-dawn-dune1. Follow docs/SUBAGENT-TASKS.md Agent C. Hyd
 
 ## O1 — Operator-research doctor CLI
 
-| | |
-| -- | -- |
-| **Status** | READY |
-| **Repo** | monorepo |
-| **Branch** | `feat/operator-research-doctor` |
-| **Owner files** | `tools/operator-agent.ts` · `lib/operator-research/doctor.ts` (new) · `package.json` script `agent:doctor` · tests under `tests/operator-research-doctor.test.ts` |
-| **Goal** | `bun run agent:doctor` / `bun tools/operator-agent.ts doctor [--json]` probes: Bun.version vs engines, `Bun.which` for curl/git, operators TOML count via Glob, evidence dir writable, optional WebView/Image capability flags |
+|                 |                                                                                                                                                                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Status**      | READY                                                                                                                                                                                                                          |
+| **Repo**        | monorepo                                                                                                                                                                                                                       |
+| **Branch**      | `feat/operator-research-doctor`                                                                                                                                                                                                |
+| **Owner files** | `tools/operator-agent.ts` · `lib/operator-research/doctor.ts` (new) · `package.json` script `agent:doctor` · tests under `tests/operator-research-doctor.test.ts`                                                              |
+| **Goal**        | `bun run agent:doctor` / `bun tools/operator-agent.ts doctor [--json]` probes: Bun.version vs engines, `Bun.which` for curl/git, operators TOML count via Glob, evidence dir writable, optional WebView/Image capability flags |
 
 **Constraints**
 
 - CLI only — **no** HTTP server in this lane.
-- Use `lib/console-depth` (`jsonOut` / `logTable`) for TTY; no raw `console.table`.
+- Use `lib/console-depth` (`jsonOut` / `logTable`) for TTY; no raw
+  `console.table`.
 - Do not implement `Bun.password` here (O2).
 
 **Verify**
@@ -208,13 +223,13 @@ Lane O1 only. Monorepo worktree. Implement lib/operator-research/doctor.ts and w
 
 ## O4 — Fetch classify backoff (`Bun.sleep`)
 
-| | |
-| -- | -- |
-| **Status** | READY |
-| **Repo** | monorepo |
-| **Branch** | `fix/operator-research-fetch-backoff` |
-| **Owner files** | `lib/operator-research/fetch-classify.ts` (+ tests) |
-| **Goal** | Exponential backoff with `Bun.sleep` on 429 / transient network errors |
+|                 |                                                                        |
+| --------------- | ---------------------------------------------------------------------- |
+| **Status**      | READY                                                                  |
+| **Repo**        | monorepo                                                               |
+| **Branch**      | `fix/operator-research-fetch-backoff`                                  |
+| **Owner files** | `lib/operator-research/fetch-classify.ts` (+ tests)                    |
+| **Goal**        | Exponential backoff with `Bun.sleep` on 429 / transient network errors |
 
 **Verify**
 
@@ -233,10 +248,10 @@ Lane O4 only. Add Bun.sleep exponential backoff to lib/operator-research/fetch-c
 
 ## O2 / O3 — Optional research HTTP agent (SERIAL — parent must approve)
 
-| ID | Goal | Do not |
-| -- | ---- | ------ |
-| **O2** | `Bun.password` hashed keys in `data/operator-research/auth.json` (gitignored) for a **future** research HTTP surface only | Do not apply to Tennis Worker |
-| **O3** | `Bun.serve` dashboard: enrich status, gzip JSON, `Bun.escapeHTML` in any HTML, wire doctor to `/api/platform` | Do not replace portal Pages boards |
+| ID     | Goal                                                                                                                      | Do not                             |
+| ------ | ------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **O2** | `Bun.password` hashed keys in `data/operator-research/auth.json` (gitignored) for a **future** research HTTP surface only | Do not apply to Tennis Worker      |
+| **O3** | `Bun.serve` dashboard: enrich status, gzip JSON, `Bun.escapeHTML` in any HTML, wire doctor to `/api/platform`             | Do not replace portal Pages boards |
 
 **Spawn only after parent message: `APPROVE O2+O3 research HTTP`.**
 
@@ -273,12 +288,12 @@ bun run agent:doctor -- --json   # after O1
 
 Spawn **wave 0** together (disjoint files):
 
-| Subagent | Branch | Isolation |
-| -------- | ------ | --------- |
-| T1+T2 | monorepo worktree | `isolation: worktree` recommended |
-| P1 | producer | shared producer clone **or** worktree |
-| O1 | monorepo worktree | separate worktree from T1 |
-| O4 | monorepo worktree | third worktree **or** after O1 |
+| Subagent | Branch            | Isolation                             |
+| -------- | ----------------- | ------------------------------------- |
+| T1+T2    | monorepo worktree | `isolation: worktree` recommended     |
+| P1       | producer          | shared producer clone **or** worktree |
+| O1       | monorepo worktree | separate worktree from T1             |
+| O4       | monorepo worktree | third worktree **or** after O1        |
 
 Then **wave 1**: T3 (producer), then H1.
 
@@ -288,10 +303,10 @@ Machine-readable catalog: [`subagent-fanout.json`](./subagent-fanout.json).
 
 ## Cross-links
 
-| Surface | Doc |
-| ------- | --- |
-| Tennis producer board | `plum-spruce-dawn-dune1/docs/SUBAGENT-TASKS.md` |
-| Tennis audit | `docs/harness/tenants/tennis-hq-ui-audit.md` |
-| Tennis registry | `docs/harness/tenants/tennis-hq-registry.md` |
+| Surface               | Doc                                                  |
+| --------------------- | ---------------------------------------------------- |
+| Tennis producer board | `plum-spruce-dawn-dune1/docs/SUBAGENT-TASKS.md`      |
+| Tennis audit          | `docs/harness/tenants/tennis-hq-ui-audit.md`         |
+| Tennis registry       | `docs/harness/tenants/tennis-hq-registry.md`         |
 | Operator research CLI | `tools/operator-agent.ts` · `lib/operator-research/` |
-| Authority | `docs/harness/AUTHORITY.md` |
+| Authority             | `docs/harness/AUTHORITY.md`                          |

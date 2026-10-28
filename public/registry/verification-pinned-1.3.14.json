@@ -79,9 +79,7 @@
       "title": "Event loop refactor (reliability + memory)",
       "verify": "automated",
       "canonical": "https://bun.com/blog/bun-v1.3.14#event-loop-refactor",
-      "refs": [
-        "https://bun.com/blog/bun-v1.3.14#event-loop-refactor"
-      ]
+      "refs": ["https://bun.com/blog/bun-v1.3.14#event-loop-refactor"]
     },
     {
       "id": "using-await-using-native",
@@ -106,9 +104,7 @@
       "title": "Faster ESM module loading",
       "verify": "smoke",
       "canonical": "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading",
-      "refs": [
-        "https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading"
-      ]
+      "refs": ["https://bun.com/blog/bun-v1.3.14#faster-esm-module-loading"]
     },
     {
       "id": "cross-language-lto",

@@ -10,4 +10,5 @@ bun lib/rip/cli.ts help
 
 Import: `@factorywager/rip` / workspace package entry `src/index.ts`.
 
-Hub: [../../../README.md](../../../README.md) · Bun APIs: `bun tools/bun-doc-refs.ts suggest "Bun.spawn"`.
+Hub: [../../../README.md](../../../README.md) · Bun APIs:
+`bun tools/bun-doc-refs.ts suggest "Bun.spawn"`.

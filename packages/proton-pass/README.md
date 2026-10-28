@@ -1,17 +1,19 @@
 # `@factorywager/proton-pass`
 
-Portable **Proton Pass CLI** integration for Bun hosts (Kalshi-bot, FactoryWager monorepo, or any repo).
+Portable **Proton Pass CLI** integration for Bun hosts (Kalshi-bot, FactoryWager
+monorepo, or any repo).
 
 ## Principles
 
-| Rule | Detail |
-| ---- | ------ |
-| Custody | Secret **values** only in Proton Pass vaults |
-| References | Git holds `pass://vault/item/field` only |
-| Boundary | Resolve into child process env; domain code never shells `pass-cli` for secrets mid-request |
-| Logging | Never log secret values — keys, URIs, status, ms only |
+| Rule       | Detail                                                                                      |
+| ---------- | ------------------------------------------------------------------------------------------- |
+| Custody    | Secret **values** only in Proton Pass vaults                                                |
+| References | Git holds `pass://vault/item/field` only                                                    |
+| Boundary   | Resolve into child process env; domain code never shells `pass-cli` for secrets mid-request |
+| Logging    | Never log secret values — keys, URIs, status, ms only                                       |
 
-Official CLI: [protonpass.github.io/pass-cli](https://protonpass.github.io/pass-cli/).
+Official CLI:
+[protonpass.github.io/pass-cli](https://protonpass.github.io/pass-cli/).
 
 ## Install
 
@@ -35,7 +37,8 @@ bun run --filter @factorywager/proton-pass test
 bunx --bun proton-pass version
 ```
 
-PM surface cookbook: [`docs/harness/tenants/monorepo-workspaces.md`](../../docs/harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).
+PM surface cookbook:
+[`docs/harness/tenants/monorepo-workspaces.md`](../../docs/harness/tenants/monorepo-workspaces.md#bun-pm-surface-operator-cookbook).
 
 ### Sibling / out-of-tree host (e.g. Kalshi-bot)
 
@@ -47,7 +50,9 @@ PM surface cookbook: [`docs/harness/tenants/monorepo-workspaces.md`](../../docs/
 }
 ```
 
-Or interim: `bun link` from `packages/proton-pass`, then `bun link @factorywager/proton-pass` in the host. Prefer path/`workspace:*` over global link for reproducible installs.
+Or interim: `bun link` from `packages/proton-pass`, then
+`bun link @factorywager/proton-pass` in the host. Prefer path/`workspace:*` over
+global link for reproducible installs.
 
 **Do not** add Kalshi-bot to root `workspaces.packages` just for this package.
 
@@ -68,9 +73,9 @@ import {
 
 ## Modes
 
-| Mode | Use |
-| ---- | --- |
-| **run** | Bare `pass://` in `.env.protonpass` + spawn child with resolved env (Kalshi default) |
+| Mode       | Use                                                                                                   |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| **run**    | Bare `pass://` in `.env.protonpass` + spawn child with resolved env (Kalshi default)                  |
 | **inject** | `{{ pass:// }}` templates → write `.env` (FactoryWager default) — host scripts still wrap CLI for now |
 
 ## CLI
@@ -92,7 +97,8 @@ bun run proton:inject:factorywager
 # → bunx --bun proton-pass inject --in-file env.template --out-file .env --agent factorywager
 ```
 
-Avoid glued forms like `--env-file=path` in docs (still accepted for compatibility).
+Avoid glued forms like `--env-file=path` in docs (still accepted for
+compatibility).
 
 ## Tests
 

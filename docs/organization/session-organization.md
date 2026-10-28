@@ -24,17 +24,17 @@ the archive reads as a coherent work history.
 Counts match the **29 active** rows below (two zero-turn empties trashed
 2026-08-06 are listed under Housekeeping, not here).
 
-| Lane               | Sessions | Theme                                                                                               |
-| ------------------ | -------- | --------------------------------------------------------------------------------------------------- |
-| **harness/infra**  | 7        | remote SSH/staging, config, proof pipeline, verification ratchets, hooks setup, architecture review |
+| Lane               | Sessions | Theme                                                                                                                |
+| ------------------ | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| **harness/infra**  | 7        | remote SSH/staging, config, proof pipeline, verification ratchets, hooks setup, architecture review                  |
 | **partner**        | 8        | limits detection, accounting/ledger integration, onboarding, Fantasy402, partner domain map, anchor-stability signal |
-| **portal/UI**      | 4        | HTML designs, ops portal tables/cards, registry/package cards dashboard                             |
-| **concepts**       | 3        | concept audit / graph / health dashboard proposals                                                  |
-| **git-ops / meta** | 2        | main rebase + `bun:ci` sync, commit summaries, session archive map                                  |
-| **tennis-hq**      | 2        | producer repo (`plum-spruce-dawn-dune1`) PR review + site checks                                    |
-| **docs**           | 1        | bunx doc translation                                                                                |
-| **bugfix**         | 1        | generic bug hunt                                                                                    |
-| **empty / misc**   | 1        | casual Q&A                                                                                          |
+| **portal/UI**      | 4        | HTML designs, ops portal tables/cards, registry/package cards dashboard                                              |
+| **concepts**       | 3        | concept audit / graph / health dashboard proposals                                                                   |
+| **git-ops / meta** | 2        | main rebase + `bun:ci` sync, commit summaries, session archive map                                                   |
+| **tennis-hq**      | 2        | producer repo (`plum-spruce-dawn-dune1`) PR review + site checks                                                     |
+| **docs**           | 1        | bunx doc translation                                                                                                 |
+| **bugfix**         | 1        | generic bug hunt                                                                                                     |
+| **empty / misc**   | 1        | casual Q&A                                                                                                           |
 
 ## Rename map (session → title → lane)
 
@@ -48,6 +48,7 @@ suffix. Use it to locate or rename the real files.
 | --- | ------------------------------------------------------ | --------------
 |
 -----------------------------------------------------------------------------------------------------------------------------
+
 | ------------- | ----- | ----- |
 ----------------------------------------------------------------- | | 1 |
 `20260722-122604.664830000-session` | `26-0722-1226` | DeepSeek-Reasonix guide
@@ -137,7 +138,8 @@ HTML design: tabs + `Bun.color` palette | portal/UI | 2 | 08-06 |
 Philosophy Q&A (casual) | empty/misc | 1 | 08-06 |
 `20260806-1527-empty-misc-philosophy-qa.jsonl` | | 31 |
 `20260806-152835.941080000-deepseek-deepseek-v4-flash` | `26-0806-1528` |
-Session org doc + dead-anchor fix + grounded "Echo Snipe" re-scope (anchor-stability, TelegramChatId, cron bake) | partner | ~90 | 08-06 |
+Session org doc + dead-anchor fix + grounded "Echo Snipe" re-scope
+(anchor-stability, TelegramChatId, cron bake) | partner | ~90 | 08-06 |
 `20260806-1528-partner-anchor-stability-cron-bake.jsonl` |
 
 ## Naming pattern (`<t>-<lane>-<slug>`)

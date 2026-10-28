@@ -326,9 +326,7 @@
         "references": 0,
         "assets": 0
       },
-      "validation": [
-        "body too long (919 lines, want ≤500)"
-      ]
+      "validation": ["body too long (919 lines, want ≤500)"]
     }
   ],
   "count": 25

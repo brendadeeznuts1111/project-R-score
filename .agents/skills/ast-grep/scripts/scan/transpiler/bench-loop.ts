@@ -1,4 +1,4 @@
-import { assembleTestCommand, loadTestProfiles } from "./test-runner.ts";
+import { assembleTestCommand, loadTestProfiles } from './test-runner.ts';
 
 export type BenchRunResult = {
   iteration: number;
@@ -42,7 +42,11 @@ function percentile(sorted: number[], p: number): number {
   return sorted[idx] ?? 0;
 }
 
-export function parseBunTestSummary(output: string): { pass: number; fail: number; skipped: number } {
+export function parseBunTestSummary(output: string): {
+  pass: number;
+  fail: number;
+  skipped: number;
+} {
   const passMatch = output.match(/(\d+)\s+pass/);
   const failMatch = output.match(/(\d+)\s+fail/);
   const skipMatch = output.match(/(\d+)\s+skip/);
@@ -67,7 +71,7 @@ export function parseBunTestSummary(output: string): { pass: number; fail: numbe
 export function computeBenchRating(
   passRate: number,
   p50Ms: number,
-  targetMs?: number,
+  targetMs?: number
 ): { rating: number; grade: string } {
   let rating = Math.round(passRate * 100);
   if (targetMs && p50Ms > 0 && p50Ms <= targetMs) {
@@ -78,22 +82,19 @@ export function computeBenchRating(
     rating = Math.max(0, rating - penalty);
   }
   const grade =
-    rating >= 95 ? "A" :
-    rating >= 85 ? "B" :
-    rating >= 70 ? "C" :
-    rating >= 50 ? "D" : "F";
+    rating >= 95 ? 'A' : rating >= 85 ? 'B' : rating >= 70 ? 'C' : rating >= 50 ? 'D' : 'F';
   return { rating, grade };
 }
 
 export function summarizeBenchRuns(
   profile: string,
   runs: BenchRunResult[],
-  targetMs?: number,
+  targetMs?: number
 ): BenchLoopSummary {
   const iterations = runs.length;
-  const okRuns = runs.filter((r) => r.ok).length;
+  const okRuns = runs.filter(r => r.ok).length;
   const passRate = iterations ? okRuns / iterations : 0;
-  const elapsed = [...runs.map((r) => r.elapsedMs)].sort((a, b) => a - b);
+  const elapsed = [...runs.map(r => r.elapsedMs)].sort((a, b) => a - b);
   const { rating, grade } = computeBenchRating(passRate, percentile(elapsed, 50), targetMs);
   return {
     profile,
@@ -108,10 +109,7 @@ export function summarizeBenchRuns(
   };
 }
 
-async function runSingleBench(
-  opts: BenchLoopOptions,
-  iteration: number,
-): Promise<BenchRunResult> {
+async function runSingleBench(opts: BenchLoopOptions, iteration: number): Promise<BenchRunResult> {
   const { profiles } = await loadTestProfiles(opts.skillRoot);
   const assembled = assembleTestCommand(profiles, {
     skillRoot: opts.skillRoot,
@@ -122,8 +120,8 @@ async function runSingleBench(
   if (assembled.preflight && !opts.skipPreflight) {
     const pf = Bun.spawn(assembled.preflight.command, {
       cwd: assembled.preflight.cwd,
-      stdout: "pipe",
-      stderr: "pipe",
+      stdout: 'pipe',
+      stderr: 'pipe',
       env: assembled.env ? { ...process.env, ...assembled.env } : process.env,
     });
     const pfCode = await pf.exited;
@@ -143,8 +141,8 @@ async function runSingleBench(
   const started = performance.now();
   const proc = Bun.spawn(assembled.command, {
     cwd: assembled.cwd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
     env: assembled.env ? { ...process.env, ...assembled.env } : process.env,
   });
   const [stdout, stderr, exitCode] = await Promise.all([
@@ -171,10 +169,12 @@ export async function runBenchLoop(opts: BenchLoopOptions): Promise<BenchLoopSum
   return summarizeBenchRuns(opts.profile, runs, opts.targetMs);
 }
 
-export function formatBenchStatus(summary: BenchLoopSummary, reason = "bench"): string {
+export function formatBenchStatus(summary: BenchLoopSummary, reason = 'bench'): string {
   const pct = Math.round(summary.passRate * 100);
-  return `[loop] ${reason} profile=${summary.profile} `
-    + `iter=${summary.iterations} pass_rate=${pct}% `
-    + `p50=${summary.p50Ms}ms p95=${summary.p95Ms}ms `
-    + `rating=${summary.rating} (${summary.grade})`;
+  return (
+    `[loop] ${reason} profile=${summary.profile} ` +
+    `iter=${summary.iterations} pass_rate=${pct}% ` +
+    `p50=${summary.p50Ms}ms p95=${summary.p95Ms}ms ` +
+    `rating=${summary.rating} (${summary.grade})`
+  );
 }

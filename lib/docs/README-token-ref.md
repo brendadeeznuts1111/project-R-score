@@ -33,12 +33,12 @@ DocCatalogEntry (catalog plane)
 | `related`         | Graph neighbors                                                                 |
 | `meta`            | `buildPin` · `sourceCommit` · `lastVerified`                                    |
 
-| Concern   | Path                                                                                  |
-| --------- | ------------------------------------------------------------------------------------- |
-| Schemas   | [`bun-token.schema.json`](./bun-token.schema.json) · [`token-ref.schema.json`](./token-ref.schema.json) |
-| Adapters  | [`token-ref-adapter.ts`](./token-ref-adapter.ts)                                      |
-| Locus     | [`locus-resolve.ts`](./locus-resolve.ts)                                              |
-| Operate   | [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md)                          |
+| Concern  | Path                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------- |
+| Schemas  | [`bun-token.schema.json`](./bun-token.schema.json) · [`token-ref.schema.json`](./token-ref.schema.json) |
+| Adapters | [`token-ref-adapter.ts`](./token-ref-adapter.ts)                                                        |
+| Locus    | [`locus-resolve.ts`](./locus-resolve.ts)                                                                |
+| Operate  | [`docs/BUN_DOCS_OPERATE.md`](../../docs/BUN_DOCS_OPERATE.md)                                            |
 
 ```bash
 # Token plane

@@ -5,6 +5,7 @@ title: Archive naming grammar
 # Archive naming grammar — `<t>-<lane>-<slug>`
 
 <!-- REF:ID 0.1.naming-grammar -->
+
 <a id="0.1.naming-grammar"></a>
 
 Reusable **filename / folder** grammar for human-facing archive artifacts in
@@ -66,12 +67,12 @@ invent per-file lanes.
 Archive filenames encode **session lane** only. Finer product cuts are not a
 fourth token:
 
-| Word people say | Machine | Where it lives |
-| --------------- | ------- | -------------- |
-| lane (chat/archive) | Session archive lane | this grammar · [`session-organization.md`](session-organization.md) |
-| Domain (issue/PR) | Chrome Domain lane | [`ISSUE-ROUTING.md`](../harness/ISSUE-ROUTING.md) · `PORTAL_DOMAIN_LANE_META` |
-| domain (meaning) | ConceptDomain | [`DOMAIN_CONCEPT_SHAPE.md`](../DOMAIN_CONCEPT_SHAPE.md) · `concept-domains.ts` |
-| scope (commit) | Conventional commit scope | `type(scope):` — open set |
+| Word people say     | Machine                   | Where it lives                                                                 |
+| ------------------- | ------------------------- | ------------------------------------------------------------------------------ |
+| lane (chat/archive) | Session archive lane      | this grammar · [`session-organization.md`](session-organization.md)            |
+| Domain (issue/PR)   | Chrome Domain lane        | [`ISSUE-ROUTING.md`](../harness/ISSUE-ROUTING.md) · `PORTAL_DOMAIN_LANE_META`  |
+| domain (meaning)    | ConceptDomain             | [`DOMAIN_CONCEPT_SHAPE.md`](../DOMAIN_CONCEPT_SHAPE.md) · `concept-domains.ts` |
+| scope (commit)      | Conventional commit scope | `type(scope):` — open set                                                      |
 
 Crosswalk (correlations, not nesting):
 [`docs/harness/tenants/workspace-lane-cross-map.md`](../harness/tenants/workspace-lane-cross-map.md)

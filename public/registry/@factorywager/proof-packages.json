@@ -4,10 +4,7 @@
   "packages": {
     "@factorywager/bun-utils-test": {
       "name": "@factorywager/bun-utils-test",
-      "versions": [
-        "0.0.0+20260723T181647",
-        "0.0.0+20260724T075144"
-      ],
+      "versions": ["0.0.0+20260723T181647", "0.0.0+20260724T075144"],
       "dist-tags": {
         "pre": "0.0.0+20260724T075144",
         "latest": "0.0.0+20260723T181647",
@@ -32,10 +29,7 @@
     },
     "@factorywager/registry-snapshot": {
       "name": "@factorywager/registry-snapshot",
-      "versions": [
-        "0.0.0+20260723T181647",
-        "0.0.0+20260724T075144"
-      ],
+      "versions": ["0.0.0+20260723T181647", "0.0.0+20260724T075144"],
       "dist-tags": {
         "pre": "0.0.0+20260724T075144",
         "latest": "0.0.0+20260723T181647",
@@ -60,9 +54,7 @@
     },
     "@factorywager/routing-test": {
       "name": "@factorywager/routing-test",
-      "versions": [
-        "0.0.0+20260724T075144"
-      ],
+      "versions": ["0.0.0+20260724T075144"],
       "dist-tags": {
         "pre": "0.0.0+20260724T075144",
         "latest": "0.0.0+20260724T075144"

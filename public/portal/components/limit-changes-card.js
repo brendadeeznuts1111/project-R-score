@@ -279,7 +279,11 @@ function formatWhen(unixSeconds) {
   const date = new Date(unixSeconds * 1000);
   if (Number.isNaN(date.getTime())) return { label: '—', detail: '', iso: '' };
   return {
-    label: date.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' }),
+    label: date.toLocaleDateString(undefined, {
+      month: 'numeric',
+      day: 'numeric',
+      year: 'numeric',
+    }),
     detail: date.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' }),
     iso: date.toISOString(),
   };
@@ -571,7 +575,9 @@ export class LimitChangesCard extends HTMLElement {
     const showAccount = !partnerFilter;
     const showFactors =
       !isCompact &&
-      filtered.some(c => Array.isArray(c.top_contributing_factors) && c.top_contributing_factors.length);
+      filtered.some(
+        c => Array.isArray(c.top_contributing_factors) && c.top_contributing_factors.length
+      );
     const showScore = !isCompact;
     const showActivity = !isCompact;
     const hasPredictions = !isCompact && filtered.some(c => c.predicted_raise_prob != null);
@@ -614,9 +620,7 @@ export class LimitChangesCard extends HTMLElement {
         'Observed effective max wager after the change · ops.limits.effective_limit',
       ],
       ['Delta', G.deltaColumn, 'Signed USD change vs prior · ops.limits.limit_delta'],
-      showActivity
-        ? ['Deposits', G.depositsColumn, 'Account deposits · accounting.deposit']
-        : null,
+      showActivity ? ['Deposits', G.depositsColumn, 'Account deposits · accounting.deposit'] : null,
       showActivity
         ? ['Withdraws', G.withdrawsColumn, 'Account withdrawals · accounting.withdrawal']
         : null,
@@ -654,11 +658,7 @@ export class LimitChangesCard extends HTMLElement {
           ]
         : null,
       hasPredictions
-        ? [
-            'Prediction',
-            G.predictionColumn,
-            'Predicted raise probability · ops.limits.prediction',
-          ]
+        ? ['Prediction', G.predictionColumn, 'Predicted raise probability · ops.limits.prediction']
         : null,
       [
         'Observed',
@@ -724,10 +724,7 @@ export class LimitChangesCard extends HTMLElement {
     const exportBtn = this.shadowRoot.getElementById('lcc-export');
     const rowCount = this._data.length;
     exportBtn?.setAttribute('aria-busy', 'true');
-    exportBtn?.setAttribute(
-      'aria-label',
-      `Exporting ${rowCount} rows · ${G.ariaExportProgress}`
-    );
+    exportBtn?.setAttribute('aria-label', `Exporting ${rowCount} rows · ${G.ariaExportProgress}`);
     exportBtn?.setAttribute('data-glossary-concept', G.ariaExportProgress);
     const isCompact = this.hasAttribute('compact');
     const headers = [
@@ -745,14 +742,7 @@ export class LimitChangesCard extends HTMLElement {
       'delta',
       ...(isCompact
         ? []
-        : [
-            'deposits',
-            'withdraws',
-            'bet_volume',
-            'bets_placed',
-            'bets_won',
-            'avg_wager',
-          ]),
+        : ['deposits', 'withdraws', 'bet_volume', 'bets_placed', 'bets_won', 'avg_wager']),
       'score',
       'top_factors',
       'increased_at',

@@ -1,25 +1,28 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9: NO_PROXY Environment Variable Demo
- * 
+ *
  * Demonstrates that NO_PROXY is now always respected, even with explicit proxy settings
  */
 
-console.info("🌐 Bun v1.3.9: NO_PROXY Environment Variable Demo\n");
-console.info("=" .repeat(70));
+console.info('🌐 Bun v1.3.9: NO_PROXY Environment Variable Demo\n');
+console.info('='.repeat(70));
 
 // Mock server for demonstration
 async function createMockServer(port: number): Promise<{ stop: () => void; url: string }> {
   const server = Bun.serve({
     port,
     fetch(req) {
-      return new Response(JSON.stringify({
-        message: "Hello from mock server",
-        url: req.url,
-        headers: Object.fromEntries(req.headers),
-      }), {
-        headers: { "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          message: 'Hello from mock server',
+          url: req.url,
+          headers: Object.fromEntries(req.headers),
+        }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     },
   });
 
@@ -30,8 +33,8 @@ async function createMockServer(port: number): Promise<{ stop: () => void; url: 
 }
 
 function showBeforeAfter() {
-  console.info("\n📦 The Problem (Before v1.3.9)");
-  console.info("-".repeat(70));
+  console.info('\n📦 The Problem (Before v1.3.9)');
+  console.info('-'.repeat(70));
   console.info(`
 BEFORE v1.3.9:
 ──────────────
@@ -52,8 +55,8 @@ PROBLEM:
 • Some internal services couldn't be reached through proxy
 `);
 
-  console.info("\n📦 The Fix (v1.3.9+)");
-  console.info("-".repeat(70));
+  console.info('\n📦 The Fix (v1.3.9+)');
+  console.info('-'.repeat(70));
   console.info(`
 AFTER v1.3.9:
 ─────────────
@@ -76,9 +79,9 @@ FIX:
 }
 
 function showNO_PROXYFormats() {
-  console.info("\n" + "=".repeat(70));
-  console.info("📋 NO_PROXY Format Examples");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('📋 NO_PROXY Format Examples');
+  console.info('='.repeat(70));
   console.info(`
 SYNTAX:
 ───────
@@ -113,9 +116,9 @@ MATCHING BEHAVIOR:
 }
 
 function showUsageExamples() {
-  console.info("\n" + "=".repeat(70));
-  console.info("💻 Usage Examples");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('💻 Usage Examples');
+  console.info('='.repeat(70));
   console.info(`
 COMMAND LINE:
 ─────────────
@@ -160,9 +163,9 @@ const ws = new WebSocket("ws://localhost:3000/ws", {
 }
 
 function showTestingStrategies() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🧪 Testing NO_PROXY Behavior");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🧪 Testing NO_PROXY Behavior');
+  console.info('='.repeat(70));
   console.info(`
 TEST SETUP:
 ───────────
@@ -205,9 +208,9 @@ console.info("Response:", await resp.text());
 }
 
 function showCommonPitfalls() {
-  console.info("\n" + "=".repeat(70));
-  console.info("⚠️ Common Pitfalls");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('⚠️ Common Pitfalls');
+  console.info('='.repeat(70));
   console.info(`
 PITFALL 1: Missing ports in NO_PROXY
 ────────────────────────────────────
@@ -262,7 +265,7 @@ async function main() {
   showTestingStrategies();
   showCommonPitfalls();
 
-  console.info("\n✅ NO_PROXY demo complete!\n");
+  console.info('\n✅ NO_PROXY demo complete!\n');
 }
 
 if (import.meta.main) {

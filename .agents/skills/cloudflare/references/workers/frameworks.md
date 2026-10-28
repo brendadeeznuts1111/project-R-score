@@ -2,7 +2,8 @@
 
 ## Hono (Recommended)
 
-Workers-native web framework with excellent TypeScript support and middleware ecosystem.
+Workers-native web framework with excellent TypeScript support and middleware
+ecosystem.
 
 ```bash
 npm install hono
@@ -15,8 +16,8 @@ import { Hono } from 'hono';
 
 const app = new Hono();
 
-app.get('/', (c) => c.text('Hello World!'));
-app.post('/api/users', async (c) => {
+app.get('/', c => c.text('Hello World!'));
+app.post('/api/users', async c => {
   const body = await c.req.json();
   return c.json({ id: 1, ...body }, 201);
 });
@@ -31,8 +32,8 @@ import type { Env } from './.wrangler/types/runtime';
 
 const app = new Hono<{ Bindings: Env }>();
 
-app.get('/data', async (c) => {
-  const value = await c.env.MY_KV.get('key');  // Fully typed
+app.get('/data', async c => {
+  const value = await c.env.MY_KV.get('key'); // Fully typed
   return c.text(value || 'Not found');
 });
 ```
@@ -65,8 +66,8 @@ const schema = z.object({
   email: z.string().email(),
 });
 
-app.post('/users', zValidator('json', schema), async (c) => {
-  const validated = c.req.valid('json');  // Type-safe, validated data
+app.post('/users', zValidator('json', schema), async c => {
+  const validated = c.req.valid('json'); // Type-safe, validated data
   return c.json({ id: 1, ...validated });
 });
 ```
@@ -78,10 +79,10 @@ app.post('/users', zValidator('json', schema), async (c) => {
 ```typescript
 const api = new Hono().basePath('/api');
 
-api.get('/users', (c) => c.json([]));
-api.post('/users', (c) => c.json({ id: 1 }));
+api.get('/users', c => c.json([]));
+api.post('/users', c => c.json({ id: 1 }));
 
-app.route('/', api);  // Mounts at /api/*
+app.route('/', api); // Mounts at /api/*
 ```
 
 ### Error Handling
@@ -92,7 +93,7 @@ app.onError((err, c) => {
   return c.json({ error: err.message }, 500);
 });
 
-app.notFound((c) => c.json({ error: 'Not Found' }, 404));
+app.notFound(c => c.json({ error: 'Not Found' }, 404));
 ```
 
 ### Accessing ExecutionContext
@@ -105,7 +106,7 @@ export default {
 };
 
 // In route handlers:
-app.get('/log', (c) => {
+app.get('/log', c => {
   c.executionCtx.waitUntil(logRequest(c.req));
   return c.text('OK');
 });
@@ -123,16 +124,22 @@ const route = createRoute({
   path: '/users/{id}',
   request: { params: z.object({ id: z.string() }) },
   responses: {
-    200: { description: 'User found', content: { 'application/json': { schema: z.object({ id: z.string() }) } } },
+    200: {
+      description: 'User found',
+      content: { 'application/json': { schema: z.object({ id: z.string() }) } },
+    },
   },
 });
 
-app.openapi(route, (c) => {
+app.openapi(route, c => {
   const { id } = c.req.valid('param');
   return c.json({ id });
 });
 
-app.doc('/openapi.json', { openapi: '3.0.0', info: { version: '1.0.0', title: 'API' } });
+app.doc('/openapi.json', {
+  openapi: '3.0.0',
+  info: { version: '1.0.0', title: 'API' },
+});
 ```
 
 ### Testing with Hono
@@ -184,11 +191,11 @@ router.listen();
 
 ## Framework Comparison
 
-| Framework | Bundle Size | TypeScript | Middleware | Validation | Best For |
-|-----------|-------------|------------|------------|------------|----------|
-| Hono | ~12KB | Excellent | Rich | Zod | Production apps |
-| itty-router | ~500B | Good | Basic | Manual | Minimal APIs |
-| Worktop | ~8KB | Good | Advanced | Manual | Complex routing |
+| Framework   | Bundle Size | TypeScript | Middleware | Validation | Best For        |
+| ----------- | ----------- | ---------- | ---------- | ---------- | --------------- |
+| Hono        | ~12KB       | Excellent  | Rich       | Zod        | Production apps |
+| itty-router | ~500B       | Good       | Basic      | Manual     | Minimal APIs    |
+| Worktop     | ~8KB        | Good       | Advanced   | Manual     | Complex routing |
 
 ## See Also
 

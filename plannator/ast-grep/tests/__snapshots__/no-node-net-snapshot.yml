@@ -2,13 +2,13 @@ id: no-node-net
 snapshots:
   import net from "net":
     labels:
-    - source: import net from "net"
-      style: primary
-      start: 0
-      end: 21
+      - source: import net from "net"
+        style: primary
+        start: 0
+        end: 21
   import { createServer } from "node:net":
     labels:
-    - source: import { createServer } from "node:net"
-      style: primary
-      start: 0
-      end: 39
+      - source: import { createServer } from "node:net"
+        style: primary
+        start: 0
+        end: 39

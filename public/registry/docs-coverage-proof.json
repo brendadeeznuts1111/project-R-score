@@ -31,9 +31,7 @@
   },
   "referenceUrls": {
     "catalogPagesChecked": 26,
-    "missingFromIndex": [
-      "https://bun.com/reference/"
-    ]
+    "missingFromIndex": ["https://bun.com/reference/"]
   },
   "summary": {
     "ok": true,
@@ -96,8 +94,6 @@
     "arch": "arm64",
     "channelResolveSource": "runtime",
     "githubAuthSource": "none",
-    "subsystems": [
-      "other"
-    ]
+    "subsystems": ["other"]
   }
 }

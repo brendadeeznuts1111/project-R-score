@@ -22,9 +22,8 @@ system-local timezone. This is intentionally not registered as a spine tenant.
 - Main tip and intentional wrapper/declaration channel differences are
   informational unless a selected-channel invariant fails.
 
-The optional derived artifact is
-`public/registry/bun-channel-status.json`. The doctor itself is read-only;
-artifact writing is a separate explicit command.
+The optional derived artifact is `public/registry/bun-channel-status.json`. The
+doctor itself is read-only; artifact writing is a separate explicit command.
 
 ## Intervention
 

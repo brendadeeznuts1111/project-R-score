@@ -67,19 +67,14 @@ function tocHeaders(snap: TocSnap | null, extra?: Record<string, string>): Heade
     'X-TOC-Source': 'snapshot',
     'X-TOC-Read-Only': '1',
     'X-TOC-Plane': snap?.plane ?? 'demo-readonly',
-    ...(snap?.enforcement?.plane
-      ? { 'X-TOC-Enforcement': snap.enforcement.plane }
-      : {}),
+    ...(snap?.enforcement?.plane ? { 'X-TOC-Enforcement': snap.enforcement.plane } : {}),
     ...(focus ? { 'X-TOC-Focus': focus } : {}),
     ...(typeof failed === 'number' ? { 'X-TOC-Gates-Failed': String(failed) } : {}),
     ...extra,
   };
 }
 
-export async function onRequest(context: {
-  request: Request;
-  env: PagesEnv;
-}): Promise<Response> {
+export async function onRequest(context: { request: Request; env: PagesEnv }): Promise<Response> {
   const { request, env } = context;
   const origin = new URL(request.url).origin;
   const sub = new URL(request.url).pathname.replace(/^\/api\/toc\/?/, '') || 'index';

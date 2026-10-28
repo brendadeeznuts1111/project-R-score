@@ -1,11 +1,11 @@
-import { readFile, stat } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { readFile, stat } from 'node:fs/promises';
+import { dirname, join, resolve } from 'node:path';
 
 export type ResolvedDependency = {
   name: string;
   version: string;
   spec: string;
-  source: "lock" | "spec";
+  source: 'lock' | 'spec';
 };
 
 type PackageJson = {
@@ -24,9 +24,9 @@ function parseBunLockPackages(doc: Record<string, unknown>): Map<string, string>
   for (const [key, value] of Object.entries(packages)) {
     if (!Array.isArray(value) || value.length === 0) continue;
     const head = String(value[0]);
-    const at = head.lastIndexOf("@");
+    const at = head.lastIndexOf('@');
     if (at <= 0) continue;
-    const name = head.startsWith("@") ? head.slice(0, at) : head.slice(0, at);
+    const name = head.startsWith('@') ? head.slice(0, at) : head.slice(0, at);
     const version = head.slice(at + 1);
     if (!out.has(name)) out.set(name, version);
     if (!out.has(key)) out.set(key, version);
@@ -44,7 +44,7 @@ async function findPackageJson(start: string, stop: string): Promise<string | nu
   let dir = resolve(start);
   const root = resolve(stop);
   while (dir.startsWith(root)) {
-    const candidate = join(dir, "package.json");
+    const candidate = join(dir, 'package.json');
     try {
       await stat(candidate);
       return candidate;
@@ -60,11 +60,11 @@ async function findPackageJson(start: string, stop: string): Promise<string | nu
 }
 
 async function findLockfile(repo: string): Promise<string | null> {
-  for (const name of ["bun.lock", "bun.lockb"]) {
+  for (const name of ['bun.lock', 'bun.lockb']) {
     const path = join(repo, name);
     try {
       await stat(path);
-      if (name.endsWith(".lockb")) continue;
+      if (name.endsWith('.lockb')) continue;
       return path;
     } catch {
       // try next
@@ -83,7 +83,7 @@ export async function resolveTargetDependencies(options: {
   const pkgPath = await findPackageJson(absTarget, repo);
   if (!pkgPath) return { packageJson: null, dependencies: [] };
 
-  const pkg = JSON.parse(await readFile(pkgPath, "utf8")) as PackageJson;
+  const pkg = JSON.parse(await readFile(pkgPath, 'utf8')) as PackageJson;
   const specs: Record<string, string> = { ...(pkg.dependencies ?? {}) };
   if (includeDev) Object.assign(specs, pkg.devDependencies ?? {});
 
@@ -91,7 +91,7 @@ export async function resolveTargetDependencies(options: {
   let lockMap = new Map<string, string>();
   if (lockPath) {
     try {
-      const lockDoc = JSON.parse(await readFile(lockPath, "utf8")) as Record<string, unknown>;
+      const lockDoc = JSON.parse(await readFile(lockPath, 'utf8')) as Record<string, unknown>;
       lockMap = parseBunLockPackages(lockDoc);
     } catch {
       // unreadable lockfile
@@ -100,7 +100,7 @@ export async function resolveTargetDependencies(options: {
 
   const dependencies: ResolvedDependency[] = [];
   for (const [name, spec] of Object.entries(specs)) {
-    if (spec.startsWith("workspace:") || spec === "catalog:" || spec.startsWith("catalog:")) {
+    if (spec.startsWith('workspace:') || spec === 'catalog:' || spec.startsWith('catalog:')) {
       continue;
     }
     const locked = lockMap.get(name);
@@ -111,7 +111,7 @@ export async function resolveTargetDependencies(options: {
       name,
       version,
       spec,
-      source: locked ? "lock" : "spec",
+      source: locked ? 'lock' : 'spec',
     });
   }
 

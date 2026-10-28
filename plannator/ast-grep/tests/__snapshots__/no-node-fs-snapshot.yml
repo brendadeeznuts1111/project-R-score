@@ -2,19 +2,19 @@ id: no-node-fs
 snapshots:
   import fs from "fs":
     labels:
-    - source: import fs from "fs"
-      style: primary
-      start: 0
-      end: 19
+      - source: import fs from "fs"
+        style: primary
+        start: 0
+        end: 19
   import fs from "node:fs":
     labels:
-    - source: import fs from "node:fs"
-      style: primary
-      start: 0
-      end: 24
+      - source: import fs from "node:fs"
+        style: primary
+        start: 0
+        end: 24
   import { readFileSync } from "fs":
     labels:
-    - source: import { readFileSync } from "fs"
-      style: primary
-      start: 0
-      end: 33
+      - source: import { readFileSync } from "fs"
+        style: primary
+        start: 0
+        end: 33

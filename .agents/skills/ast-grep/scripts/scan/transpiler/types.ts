@@ -1,21 +1,21 @@
-export type Loader = "js" | "jsx" | "ts" | "tsx";
+export type Loader = 'js' | 'jsx' | 'ts' | 'tsx';
 
-export type Severity = "info" | "warn" | "error" | "low" | "medium" | "high" | "critical";
+export type Severity = 'info' | 'warn' | 'error' | 'low' | 'medium' | 'high' | 'critical';
 
-export type ScanLayer = "import" | "source" | "output" | "integrity" | "deps" | "network";
+export type ScanLayer = 'import' | 'source' | 'output' | 'integrity' | 'deps' | 'network';
 
 export type ImportKind =
-  | "import-statement"
-  | "require-call"
-  | "require-resolve"
-  | "dynamic-import"
-  | "import-rule"
-  | "url-token"
-  | "internal"
-  | "entry-point-build"
-  | "entry-point-run";
+  | 'import-statement'
+  | 'require-call'
+  | 'require-resolve'
+  | 'dynamic-import'
+  | 'import-rule'
+  | 'url-token'
+  | 'internal'
+  | 'entry-point-build'
+  | 'entry-point-run';
 
-export type RuleType = "regex" | "ast" | "import";
+export type RuleType = 'regex' | 'ast' | 'import';
 
 export interface PolicyRule {
   id: string;
@@ -38,7 +38,7 @@ export interface RuleSet {
   network_rules: PolicyRule[];
 }
 
-export type ReportFormat = "json" | "html" | "markdown" | "ansi" | "plaintext";
+export type ReportFormat = 'json' | 'html' | 'markdown' | 'ansi' | 'plaintext';
 
 export interface ScanProfile {
   description?: string;
@@ -62,7 +62,7 @@ export interface ScanProfile {
   endpoint_meta?: boolean;
 }
 
-export type RemediationAction = "upgrade" | "remove";
+export type RemediationAction = 'upgrade' | 'remove';
 
 export type ScanRemediation = {
   action?: RemediationAction;
@@ -73,10 +73,10 @@ export type ScanRemediation = {
   reason?: string;
 };
 
-export type ViolationKind = "semver_rule" | "allowed" | "blocked" | "threat";
+export type ViolationKind = 'semver_rule' | 'allowed' | 'blocked' | 'threat';
 
 export interface ScanResult {
-  type: "transpiler" | "semver" | "threat";
+  type: 'transpiler' | 'semver' | 'threat';
   file: string;
   line: number;
   column: number;
@@ -124,7 +124,7 @@ export interface TargetScanResult {
 export interface BundleScanReport {
   repo: string;
   profile: string;
-  layer: "4.5";
+  layer: '4.5';
   description?: string;
   min_severity: Severity;
   format: ReportFormat;
@@ -189,7 +189,7 @@ export interface BundleScanReport {
   health?: {
     probed: boolean;
     base_url: string;
-    overall: "healthy" | "degraded" | "unreachable";
+    overall: 'healthy' | 'degraded' | 'unreachable';
     probes: Array<{
       url: string;
       ok: boolean;

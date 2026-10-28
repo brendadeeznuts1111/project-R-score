@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BUN_INSTALL_CACHE_DIR: /home/runner/.bun/install/cache
-      BUN_INSTALL_GLOBAL_STORE: '1'
+      BUN_INSTALL_GLOBAL_STORE: "1"
       # Full-tree ESLint only on push to main; PRs lint the change set.
       HARNESS_FULL_LINT: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && '1' || '0' }}
     steps:
@@ -30,7 +30,7 @@ jobs:
       - name: Setup Factory Bun
         uses: ./.github/actions/setup-factory-bun
         with:
-          eslint-cache: 'true'
+          eslint-cache: "true"
 
       - name: Claim → evidence
         if: github.event_name == 'pull_request'

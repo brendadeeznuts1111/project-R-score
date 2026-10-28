@@ -1,6 +1,7 @@
 # Partner dashboard MVP proposal
 
 <!-- REF:ID 0.1.partner-consolidation-status -->
+
 <a id="0.1.partner-consolidation-status"></a>
 
 This directory contains a derived, reviewable proposal snapshot of the partner
@@ -18,8 +19,8 @@ Terminal row is backed by a four-row API/HTML boundary audit extract.
 
 The dashboard is **not** another partner-domain SSOT or a production data
 surface. Profile coverage is now materialized for ASH · BIL · NOV · SPEN; the
-snapshot remains partial while other connectors and the one-artifact board cutover remain open. Its
-sources remain:
+snapshot remains partial while other connectors and the one-artifact board
+cutover remain open. Its sources remain:
 
 - `docs/design/partner-dashboard-mvp.toml` for MVP composition and policy;
 - `scripts/validate-partner-dashboard-plan.ts` for enforced plan counts;

@@ -1,16 +1,10 @@
-import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
-import { computeBenchRating } from "./bench-loop.ts";
-import { validateNetworkGroundTruth } from "./network-ground-truth-validator.ts";
-import { runNetworkAuditOnce } from "./network-loop.ts";
-import {
-  captureNetworkSectionFromReport,
-  defaultSnapshotPath,
-} from "./snapshot-network.ts";
-import {
-  validateSnapshotFull,
-  type DoctorSnapshotV2,
-} from "./snapshot.ts";
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { computeBenchRating } from './bench-loop.ts';
+import { validateNetworkGroundTruth } from './network-ground-truth-validator.ts';
+import { runNetworkAuditOnce } from './network-loop.ts';
+import { captureNetworkSectionFromReport, defaultSnapshotPath } from './snapshot-network.ts';
+import { validateSnapshotFull, type DoctorSnapshotV2 } from './snapshot.ts';
 
 export type SnapshotBenchPhaseTiming = {
   loadMs: number;
@@ -85,28 +79,34 @@ export function summarizeSnapshotBenchRuns(
     liveNetwork: boolean;
     groundTruth: boolean;
     targetMs?: number;
-  },
+  }
 ): SnapshotBenchSummary {
   const iterations = runs.length;
-  const okRuns = runs.filter((r) => r.ok).length;
+  const okRuns = runs.filter(r => r.ok).length;
   const passRate = iterations ? okRuns / iterations : 0;
-  const elapsed = [...runs.map((r) => r.elapsedMs)].sort((a, b) => a - b);
+  const elapsed = [...runs.map(r => r.elapsedMs)].sort((a, b) => a - b);
   const { rating, grade } = computeBenchRating(passRate, percentile(elapsed, 50), meta.targetMs);
-  const phaseRuns = runs.filter((r) => r.phases);
+  const phaseRuns = runs.filter(r => r.phases);
   const phaseP50 = phaseRuns.length
     ? {
-        loadP50Ms: percentile(phaseRuns.map((r) => r.phases!.loadMs).sort((a, b) => a - b), 50),
-        networkP50Ms: phaseRuns.some((r) => r.phases?.networkMs !== undefined)
+        loadP50Ms: percentile(
+          phaseRuns.map(r => r.phases!.loadMs).sort((a, b) => a - b),
+          50
+        ),
+        networkP50Ms: phaseRuns.some(r => r.phases?.networkMs !== undefined)
           ? percentile(
-              phaseRuns.map((r) => r.phases!.networkMs ?? 0).sort((a, b) => a - b),
-              50,
+              phaseRuns.map(r => r.phases!.networkMs ?? 0).sort((a, b) => a - b),
+              50
             )
           : undefined,
-        validateP50Ms: percentile(phaseRuns.map((r) => r.phases!.validateMs).sort((a, b) => a - b), 50),
-        groundTruthP50Ms: phaseRuns.some((r) => r.phases?.groundTruthMs !== undefined)
+        validateP50Ms: percentile(
+          phaseRuns.map(r => r.phases!.validateMs).sort((a, b) => a - b),
+          50
+        ),
+        groundTruthP50Ms: phaseRuns.some(r => r.phases?.groundTruthMs !== undefined)
           ? percentile(
-              phaseRuns.map((r) => r.phases!.groundTruthMs ?? 0).sort((a, b) => a - b),
-              50,
+              phaseRuns.map(r => r.phases!.groundTruthMs ?? 0).sort((a, b) => a - b),
+              50
             )
           : undefined,
       }
@@ -114,7 +114,7 @@ export function summarizeSnapshotBenchRuns(
 
   return {
     schemaVersion: 1,
-    tool: "skill-loop-bench-snapshot",
+    tool: 'skill-loop-bench-snapshot',
     domain,
     iterations,
     runs,
@@ -135,13 +135,13 @@ async function runSingleSnapshotBench(
   opts: SnapshotBenchOptions,
   iteration: number,
   domain: string,
-  snapshotPath: string,
+  snapshotPath: string
 ): Promise<SnapshotBenchRunResult> {
   const started = performance.now();
   const phases: SnapshotBenchPhaseTiming = { loadMs: 0, validateMs: 0 };
   try {
     const loadStart = performance.now();
-    const raw = await readFile(snapshotPath, "utf8");
+    const raw = await readFile(snapshotPath, 'utf8');
     const snapshot = JSON.parse(raw) as DoctorSnapshotV2;
     phases.loadMs = Math.round(performance.now() - loadStart);
 
@@ -153,7 +153,7 @@ async function runSingleSnapshotBench(
         skillRoot: opts.skillRoot,
         repo: opts.repo,
         scanPath: opts.scanPath,
-        profileName: opts.profileName ?? "supply-chain-network-dist",
+        profileName: opts.profileName ?? 'supply-chain-network-dist',
         domain,
         verbose: false,
       });
@@ -161,7 +161,7 @@ async function runSingleSnapshotBench(
         currentNetwork = captureNetworkSectionFromReport(
           liveAudit.tick.report,
           domain,
-          opts.scanPath,
+          opts.scanPath
         );
       }
       phases.networkMs = Math.round(performance.now() - netStart);
@@ -182,13 +182,9 @@ async function runSingleSnapshotBench(
       const gt = await validateNetworkGroundTruth({
         skillRoot: opts.skillRoot,
         repo: opts.repo,
-        ids: [
-          "sports-terminal-snapshot",
-          "security-policy-network",
-          "network-dist-profile",
-        ],
+        ids: ['sports-terminal-snapshot', 'security-policy-network', 'network-dist-profile'],
         liveAudit,
-        liveGroundTruthId: domain === "sports-terminal-os" ? "sports-terminal-snapshot" : undefined,
+        liveGroundTruthId: domain === 'sports-terminal-os' ? 'sports-terminal-snapshot' : undefined,
       });
       phases.groundTruthMs = Math.round(performance.now() - gtStart);
       groundTruthOk = gt.ok;
@@ -198,9 +194,9 @@ async function runSingleSnapshotBench(
     const networkDrift = Boolean(validation.drift.network?.drift);
     const ok = snapshotOk && groundTruthOk !== false;
     const detailParts = [
-      validation.sections.length ? `sections=${validation.sections.join(",")}` : null,
-      networkDrift ? "network-drift" : null,
-      groundTruthOk === false ? "ground-truth-fail" : null,
+      validation.sections.length ? `sections=${validation.sections.join(',')}` : null,
+      networkDrift ? 'network-drift' : null,
+      groundTruthOk === false ? 'ground-truth-fail' : null,
     ].filter(Boolean);
 
     return {
@@ -211,7 +207,7 @@ async function runSingleSnapshotBench(
       groundTruthOk,
       networkDrift,
       sections: validation.sections,
-      detail: detailParts.join(" ") || undefined,
+      detail: detailParts.join(' ') || undefined,
       phases,
     };
   } catch (e) {
@@ -228,12 +224,10 @@ async function runSingleSnapshotBench(
 }
 
 export async function runSnapshotBenchLoop(
-  opts: SnapshotBenchOptions,
+  opts: SnapshotBenchOptions
 ): Promise<SnapshotBenchSummary> {
-  const domain = opts.domain ?? "sports-terminal-os";
-  const snapshotPath = resolve(
-    opts.snapshotPath ?? defaultSnapshotPath(opts.skillRoot, domain),
-  );
+  const domain = opts.domain ?? 'sports-terminal-os';
+  const snapshotPath = resolve(opts.snapshotPath ?? defaultSnapshotPath(opts.skillRoot, domain));
   const iterations = opts.iterations ?? 3;
   const runs: SnapshotBenchRunResult[] = [];
 
@@ -254,24 +248,25 @@ export async function runSnapshotBenchLoop(
 
 export function formatSnapshotBenchStatus(
   summary: SnapshotBenchSummary,
-  opts?: { verbose?: boolean },
+  opts?: { verbose?: boolean }
 ): string {
   const pct = Math.round(summary.passRate * 100);
-  const modes = [
-    summary.liveNetwork ? "live-network" : null,
-    summary.groundTruth ? "ground-truth" : null,
-  ].filter(Boolean).join("+") || "snapshot-only";
-  let line = `[loop] bench-snapshot domain=${summary.domain} mode=${modes} `
-    + `iter=${summary.iterations} pass_rate=${pct}% `
-    + `p50=${summary.p50Ms}ms p95=${summary.p95Ms}ms `
-    + `rating=${summary.rating} (${summary.grade}) `
-    + `path=${summary.snapshotPath}`;
+  const modes =
+    [summary.liveNetwork ? 'live-network' : null, summary.groundTruth ? 'ground-truth' : null]
+      .filter(Boolean)
+      .join('+') || 'snapshot-only';
+  let line =
+    `[loop] bench-snapshot domain=${summary.domain} mode=${modes} ` +
+    `iter=${summary.iterations} pass_rate=${pct}% ` +
+    `p50=${summary.p50Ms}ms p95=${summary.p95Ms}ms ` +
+    `rating=${summary.rating} (${summary.grade}) ` +
+    `path=${summary.snapshotPath}`;
   if (opts?.verbose && summary.phaseP50) {
     const p = summary.phaseP50;
     const bits = [`load=${p.loadP50Ms}ms`, `validate=${p.validateP50Ms}ms`];
     if (p.networkP50Ms !== undefined) bits.push(`network=${p.networkP50Ms}ms`);
     if (p.groundTruthP50Ms !== undefined) bits.push(`ground-truth=${p.groundTruthP50Ms}ms`);
-    line += ` phases_p50={${bits.join(" ")}}`;
+    line += ` phases_p50={${bits.join(' ')}}`;
   }
   return line;
 }

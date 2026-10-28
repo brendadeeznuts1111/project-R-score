@@ -26,10 +26,17 @@
       "audience": ["developers"],
       "lastVerified": "2026-07-28",
       "format": "markdown (generated)",
-      "groundedCapabilities": ["Bun.Glob (scanFilesSync)", "Bun.file / readJson", "Bun.write"],
+      "groundedCapabilities": [
+        "Bun.Glob (scanFilesSync)",
+        "Bun.file / readJson",
+        "Bun.write"
+      ],
       "maintainer": "docs / packages tooling",
       "triggers": ["new workspace member", "version bump", "triage change"],
-      "relatedCommands": ["bun run packages:list", "bun run packages:list --write"]
+      "relatedCommands": [
+        "bun run packages:list",
+        "bun run packages:list --write"
+      ]
     },
     {
       "id": "monorepo-workspaces",
@@ -41,10 +48,19 @@
       "audience": ["devops", "contributors"],
       "lastVerified": "2026-07-28",
       "format": "markdown",
-      "groundedCapabilities": ["workspace globs", "catalog:", "bun run --filter", "bun outdated --filter"],
+      "groundedCapabilities": [
+        "workspace globs",
+        "catalog:",
+        "bun run --filter",
+        "bun outdated --filter"
+      ],
       "maintainer": "platform",
       "triggers": ["Bun PM upgrade", "workspace membership change"],
-      "relatedCommands": ["bun run validate:workspaces", "bun run --filter '*'", "bun outdated --filter"]
+      "relatedCommands": [
+        "bun run validate:workspaces",
+        "bun run --filter '*'",
+        "bun outdated --filter"
+      ]
     },
     {
       "id": "monorepo-filter-section",
@@ -56,10 +72,20 @@
       "audience": ["all operators"],
       "lastVerified": "2026-07-28",
       "format": "markdown (section)",
-      "groundedCapabilities": ["--filter", "--if-present", "--parallel", "--sequential", "--workspaces"],
+      "groundedCapabilities": [
+        "--filter",
+        "--if-present",
+        "--parallel",
+        "--sequential",
+        "--workspaces"
+      ],
       "maintainer": "platform",
       "triggers": ["Bun filter semantics change"],
-      "relatedCommands": ["bun run --parallel --filter '*'", "bun install --filter", "bun outdated --filter"]
+      "relatedCommands": [
+        "bun run --parallel --filter '*'",
+        "bun install --filter",
+        "bun outdated --filter"
+      ]
     },
     {
       "id": "unified-catalogs",
@@ -71,7 +97,12 @@
       "audience": ["all"],
       "lastVerified": "2026-07-28",
       "format": "markdown",
-      "groundedCapabilities": ["catalog:", "workspace:*", "frozenLockfile", "install.exact"],
+      "groundedCapabilities": [
+        "catalog:",
+        "workspace:*",
+        "frozenLockfile",
+        "install.exact"
+      ],
       "maintainer": "platform",
       "triggers": ["install policy change", "catalog pin bump"],
       "relatedCommands": ["bun install", "bun run validate:workspaces"]
@@ -101,10 +132,18 @@
       "audience": ["all"],
       "lastVerified": "2026-07-28",
       "format": "external HTML",
-      "groundedCapabilities": ["bun run --filter", "bun install --filter", "bun outdated --filter"],
+      "groundedCapabilities": [
+        "bun run --filter",
+        "bun install --filter",
+        "bun outdated --filter"
+      ],
       "maintainer": "Bun OSS",
       "triggers": [],
-      "relatedCommands": ["bun run --filter", "bun outdated --filter", "bun install --filter"]
+      "relatedCommands": [
+        "bun run --filter",
+        "bun outdated --filter",
+        "bun install --filter"
+      ]
     },
     {
       "id": "pm-outdated",

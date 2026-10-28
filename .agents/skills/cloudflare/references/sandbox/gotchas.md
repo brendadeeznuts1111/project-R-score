@@ -4,8 +4,8 @@
 
 ### "Container running indefinitely"
 
-**Cause:** `keepAlive: true` without calling `destroy()`
-**Solution:** Always call `destroy()` when done with keepAlive containers
+**Cause:** `keepAlive: true` without calling `destroy()` **Solution:** Always
+call `destroy()` when done with keepAlive containers
 
 ```typescript
 const sandbox = getSandbox(env.Sandbox, 'temp', { keepAlive: true });
@@ -13,7 +13,7 @@ try {
   const result = await sandbox.exec('python script.py');
   return result.stdout;
 } finally {
-  await sandbox.destroy();  // REQUIRED to free resources
+  await sandbox.destroy(); // REQUIRED to free resources
 }
 ```
 
@@ -40,13 +40,15 @@ async function execWithRetry(sandbox, cmd) {
 
 ### "Connection refused: container port not found"
 
-**Cause:** Missing `EXPOSE` directive in Dockerfile
-**Solution:** Add `EXPOSE <port>` to Dockerfile (only needed for `wrangler dev`, production auto-exposes)
+**Cause:** Missing `EXPOSE` directive in Dockerfile **Solution:** Add
+`EXPOSE <port>` to Dockerfile (only needed for `wrangler dev`, production
+auto-exposes)
 
 ### "Preview URLs not working"
 
-**Cause:** Custom domain not configured, wildcard DNS missing, `normalizeId` not set, or `proxyToSandbox()` not called
-**Solution:** Check:
+**Cause:** Custom domain not configured, wildcard DNS missing, `normalizeId` not
+set, or `proxyToSandbox()` not called **Solution:** Check:
+
 1. Custom domain configured? (not `.workers.dev`)
 2. Wildcard DNS set up? (`*.domain.com → worker.domain.com`)
 3. `normalizeId: true` in getSandbox?
@@ -54,16 +56,16 @@ async function execWithRetry(sandbox, cmd) {
 
 ### "Slow first request"
 
-**Cause:** Cold start (container provisioning)
-**Solution:**
+**Cause:** Cold start (container provisioning) **Solution:**
+
 - Use `sleepAfter` instead of creating new sandboxes
 - Pre-warm with cron triggers
 - Set `keepAlive: true` for critical sandboxes
 
 ### "File not persisting"
 
-**Cause:** Files in `/tmp` or other ephemeral paths
-**Solution:** Use `/workspace` for persistent files
+**Cause:** Files in `/tmp` or other ephemeral paths **Solution:** Use
+`/workspace` for persistent files
 
 ### "Bucket mounting doesn't work locally"
 
@@ -72,19 +74,19 @@ async function execWithRetry(sandbox, cmd) {
 
 ### "Different normalizeId = different sandbox"
 
-**Cause:** Changing `normalizeId` option changes Durable Object ID
-**Solution:** Set `normalizeId` consistently. `normalizeId: true` lowercases the ID.
+**Cause:** Changing `normalizeId` option changes Durable Object ID **Solution:**
+Set `normalizeId` consistently. `normalizeId: true` lowercases the ID.
 
 ```typescript
 // These create DIFFERENT sandboxes:
-getSandbox(env.Sandbox, 'MyApp');              // DO ID: hash('MyApp')
-getSandbox(env.Sandbox, 'MyApp', { normalizeId: true });  // DO ID: hash('myapp')
+getSandbox(env.Sandbox, 'MyApp'); // DO ID: hash('MyApp')
+getSandbox(env.Sandbox, 'MyApp', { normalizeId: true }); // DO ID: hash('myapp')
 ```
 
 ### "Code context variables disappeared"
 
-**Cause:** Container restart clears code context state
-**Solution:** Code contexts are ephemeral. Recreate context after container sleep/wake.
+**Cause:** Container restart clears code context state **Solution:** Code
+contexts are ephemeral. Recreate context after container sleep/wake.
 
 ## Performance Optimization
 
@@ -116,6 +118,7 @@ getSandbox(env.Sandbox, 'id', { keepAlive: true });
 ## Security Best Practices
 
 ### Sandbox Isolation
+
 - Each sandbox = isolated container (filesystem, network, processes)
 - Use unique sandbox IDs per tenant for multi-tenant apps
 - Sandboxes cannot communicate directly
@@ -136,7 +139,7 @@ const result = await sandbox.exec('python3 /workspace/user_code.py');
 ```typescript
 // Timeout long-running commands
 const result = await sandbox.exec('python3 script.py', {
-  timeout: 30000  // 30 seconds
+  timeout: 30000, // 30 seconds
 });
 ```
 
@@ -151,32 +154,36 @@ const token = env.GITHUB_TOKEN;
 
 // Pass to sandbox via exec env
 const result = await sandbox.exec('git clone ...', {
-  env: { GIT_TOKEN: token }
+  env: { GIT_TOKEN: token },
 });
 ```
 
 ### Preview URL Security
+
 Preview URLs include auto-generated tokens:
+
 ```
 https://8080-sandbox-abc123def456.yourdomain.com
 ```
+
 Token changes on each expose operation, preventing unauthorized access.
 
 ## Limits
 
-| Resource | Lite | Standard | Heavy |
-|----------|------|----------|-------|
-| RAM | 256MB | 512MB | 1GB |
-| vCPU | 0.5 | 1 | 2 |
+| Resource | Lite  | Standard | Heavy |
+| -------- | ----- | -------- | ----- |
+| RAM      | 256MB | 512MB    | 1GB   |
+| vCPU     | 0.5   | 1        | 2     |
 
-| Operation | Default Timeout | Override |
-|-----------|----------------|----------|
-| Container provisioning | 30s | `SANDBOX_INSTANCE_TIMEOUT_MS` |
-| Port readiness | 90s | `SANDBOX_PORT_TIMEOUT_MS` |
-| exec() | None (no default) | `timeout` option |
-| sleepAfter | 10m | `sleepAfter` option |
+| Operation              | Default Timeout   | Override                      |
+| ---------------------- | ----------------- | ----------------------------- |
+| Container provisioning | 30s               | `SANDBOX_INSTANCE_TIMEOUT_MS` |
+| Port readiness         | 90s               | `SANDBOX_PORT_TIMEOUT_MS`     |
+| exec()                 | None (no default) | `timeout` option              |
+| sleepAfter             | 10m               | `sleepAfter` option           |
 
 **Performance**:
+
 - **First deploy**: 2-3 min for container build
 - **Cold start**: 2-3s when waking from sleep
 - **Bucket mounting**: Production only (FUSE not in dev)

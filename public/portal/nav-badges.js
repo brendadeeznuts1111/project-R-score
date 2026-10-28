@@ -18,7 +18,7 @@
 /** @param {object|null|undefined} data */
 export function pickFailuresBadge(data) {
   const n = data?.totals?.failures;
-  return typeof n === 'number' ? n : data?.failures?.length ?? null;
+  return typeof n === 'number' ? n : (data?.failures?.length ?? null);
 }
 
 /** @param {number|null} n */

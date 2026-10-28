@@ -492,11 +492,7 @@ function renderPortalSections(payload) {
       conceptLink.textContent = section.conceptId;
       conceptLink.title = 'Open concept definition';
 
-      const ids = text(
-        'div',
-        `domId=${section.domId} · #section:${section.hash}`,
-        'sec-ids'
-      );
+      const ids = text('div', `domId=${section.domId} · #section:${section.hash}`, 'sec-ids');
 
       li.append(titleWrap, conceptLink, ids);
       list.append(li);

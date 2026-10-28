@@ -1,8 +1,9 @@
 # Limits Forecast Lab
 
-**Surface:** `/portal/limits-lab/`
-**Artifact:** `/registry/limit-forecast-lab.json`
-**Source:** read-only `data/operations.db → partner_account_limits` **plus** Tier 4 JSONL (`artifacts/raw-limits/{book}.jsonl`, synthetic nodes `scrape-{bookId}`)
+**Surface:** `/portal/limits-lab/` **Artifact:**
+`/registry/limit-forecast-lab.json` **Source:** read-only
+`data/operations.db → partner_account_limits` **plus** Tier 4 JSONL
+(`artifacts/raw-limits/{book}.jsonl`, synthetic nodes `scrape-{bookId}`)
 
 The lab isolates forecasting experiments from the production limit-prediction
 cycle. It can compare global and sportsbook-pooled candidates, inspect support,

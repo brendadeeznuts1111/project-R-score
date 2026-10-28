@@ -1,28 +1,31 @@
 ---
-name: "[P0][DEPS] Remove unused dependencies"
+name: '[P0][DEPS] Remove unused dependencies'
 about: Remove unused dependencies to reduce attack surface
-title: "[P0][DEPS] Remove unused dependencies (express, axios, chalk)"
+title: '[P0][DEPS] Remove unused dependencies (express, axios, chalk)'
 labels: tech-debt, p0, dependencies
 assignees: dev-team
 ---
 
 ## Routing (optional — human queue)
 
-| Field | Value |
-|-------|-------|
-| **Domain** | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
-| **Tracker** | tenant open-issue id · or n/a |
-| **Concept** | vocabulary id only if chrome/wire changes · or n/a |
+| Field       | Value                                                                              |
+| ----------- | ---------------------------------------------------------------------------------- |
+| **Domain**  | `partner` · `control` · `trading` · `identity` · `knowledge` · `platform` · or n/a |
+| **Tracker** | tenant open-issue id · or n/a                                                      |
+| **Concept** | vocabulary id only if chrome/wire changes · or n/a                                 |
 
 See [ISSUE-ROUTING.md](../../docs/harness/ISSUE-ROUTING.md).
 
 ## 📦 Description
+
 Unused dependencies adding 50+ transitive deps to bundle:
+
 - `express` (not used, we use Bun.serve)
 - `axios` (use native `fetch`)
 - `chalk` (use Bun's color utilities)
 
 ## 📋 Acceptance Criteria
+
 - [ ] Remove from package.json
 - [ ] Replace any remaining imports with Bun-native alternatives
 - [ ] Verify bundle size reduction in CI
@@ -30,7 +33,9 @@ Unused dependencies adding 50+ transitive deps to bundle:
 - [ ] Run `bun install` to update lockfile
 
 ## 🔍 Affected Files
+
 Search for imports:
+
 ```bash
 grep -r "from ['\"]express['\"]" .
 grep -r "from ['\"]axios['\"]" .
@@ -40,6 +45,7 @@ grep -r "from ['\"]chalk['\"]" .
 ## 🔄 Replacement Guide
 
 ### express → Bun.serve
+
 ```typescript
 // Before
 import express from 'express';
@@ -51,6 +57,7 @@ const server = serve({ ... });
 ```
 
 ### axios → fetch
+
 ```typescript
 // Before
 import axios from 'axios';
@@ -61,6 +68,7 @@ const res = await fetch(url);
 ```
 
 ### chalk → Bun color utilities
+
 ```typescript
 // Before
 import chalk from 'chalk';
@@ -72,10 +80,12 @@ console.log('\x1b[31mError\x1b[0m');
 ```
 
 ## 📊 Expected Impact
+
 - Bundle size reduction: ~2MB
 - Transitive dependencies: -50
 - Attack surface: Reduced
 
 ## 🔗 Related
+
 - Part of: Security audit cleanup
 - Blocks: Bundle size optimization work

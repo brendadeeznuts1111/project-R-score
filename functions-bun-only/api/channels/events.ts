@@ -56,7 +56,12 @@ export async function onRequest(context: PagesContext): Promise<Response> {
   }
 
   let events = await store.readSince(topic, since);
-  events = filterEventsForSession(events, topic, session.sub, account?.tenantId as string | undefined);
+  events = filterEventsForSession(
+    events,
+    topic,
+    session.sub,
+    account?.tenantId as string | undefined
+  );
   const meta = await store.getMeta(topic);
   return jsonResponse({ topic, since, events, meta });
 }

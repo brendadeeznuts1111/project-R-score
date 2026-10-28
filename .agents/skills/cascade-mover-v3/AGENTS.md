@@ -2,11 +2,11 @@
 
 ## Available Agents
 
-| Agent | Vault | Token Source | Purpose |
-|-------|-------|-------------|---------|
-| `factorywager-agent` | factorywager | `scripts/agent-env.sh factorywager` | Deploy, inject, infra |
-| `bet-ticker-agent` | bet-ticker | `scripts/agent-env.sh bet-ticker` | Poller health, token health |
-| `cascade-agent` | cascade-mover | `scripts/agent-env.sh cascade-mover` | Sports intelligence, market data |
+| Agent                | Vault         | Token Source                         | Purpose                          |
+| -------------------- | ------------- | ------------------------------------ | -------------------------------- |
+| `factorywager-agent` | factorywager  | `scripts/agent-env.sh factorywager`  | Deploy, inject, infra            |
+| `bet-ticker-agent`   | bet-ticker    | `scripts/agent-env.sh bet-ticker`    | Poller health, token health      |
+| `cascade-agent`      | cascade-mover | `scripts/agent-env.sh cascade-mover` | Sports intelligence, market data |
 
 ## Quick Start
 
@@ -22,7 +22,9 @@ PROTON_PASS_AGENT_REASON="Checking R2 bucket config" \
 ## MCP Servers Available
 
 The workspace `.mcp.json` provides:
-- **cascade-mover** — 43 tools for sports intelligence (odds, lines, confidence, market state)
+
+- **cascade-mover** — 43 tools for sports intelligence (odds, lines, confidence,
+  market state)
 - **cloudflare** — Pages, R2, DNS management
 - **github** — repo management, PRs, issues
 - **ast-grep** — code search and structure
@@ -55,8 +57,10 @@ bun run proton:inject:factorywager
 ## Token Auto-Refresh
 
 The poller token auto-refresh loop:
+
 1. cascade-token gets JWT via Chrome WebView (every 10 min)
 2. Poller-token-sync copies JWT to poller (every 5 min)
 3. Poller reads fresh token — no auth errors
 
-If loop breaks: `ssh bet-ticker-vps "cd /opt/bet-ticker-worker-v1.1 && bun run admin:reseed -- --access-token=<jwt>"`
+If loop breaks:
+`ssh bet-ticker-vps "cd /opt/bet-ticker-worker-v1.1 && bun run admin:reseed -- --access-token=<jwt>"`

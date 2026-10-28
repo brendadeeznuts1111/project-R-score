@@ -5,8 +5,8 @@
  * https://bun.com/docs/guides/process/ctrl-c
  */
 
-console.info("⌨️  Bun CTRL+C Demo (Hardened)\n");
-console.info("=".repeat(74));
+console.info('⌨️  Bun CTRL+C Demo (Hardened)\n');
+console.info('='.repeat(74));
 
 const resources: Array<{ name: string; close: () => Promise<void> | void }> = [];
 let shuttingDown = false;
@@ -31,47 +31,47 @@ async function gracefulShutdown(reason: string, exitCode = 0) {
   process.exit(exitCode);
 }
 
-process.on("SIGINT", () => {
+process.on('SIGINT', () => {
   interruptCount += 1;
   console.info(`\n⚡ SIGINT received (count=${interruptCount})`);
   if (interruptCount >= 2) {
-    void gracefulShutdown("SIGINT");
+    void gracefulShutdown('SIGINT');
     return;
   }
-  console.info("   send SIGINT again to confirm shutdown");
+  console.info('   send SIGINT again to confirm shutdown');
 });
 
-process.on("beforeExit", (code) => {
+process.on('beforeExit', code => {
   console.info(`[lifecycle] beforeExit code=${code}`);
 });
-process.on("exit", (code) => {
+process.on('exit', code => {
   console.info(`[lifecycle] exit code=${code}`);
 });
 
-console.info("\n1️⃣ Registering resources");
-console.info("-".repeat(74));
+console.info('\n1️⃣ Registering resources');
+console.info('-'.repeat(74));
 let ticks = 0;
 const heartbeat = setInterval(() => {
   ticks += 1;
   console.info(`heartbeat ${ticks}`);
 }, 120);
-registerResource("heartbeat-interval", () => clearInterval(heartbeat));
+registerResource('heartbeat-interval', () => clearInterval(heartbeat));
 
 const worker = Bun.spawn({
   cmd: [
     process.execPath,
-    "-e",
+    '-e',
     `
       process.on("SIGTERM", () => process.exit(0));
       setInterval(() => console.info("[child] alive"), 200);
     `,
   ],
-  stdout: "pipe",
-  stderr: "pipe",
+  stdout: 'pipe',
+  stderr: 'pipe',
 });
-registerResource("child-process", () => {
+registerResource('child-process', () => {
   try {
-    worker.kill("SIGTERM");
+    worker.kill('SIGTERM');
   } catch {
     // already exited
   }
@@ -83,10 +83,10 @@ void (async () => {
   }
 })();
 
-console.info("\n2️⃣ Deterministic SIGINT simulation");
-console.info("-".repeat(74));
-console.info("sending SIGINT now, then a confirming SIGINT in 300ms...");
-process.kill(process.pid, "SIGINT");
+console.info('\n2️⃣ Deterministic SIGINT simulation');
+console.info('-'.repeat(74));
+console.info('sending SIGINT now, then a confirming SIGINT in 300ms...');
+process.kill(process.pid, 'SIGINT');
 setTimeout(() => {
-  process.kill(process.pid, "SIGINT");
+  process.kill(process.pid, 'SIGINT');
 }, 300);

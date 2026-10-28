@@ -1,6 +1,7 @@
 # Bun v1.3.9 Performance Benchmarks
 
-This directory contains benchmarks demonstrating the performance improvements in Bun v1.3.9.
+This directory contains benchmarks demonstrating the performance improvements in
+Bun v1.3.9.
 
 ## 📊 Available Benchmarks
 
@@ -18,6 +19,7 @@ Demonstrates the **3.9x speedup** for fixed-count regex patterns:
   - `/(a+)*b/` - Zero-or-more quantifiers
 
 **Run:**
+
 ```bash
 bun run benchmarks/regex-jit-benchmark.ts
 ```
@@ -34,6 +36,7 @@ Demonstrates improvements in `Bun.Markdown`:
 - **6% smaller** heap size during rendering
 
 **Run:**
+
 ```bash
 bun run benchmarks/markdown-performance.ts
 ```
@@ -52,6 +55,7 @@ Demonstrates JavaScriptCore optimizations:
 - **AbortSignal.abort():** ~6% faster with no listeners
 
 **Run:**
+
 ```bash
 bun run benchmarks/string-optimizations.ts
 ```
@@ -70,45 +74,52 @@ bun run --parallel "benchmarks:*"
 
 ## 📈 Expected Results
 
-| Feature | Improvement | Notes |
-|---------|-------------|-------|
-| Fixed-count regex | **3.9x faster** | JIT-compiled patterns |
-| SIMD regex prefix | **16 bytes/scan** | ARM64 & x86_64 |
-| Markdown (small) | **28% faster** | React renderer |
-| Markdown (medium) | **7% faster** | React renderer |
-| Markdown (large) | **7.4% faster** | React renderer |
-| HTML escaping | **3-15% faster** | SIMD acceleration |
-| String#startsWith | **1.42x faster** | DFG/FTL intrinsic |
-| String#startsWith (const) | **5.76x faster** | Constant folding |
-| String#trim | **1.17x faster** | Direct pointer access |
-| String#trimEnd | **1.42x faster** | Direct pointer access |
-| Set#size | **2.24x faster** | Intrinsic optimization |
-| Map#size | **2.74x faster** | Intrinsic optimization |
-| AbortSignal.abort() | **~6% faster** | No listener optimization |
+| Feature                   | Improvement       | Notes                    |
+| ------------------------- | ----------------- | ------------------------ |
+| Fixed-count regex         | **3.9x faster**   | JIT-compiled patterns    |
+| SIMD regex prefix         | **16 bytes/scan** | ARM64 & x86_64           |
+| Markdown (small)          | **28% faster**    | React renderer           |
+| Markdown (medium)         | **7% faster**     | React renderer           |
+| Markdown (large)          | **7.4% faster**   | React renderer           |
+| HTML escaping             | **3-15% faster**  | SIMD acceleration        |
+| String#startsWith         | **1.42x faster**  | DFG/FTL intrinsic        |
+| String#startsWith (const) | **5.76x faster**  | Constant folding         |
+| String#trim               | **1.17x faster**  | Direct pointer access    |
+| String#trimEnd            | **1.42x faster**  | Direct pointer access    |
+| Set#size                  | **2.24x faster**  | Intrinsic optimization   |
+| Map#size                  | **2.74x faster**  | Intrinsic optimization   |
+| AbortSignal.abort()       | **~6% faster**    | No listener optimization |
 
 ## 🔍 Understanding the Results
 
 ### RegExp JIT
 
-The JIT compiler optimizes patterns with fixed-count quantifiers. Patterns with variable quantifiers (`+`, `*`) remain in the interpreter.
+The JIT compiler optimizes patterns with fixed-count quantifiers. Patterns with
+variable quantifiers (`+`, `*`) remain in the interpreter.
 
 **Optimization tip:** Use `{n}` instead of `+` when the count is known.
 
 ### Markdown Performance
 
-SIMD acceleration is most noticeable with documents containing many special characters (`&`, `<`, `>`, `"`). The React renderer benefits from cached tag strings.
+SIMD acceleration is most noticeable with documents containing many special
+characters (`&`, `<`, `>`, `"`). The React renderer benefits from cached tag
+strings.
 
-**Optimization tip:** Larger documents with fewer special characters see the biggest gains.
+**Optimization tip:** Larger documents with fewer special characters see the
+biggest gains.
 
 ### String Optimizations
 
-All string optimizations are automatic and require no code changes. The improvements come from JavaScriptCore's DFG/FTL JIT tiers.
+All string optimizations are automatic and require no code changes. The
+improvements come from JavaScriptCore's DFG/FTL JIT tiers.
 
-**Optimization tip:** Constant folding provides the biggest gains - use string literals when possible.
+**Optimization tip:** Constant folding provides the biggest gains - use string
+literals when possible.
 
 ### Collection Size
 
-The `.size` getter is now an intrinsic, eliminating generic getter call overhead.
+The `.size` getter is now an intrinsic, eliminating generic getter call
+overhead.
 
 **Optimization tip:** No changes needed - just upgrade to Bun v1.3.9!
 

@@ -128,10 +128,7 @@ function jsonResponseFromText(
   return new Response(text, { status: 200, headers });
 }
 
-function wrapStaticRegistryResponse(
-  res: Response,
-  cors: Record<string, string>
-): Response {
+function wrapStaticRegistryResponse(res: Response, cors: Record<string, string>): Response {
   const headers: Record<string, string> = {
     'Content-Type': res.headers.get('Content-Type') || 'application/json; charset=utf-8',
     'Cache-Control': 'public, max-age=60, s-maxage=300',

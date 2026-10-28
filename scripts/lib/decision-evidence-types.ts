@@ -74,4 +74,3 @@ export type DecisionVerificationResult = {
   valid: boolean;
   errors: string[];
 };
-

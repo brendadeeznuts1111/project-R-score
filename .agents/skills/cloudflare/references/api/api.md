@@ -105,6 +105,7 @@ try {
 ```
 
 **Common Error Types:**
+
 - `AuthenticationError` (401) - Invalid token
 - `PermissionDeniedError` (403) - Insufficient scope
 - `NotFoundError` (404) - Resource not found
@@ -199,6 +200,7 @@ client.dns.records.create(
 
 ## See Also
 
-- [configuration.md](./configuration.md) - SDK configuration, environment variables
+- [configuration.md](./configuration.md) - SDK configuration, environment
+  variables
 - [patterns.md](./patterns.md) - Real-world patterns and workflows
 - [gotchas.md](./gotchas.md) - Rate limits, troubleshooting

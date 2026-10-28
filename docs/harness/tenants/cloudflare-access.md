@@ -8,11 +8,17 @@ authorization selector. Proton Pass is the credential source for automation.
 
 Live status (verified 2026-07-31 — see `.cloudflare-access.yml` header):
 
-- `ledger.factory-wager.com` — whole hostname behind Access. **APPLIED** (302 → Access login).
-- ~~`reasonix.factory-wager.com` — whole hostname behind Access.~~ **DECOMMISSIONED 2026-07-28** (never provisioned; app removed from policy).
-- `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** (302 → Access login).
-- `project-r-score.pages.dev/portal` — production Pages portal behind Access. **APPLIED** (302 → Access login).
-- Pages branch and hash preview hostnames — **PAGES-OWNED TARGET**; sampled previews returned public 200 on 2026-07-31. Enable the project-level preview Access policy in Pages settings.
+- `ledger.factory-wager.com` — whole hostname behind Access. **APPLIED** (302 →
+  Access login).
+- ~~`reasonix.factory-wager.com` — whole hostname behind Access.~~
+  **DECOMMISSIONED 2026-07-28** (never provisioned; app removed from policy).
+- `score.factory-wager.com/portal` — portal path behind Access. **APPLIED** (302
+  → Access login).
+- `project-r-score.pages.dev/portal` — production Pages portal behind Access.
+  **APPLIED** (302 → Access login).
+- Pages branch and hash preview hostnames — **PAGES-OWNED TARGET**; sampled
+  previews returned public 200 on 2026-07-31. Enable the project-level preview
+  Access policy in Pages settings.
 - `score.factory-wager.com/registry` and public proof/API read routes stay
   outside this app so package and verification consumers remain non-interactive.
 - Pages preview deployments are public by default. Their protection owner is
@@ -31,15 +37,16 @@ deleting them.
    SSO). Operators sign in with an allowlisted personal or `@factory-wager.com`
    inbox.
 2. Each managed app uses an explicit `email: { email: … }` allowlist (OR
-   includes). Source of truth: [`.cloudflare-access.yml`](../../../.cloudflare-access.yml).
-   Keep live Access policies in sync when adding/removing operators.
+   includes). Source of truth:
+   [`.cloudflare-access.yml`](../../../.cloudflare-access.yml). Keep live Access
+   policies in sync when adding/removing operators.
 3. Domain-wide `email_domain` OTP is **not** the SSO contract (rejected by
    `bun run cloudflare:access:verify`).
 4. Interactive sessions are capped at four hours.
 5. Access authorization cookies remain `HttpOnly`. Do not enable a binding
    cookie or change `SameSite` without browser-flow verification.
-6. App Launcher visibility is configured after the application policies
-   pass authorized and unauthorized tests.
+6. App Launcher visibility is configured after the application policies pass
+   authorized and unauthorized tests.
 7. GitHub `noreply` commit emails cannot authenticate — use real inboxes only.
 
 Current Cloudflare references:
@@ -103,12 +110,13 @@ persisting the credential outside the vault-derived `.env`/Reasonix cache.
 
 ## Doctor probes (live edge)
 
-`portal-cli doctor` group **`infra`** observes edge behavior (no Access API token required):
+`portal-cli doctor` group **`infra`** observes edge behavior (no Access API
+token required):
 
-| Check | Level | Proves |
-|-------|-------|--------|
+| Check                 | Level | Proves                                                                                                                        |
+| --------------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------- |
 | `infra-ledger-access` | fatal | `ledger.factory-wager.com` returns Access challenge (302 → `*.cloudflareaccess.com` or `www-authenticate: Cloudflare-Access`) |
-| `infra-portal-access` | warn | both `score.factory-wager.com/portal/` **and** `project-r-score.pages.dev/portal/` are Access-enforced |
+| `infra-portal-access` | warn  | both `score.factory-wager.com/portal/` **and** `project-r-score.pages.dev/portal/` are Access-enforced                        |
 
 ```bash
 bun tools/portal-cli.ts doctor --env ci --group infra
@@ -124,19 +132,19 @@ bun --env-file ~/.reasonix/.env run cloudflare:access:edge:validate
 
 This command requires Ledger, both production portal hostnames, and the newest
 Pages preview to challenge with Access. It simultaneously requires the public
-registry route to remain JSON and carry the shared security-header contract.
-It never uses `CLOUDFLARE_ACCESS_API_TOKEN` and cannot mutate policy.
+registry route to remain JSON and carry the shared security-header contract. It
+never uses `CLOUDFLARE_ACCESS_API_TOKEN` and cannot mutate policy.
 
 ### Live status (re-probed 2026-07-31)
 
-| Surface | Edge | Doctor |
-|---------|------|--------|
-| `ledger.factory-wager.com` | **Access 302** | `infra-ledger-access` PASS |
-| `score.factory-wager.com/portal` | **Access 302** | `infra-portal-access` PASS |
-| `project-r-score.pages.dev/portal` | **Access 302** | (same) |
-| sampled branch/hash preview hosts | **public 200** | not covered by production-path doctor |
-| `terminal.factory-wager.com` | **NXDOMAIN** (CNAME deleted 2026-07-28) | `infra-terminal-host` — host gone; see [tunnel-inventory](tunnel-inventory.md) · [brand-alignment](../../brand-alignment.md) |
-| `reasonix.factory-wager.com` | **NXDOMAIN** | `infra-reasonix-dns` info (expected) |
+| Surface                            | Edge                                    | Doctor                                                                                                                       |
+| ---------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `ledger.factory-wager.com`         | **Access 302**                          | `infra-ledger-access` PASS                                                                                                   |
+| `score.factory-wager.com/portal`   | **Access 302**                          | `infra-portal-access` PASS                                                                                                   |
+| `project-r-score.pages.dev/portal` | **Access 302**                          | (same)                                                                                                                       |
+| sampled branch/hash preview hosts  | **public 200**                          | not covered by production-path doctor                                                                                        |
+| `terminal.factory-wager.com`       | **NXDOMAIN** (CNAME deleted 2026-07-28) | `infra-terminal-host` — host gone; see [tunnel-inventory](tunnel-inventory.md) · [brand-alignment](../../brand-alignment.md) |
+| `reasonix.factory-wager.com`       | **NXDOMAIN**                            | `infra-reasonix-dns` info (expected)                                                                                         |
 
 ```bash
 bun tools/portal-cli.ts doctor --group infra --no-write          # live
@@ -190,9 +198,10 @@ and static responses passing through the edge use root
 [`lib/http/cloudflare-security-headers.ts`](../../../lib/http/cloudflare-security-headers.ts).
 Tests enforce parity while preserving route-specific CORS and cache headers.
 `bun run verify:pages-edge` checks the deployed contract on one static asset and
-one Pages Function response so `_headers`/middleware drift is visible after deploy.
+one Pages Function response so `_headers`/middleware drift is visible after
+deploy.
 
-The contract sets a frame/object/base-restricted CSP, `DENY` framing,
-`nosniff`, no-referrer, a restrictive permissions policy, COOP, and one-year
-HSTS. HSTS omits `includeSubDomains` until every `factory-wager.com` hostname
-has an HTTPS inventory and owner.
+The contract sets a frame/object/base-restricted CSP, `DENY` framing, `nosniff`,
+no-referrer, a restrictive permissions policy, COOP, and one-year HSTS. HSTS
+omits `includeSubDomains` until every `factory-wager.com` hostname has an HTTPS
+inventory and owner.

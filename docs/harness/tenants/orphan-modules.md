@@ -7,12 +7,14 @@
 
 ## Signal (failure)
 
-`bun run check:harness-orphans` lists `lib/harness` modules with no importers outside themselves.
+`bun run check:harness-orphans` lists `lib/harness` modules with no importers
+outside themselves.
 
 ## Intervention (repair)
 
 1. Reproduce: `bun run check:harness-orphans`
-2. Wire the module into a consumer (test, spine, script, or sibling harness import) **or** delete/merge the dead module
+2. Wire the module into a consumer (test, spine, script, or sibling harness
+   import) **or** delete/merge the dead module
 3. Re-run: `bun run check:harness-orphans`
 
 ## Retirement

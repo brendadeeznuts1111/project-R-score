@@ -37,7 +37,14 @@
     {
       "id": "5",
       "name": "Runtime",
-      "components": ["Service", "Registry", "SemverMatcher", "snapshot-validation", "policy-constraints", "auto-remediation"],
+      "components": [
+        "Service",
+        "Registry",
+        "SemverMatcher",
+        "snapshot-validation",
+        "policy-constraints",
+        "auto-remediation"
+      ],
       "status": "integrated",
       "entry": "bun supply-chain packages",
       "paths": {

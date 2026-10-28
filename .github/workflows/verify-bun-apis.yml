@@ -2,24 +2,24 @@ name: Verify Bun APIs
 
 on:
   schedule:
-    - cron: '0 6 * * *'
+    - cron: "0 6 * * *"
   push:
     branches: [main]
     paths:
-      - 'tools/bun-api-oneliners.ts'
-      - 'tools/bun-ops-oneliners.ts'
-      - 'tools/bun-api-verify.ts'
-      - 'lib/bun-api-proof.ts'
-      - 'lib/operations/**'
-      - 'package.json'
-      - 'bun.lock'
+      - "tools/bun-api-oneliners.ts"
+      - "tools/bun-ops-oneliners.ts"
+      - "tools/bun-api-verify.ts"
+      - "lib/bun-api-proof.ts"
+      - "lib/operations/**"
+      - "package.json"
+      - "bun.lock"
   pull_request:
     paths:
-      - 'tools/bun-api-oneliners.ts'
-      - 'tools/bun-ops-oneliners.ts'
-      - 'tools/bun-api-verify.ts'
-      - 'lib/bun-api-proof.ts'
-      - 'lib/operations/**'
+      - "tools/bun-api-oneliners.ts"
+      - "tools/bun-ops-oneliners.ts"
+      - "tools/bun-api-verify.ts"
+      - "lib/bun-api-proof.ts"
+      - "lib/operations/**"
   workflow_dispatch:
 
 concurrency:

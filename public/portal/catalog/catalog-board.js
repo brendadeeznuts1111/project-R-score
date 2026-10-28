@@ -91,13 +91,13 @@ function allCategories() {
 
 function filteredAccounts() {
   const q = query.toLowerCase().trim();
-  const cats =
-    categoryFilters.size > 0 ? categoryFilters : new Set(allCategories());
+  const cats = categoryFilters.size > 0 ? categoryFilters : new Set(allCategories());
   return accounts.filter(a => {
     if (statusFilter && a.status !== statusFilter) return false;
     if (!cats.has(a.category)) return false;
     if (!q) return true;
-    const hay = `${a.platform ?? ''} ${a.account_identifier ?? ''} ${a.partner_name ?? ''}`.toLowerCase();
+    const hay =
+      `${a.platform ?? ''} ${a.account_identifier ?? ''} ${a.partner_name ?? ''}`.toLowerCase();
     return hay.includes(q);
   });
 }
@@ -105,7 +105,8 @@ function filteredAccounts() {
 function sortedAccounts(rows) {
   const list = [...rows];
   if (sortKey === 'balance') list.sort((a, b) => (b.balance || 0) - (a.balance || 0));
-  else if (sortKey === 'date') list.sort((a, b) => new Date(b.opened_at || 0) - new Date(a.opened_at || 0));
+  else if (sortKey === 'date')
+    list.sort((a, b) => new Date(b.opened_at || 0) - new Date(a.opened_at || 0));
   else list.sort((a, b) => (a.platform || '').localeCompare(b.platform || ''));
   return list;
 }
@@ -113,7 +114,9 @@ function sortedAccounts(rows) {
 function showSkeletons() {
   const stats = $('cat-stats');
   if (stats) {
-    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join('');
+    stats.innerHTML = Array.from({ length: 4 }, () => `<div class="portal-skeleton"></div>`).join(
+      ''
+    );
   }
   const gate = $('cat-gate');
   if (gate) {
@@ -193,9 +196,7 @@ function renderHero() {
     parts.push(`${accounts.length} accounts`);
     if (wirePayload?.summary) {
       const s = wirePayload.summary;
-      parts.push(
-        `wire ${s.books ?? '?'} books · ${s.states ?? '?'} states`
-      );
+      parts.push(`wire ${s.books ?? '?'} books · ${s.states ?? '?'} states`);
     }
     meta.textContent = parts.join(' · ') || 'live catalog';
   }
@@ -249,9 +250,7 @@ function renderStats() {
   stats.innerHTML = items
     .map(item => {
       const activeStat =
-        item.filter?.kind === 'status'
-          ? statusFilter === item.filter.value
-          : false;
+        item.filter?.kind === 'status' ? statusFilter === item.filter.value : false;
       const disabled = item.filter == null ? ' disabled' : '';
       const activeCls = activeStat ? ' active' : '';
       const dataAttr =
@@ -402,7 +401,10 @@ function renderScrapeWire(payload) {
     ['book aliases', s.bookAliases],
     ['league aliases', s.leagueAliases],
   ]
-    .map(([label, n]) => `<span class="wire-stat"><strong>${esc(n ?? '—')}</strong> ${esc(label)}</span>`)
+    .map(
+      ([label, n]) =>
+        `<span class="wire-stat"><strong>${esc(n ?? '—')}</strong> ${esc(label)}</span>`
+    )
     .join('');
 
   const books = Array.isArray(payload.bookRegistry) ? payload.bookRegistry : [];
@@ -434,7 +436,14 @@ function renderScrapeWire(payload) {
   $('wire-leagues').innerHTML = leagues.length
     ? leagues
         .map(row =>
-          wireChip(row.label, row.key, row.conceptId, row.sport, row.hex || '', row.colorKey || row.key)
+          wireChip(
+            row.label,
+            row.key,
+            row.conceptId,
+            row.sport,
+            row.hex || '',
+            row.colorKey || row.key
+          )
         )
         .join('')
     : '<span class="wire-stat">No leagueRegistry in bake</span>';
@@ -449,7 +458,9 @@ function renderScrapeWire(payload) {
   const phases = Array.isArray(payload.phaseRegistry) ? payload.phaseRegistry : [];
   $('wire-phases').innerHTML = phases.length
     ? phases.map(row => wireChip(row.label, row.key, row.conceptId)).join('')
-    : ['pregame', 'live'].map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`).join('');
+    : ['pregame', 'live']
+        .map(key => `<span class="wire-chip"><code>${esc(key)}</code></span>`)
+        .join('');
 
   const states = Array.isArray(payload.stateRegistry) ? payload.stateRegistry : [];
   $('wire-states').innerHTML = states.length
@@ -494,7 +505,8 @@ async function loadRelatedBakes() {
       headers: { Accept: 'application/json' },
     });
     if (res.ok) renderScrapeWire(await res.json());
-    else if ($('wire-stats')) $('wire-stats').textContent = `scrape-wire-taxonomy HTTP ${res.status}`;
+    else if ($('wire-stats'))
+      $('wire-stats').textContent = `scrape-wire-taxonomy HTTP ${res.status}`;
   } catch (err) {
     if ($('wire-stats')) {
       $('wire-stats').textContent =

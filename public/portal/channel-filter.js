@@ -76,20 +76,19 @@ class ChannelFilter extends HTMLElement {
   }
 
   applyFilter() {
-    const channels = Array.from(
-      this.querySelectorAll('input[name="channel"]:checked')
-    ).map(cb => /** @type {HTMLInputElement} */ (cb).value);
-    const subsystems = Array.from(
-      this.querySelectorAll('input[name="subsystem"]:checked')
-    ).map(cb => /** @type {HTMLInputElement} */ (cb).value);
+    const channels = Array.from(this.querySelectorAll('input[name="channel"]:checked')).map(
+      cb => /** @type {HTMLInputElement} */ (cb).value
+    );
+    const subsystems = Array.from(this.querySelectorAll('input[name="subsystem"]:checked')).map(
+      cb => /** @type {HTMLInputElement} */ (cb).value
+    );
     const root = this.closest('operations-dashboard') || document;
     root.querySelectorAll('.verification-result').forEach(card => {
       const channel = card.getAttribute('data-channel') || '';
       const subsystem = card.getAttribute('data-subsystem') || 'other';
       const channelOk = channels.length === 0 || channels.includes(channel);
       const subsystemOk = subsystems.length === 0 || subsystems.includes(subsystem);
-      /** @type {HTMLElement} */ (card).style.display =
-        channelOk && subsystemOk ? '' : 'none';
+      /** @type {HTMLElement} */ (card).style.display = channelOk && subsystemOk ? '' : 'none';
     });
     // Ops panels: data-subsystem="mixed" stays when any pillar is selected;
     // empty / missing attr always visible.

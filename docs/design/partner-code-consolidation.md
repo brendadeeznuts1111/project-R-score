@@ -1,6 +1,7 @@
 # Partner code consolidation review
 
 <!-- REF:ID 0.1.partner-code-consolidation -->
+
 <a id="0.1.partner-code-consolidation"></a>
 
 Status: extraction in progress (2026-08-05)

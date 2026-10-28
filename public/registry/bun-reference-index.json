@@ -238,10 +238,7 @@
   ],
   "semver": {
     "api": "Bun.semver",
-    "functions": [
-      "order",
-      "satisfies"
-    ],
+    "functions": ["order", "satisfies"],
     "docs": "https://bun.com/docs/runtime/semver"
   },
   "interop": {

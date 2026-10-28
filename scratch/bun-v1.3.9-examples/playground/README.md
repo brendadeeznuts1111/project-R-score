@@ -1,6 +1,7 @@
 # Bun v1.3.9 Interactive Playground
 
-An interactive playground showcasing all features and implementations from Bun v1.3.9.
+An interactive playground showcasing all features and implementations from Bun
+v1.3.9.
 
 ## 🚀 Quick Start
 
@@ -25,59 +26,73 @@ bun run demo:performance   # Performance optimizations
 ## 📋 Available Demos
 
 ### 1. Parallel & Sequential Scripts
+
 **File:** `demos/parallel-scripts.ts`
 
 Demonstrates:
+
 - `bun run --parallel` - Concurrent script execution
 - `bun run --sequential` - Sequential script execution
 - Pre/post script grouping
 - Prefixed output format
 
 ### 2. HTTP/2 Connection Upgrades
+
 **File:** `demos/http2-upgrade.ts`
 
 Demonstrates:
+
 - `net.Server → Http2SecureServer` connection upgrade pattern
 - Forwarding raw TCP connections to HTTP/2 server
 - Used by http2-wrapper, crawlee, and custom proxies
 
 ### 3. Mock Auto-Cleanup (Symbol.dispose)
+
 **File:** `demos/mock-dispose.ts`
 
 Demonstrates:
+
 - Automatic mock restoration with `using` keyword
 - Works with `spyOn()` and `mock()`
 - Cleanup even on exceptions
 - No need for manual `mockRestore()`
 
 ### 4. NO_PROXY Environment Variable
+
 **File:** `demos/no-proxy.ts`
 
 Demonstrates:
+
 - `NO_PROXY` now respected even with explicit proxy options
 - Works with `fetch()` and `WebSocket`
 - Local development proxy bypass
 
 ### 5. CPU Profiling Interval
+
 **File:** `demos/cpu-profiling.ts`
 
 Demonstrates:
+
 - `--cpu-prof-interval` flag
 - Configurable sampling interval (microseconds)
 - Higher resolution profiling
 
 ### 6. ESM Bytecode Compilation
+
 **File:** `demos/esm-bytecode.ts`
 
 Demonstrates:
+
 - ESM bytecode support in `--compile`
 - `--format=esm` with `--bytecode`
 - Faster startup and smaller files
 
 ### 7. Performance Optimizations
+
 **File:** `demos/performance.ts`
 
 Demonstrates:
+
 - RegExp JIT (3.9x speedup)
 - Markdown rendering (3-15% faster)
 - String optimizations (startsWith, trim)
@@ -93,6 +108,7 @@ bun start
 ```
 
 This will show a menu where you can:
+
 - Select a demo by number (1-7)
 - Run all demos (`all`)
 - View the menu again (`menu`)
@@ -137,6 +153,7 @@ playground/
 ## 💡 Features Showcased
 
 ### Script Orchestration
+
 - ✅ Parallel execution (`--parallel`)
 - ✅ Sequential execution (`--sequential`)
 - ✅ Workspace support (`--filter`, `--workspaces`)
@@ -144,18 +161,22 @@ playground/
 - ✅ Pre/post script grouping
 
 ### Networking
+
 - ✅ HTTP/2 connection upgrades
 - ✅ NO_PROXY environment variable
 
 ### Testing
+
 - ✅ Mock auto-cleanup with `Symbol.dispose`
 - ✅ `using` keyword support
 
 ### Build & Compilation
+
 - ✅ ESM bytecode compilation
 - ✅ CPU profiling intervals
 
 ### Performance
+
 - ✅ RegExp JIT optimization
 - ✅ Markdown rendering improvements
 - ✅ String method optimizations
@@ -165,6 +186,7 @@ playground/
 ## 🎯 Usage Examples
 
 ### Interactive Menu
+
 ```bash
 $ bun start
 
@@ -192,11 +214,13 @@ Enter your choice:
 ```
 
 ### Run Specific Demo
+
 ```bash
 bun run demo:parallel
 ```
 
 ### Run All Demos
+
 ```bash
 bun run all
 ```
@@ -211,15 +235,18 @@ bun run all
 ## 🐛 Troubleshooting
 
 ### Demo fails to run
+
 - Make sure you're using Bun v1.3.9 or later: `bun --version`
 - Check that all dependencies are installed: `bun install`
 
 ### HTTP/2 demo requires OpenSSL
+
 - The HTTP/2 demo generates self-signed certificates
 - If OpenSSL is not available, it will use mock certificates
 - For real testing, install OpenSSL
 
 ### Performance numbers vary
+
 - Performance benchmarks are affected by system load
 - Run multiple times for more accurate results
 - Numbers are relative, not absolute

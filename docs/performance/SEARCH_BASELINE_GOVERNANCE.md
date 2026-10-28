@@ -1,6 +1,7 @@
 # Search Baseline Governance
 
-This policy governs updates to search benchmark pinned baselines under `.search/`.
+This policy governs updates to search benchmark pinned baselines under
+`.search/`.
 
 ## Required Metadata
 
@@ -47,4 +48,5 @@ The compare gate supports rolling same-pack trend assessment.
 - `SEARCH_BENCH_PIN_TREND_WINDOW` (default `5`)
 - `SEARCH_BENCH_PIN_TREND_MIN_SAMPLES` (default `3`)
 
-In CI Search Governance, trend strict mode is enabled so fail-level trend regressions block the gate.
+In CI Search Governance, trend strict mode is enabled so fail-level trend
+regressions block the gate.

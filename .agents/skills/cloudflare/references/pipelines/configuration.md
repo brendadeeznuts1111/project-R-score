@@ -1,15 +1,20 @@
 # Pipelines Configuration
 
-Templates for creating streams, sinks, and pipelines via CLI, REST, or Terraform. For the full flag/field list and allowed values, pull `https://developers.cloudflare.com/pipelines/reference/wrangler-commands/` and the streams/sinks/pipelines docs.
+Templates for creating streams, sinks, and pipelines via CLI, REST, or
+Terraform. For the full flag/field list and allowed values, pull
+`https://developers.cloudflare.com/pipelines/reference/wrangler-commands/` and
+the streams/sinks/pipelines docs.
 
 ## Naming Rules
 
-- **Streams, sinks, pipelines** use underscores: `my_stream`, `my_sink`, `my_pipeline`.
+- **Streams, sinks, pipelines** use underscores: `my_stream`, `my_sink`,
+  `my_pipeline`.
 - **Buckets** use hyphens: `my-bucket`.
 
 ## Schema (Structured Streams)
 
-Schema is a JSON object with a `fields` array; each field has `name`, `type`, `required`.
+Schema is a JSON object with a `fields` array; each field has `name`, `type`,
+`required`.
 
 ```json
 {
@@ -20,11 +25,15 @@ Schema is a JSON object with a `fields` array; each field has `name`, `type`, `r
 }
 ```
 
-Field types include `string`, `bool`, `int32/64`, `float32/64`, `timestamp`, `json`, `binary`, `list`, `struct` (with nested `items`/`fields`). For the authoritative type list, see `https://developers.cloudflare.com/pipelines/sql-reference/sql-data-types/`.
+Field types include `string`, `bool`, `int32/64`, `float32/64`, `timestamp`,
+`json`, `binary`, `list`, `struct` (with nested `items`/`fields`). For the
+authoritative type list, see
+`https://developers.cloudflare.com/pipelines/sql-reference/sql-data-types/`.
 
 Unstructured streams (no schema) store everything in a single `value` column.
 
-> Pipelines auto-adds `__ingest_ts` (TIMESTAMP, day-partitioned). Do **not** include it in your schema.
+> Pipelines auto-adds `__ingest_ts` (TIMESTAMP, day-partitioned). Do **not**
+> include it in your schema.
 
 ## Option A: Interactive (Simplest)
 
@@ -56,9 +65,13 @@ npx wrangler pipelines create my_pipeline \
   --sql "INSERT INTO my_sink SELECT * FROM my_stream"
 ```
 
-Tuning knobs (`--compression`, `--roll-interval`, `--roll-size`, etc.) and their allowed values/defaults change — pull the wrangler-commands and sinks docs rather than hardcoding. Rule of thumb: prod `--roll-interval 300+`, dev `10` (creates many small files).
+Tuning knobs (`--compression`, `--roll-interval`, `--roll-size`, etc.) and their
+allowed values/defaults change — pull the wrangler-commands and sinks docs
+rather than hardcoding. Rule of thumb: prod `--roll-interval 300+`, dev `10`
+(creates many small files).
 
-> **⚠️ Pipelines are immutable.** SQL, schema, and sink config can't be changed — delete and recreate.
+> **⚠️ Pipelines are immutable.** SQL, schema, and sink config can't be changed
+> — delete and recreate.
 
 ## Option C: REST API (Programmatic)
 
@@ -91,25 +104,31 @@ curl -X POST "$BASE_URL/pipelines" -H "Authorization: Bearer $API_TOKEN" \
 
 **REST field names ≠ CLI flags** (common failure — not obvious from docs):
 
-| REST (config body) | CLI flag | Gotcha |
-|--------------------|----------|--------|
-| `"type": "r2_data_catalog"` | `--type r2-data-catalog` | underscores vs hyphens |
-| `"table_name"` | `--table` | different key |
-| `"token"` | `--catalog-token` | different key |
-| `"format": {"type": "parquet"}` | (implied) | required in REST, omitted in CLI |
+| REST (config body)              | CLI flag                 | Gotcha                           |
+| ------------------------------- | ------------------------ | -------------------------------- |
+| `"type": "r2_data_catalog"`     | `--type r2-data-catalog` | underscores vs hyphens           |
+| `"table_name"`                  | `--table`                | different key                    |
+| `"token"`                       | `--catalog-token`        | different key                    |
+| `"format": {"type": "parquet"}` | (implied)                | required in REST, omitted in CLI |
 
 ## Worker Binding
 
 ```jsonc
 // wrangler.jsonc
-{ "pipelines": [ { "stream": "<STREAM_ID>", "binding": "MY_STREAM" } ] }
+{ "pipelines": [{ "stream": "<STREAM_ID>", "binding": "MY_STREAM" }] }
 ```
 
-> Binding field is `"stream"` as of June 2026 (was `"pipeline"`, still accepted). Use the **stream ID** (`wrangler pipelines streams list`), not the pipeline ID. Redeploy after adding. Generate typed bindings with `npx wrangler types` → `Pipeline<Cloudflare.MyStreamRecord>` from `cloudflare:pipelines`.
+> Binding field is `"stream"` as of June 2026 (was `"pipeline"`, still
+> accepted). Use the **stream ID** (`wrangler pipelines streams list`), not the
+> pipeline ID. Redeploy after adding. Generate typed bindings with
+> `npx wrangler types` → `Pipeline<Cloudflare.MyStreamRecord>` from
+> `cloudflare:pipelines`.
 
 ## Terraform
 
-Resources: `cloudflare_pipeline_stream`, `cloudflare_pipeline_sink`, `cloudflare_pipeline`. For current attribute schemas pull `https://developers.cloudflare.com/pipelines/reference/terraform/`.
+Resources: `cloudflare_pipeline_stream`, `cloudflare_pipeline_sink`,
+`cloudflare_pipeline`. For current attribute schemas pull
+`https://developers.cloudflare.com/pipelines/reference/terraform/`.
 
 ```hcl
 resource "cloudflare_pipeline_stream" "my_stream" {
@@ -144,12 +163,13 @@ resource "cloudflare_pipeline" "my_pipeline" {
 
 ## Credentials
 
-| Type | Permission |
-|------|------------|
-| Catalog token (Iceberg sink) | R2 Storage Admin R&W + R2 Data Catalog R&W |
-| R2 credentials (raw sink) | Object Read & Write |
-| HTTP ingest token | Workers Pipelines Send (only if stream auth enabled) |
+| Type                         | Permission                                           |
+| ---------------------------- | ---------------------------------------------------- |
+| Catalog token (Iceberg sink) | R2 Storage Admin R&W + R2 Data Catalog R&W           |
+| R2 credentials (raw sink)    | Object Read & Write                                  |
+| HTTP ingest token            | Workers Pipelines Send (only if stream auth enabled) |
 
 ## See Also
 
-- [api.md](api.md) — sending events, REST API, lifecycle · [gotchas.md](gotchas.md) — immutability, REST≠CLI
+- [api.md](api.md) — sending events, REST API, lifecycle ·
+  [gotchas.md](gotchas.md) — immutability, REST≠CLI

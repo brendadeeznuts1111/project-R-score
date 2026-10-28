@@ -3,10 +3,7 @@
     "types": ["bun"],
     "target": "ESNext",
     "module": "ESNext",
-    "lib": [
-      "ESNext",
-      "DOM"
-    ],
+    "lib": ["ESNext", "DOM"],
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "allowJs": true,
@@ -49,11 +46,5 @@
     "*.ts",
     "*.tsx"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build",
-    ".bun",
-    "coverage"
-  ]
+  "exclude": ["node_modules", "dist", "build", ".bun", "coverage"]
 }

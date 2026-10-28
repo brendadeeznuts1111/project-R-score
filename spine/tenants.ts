@@ -12,10 +12,7 @@ import { joinPath } from '../lib/path-bun';
 const ROOT = joinPath(import.meta.dir, '..');
 
 export type SpineTenantId =
-  | 'docs-integrity'
-  | 'install-verify'
-  | 'registry-integrity'
-  | 'ops-snapshot';
+  'docs-integrity' | 'install-verify' | 'registry-integrity' | 'ops-snapshot';
 
 export type SpineTenant = {
   id: SpineTenantId;

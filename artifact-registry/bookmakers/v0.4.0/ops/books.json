@@ -27,9 +27,7 @@
       "restBaseUrl": "https://api.pinnacle.com/v1",
       "restProtocol": "http2",
       "apiKeyEnv": "PINNACLE_API_KEY",
-      "envVars": [
-        "PINNACLE_API_KEY"
-      ]
+      "envVars": ["PINNACLE_API_KEY"]
     },
     "caesars": {
       "id": "caesars",
@@ -102,9 +100,7 @@
         "telegram": null,
         "opsDesk": null
       },
-      "envVars": [
-        "BETMGM_DEFAULT_STATE"
-      ]
+      "envVars": ["BETMGM_DEFAULT_STATE"]
     },
     "hard-rock-florida": {
       "id": "hard-rock-florida",

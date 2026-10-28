@@ -38,7 +38,7 @@ for iter.Next() {
 const client = new Cloudflare({ maxRetries: 5 });
 
 try {
-  const zone = await client.zones.create({ /* ... */ });
+  const zone = await client.zones.create({/* ... */});
 } catch (err) {
   if (err instanceof Cloudflare.RateLimitError) {
     // Already retried 5 times with backoff
@@ -73,14 +73,16 @@ await Promise.all(records);
 import pLimit from 'p-limit';
 const limit = pLimit(10); // Max 10 concurrent
 
-const subdomains = ['www', 'api', 'cdn', /* many more */];
+const subdomains = ['www', 'api', 'cdn' /* many more */];
 const records = subdomains.map(subdomain =>
-  limit(() => client.dns.records.create({
-    zone_id: 'zone-id',
-    type: 'A',
-    name: `${subdomain}.example.com`,
-    content: '192.0.2.1',
-  }))
+  limit(() =>
+    client.dns.records.create({
+      zone_id: 'zone-id',
+      type: 'A',
+      name: `${subdomain}.example.com`,
+      content: '192.0.2.1',
+    })
+  )
 );
 await Promise.all(records);
 ```
@@ -118,17 +120,19 @@ for await (const record of client.dns.records.list({
 }
 
 // Update all to new IP
-await Promise.all(records.map(record =>
-  client.dns.records.update({
-    zone_id: 'zone-id',
-    dns_record_id: record.id,
-    type: 'A',
-    name: record.name,
-    content: '203.0.113.1', // New IP
-    proxied: record.proxied,
-    ttl: record.ttl,
-  })
-));
+await Promise.all(
+  records.map(record =>
+    client.dns.records.update({
+      zone_id: 'zone-id',
+      dns_record_id: record.id,
+      type: 'A',
+      name: record.name,
+      content: '203.0.113.1', // New IP
+      proxied: record.proxied,
+      ttl: record.ttl,
+    })
+  )
+);
 ```
 
 ## Filter and Collect Results
@@ -160,7 +164,9 @@ async function createZoneWithRetry(name: string, maxAttempts = 3) {
     } catch (err) {
       if (err instanceof Cloudflare.RateLimitError && attempt < maxAttempts) {
         const retryAfter = parseInt(err.headers['retry-after'] || '5');
-        console.log(`Rate limited, waiting ${retryAfter}s (retry ${attempt}/${maxAttempts})`);
+        console.log(
+          `Rate limited, waiting ${retryAfter}s (retry ${attempt}/${maxAttempts})`
+        );
         await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
       } else {
         throw err;

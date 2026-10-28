@@ -1076,34 +1076,21 @@
       "label": "Trading",
       "description": "Tennis HQ runtime · prediction reports · live desk metrics",
       "doc": "docs/harness/tenants/tennis-hq-registry.md",
-      "boardIds": [
-        "tennis",
-        "prediction-report"
-      ]
+      "boardIds": ["tennis", "prediction-report"]
     },
     {
       "id": "control",
       "label": "Control loop",
       "description": "Ops snapshot · TOC · dashboard · monitoring · compliance (MA/NJ)",
       "doc": "docs/harness/tenants/ops-loop-throughput.md",
-      "boardIds": [
-        "ops",
-        "compliance",
-        "dashboard",
-        "toc",
-        "monitoring"
-      ]
+      "boardIds": ["ops", "compliance", "dashboard", "toc", "monitoring"]
     },
     {
       "id": "identity",
       "label": "Identity & secrets",
       "description": "Auth board · vault · env inject · lockout / geo / JIT",
       "doc": "lib/identity/README.md",
-      "boardIds": [
-        "vault",
-        "env",
-        "identity"
-      ]
+      "boardIds": ["vault", "env", "identity"]
     },
     {
       "id": "knowledge",
@@ -1127,14 +1114,7 @@
       "label": "Platform",
       "description": "Packages graph · health · DOD · wiki hub",
       "doc": "docs/harness/AUTHORITY.md",
-      "boardIds": [
-        "home",
-        "registry",
-        "health",
-        "dod",
-        "packages",
-        "wiki"
-      ]
+      "boardIds": ["home", "registry", "health", "dod", "packages", "wiki"]
     }
   ]
 }

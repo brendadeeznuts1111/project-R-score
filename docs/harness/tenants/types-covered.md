@@ -17,7 +17,8 @@
 
 ## Retirement
 
-Remove when type-check is solely enforced by a required pre-merge gate that covers the same surfaces without a code-quality tenant.
+Remove when type-check is solely enforced by a required pre-merge gate that
+covers the same surfaces without a code-quality tenant.
 
 **Retirement verified** `false`  
 **Retirement check** proofId `lib-docs-typecheck`

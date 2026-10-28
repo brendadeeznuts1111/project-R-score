@@ -1,18 +1,21 @@
 # Codemode (Experimental)
 
-Fetch https://developers.cloudflare.com/agents/api-reference/codemode/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/api-reference/codemode/ for
+complete documentation.
 
-Codemode lets LLMs write and execute code that orchestrates your tools, instead of calling them one at a time. The LLM gets a single "write code" tool; generated JavaScript runs in an isolated Worker sandbox.
+Codemode lets LLMs write and execute code that orchestrates your tools, instead
+of calling them one at a time. The LLM gets a single "write code" tool;
+generated JavaScript runs in an isolated Worker sandbox.
 
 ## When to Use
 
-| Scenario | Use Codemode? |
-|----------|---------------|
-| Single tool call | No — standard tool calling is simpler |
-| Chained tool calls with logic | Yes |
-| Conditional logic across tools | Yes |
-| MCP multi-server workflows | Yes |
-| Simple Q&A chat | No |
+| Scenario                       | Use Codemode?                         |
+| ------------------------------ | ------------------------------------- |
+| Single tool call               | No — standard tool calling is simpler |
+| Chained tool calls with logic  | Yes                                   |
+| Conditional logic across tools | Yes                                   |
+| MCP multi-server workflows     | Yes                                   |
+| Simple Q&A chat                | No                                    |
 
 ## Setup
 
@@ -21,7 +24,7 @@ Codemode lets LLMs write and execute code that orchestrates your tools, instead 
 ```jsonc
 {
   "worker_loaders": [{ "binding": "LOADER" }],
-  "compatibility_flags": ["nodejs_compat"]
+  "compatibility_flags": ["nodejs_compat"],
 }
 ```
 
@@ -34,37 +37,41 @@ npm install @cloudflare/codemode ai zod
 ## Usage
 
 ```typescript
-import { createCodeTool } from "@cloudflare/codemode/ai";
-import { DynamicWorkerExecutor } from "@cloudflare/codemode";
-import { streamText, tool, convertToModelMessages } from "ai";
-import { z } from "zod";
+import { createCodeTool } from '@cloudflare/codemode/ai';
+import { DynamicWorkerExecutor } from '@cloudflare/codemode';
+import { streamText, tool, convertToModelMessages } from 'ai';
+import { z } from 'zod';
 
 const tools = {
   getWeather: tool({
-    description: "Get weather for a location",
+    description: 'Get weather for a location',
     inputSchema: z.object({ location: z.string() }),
-    execute: async ({ location }) => `Weather: ${location} 72°F`
+    execute: async ({ location }) => `Weather: ${location} 72°F`,
   }),
   sendEmail: tool({
-    description: "Send an email",
-    inputSchema: z.object({ to: z.string(), subject: z.string(), body: z.string() }),
-    execute: async ({ to, subject, body }) => `Email sent to ${to}`
-  })
+    description: 'Send an email',
+    inputSchema: z.object({
+      to: z.string(),
+      subject: z.string(),
+      body: z.string(),
+    }),
+    execute: async ({ to, subject, body }) => `Email sent to ${to}`,
+  }),
 };
 
 export class MyAgent extends Agent<Env, State> {
   async onChatMessage() {
     const executor = new DynamicWorkerExecutor({
-      loader: this.env.LOADER
+      loader: this.env.LOADER,
     });
 
     const codemode = createCodeTool({ tools, executor });
 
     const result = streamText({
       model,
-      system: "You are a helpful assistant.",
+      system: 'You are a helpful assistant.',
       messages: await convertToModelMessages(this.messages),
-      tools: { codemode }
+      tools: { codemode },
     });
 
     return result.toUIMessageStreamResponse();
@@ -78,9 +85,9 @@ export class MyAgent extends Agent<Env, State> {
 const codemode = createCodeTool({
   tools: {
     ...myTools,
-    ...this.mcp.getAITools()
+    ...this.mcp.getAITools(),
   },
-  executor
+  executor,
 });
 ```
 
@@ -97,7 +104,7 @@ const codemode = createCodeTool({
 ```typescript
 const executor = new DynamicWorkerExecutor({
   loader: env.LOADER,
-  globalOutbound: null           // default — fully isolated
+  globalOutbound: null, // default — fully isolated
   // globalOutbound: env.MY_SERVICE  // route through a Fetcher
 });
 ```

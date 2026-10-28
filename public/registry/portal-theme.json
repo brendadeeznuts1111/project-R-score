@@ -24,12 +24,7 @@
   ],
   "colorPolicy": {
     "rawLiteralMaximum": 0,
-    "consumerScopes": [
-      "components",
-      "style.css",
-      "venues.css",
-      "bun-1.4"
-    ],
+    "consumerScopes": ["components", "style.css", "venues.css", "bun-1.4"],
     "verificationCommand": "bun run validate:colors"
   }
 }

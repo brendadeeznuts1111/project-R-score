@@ -12,4 +12,5 @@ bun tools/doc-map-check.ts
 bun tools/harness-violations.ts --path lib --rule unknown
 ```
 
-Docs operate: [docs/BUN_DOCS_OPERATE.md](../docs/BUN_DOCS_OPERATE.md) · `bun run docs:refresh`.
+Docs operate: [docs/BUN_DOCS_OPERATE.md](../docs/BUN_DOCS_OPERATE.md) ·
+`bun run docs:refresh`.

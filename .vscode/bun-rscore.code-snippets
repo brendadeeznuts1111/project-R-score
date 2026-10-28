@@ -8,9 +8,9 @@
       "ensureDirectExecution();",
       "",
       "${2:// CLI implementation}",
-      ""
+      "",
     ],
-    "description": "Bun CLI shebang with entry guard (prevents accidental import execution)"
+    "description": "Bun CLI shebang with entry guard (prevents accidental import execution)",
   },
   "Bun Test Suite": {
     "prefix": "bun-test",
@@ -22,9 +22,9 @@
       "    ${3:expect(true).toBe(true);}",
       "  });",
       "});",
-      ""
+      "",
     ],
-    "description": "Bun test describe/test block"
+    "description": "Bun test describe/test block",
   },
   "Bun.serve HTTP Server": {
     "prefix": "bun-serve",
@@ -41,9 +41,9 @@
       "});",
       "",
       "console.log(`Listening on http://\\${server.hostname}:\\${server.port}`);",
-      ""
+      "",
     ],
-    "description": "Bun.serve HTTP server with health route"
+    "description": "Bun.serve HTTP server with health route",
   },
   "Bun Shell ($)": {
     "prefix": "bun-shell",
@@ -52,9 +52,9 @@
       "",
       "const result = await $`${1:echo hello}`.text();",
       "console.log(result.trim());",
-      ""
+      "",
     ],
-    "description": "Bun shell template literal"
+    "description": "Bun shell template literal",
   },
   "Bun MCP Tool Handler": {
     "prefix": "bun-mcp-tool",
@@ -64,9 +64,9 @@
       "  if (!${2:param}) return { error: '${2:param} is required' };",
       "  ${4:return { ok: true };}",
       "}",
-      ""
+      "",
     ],
-    "description": "MCP tool switch-case handler for Bun stdio servers"
+    "description": "MCP tool switch-case handler for Bun stdio servers",
   },
   "Bun MCP Stdio Server Header": {
     "prefix": "bun-mcp-server",
@@ -85,9 +85,9 @@
       "};",
       "",
       "${3:// tool handlers}",
-      ""
+      "",
     ],
-    "description": "MCP stdio server boilerplate header"
+    "description": "MCP stdio server boilerplate header",
   },
   "Bun R-Score Documentation Reference": {
     "prefix": "bun-rscore-docs",
@@ -99,9 +99,9 @@
       " * @see {@link https://bun.sh/docs/api/http#multiplexing} HTTP/2 multiplexing documentation",
       " * @see {@link https://bun.sh/docs/api/fetch#hardened} Hardened fetch documentation",
       " * @see {@link https://bun.sh/docs/guides/performance} Performance optimization guide",
-      " */"
+      " */",
     ],
-    "description": "Insert R-Score optimization documentation references"
+    "description": "Insert R-Score optimization documentation references",
   },
   "Bun Memory Pool Pattern": {
     "prefix": "bun-memory-pool",
@@ -117,9 +117,9 @@
       "  console.log(`File loaded at ptr ${filePtr}, size: ${fileSize} bytes`);",
       "} catch (error) {",
       "  console.error('Pool read failed:', error.message);",
-      "}"
+      "}",
     ],
-    "description": "Insert Bun memory pool usage pattern"
+    "description": "Insert Bun memory pool usage pattern",
   },
   "Bun HTTP/2 Multiplexer": {
     "prefix": "bun-http2-mux",
@@ -141,9 +141,9 @@
       "  console.log('HTTP/2 stats:', mux.getStats());",
       "} finally {",
       "  mux.disconnect();",
-      "}"
+      "}",
     ],
-    "description": "Insert HTTP/2 multiplexing pattern"
+    "description": "Insert HTTP/2 multiplexing pattern",
   },
   "Bun Hardened Fetch": {
     "prefix": "bun-hardened-fetch",
@@ -163,9 +163,9 @@
       "  console.log(`Status: ${response.status}, OK: ${response.ok}`);",
       "} catch (error) {",
       "  console.error('Hardened fetch failed:', error.message);",
-      "}"
+      "}",
     ],
-    "description": "Insert hardened fetch with TLS verification"
+    "description": "Insert hardened fetch with TLS verification",
   },
   "Bun Lazy File Loading": {
     "prefix": "bun-lazy-file",
@@ -191,9 +191,9 @@
       "  }",
       "} else {",
       "  console.log('File not found');",
-      "}"
+      "}",
     ],
-    "description": "Insert lazy file loading pattern"
+    "description": "Insert lazy file loading pattern",
   },
   "R-Score Calculation": {
     "prefix": "rscore-calc",
@@ -213,9 +213,9 @@
       "  }",
       "};",
       "",
-      "console.log(`R-Score: ${rScore.total_score.toFixed(3)}`);"
+      "console.log(`R-Score: ${rScore.total_score.toFixed(3)}`);",
     ],
-    "description": "Insert R-Score calculation formula"
+    "description": "Insert R-Score calculation formula",
   },
   "Bun Documentation Reference": {
     "prefix": "bun-doc-ref",
@@ -234,8 +234,8 @@
       "",
       "// Parse URL structure",
       "const parsed = docs.parseUrl('${2:https://bun.sh/docs/api/utils}');",
-      "console.log('Parsed URL:', parsed);"
+      "console.log('Parsed URL:', parsed);",
     ],
-    "description": "Insert documentation reference management"
-  }
+    "description": "Insert documentation reference management",
+  },
 }

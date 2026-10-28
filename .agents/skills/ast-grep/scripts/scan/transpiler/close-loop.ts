@@ -1,31 +1,27 @@
-import { resolve } from "node:path";
+import { resolve } from 'node:path';
 import {
   captureLoopBaseline,
   diffLoopBaselines,
   loadLoopBaseline,
   writeLoopBaseline,
   type LoopBaselineDelta,
-} from "./skill-loop-baseline.ts";
-import { validateNetworkGroundTruth } from "./network-ground-truth-validator.ts";
-import { runNetworkAuditOnce } from "./network-loop.ts";
+} from './skill-loop-baseline.ts';
+import { validateNetworkGroundTruth } from './network-ground-truth-validator.ts';
+import { runNetworkAuditOnce } from './network-loop.ts';
 import {
   formatSnapshotBenchStatus,
   runSnapshotBenchLoop,
   type SnapshotBenchSummary,
-} from "./snapshot-bench-loop.ts";
+} from './snapshot-bench-loop.ts';
 import {
   loadSkillLoopRegistry,
   resolveBenchSnapshotPreset,
   snapshotBenchSummaryToTick,
   type BenchSnapshotPresetSpec,
-} from "./skill-loop.ts";
+} from './skill-loop.ts';
 
 export type CloseLoopStepId =
-  | "seed"
-  | "ground-truth"
-  | "bench-snapshot"
-  | "baseline-diff"
-  | "baseline-write";
+  'seed' | 'ground-truth' | 'bench-snapshot' | 'baseline-diff' | 'baseline-write';
 
 export type CloseLoopStep = {
   id: CloseLoopStepId;
@@ -36,7 +32,7 @@ export type CloseLoopStep = {
 
 export type CloseLoopSummary = {
   schemaVersion: 1;
-  tool: "skill-loop-close-loop";
+  tool: 'skill-loop-close-loop';
   domain: string;
   scanPath?: string;
   steps: CloseLoopStep[];
@@ -69,7 +65,7 @@ export type CloseLoopOptions = {
 function pushStep(
   steps: CloseLoopStep[],
   step: CloseLoopStep,
-  onStep?: CloseLoopOptions["onStep"],
+  onStep?: CloseLoopOptions['onStep']
 ): void {
   steps.push(step);
   void onStep?.(step);
@@ -77,12 +73,12 @@ function pushStep(
 
 export function formatCloseLoopStatus(
   summary: CloseLoopSummary,
-  opts?: { verbose?: boolean },
+  opts?: { verbose?: boolean }
 ): string {
-  const stepBits = summary.steps.map((s) => `${s.id}=${s.ok ? "ok" : "fail"}`).join(" ");
+  const stepBits = summary.steps.map(s => `${s.id}=${s.ok ? 'ok' : 'fail'}`).join(' ');
   let line = `[loop] close-loop domain=${summary.domain} ok=${summary.ok} ${stepBits}`;
   if (summary.rating !== undefined) {
-    line += ` rating=${summary.rating} (${summary.grade ?? "?"})`;
+    line += ` rating=${summary.rating} (${summary.grade ?? '?'})`;
   }
   if (opts?.verbose && summary.bench) {
     const b = summary.bench;
@@ -93,9 +89,9 @@ export function formatCloseLoopStatus(
     }
   }
   if (summary.drift?.length) {
-    const drifted = summary.drift.filter((d) => d.drift);
+    const drifted = summary.drift.filter(d => d.drift);
     if (drifted.length) {
-      line += ` drift=${drifted.map((d) => d.skillId).join(",")}`;
+      line += ` drift=${drifted.map(d => d.skillId).join(',')}`;
     }
   }
   if (summary.loopBaselinePath) line += ` baseline=${summary.loopBaselinePath}`;
@@ -104,7 +100,7 @@ export function formatCloseLoopStatus(
 
 export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSummary> {
   const registry = await loadSkillLoopRegistry(opts.skillRoot);
-  const skillId = opts.skillId ?? "ast-grep";
+  const skillId = opts.skillId ?? 'ast-grep';
   const bs = resolveBenchSnapshotPreset(registry, skillId, {
     ...opts.benchSnapshot,
     domain: opts.domain ?? opts.benchSnapshot?.domain,
@@ -118,27 +114,35 @@ export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSum
   if (opts.seed === true && bs.scanPath) {
     const started = performance.now();
     try {
-      const { formatSeedStatus, seedNetworkBaseline } = await import("./network-seed.ts");
+      const { formatSeedStatus, seedNetworkBaseline } = await import('./network-seed.ts');
       const seed = await seedNetworkBaseline({
         skillRoot: opts.skillRoot,
         repo: opts.repo,
         scanPath: bs.scanPath,
         domain: bs.domain,
-        profileName: "supply-chain-network-dist",
+        profileName: 'supply-chain-network-dist',
       });
-      pushStep(steps, {
-        id: "seed",
-        ok: true,
-        elapsedMs: Math.round(performance.now() - started),
-        detail: formatSeedStatus(seed),
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'seed',
+          ok: true,
+          elapsedMs: Math.round(performance.now() - started),
+          detail: formatSeedStatus(seed),
+        },
+        opts.onStep
+      );
     } catch (e) {
-      pushStep(steps, {
-        id: "seed",
-        ok: false,
-        elapsedMs: Math.round(performance.now() - started),
-        detail: e instanceof Error ? e.message : String(e),
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'seed',
+          ok: false,
+          elapsedMs: Math.round(performance.now() - started),
+          detail: e instanceof Error ? e.message : String(e),
+        },
+        opts.onStep
+      );
     }
   }
 
@@ -150,7 +154,7 @@ export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSum
           skillRoot: opts.skillRoot,
           repo: opts.repo,
           scanPath: bs.scanPath,
-          profileName: "supply-chain-network-dist",
+          profileName: 'supply-chain-network-dist',
           domain: bs.domain,
           verbose: false,
         });
@@ -158,29 +162,37 @@ export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSum
       const gt = await validateNetworkGroundTruth({
         skillRoot: opts.skillRoot,
         repo: opts.repo,
-        ids: [
-          "sports-terminal-snapshot",
-          "security-policy-network",
-          "network-dist-profile",
-        ],
+        ids: ['sports-terminal-snapshot', 'security-policy-network', 'network-dist-profile'],
         liveAudit,
-        liveGroundTruthId: bs.domain === "sports-terminal-os" ? "sports-terminal-snapshot" : undefined,
+        liveGroundTruthId:
+          bs.domain === 'sports-terminal-os' ? 'sports-terminal-snapshot' : undefined,
       });
-      pushStep(steps, {
-        id: "ground-truth",
-        ok: gt.ok,
-        elapsedMs: Math.round(performance.now() - gtStart),
-        detail: gt.ok
-          ? `${gt.checks.filter((c) => c.ok).length}/${gt.checks.length} checks`
-          : gt.checks.filter((c) => !c.ok).map((c) => c.id).join(","),
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'ground-truth',
+          ok: gt.ok,
+          elapsedMs: Math.round(performance.now() - gtStart),
+          detail: gt.ok
+            ? `${gt.checks.filter(c => c.ok).length}/${gt.checks.length} checks`
+            : gt.checks
+                .filter(c => !c.ok)
+                .map(c => c.id)
+                .join(','),
+        },
+        opts.onStep
+      );
     } catch (e) {
-      pushStep(steps, {
-        id: "ground-truth",
-        ok: false,
-        elapsedMs: Math.round(performance.now() - gtStart),
-        detail: e instanceof Error ? e.message : String(e),
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'ground-truth',
+          ok: false,
+          elapsedMs: Math.round(performance.now() - gtStart),
+          detail: e instanceof Error ? e.message : String(e),
+        },
+        opts.onStep
+      );
     }
   }
 
@@ -200,23 +212,31 @@ export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSum
       signal: opts.signal,
     });
     benchOk = bench.passRate >= 1;
-    pushStep(steps, {
-      id: "bench-snapshot",
-      ok: benchOk,
-      elapsedMs: Math.round(performance.now() - benchStart),
-      detail: formatSnapshotBenchStatus(bench),
-    }, opts.onStep);
+    pushStep(
+      steps,
+      {
+        id: 'bench-snapshot',
+        ok: benchOk,
+        elapsedMs: Math.round(performance.now() - benchStart),
+        detail: formatSnapshotBenchStatus(bench),
+      },
+      opts.onStep
+    );
   } catch (e) {
-    pushStep(steps, {
-      id: "bench-snapshot",
-      ok: false,
-      elapsedMs: Math.round(performance.now() - benchStart),
-      detail: e instanceof Error ? e.message : String(e),
-    }, opts.onStep);
+    pushStep(
+      steps,
+      {
+        id: 'bench-snapshot',
+        ok: false,
+        elapsedMs: Math.round(performance.now() - benchStart),
+        detail: e instanceof Error ? e.message : String(e),
+      },
+      opts.onStep
+    );
   }
 
   const tick = bench ? snapshotBenchSummaryToTick(skillId, bench) : undefined;
-  const baselinePath = resolve(opts.skillRoot, "baselines/loop/skill-loop-baseline.json");
+  const baselinePath = resolve(opts.skillRoot, 'baselines/loop/skill-loop-baseline.json');
   let drift: LoopBaselineDelta[] | undefined;
 
   if (tick) {
@@ -229,24 +249,32 @@ export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSum
         strict: opts.failOnDrift === true,
       };
       drift = diffLoopBaselines(current, previous, driftOpts);
-      const drifted = drift.filter((d) => d.drift);
-      pushStep(steps, {
-        id: "baseline-diff",
-        ok: !opts.failOnDrift || drifted.length === 0,
-        elapsedMs: Math.round(performance.now() - diffStart),
-        detail: drifted.length
-          ? drifted.map((d) => `${d.skillId} Δ${d.rating_delta}`).join("; ")
-          : drift.some((d) => d.rating_delta !== 0)
-            ? `within tolerance (±${driftOpts.ratingDriftTolerance})`
-            : "no drift",
-      }, opts.onStep);
+      const drifted = drift.filter(d => d.drift);
+      pushStep(
+        steps,
+        {
+          id: 'baseline-diff',
+          ok: !opts.failOnDrift || drifted.length === 0,
+          elapsedMs: Math.round(performance.now() - diffStart),
+          detail: drifted.length
+            ? drifted.map(d => `${d.skillId} Δ${d.rating_delta}`).join('; ')
+            : drift.some(d => d.rating_delta !== 0)
+              ? `within tolerance (±${driftOpts.ratingDriftTolerance})`
+              : 'no drift',
+        },
+        opts.onStep
+      );
     } else {
-      pushStep(steps, {
-        id: "baseline-diff",
-        ok: true,
-        elapsedMs: Math.round(performance.now() - diffStart),
-        detail: "no prior baseline",
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'baseline-diff',
+          ok: true,
+          elapsedMs: Math.round(performance.now() - diffStart),
+          detail: 'no prior baseline',
+        },
+        opts.onStep
+      );
     }
   }
 
@@ -255,26 +283,34 @@ export async function runCloseLoop(opts: CloseLoopOptions): Promise<CloseLoopSum
     const writeStart = performance.now();
     try {
       loopBaselinePath = await writeLoopBaseline(opts.skillRoot, [tick], baselinePath);
-      pushStep(steps, {
-        id: "baseline-write",
-        ok: true,
-        elapsedMs: Math.round(performance.now() - writeStart),
-        detail: loopBaselinePath,
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'baseline-write',
+          ok: true,
+          elapsedMs: Math.round(performance.now() - writeStart),
+          detail: loopBaselinePath,
+        },
+        opts.onStep
+      );
     } catch (e) {
-      pushStep(steps, {
-        id: "baseline-write",
-        ok: false,
-        elapsedMs: Math.round(performance.now() - writeStart),
-        detail: e instanceof Error ? e.message : String(e),
-      }, opts.onStep);
+      pushStep(
+        steps,
+        {
+          id: 'baseline-write',
+          ok: false,
+          elapsedMs: Math.round(performance.now() - writeStart),
+          detail: e instanceof Error ? e.message : String(e),
+        },
+        opts.onStep
+      );
     }
   }
 
-  const ok = steps.every((s) => s.ok);
+  const ok = steps.every(s => s.ok);
   return {
     schemaVersion: 1,
-    tool: "skill-loop-close-loop",
+    tool: 'skill-loop-close-loop',
     domain: bs.domain,
     scanPath: bs.scanPath,
     steps,

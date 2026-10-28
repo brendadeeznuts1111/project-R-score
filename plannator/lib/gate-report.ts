@@ -2,15 +2,15 @@
  * Quality gate report builders and runners for plannator.
  */
 
-import { join } from "node:path";
+import { join } from 'node:path';
 
-export const REPO_ROOT = join(import.meta.dir, "..");
-export const DEFAULT_HTML_OUTPUT = join(REPO_ROOT, "reports", "gate-report.html");
-export const DEFAULT_JSON_OUTPUT = join(REPO_ROOT, "reports", "gate-report.json");
-export const DEFAULT_HISTORY_PATH = join(REPO_ROOT, "reports", "history.jsonl");
+export const REPO_ROOT = join(import.meta.dir, '..');
+export const DEFAULT_HTML_OUTPUT = join(REPO_ROOT, 'reports', 'gate-report.html');
+export const DEFAULT_JSON_OUTPUT = join(REPO_ROOT, 'reports', 'gate-report.json');
+export const DEFAULT_HISTORY_PATH = join(REPO_ROOT, 'reports', 'history.jsonl');
 export const HISTORY_LIMIT = 20;
 
-export type GateStatus = "pass" | "fail" | "skip";
+export type GateStatus = 'pass' | 'fail' | 'skip';
 
 export type GateDefinition = {
   id: string;
@@ -39,7 +39,7 @@ export type AstGrepRule = {
   message: string;
 };
 
-export type ReportMode = "live" | "fixture-pass" | "fixture-fail";
+export type ReportMode = 'live' | 'fixture-pass' | 'fixture-fail';
 
 export type Report = {
   generatedAt: string;
@@ -62,42 +62,42 @@ export type HistoryEntry = {
 
 export const GATES: GateDefinition[] = [
   {
-    id: "typecheck",
-    label: "Typecheck",
-    description: "TypeScript --noEmit across project sources",
-    cmd: ["bun", "run", "typecheck"],
+    id: 'typecheck',
+    label: 'Typecheck',
+    description: 'TypeScript --noEmit across project sources',
+    cmd: ['bun', 'run', 'typecheck'],
   },
   {
-    id: "ast-grep-test",
-    label: "ast-grep rules",
-    description: "Snapshot tests for Bun-native lint rules",
-    cmd: ["bun", "run", "ast-grep:test"],
+    id: 'ast-grep-test',
+    label: 'ast-grep rules',
+    description: 'Snapshot tests for Bun-native lint rules',
+    cmd: ['bun', 'run', 'ast-grep:test'],
   },
   {
-    id: "ast-grep-scan",
-    label: "ast-grep scan",
-    description: "Structural scan of project-owned TypeScript",
-    cmd: ["bun", "run", "ast-grep:scan"],
+    id: 'ast-grep-scan',
+    label: 'ast-grep scan',
+    description: 'Structural scan of project-owned TypeScript',
+    cmd: ['bun', 'run', 'ast-grep:scan'],
   },
   {
-    id: "test",
-    label: "Bun tests",
-    description: "Skill content, references, bun-native, and Effect boundary tests",
-    cmd: ["bun", "run", "test"],
+    id: 'test',
+    label: 'Bun tests',
+    description: 'Skill content, references, bun-native, and Effect boundary tests',
+    cmd: ['bun', 'run', 'test'],
   },
   {
-    id: "verify-hashes",
-    label: "Skill hashes",
-    description: "SHA256 verification against skills-lock.json",
-    cmd: ["./scripts/verify-hashes.sh"],
+    id: 'verify-hashes',
+    label: 'Skill hashes',
+    description: 'SHA256 verification against skills-lock.json',
+    cmd: ['./scripts/verify-hashes.sh'],
   },
 ];
 
 const GROUNDING_GATE: GateDefinition = {
-  id: "ground-references",
-  label: "Grounding refs",
-  description: "Verify local Bun and Effect reference cards",
-  cmd: ["bun", "run", "ground-references"],
+  id: 'ground-references',
+  label: 'Grounding refs',
+  description: 'Verify local Bun and Effect reference cards',
+  cmd: ['bun', 'run', 'ground-references'],
 };
 
 export function gatesForRun(includeGrounding: boolean): GateDefinition[] {
@@ -121,12 +121,12 @@ export function parseMetrics(
 ): Record<string, string | number> {
   const combined = `${stdout}\n${stderr}`;
 
-  if (id === "ast-grep-test") {
+  if (id === 'ast-grep-test') {
     const m = combined.match(/(\d+) passed;\s*(\d+) failed/);
     if (m) return { rules: Number(m[1]), failed: Number(m[2]) };
   }
 
-  if (id === "test") {
+  if (id === 'test') {
     const pass = combined.match(/(\d+) pass/);
     const fail = combined.match(/(\d+) fail/);
     const expects = combined.match(/(\d+) expect\(\) calls/);
@@ -137,20 +137,20 @@ export function parseMetrics(
     };
   }
 
-  if (id === "verify-hashes") {
+  if (id === 'verify-hashes') {
     const ok = (combined.match(/^OK:/gm) ?? []).length;
-    return { skills: ok, matched: combined.includes("All hashes match") ? "yes" : "no" };
+    return { skills: ok, matched: combined.includes('All hashes match') ? 'yes' : 'no' };
   }
 
-  if (id === "ast-grep-scan") {
+  if (id === 'ast-grep-scan') {
     const errors = (combined.match(/^error\[/gm) ?? []).length;
     const warnings = (combined.match(/^warning\[/gm) ?? []).length;
     return { errors, warnings };
   }
 
-  if (id === "ground-references") {
-    const localOk = combined.includes("local docs: OK");
-    return { localDocs: localOk ? "ok" : "fail" };
+  if (id === 'ground-references') {
+    const localOk = combined.includes('local docs: OK');
+    return { localDocs: localOk ? 'ok' : 'fail' };
   }
 
   return {};
@@ -159,15 +159,15 @@ export function parseMetrics(
 export function parseRuleYaml(text: string): AstGrepRule | null {
   const id = text.match(/^id:\s*(.+)$/m)?.[1]?.trim();
   if (!id) return null;
-  const severity = text.match(/^severity:\s*(\w+)/m)?.[1]?.trim() ?? "warning";
+  const severity = text.match(/^severity:\s*(\w+)/m)?.[1]?.trim() ?? 'warning';
   const messageMatch = text.match(/^message:\s*(.+)$/m)?.[1]?.trim();
-  const message = messageMatch?.replace(/^"(.*)"$/, "$1") ?? id;
+  const message = messageMatch?.replace(/^"(.*)"$/, '$1') ?? id;
   return { id, severity, message };
 }
 
 export async function loadAstGrepRules(root = REPO_ROOT): Promise<AstGrepRule[]> {
-  const rulesDir = join(root, "ast-grep", "rules");
-  const glob = new Bun.Glob("*.yml");
+  const rulesDir = join(root, 'ast-grep', 'rules');
+  const glob = new Bun.Glob('*.yml');
   const rules: AstGrepRule[] = [];
 
   for await (const file of glob.scan(rulesDir)) {
@@ -179,11 +179,11 @@ export async function loadAstGrepRules(root = REPO_ROOT): Promise<AstGrepRule[]>
   return rules.sort((a, b) => a.id.localeCompare(b.id));
 }
 
-export async function toolVersion(cmd: string[], fallback = "unknown"): Promise<string> {
-  const proc = Bun.spawn({ cmd, stdout: "pipe", stderr: "pipe" });
+export async function toolVersion(cmd: string[], fallback = 'unknown'): Promise<string> {
+  const proc = Bun.spawn({ cmd, stdout: 'pipe', stderr: 'pipe' });
   const text = await new Response(proc.stdout).text();
   await proc.exited;
-  return text.trim().split("\n")[0]?.trim() || fallback;
+  return text.trim().split('\n')[0]?.trim() || fallback;
 }
 
 export async function runGate(gate: GateDefinition, root = REPO_ROOT): Promise<GateResult> {
@@ -191,9 +191,9 @@ export async function runGate(gate: GateDefinition, root = REPO_ROOT): Promise<G
   const proc = Bun.spawn({
     cmd: gate.cmd,
     cwd: gate.cwd ?? root,
-    stdout: "pipe",
-    stderr: "pipe",
-    env: { ...Bun.env, FORCE_COLOR: "0" },
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env, FORCE_COLOR: '0' },
   });
 
   const [stdout, stderr] = await Promise.all([
@@ -202,13 +202,13 @@ export async function runGate(gate: GateDefinition, root = REPO_ROOT): Promise<G
   ]);
   const exitCode = await proc.exited;
   const durationMs = Math.round((Bun.nanoseconds() - start) / 1_000_000);
-  const status: GateStatus = exitCode === 0 ? "pass" : "fail";
+  const status: GateStatus = exitCode === 0 ? 'pass' : 'fail';
 
   return {
     id: gate.id,
     label: gate.label,
     description: gate.description,
-    command: gate.cmd.join(" "),
+    command: gate.cmd.join(' '),
     status,
     exitCode,
     durationMs,
@@ -218,10 +218,12 @@ export async function runGate(gate: GateDefinition, root = REPO_ROOT): Promise<G
   };
 }
 
-export async function runAllGates(options: {
-  root?: string;
-  includeGrounding?: boolean;
-} = {}): Promise<{ gates: GateResult[]; astGrepRules: AstGrepRule[] }> {
+export async function runAllGates(
+  options: {
+    root?: string;
+    includeGrounding?: boolean;
+  } = {}
+): Promise<{ gates: GateResult[]; astGrepRules: AstGrepRule[] }> {
   const root = options.root ?? REPO_ROOT;
   const definitions = gatesForRun(options.includeGrounding ?? false);
   const [astGrepRules, gates] = await Promise.all([
@@ -250,22 +252,21 @@ export function buildPipelineSvg(gates: GateResult[]): string {
       const x = pad + i * (boxW + gap);
       const y = 20;
       const fill =
-        gate.status === "pass"
-          ? "color-mix(in oklch, var(--success) 12%, var(--card))"
-          : "color-mix(in oklch, var(--destructive) 12%, var(--card))";
-      const stroke = gate.status === "pass" ? "var(--success)" : "var(--destructive)";
+        gate.status === 'pass'
+          ? 'color-mix(in oklch, var(--success) 12%, var(--card))'
+          : 'color-mix(in oklch, var(--destructive) 12%, var(--card))';
+      const stroke = gate.status === 'pass' ? 'var(--success)' : 'var(--destructive)';
       const arrow =
         i < gates.length - 1
           ? `<line x1="${x + boxW + 4}" y1="${y + boxH / 2}" x2="${x + boxW + gap - 4}" y2="${y + boxH / 2}" stroke="var(--muted-foreground)" stroke-width="1.5" marker-end="url(#arrow)"/>`
-          : "";
-      const label =
-        gate.label.length > 14 ? `${gate.label.slice(0, 12)}…` : gate.label;
+          : '';
+      const label = gate.label.length > 14 ? `${gate.label.slice(0, 12)}…` : gate.label;
       return `${arrow}
         <rect x="${x}" y="${y}" width="${boxW}" height="${boxH}" rx="8" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/>
         <text x="${x + boxW / 2}" y="${y + 22}" text-anchor="middle" font-family="var(--font-mono)" font-size="10" fill="var(--foreground)">${escapeHtml(label)}</text>
         <text x="${x + boxW / 2}" y="${y + 38}" text-anchor="middle" font-family="var(--font-mono)" font-size="9" fill="${stroke}">${gate.status.toUpperCase()}</text>`;
     })
-    .join("\n");
+    .join('\n');
 
   return `<svg class="pipeline" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gate pipeline">
     <defs>
@@ -278,7 +279,7 @@ export function buildPipelineSvg(gates: GateResult[]): string {
 }
 
 export function historyFromReport(report: Report): HistoryEntry {
-  const gatesPassed = report.gates.filter((g) => g.status === "pass").length;
+  const gatesPassed = report.gates.filter(g => g.status === 'pass').length;
   return {
     generatedAt: report.generatedAt,
     overall: report.overall,
@@ -296,8 +297,8 @@ export async function loadHistory(
   if (!(await file.exists())) return [];
 
   const lines = (await file.text())
-    .split("\n")
-    .map((l) => l.trim())
+    .split('\n')
+    .map(l => l.trim())
     .filter(Boolean);
 
   const entries: HistoryEntry[] = [];
@@ -311,49 +312,44 @@ export async function loadHistory(
   return entries;
 }
 
-export async function appendHistory(
-  report: Report,
-  path = DEFAULT_HISTORY_PATH
-): Promise<void> {
+export async function appendHistory(report: Report, path = DEFAULT_HISTORY_PATH): Promise<void> {
   const entry = historyFromReport(report);
   const line = `${JSON.stringify(entry)}\n`;
   const file = Bun.file(path);
-  const prior = (await file.exists()) ? await file.text() : "";
+  const prior = (await file.exists()) ? await file.text() : '';
   await Bun.write(path, prior + line);
 }
 
 export function buildHistoryChart(history: HistoryEntry[]): string {
-  if (history.length === 0) return "";
-  const maxMs = Math.max(...history.map((h) => h.totalDurationMs), 1);
+  if (history.length === 0) return '';
+  const maxMs = Math.max(...history.map(h => h.totalDurationMs), 1);
 
   const bars = history
-    .map((entry) => {
+    .map(entry => {
       const h = Math.max(12, Math.round((entry.totalDurationMs / maxMs) * 72));
-      const cls = entry.overall === "pass" ? "pass" : "fail";
+      const cls = entry.overall === 'pass' ? 'pass' : 'fail';
       const title = `${entry.generatedAt} · ${entry.overall} · ${formatDuration(entry.totalDurationMs)}`;
       return `<div class="hist-bar ${cls}" style="height:${h}px" title="${escapeHtml(title)}"></div>`;
     })
-    .join("");
+    .join('');
 
   const passRate = Math.round(
-    (history.filter((h) => h.overall === "pass").length / history.length) * 100
+    (history.filter(h => h.overall === 'pass').length / history.length) * 100
   );
-  const avgMs = Math.round(
-    history.reduce((sum, h) => sum + h.totalDurationMs, 0) / history.length
-  );
+  const avgMs = Math.round(history.reduce((sum, h) => sum + h.totalDurationMs, 0) / history.length);
 
   const rows = [...history]
     .reverse()
     .slice(0, 8)
     .map(
-      (entry) => `<tr>
+      entry => `<tr>
         <td>${escapeHtml(entry.generatedAt)}</td>
         <td><span class="badge ${entry.overall}">${entry.overall.toUpperCase()}</span></td>
         <td>${entry.gatesPassed}/${entry.gatesTotal}</td>
         <td>${formatDuration(entry.totalDurationMs)}</td>
       </tr>`
     )
-    .join("");
+    .join('');
 
   return `
     <section class="section">
@@ -371,29 +367,26 @@ export function buildHistoryChart(history: HistoryEntry[]): string {
     </section>`;
 }
 
-export async function buildFixtureReport(
-  mode: "pass" | "fail",
-  root = REPO_ROOT
-): Promise<Report> {
+export async function buildFixtureReport(mode: 'pass' | 'fail', root = REPO_ROOT): Promise<Report> {
   const astGrepRules = await loadAstGrepRules(root);
   const gates: GateResult[] = GATES.map((gate, index) => {
-    const failThis = mode === "fail" && gate.id === "ast-grep-scan";
+    const failThis = mode === 'fail' && gate.id === 'ast-grep-scan';
     return {
       id: gate.id,
       label: gate.label,
       description: gate.description,
-      command: gate.cmd.join(" "),
-      status: failThis ? "fail" : "pass",
+      command: gate.cmd.join(' '),
+      status: failThis ? 'fail' : 'pass',
       exitCode: failThis ? 1 : 0,
       durationMs: 80 + index * 40,
       stdout: failThis
-        ? "error[bun-serve-exact-signature]: Bun.serve expects an options object\nwarning[no-node-fs]: Prefer Bun.file"
-        : gate.id === "ast-grep-test"
-          ? "test result: ok. 15 passed; 0 failed"
-          : gate.id === "test"
-            ? "43 pass\n0 fail"
-            : "",
-      stderr: "",
+        ? 'error[bun-serve-exact-signature]: Bun.serve expects an options object\nwarning[no-node-fs]: Prefer Bun.file'
+        : gate.id === 'ast-grep-test'
+          ? 'test result: ok. 15 passed; 0 failed'
+          : gate.id === 'test'
+            ? '43 pass\n0 fail'
+            : '',
+      stderr: '',
       metrics: {},
     };
   });
@@ -404,10 +397,10 @@ export async function buildFixtureReport(
 
   return {
     generatedAt: new Date().toISOString(),
-    bunVersion: await toolVersion(["bun", "--version"]),
-    astGrepVersion: await toolVersion(["ast-grep", "--version"], "fixture"),
-    mode: mode === "pass" ? "fixture-pass" : "fixture-fail",
-    overall: mode === "pass" ? "pass" : "fail",
+    bunVersion: await toolVersion(['bun', '--version']),
+    astGrepVersion: await toolVersion(['ast-grep', '--version'], 'fixture'),
+    mode: mode === 'pass' ? 'fixture-pass' : 'fixture-fail',
+    overall: mode === 'pass' ? 'pass' : 'fail',
     totalDurationMs: gates.reduce((sum, g) => sum + g.durationMs, 0),
     gates,
     astGrepRules,
@@ -416,9 +409,9 @@ export async function buildFixtureReport(
 
 export function buildRuleGrid(rules: AstGrepRule[], rulesGatePassed: boolean): string {
   return rules
-    .map((rule) => {
-      const sevClass = rule.severity === "error" ? "error" : "warning";
-      const status = rulesGatePassed ? "tested" : "unknown";
+    .map(rule => {
+      const sevClass = rule.severity === 'error' ? 'error' : 'warning';
+      const status = rulesGatePassed ? 'tested' : 'unknown';
       return `<div class="rule-card">
         <div class="rule-head">
           <code class="rule-id">${escapeHtml(rule.id)}</code>
@@ -428,40 +421,38 @@ export function buildRuleGrid(rules: AstGrepRule[], rulesGatePassed: boolean): s
         <span class="rule-status ${status}">${status}</span>
       </div>`;
     })
-    .join("\n");
+    .join('\n');
 }
 
 export function buildHtml(report: Report, history: HistoryEntry[] = []): string {
-  const passed = report.gates.filter((g) => g.status === "pass").length;
-  const failed = report.gates.filter((g) => g.status === "fail").length;
+  const passed = report.gates.filter(g => g.status === 'pass').length;
+  const failed = report.gates.filter(g => g.status === 'fail').length;
   const rulesTested =
-    report.gates.find((g) => g.id === "ast-grep-test")?.metrics.rules ??
-    report.astGrepRules.length;
-  const tests = report.gates.find((g) => g.id === "test")?.metrics.tests ?? "—";
-  const rulesGatePassed =
-    report.gates.find((g) => g.id === "ast-grep-test")?.status === "pass";
-  const isFixture = report.mode !== "live";
+    report.gates.find(g => g.id === 'ast-grep-test')?.metrics.rules ?? report.astGrepRules.length;
+  const tests = report.gates.find(g => g.id === 'test')?.metrics.tests ?? '—';
+  const rulesGatePassed = report.gates.find(g => g.id === 'ast-grep-test')?.status === 'pass';
+  const isFixture = report.mode !== 'live';
   const overallLabel = isFixture
-    ? report.overall === "pass"
-      ? "Fixture demo — all gates passed (not a real run)"
+    ? report.overall === 'pass'
+      ? 'Fixture demo — all gates passed (not a real run)'
       : `Fixture demo — ${failed} gate(s) failed (not a real run)`
-    : report.overall === "pass"
-      ? "All gates passed"
+    : report.overall === 'pass'
+      ? 'All gates passed'
       : `${failed} gate(s) failed`;
-  const overallClass = report.overall === "pass" ? "pass" : "fail";
+  const overallClass = report.overall === 'pass' ? 'pass' : 'fail';
   const demoBanner = isFixture
     ? `<div class="demo-banner" role="note">
         <strong>Demo report</strong> — generated with <code>--fixture</code>; gates were not executed.
         Open <code>reports/gate-report.html</code> for the live run.
       </div>`
-    : "";
+    : '';
 
   const gateCards = report.gates
-    .map((gate) => {
-      const log = [gate.stdout, gate.stderr].filter(Boolean).join("\n").trim() || "(no output)";
+    .map(gate => {
+      const log = [gate.stdout, gate.stderr].filter(Boolean).join('\n').trim() || '(no output)';
       const metricChips = Object.entries(gate.metrics)
         .map(([k, v]) => `<span class="chip">${escapeHtml(k)}: ${escapeHtml(String(v))}</span>`)
-        .join("");
+        .join('');
 
       return `
         <article class="gate-card ${gate.status}">
@@ -477,14 +468,14 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
           </div>
           <p class="gate-desc">${escapeHtml(gate.description)}</p>
           <code class="gate-cmd">${escapeHtml(gate.command)}</code>
-          ${metricChips ? `<div class="chips">${metricChips}</div>` : ""}
+          ${metricChips ? `<div class="chips">${metricChips}</div>` : ''}
           <details class="log-details">
             <summary>Output log</summary>
             <pre class="log">${escapeHtml(log)}</pre>
           </details>
         </article>`;
     })
-    .join("\n");
+    .join('\n');
 
   const pipeline = buildPipelineSvg(report.gates);
   const ruleGrid = buildRuleGrid(report.astGrepRules, rulesGatePassed);
@@ -495,7 +486,7 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plannator Gate Report — ${isFixture ? "DEMO" : report.overall === "pass" ? "PASS" : "FAIL"}</title>
+  <title>Plannator Gate Report — ${isFixture ? 'DEMO' : report.overall === 'pass' ? 'PASS' : 'FAIL'}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
@@ -778,7 +769,7 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
 <body>
   <div class="container">
     <span class="eyebrow">Quality gates · Plannator</span>
-    <h1>Gate Report${isFixture ? " <span class=\"eyebrow\">(demo)</span>" : ""}</h1>
+    <h1>Gate Report${isFixture ? ' <span class="eyebrow">(demo)</span>' : ''}</h1>
 
     ${demoBanner}
 
@@ -833,22 +824,22 @@ export function buildHtml(report: Report, history: HistoryEntry[] = []): string 
 }
 
 export function buildGithubSummary(report: Report): string {
-  const icon = (s: GateStatus) => (s === "pass" ? "✅" : "❌");
+  const icon = (s: GateStatus) => (s === 'pass' ? '✅' : '❌');
   return [
-    "## Plannator gate report",
-    "",
-    `**Overall:** ${report.overall === "pass" ? "PASS" : "FAIL"} · ${formatDuration(report.totalDurationMs)}`,
-    "",
-    "| Gate | Status | Duration |",
-    "|------|--------|----------|",
+    '## Plannator gate report',
+    '',
+    `**Overall:** ${report.overall === 'pass' ? 'PASS' : 'FAIL'} · ${formatDuration(report.totalDurationMs)}`,
+    '',
+    '| Gate | Status | Duration |',
+    '|------|--------|----------|',
     ...report.gates.map(
-      (g) => `| ${g.label} | ${icon(g.status)} ${g.status} | ${formatDuration(g.durationMs)} |`
+      g => `| ${g.label} | ${icon(g.status)} ${g.status} | ${formatDuration(g.durationMs)} |`
     ),
-    "",
+    '',
     `**ast-grep rules:** ${report.astGrepRules.length} defined`,
-    "",
-    "Download the `gate-report` artifact for the HTML dashboard.",
-  ].join("\n");
+    '',
+    'Download the `gate-report` artifact for the HTML dashboard.',
+  ].join('\n');
 }
 
 export function buildJson(report: Report): string {

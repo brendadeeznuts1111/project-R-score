@@ -9,17 +9,11 @@
         "feature": "health.states",
         "expectedState": {
           "ok": true,
-          "states": [
-            "MA",
-            "NJ"
-          ]
+          "states": ["MA", "NJ"]
         },
         "actualState": {
           "ok": true,
-          "states": [
-            "MA",
-            "NJ"
-          ]
+          "states": ["MA", "NJ"]
         },
         "match": true,
         "notes": "GET /health lists regulated states"

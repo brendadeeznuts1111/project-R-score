@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 /**
  * Bun v1.3.9: HTTP/2 Connection Upgrade Demo
- * 
+ *
  * Demonstrates the fixed net.Server → Http2SecureServer upgrade pattern
  */
 
-import { createServer } from "node:net";
-import { createSecureServer } from "node:http2";
-import { randomUUID } from "node:crypto";
+import { createServer } from 'node:net';
+import { createSecureServer } from 'node:http2';
+import { randomUUID } from 'node:crypto';
 
-console.info("🔌 Bun v1.3.9: HTTP/2 Connection Upgrade Demo\n");
-console.info("=" .repeat(70));
+console.info('🔌 Bun v1.3.9: HTTP/2 Connection Upgrade Demo\n');
+console.info('='.repeat(70));
 
 // Generate self-signed certificate for demo
 async function generateCert(): Promise<{ key: string; cert: string }> {
@@ -29,8 +29,8 @@ MIIDXTCCAkWgAwIBAgIJAJC1HiIAZAiUMA0GCSqGSIb3Qa0B4x0zN0dWJxYWdlc3Qx
 
 // Demo 1: HTTP/2 Direct Server
 function demo1_directHTTP2Server() {
-  console.info("\n📦 Demo 1: Direct HTTP/2 Server");
-  console.info("-".repeat(70));
+  console.info('\n📦 Demo 1: Direct HTTP/2 Server');
+  console.info('-'.repeat(70));
   console.info(`
 import { createSecureServer } from "node:http2";
 
@@ -50,8 +50,8 @@ server.listen(8443);
 
 // Demo 2: Connection Upgrade Pattern (FIXED in v1.3.9)
 function demo2_connectionUpgrade() {
-  console.info("\n📦 Demo 2: Connection Upgrade Pattern (FIXED in v1.3.9)");
-  console.info("-".repeat(70));
+  console.info('\n📦 Demo 2: Connection Upgrade Pattern (FIXED in v1.3.9)');
+  console.info('-'.repeat(70));
   console.info(`
 import { createServer } from "node:net";
 import { createSecureServer } from "node:http2";
@@ -80,8 +80,8 @@ netServer.listen(8443);
 
 // Demo 3: HTTP/2 Proxy Server
 function demo3_http2Proxy() {
-  console.info("\n📦 Demo 3: HTTP/2 Proxy Server Pattern");
-  console.info("-".repeat(70));
+  console.info('\n📦 Demo 3: HTTP/2 Proxy Server Pattern');
+  console.info('-'.repeat(70));
   console.info(`
 import { createServer } from "node:net";
 import { createSecureServer, connect } from "node:http2";
@@ -136,8 +136,8 @@ proxy.listen(8443);
 
 // Demo 4: Connection Pool with HTTP/2
 function demo4_connectionPool() {
-  console.info("\n📦 Demo 4: HTTP/2 Connection Pool");
-  console.info("-".repeat(70));
+  console.info('\n📦 Demo 4: HTTP/2 Connection Pool');
+  console.info('-'.repeat(70));
   console.info(`
 import { createServer } from "node:net";
 import { createSecureServer } from "node:http2";
@@ -199,9 +199,9 @@ pool.createNetServer(8443);
 
 // Show what was fixed
 function showWhatWasFixed() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🔧 What Was Fixed in v1.3.9");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🔧 What Was Fixed in v1.3.9');
+  console.info('='.repeat(70));
   console.info(`
 BEFORE v1.3.9:
 ──────────────
@@ -237,9 +237,9 @@ AFFECTED LIBRARIES:
 
 // Show security considerations
 function showSecurityConsiderations() {
-  console.info("\n" + "=".repeat(70));
-  console.info("🔒 Security Considerations");
-  console.info("=".repeat(70));
+  console.info('\n' + '='.repeat(70));
+  console.info('🔒 Security Considerations');
+  console.info('='.repeat(70));
   console.info(`
 TLS CERTIFICATES:
 ─────────────────
@@ -268,8 +268,8 @@ async function main() {
   console.info(`Bun version: ${Bun.version}`);
   console.info(`Platform: ${process.platform} ${process.arch}\n`);
 
-  console.info("NOTE: This is a code demonstration.");
-  console.info("The actual server examples require valid TLS certificates.\n");
+  console.info('NOTE: This is a code demonstration.');
+  console.info('The actual server examples require valid TLS certificates.\n');
 
   demo1_directHTTP2Server();
   demo2_connectionUpgrade();
@@ -278,7 +278,7 @@ async function main() {
   showWhatWasFixed();
   showSecurityConsiderations();
 
-  console.info("\n✅ HTTP/2 Connection Upgrade demo complete!\n");
+  console.info('\n✅ HTTP/2 Connection Upgrade demo complete!\n');
 }
 
 if (import.meta.main) {

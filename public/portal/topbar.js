@@ -78,9 +78,8 @@ async function bootstrapSidebar() {
   const nav = document.getElementById('tenant-sidebar');
   if (!nav) return;
 
-  const { loadTenantManifest, resolveTenantId, renderSidebar } = await import(
-    './components/sidebar.js'
-  );
+  const { loadTenantManifest, resolveTenantId, renderSidebar } =
+    await import('./components/sidebar.js');
 
   const run = async () => {
     if (sidebarBootstrapped) return;

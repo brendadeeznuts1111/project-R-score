@@ -169,140 +169,64 @@
   "correlations": [
     {
       "sessionLane": "harness-infra",
-      "chromeDomains": [
-        "platform",
-        "knowledge"
-      ],
-      "conceptDomains": [
-        "operations",
-        "infrastructure",
-        "registry"
-      ],
-      "commitScopeHints": [
-        "harness",
-        "ci",
-        "lib",
-        "bun"
-      ],
+      "chromeDomains": ["platform", "knowledge"],
+      "conceptDomains": ["operations", "infrastructure", "registry"],
+      "commitScopeHints": ["harness", "ci", "lib", "bun"],
       "rationale": "Proof/config/hooks sessions usually land on platform chrome and operations/infrastructure concept ownership."
     },
     {
       "sessionLane": "partner",
-      "chromeDomains": [
-        "partner"
-      ],
-      "conceptDomains": [
-        "partners",
-        "accounting",
-        "telegram"
-      ],
-      "commitScopeHints": [
-        "ops",
-        "partners",
-        "partner"
-      ],
+      "chromeDomains": ["partner"],
+      "conceptDomains": ["partners", "accounting", "telegram"],
+      "commitScopeHints": ["ops", "partners", "partner"],
       "rationale": "Partner desk chats correlate to chrome partner Domain; meaning often spans partners/accounting/telegram ConceptDomains."
     },
     {
       "sessionLane": "portal-ui",
-      "chromeDomains": [
-        "knowledge",
-        "platform"
-      ],
-      "conceptDomains": [
-        "portal"
-      ],
-      "commitScopeHints": [
-        "portal",
-        "ui"
-      ],
+      "chromeDomains": ["knowledge", "platform"],
+      "conceptDomains": ["portal"],
+      "commitScopeHints": ["portal", "ui"],
       "rationale": "Static portal HTML/UX work is portal ConceptDomain; chrome routing often knowledge or platform."
     },
     {
       "sessionLane": "concepts",
-      "chromeDomains": [
-        "knowledge"
-      ],
-      "conceptDomains": [
-        "portal",
-        "registry",
-        "tbd"
-      ],
-      "commitScopeHints": [
-        "concepts",
-        "glossary",
-        "portal"
-      ],
+      "chromeDomains": ["knowledge"],
+      "conceptDomains": ["portal", "registry", "tbd"],
+      "commitScopeHints": ["concepts", "glossary", "portal"],
       "rationale": "Vocabulary/graph sessions sit under knowledge chrome; ConceptDomain varies by topic (often portal/registry)."
     },
     {
       "sessionLane": "tennis-hq",
-      "chromeDomains": [
-        "trading"
-      ],
-      "conceptDomains": [
-        "trading",
-        "marketdata",
-        "research"
-      ],
-      "commitScopeHints": [
-        "tennis",
-        "sports-terminal"
-      ],
+      "chromeDomains": ["trading"],
+      "conceptDomains": ["trading", "marketdata", "research"],
+      "commitScopeHints": ["tennis", "sports-terminal"],
       "rationale": "Tennis HQ producer/runtime aligns with trading chrome Domain and trading/marketdata concepts."
     },
     {
       "sessionLane": "git-ops-meta",
-      "chromeDomains": [
-        "platform"
-      ],
-      "conceptDomains": [
-        "operations"
-      ],
-      "commitScopeHints": [
-        "chore",
-        "docs",
-        "organization"
-      ],
+      "chromeDomains": ["platform"],
+      "conceptDomains": ["operations"],
+      "commitScopeHints": ["chore", "docs", "organization"],
       "rationale": "Rebase/ci/session-map meta work is platform chrome; operations ConceptDomain for tooling ownership."
     },
     {
       "sessionLane": "docs",
-      "chromeDomains": [
-        "knowledge",
-        "platform"
-      ],
-      "conceptDomains": [
-        "portal",
-        "operations"
-      ],
-      "commitScopeHints": [
-        "docs",
-        "organization",
-        "harness"
-      ],
+      "chromeDomains": ["knowledge", "platform"],
+      "conceptDomains": ["portal", "operations"],
+      "commitScopeHints": ["docs", "organization", "harness"],
       "rationale": "Doc translation/hygiene spans knowledge boards and platform authority docs."
     },
     {
       "sessionLane": "bugfix",
-      "chromeDomains": [
-        "platform"
-      ],
-      "conceptDomains": [
-        "tbd",
-        "operations"
-      ],
-      "commitScopeHints": [
-        "fix"
-      ],
+      "chromeDomains": ["platform"],
+      "conceptDomains": ["tbd", "operations"],
+      "commitScopeHints": ["fix"],
       "rationale": "Generic bug hunts have no stable product Domain; default platform chrome and tbd until scoped."
     },
     {
       "sessionLane": "empty-misc",
       "chromeDomains": [],
-      "conceptDomains": [
-        "tbd"
-      ],
+      "conceptDomains": ["tbd"],
       "commitScopeHints": [],
       "rationale": "Casual/empty sessions do not imply product Domain or commit scope."
     }

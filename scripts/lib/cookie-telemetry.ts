@@ -15,12 +15,14 @@ export async function storeCookieTelemetry(
   bucket: R2BucketLike,
   nowMs: number = Date.now()
 ): Promise<void> {
-  const normalizedDomain = String(domain || '').trim().toLowerCase();
+  const normalizedDomain = String(domain || '')
+    .trim()
+    .toLowerCase();
   if (!normalizedDomain) {
     throw new Error('domain is required');
   }
 
-  const keys = Array.from(cookies.keys()).map((key) => String(key));
+  const keys = Array.from(cookies.keys()).map(key => String(key));
   const labels = normalizedDomain.split('.');
   const subdomains = labels.length > 2 ? labels.slice(0, -2) : [];
 

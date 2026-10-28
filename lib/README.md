@@ -25,29 +25,29 @@ bun tools/harness-violations.ts --path lib/types --rule unknown
 
 ## Canonical docs
 
-| Role                                      | Path                                                                                                                          |
-| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Path SSOT                                 | [`docs/repo-docs.ts`](./docs/repo-docs.ts)                                                                                    |
-| Docs index                                | [`../docs/README.md`](../docs/README.md)                                                                                      |
-| Standards                                 | [`.custom-instructions.md`](../.custom-instructions.md)                                                                       |
-| Agents                                    | [`../AGENTS.md`](../AGENTS.md)                                                                                                |
-| Install                                   | [`../docs/UNIFIED.md`](../docs/UNIFIED.md)                                                                                    |
-| Wire                                      | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md)                                                                        |
-| Brands                                    | [`types/branded/README.md`](./types/branded/README.md)                                                                        |
-| Bun native capabilities                   | [`../docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md)                                                    |
+| Role                                      | Path                                                                                                                                |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Path SSOT                                 | [`docs/repo-docs.ts`](./docs/repo-docs.ts)                                                                                          |
+| Docs index                                | [`../docs/README.md`](../docs/README.md)                                                                                            |
+| Standards                                 | [`.custom-instructions.md`](../.custom-instructions.md)                                                                             |
+| Agents                                    | [`../AGENTS.md`](../AGENTS.md)                                                                                                      |
+| Install                                   | [`../docs/UNIFIED.md`](../docs/UNIFIED.md)                                                                                          |
+| Wire                                      | [`../docs/WIRE_BOUNDARY.md`](../docs/WIRE_BOUNDARY.md)                                                                              |
+| Brands                                    | [`types/branded/README.md`](./types/branded/README.md)                                                                              |
+| Bun native capabilities                   | [`../docs/BUN_NATIVE_CAPABILITIES.md`](../docs/BUN_NATIVE_CAPABILITIES.md)                                                          |
 | Console domain                            | [`console/`](./console/README.md) · facade [`console-depth.ts`](./console-depth.ts) · note [`console-depth.md`](./console-depth.md) |
-| Bun runtime hub (CLI · depth · utilities) | [`bun-runtime.md`](./bun-runtime.md) · flags [`../config/runtime-flags.json`](../config/runtime-flags.json)                   |
-| Terminal / PTY                            | [`terminal.ts`](./terminal.ts)                                                                                                |
-| Deep equals                               | [`deep-equals.ts`](./deep-equals.ts)                                                                                          |
-| Peek settle                               | [`peek-settle.ts`](./peek-settle.ts)                                                                                          |
-| Time / UUID v7                            | [`time.ts`](./time.ts)                                                                                                        |
-| Image metadata                            | [`image-metadata.ts`](./image-metadata.ts)                                                                                    |
-| Screenshot TEST-003                       | [`screenshot-remediation.ts`](./screenshot-remediation.ts)                                                                    |
-| Path (Bun)                                | [`path-bun.ts`](./path-bun.ts)                                                                                                |
-| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync` · mint helpers)                                      |
-| Probe temp dirs                           | [`tmp-probe.ts`](./tmp-probe.ts) (`makeTempDir` · `removeTempDir` · `systemTempDir`)                                          |
-| FS helpers (scripts plane)                | [`../scripts/lib/fs-bun.ts`](../scripts/lib/fs-bun.ts) re-exports path-bun                                                    |
-| ESLint bun-native ban                     | [`../config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts) (`node:fs` · `node:url` · `node:zlib` · …) |
+| Bun runtime hub (CLI · depth · utilities) | [`bun-runtime.md`](./bun-runtime.md) · flags [`../config/runtime-flags.json`](../config/runtime-flags.json)                         |
+| Terminal / PTY                            | [`terminal.ts`](./terminal.ts)                                                                                                      |
+| Deep equals                               | [`deep-equals.ts`](./deep-equals.ts)                                                                                                |
+| Peek settle                               | [`peek-settle.ts`](./peek-settle.ts)                                                                                                |
+| Time / UUID v7                            | [`time.ts`](./time.ts)                                                                                                              |
+| Image metadata                            | [`image-metadata.ts`](./image-metadata.ts)                                                                                          |
+| Screenshot TEST-003                       | [`screenshot-remediation.ts`](./screenshot-remediation.ts)                                                                          |
+| Path (Bun)                                | [`path-bun.ts`](./path-bun.ts)                                                                                                      |
+| Sync FS spine                             | [`bun-fs-utils.ts`](./bun-fs-utils.ts) (`ensureDirSync` · `readJsonSync` · mint helpers)                                            |
+| Probe temp dirs                           | [`tmp-probe.ts`](./tmp-probe.ts) (`makeTempDir` · `removeTempDir` · `systemTempDir`)                                                |
+| FS helpers (scripts plane)                | [`../scripts/lib/fs-bun.ts`](../scripts/lib/fs-bun.ts) re-exports path-bun                                                          |
+| ESLint bun-native ban                     | [`../config/eslint/harness/bun-native.ts`](../config/eslint/harness/bun-native.ts) (`node:fs` · `node:url` · `node:zlib` · …)       |
 
 ## Bun-native exceptions (`node:*` still present)
 
@@ -105,21 +105,21 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 
 ### Bun API wrappers · output · media
 
-| Module                                                     | Purpose                                                                                                       |
-| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| [`console/`](./console/README.md)                          | TTY/inspect domain · `cliOut` · `tones` · chrome · depth · layout                                             |
+| Module                                                     | Purpose                                                                                                               |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| [`console/`](./console/README.md)                          | TTY/inspect domain · `cliOut` · `tones` · chrome · depth · layout                                                     |
 | [`console-depth.ts`](./console-depth.ts)                   | Compat facade → `console/` · hub [`bun-runtime.md`](./bun-runtime.md) · note [`console-depth.md`](./console-depth.md) |
-| [`console-format-scan.ts`](./console-format-scan.ts)       | Console-format ratchet scanner (patterns + repo scan)                                                         |
-| [`table-format.ts`](./table-format.ts)                     | Rich box tables (uses `shouldColor` + layout from `console/`)                                                 |
-| [`terminal.ts`](./terminal.ts)                             | `Bun.Terminal` PTY helpers (`spawnWithTerminal`)                                                              |
-| [`deep-equals.ts`](./deep-equals.ts)                       | `Bun.deepEquals` · strict · changed-index                                                                     |
-| [`peek-settle.ts`](./peek-settle.ts)                       | `Bun.peek` · `awaitSettled` · `awaitAllSettled` · `peekIfSettled`                                             |
-| [`time.ts`](./time.ts)                                     | `Bun.nanoseconds` · `sleep`/`sleepSync` · `randomUUIDv7`                                                      |
-| [`escape-html.ts`](./escape-html.ts)                       | `Bun.escapeHTML` wrapper                                                                                      |
-| [`bytes-base64.ts`](./bytes-base64.ts)                     | `Uint8Array` base64 / base64url / hex (no `btoa`/`atob`)                                                      |
-| [`toml-stringify.ts`](./toml-stringify.ts)                 | Stable Bun 1.4 native TOML serialization boundary                                                            |
-| [`image-metadata.ts`](./image-metadata.ts)                 | `Bun.Image.metadata` evidence helpers                                                                         |
-| [`screenshot-remediation.ts`](./screenshot-remediation.ts) | TEST-003 screenshot metadata remediation                                                                      |
+| [`console-format-scan.ts`](./console-format-scan.ts)       | Console-format ratchet scanner (patterns + repo scan)                                                                 |
+| [`table-format.ts`](./table-format.ts)                     | Rich box tables (uses `shouldColor` + layout from `console/`)                                                         |
+| [`terminal.ts`](./terminal.ts)                             | `Bun.Terminal` PTY helpers (`spawnWithTerminal`)                                                                      |
+| [`deep-equals.ts`](./deep-equals.ts)                       | `Bun.deepEquals` · strict · changed-index                                                                             |
+| [`peek-settle.ts`](./peek-settle.ts)                       | `Bun.peek` · `awaitSettled` · `awaitAllSettled` · `peekIfSettled`                                                     |
+| [`time.ts`](./time.ts)                                     | `Bun.nanoseconds` · `sleep`/`sleepSync` · `randomUUIDv7`                                                              |
+| [`escape-html.ts`](./escape-html.ts)                       | `Bun.escapeHTML` wrapper                                                                                              |
+| [`bytes-base64.ts`](./bytes-base64.ts)                     | `Uint8Array` base64 / base64url / hex (no `btoa`/`atob`)                                                              |
+| [`toml-stringify.ts`](./toml-stringify.ts)                 | Stable Bun 1.4 native TOML serialization boundary                                                                     |
+| [`image-metadata.ts`](./image-metadata.ts)                 | `Bun.Image.metadata` evidence helpers                                                                                 |
+| [`screenshot-remediation.ts`](./screenshot-remediation.ts) | TEST-003 screenshot metadata remediation                                                                              |
 
 ### Proof · discovery · registry bake
 
@@ -142,14 +142,14 @@ Every `lib/*.ts` module is listed. Grouped for scan; paths stay flat under
 
 ### GitHub identity · issue taxonomy
 
-| Module                                                                           | Purpose                                                   |
-| -------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Module                                                                           | Purpose                                                                      |
+| -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
 | [`github-repository-ref.ts`](./github-repository-ref.ts)                         | Runtime resolve + global `GITHUB_ORIGIN` / `BUN_GITHUB_ENV` (not `REPO_URL`) |
-| [`github-issue-taxonomy-public.ts`](./github-issue-taxonomy-public.ts)           | Public projection of repo-owned issue taxonomy → registry |
-| [`github-issue-taxonomy-public-wire.ts`](./github-issue-taxonomy-public-wire.ts) | Wire verify for public taxonomy artifact                  |
-| [`github-issue-taxonomy-wire.ts`](./github-issue-taxonomy-wire.ts)               | Parse-once boundary for `factorywager.issue-spine.v1`     |
-| [`github-issue-tooling-wire.ts`](./github-issue-tooling-wire.ts)                 | GitHub provider issue JSON → interior spine               |
-| [`github-issue-tooling.ts`](./github-issue-tooling.ts)                           | Issue audit + label-sync planning                         |
+| [`github-issue-taxonomy-public.ts`](./github-issue-taxonomy-public.ts)           | Public projection of repo-owned issue taxonomy → registry                    |
+| [`github-issue-taxonomy-public-wire.ts`](./github-issue-taxonomy-public-wire.ts) | Wire verify for public taxonomy artifact                                     |
+| [`github-issue-taxonomy-wire.ts`](./github-issue-taxonomy-wire.ts)               | Parse-once boundary for `factorywager.issue-spine.v1`                        |
+| [`github-issue-tooling-wire.ts`](./github-issue-tooling-wire.ts)                 | GitHub provider issue JSON → interior spine                                  |
+| [`github-issue-tooling.ts`](./github-issue-tooling.ts)                           | Issue audit + label-sync planning                                            |
 
 ### Ops product (root-level modules)
 

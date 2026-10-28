@@ -9,9 +9,7 @@
   },
   "packages": {
     "quantum-domain-ops": {
-      "versions": [
-        "0.1.0"
-      ],
+      "versions": ["0.1.0"],
       "dist-tags": {
         "latest": "0.1.0"
       },
@@ -22,11 +20,7 @@
           "version": "0.1.0",
           "type": "library",
           "description": "Protocols for operating QuantumDomain instances — state collapse, entanglement, coherence monitoring",
-          "tags": [
-            "quantum",
-            "state-management",
-            "experimental"
-          ],
+          "tags": ["quantum", "state-management", "experimental"],
           "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> ⚠️ Requires Bun ≥1.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
           "publishedAt": "2026-07-20T03:00:00Z",
           "publisher": "factory-cli",
@@ -40,11 +34,7 @@
       }
     },
     "event-store": {
-      "versions": [
-        "1.0.0",
-        "1.1.0",
-        "2.0.0-beta"
-      ],
+      "versions": ["1.0.0", "1.1.0", "2.0.0-beta"],
       "dist-tags": {
         "latest": "1.1.0",
         "beta": "2.0.0-beta"
@@ -56,11 +46,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Event sourcing and CQRS primitives for sports trading pipelines",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "trading"
-          ],
+          "tags": ["event-sourcing", "cqrs", "trading"],
           "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
           "publishedAt": "2026-07-15T10:30:00Z",
           "publisher": "factory-cli",
@@ -77,12 +63,7 @@
           "version": "1.1.0",
           "type": "library",
           "description": "Event sourcing with snapshot support and R2 persistence",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "r2",
-            "snapshots"
-          ],
+          "tags": ["event-sourcing", "cqrs", "r2", "snapshots"],
           "publishedAt": "2026-07-20T14:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -98,12 +79,7 @@
           "version": "2.0.0-beta",
           "type": "library",
           "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
-          "tags": [
-            "event-sourcing",
-            "multi-tenant",
-            "streaming",
-            "beta"
-          ],
+          "tags": ["event-sourcing", "multi-tenant", "streaming", "beta"],
           "publishedAt": "2026-07-22T09:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -116,9 +92,7 @@
       }
     },
     "odds-engine": {
-      "versions": [
-        "0.7.0"
-      ],
+      "versions": ["0.7.0"],
       "dist-tags": {
         "latest": "0.7.0"
       },
@@ -129,11 +103,7 @@
           "version": "0.7.0",
           "type": "library",
           "description": "Real-time odds computation with Bayesian adjustment and market normalization",
-          "tags": [
-            "odds",
-            "bayesian",
-            "trading"
-          ],
+          "tags": ["odds", "bayesian", "trading"],
           "publishedAt": "2026-05-10T12:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -146,9 +116,7 @@
       }
     },
     "test-plugin": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0",
         "stable": "1.0.0"
@@ -160,10 +128,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Test plugin",
-          "tags": [
-            "latest",
-            "stable"
-          ],
+          "tags": ["latest", "stable"],
           "publishedAt": "2026-07-23T17:14:57.086Z",
           "publisher": "api",
           "storage": {
@@ -176,9 +141,7 @@
       }
     },
     "sdk-test-pkg": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -189,9 +152,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "SDK publish test",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T22:45:20.173Z",
           "publisher": "api",
           "storage": {

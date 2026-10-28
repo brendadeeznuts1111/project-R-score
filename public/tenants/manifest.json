@@ -6,11 +6,7 @@
       "icon": "factory",
       "portalDefaultPage": "dashboard",
       "staticRegistryPath": "/registry/factory/registry.json",
-      "roles": [
-        "admin",
-        "operator",
-        "viewer"
-      ],
+      "roles": ["admin", "operator", "viewer"],
       "iconSrc": "/icons/factory/mark-32.webp",
       "iconSvg": "/icons/factory/mark.svg",
       "color": "#3b82f6",
@@ -22,11 +18,7 @@
       "icon": "science",
       "portalDefaultPage": "dashboard",
       "staticRegistryPath": "/registry/science/registry.json",
-      "roles": [
-        "admin",
-        "operator",
-        "viewer"
-      ],
+      "roles": ["admin", "operator", "viewer"],
       "iconSrc": "/icons/science/mark-32.webp",
       "iconSvg": "/icons/science/mark.svg",
       "color": "#10b981",
@@ -38,11 +30,7 @@
       "icon": "tennis",
       "portalDefaultPage": "dashboard",
       "staticRegistryPath": "/registry/tennis/registry.json",
-      "roles": [
-        "admin",
-        "operator",
-        "viewer"
-      ],
+      "roles": ["admin", "operator", "viewer"],
       "iconSrc": "/icons/tennis/mark-32.webp",
       "iconSvg": "/icons/tennis/mark.svg",
       "color": "#f59e0b",

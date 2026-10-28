@@ -17,9 +17,7 @@
     "arch": "arm64",
     "channelResolveSource": "runtime",
     "githubAuthSource": "none",
-    "subsystems": [
-      "bundler"
-    ]
+    "subsystems": ["bundler"]
   },
   "results": [
     {
@@ -41,11 +39,7 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
         "report": "/registry/bundler-loaders-proof.json"
       },
-      "features": [
-        "bundler",
-        "loaders",
-        "css"
-      ],
+      "features": ["bundler", "loaders", "css"],
       "canonicalSource": "docs"
     },
     {
@@ -67,11 +61,7 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
         "report": "/registry/bundler-loaders-proof.json"
       },
-      "features": [
-        "bundler",
-        "loaders",
-        "css"
-      ],
+      "features": ["bundler", "loaders", "css"],
       "canonicalSource": "docs"
     },
     {
@@ -93,11 +83,7 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
         "report": "/registry/bundler-loaders-proof.json"
       },
-      "features": [
-        "bundler",
-        "loaders",
-        "jsonc"
-      ],
+      "features": ["bundler", "loaders", "jsonc"],
       "canonicalSource": "docs"
     },
     {
@@ -119,11 +105,7 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
         "report": "/registry/bundler-loaders-proof.json"
       },
-      "features": [
-        "bundler",
-        "loaders",
-        "text"
-      ],
+      "features": ["bundler", "loaders", "text"],
       "canonicalSource": "docs"
     },
     {
@@ -145,11 +127,7 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
         "report": "/registry/bundler-loaders-proof.json"
       },
-      "features": [
-        "bundler",
-        "loaders",
-        "ts"
-      ],
+      "features": ["bundler", "loaders", "ts"],
       "canonicalSource": "docs"
     },
     {
@@ -171,11 +149,7 @@
         "source": "https://raw.githubusercontent.com/brendadeeznuts1111/project-R-score/main/tools/verify-bundler.ts",
         "report": "/registry/bundler-loaders-proof.json"
       },
-      "features": [
-        "bundler",
-        "loaders",
-        "file"
-      ],
+      "features": ["bundler", "loaders", "file"],
       "canonicalSource": "docs"
     }
   ],
@@ -202,15 +176,7 @@
     "softwareVersion": "1.4.0",
     "dateModified": "2026-07-28T20:27:22.772Z",
     "identifier": "1.4.0",
-    "featureList": [
-      "bundler",
-      "loaders",
-      "css",
-      "jsonc",
-      "text",
-      "ts",
-      "file"
-    ],
+    "featureList": ["bundler", "loaders", "css", "jsonc", "text", "ts", "file"],
     "aggregateRating": {
       "@type": "AggregateRating",
       "ratingValue": 5,

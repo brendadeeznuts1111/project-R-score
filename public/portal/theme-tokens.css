@@ -185,7 +185,7 @@
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-html[data-theme='light'] {
+html[data-theme="light"] {
   color-scheme: light;
   --bg: #ffffff;
   --surface: #f6f8fa;

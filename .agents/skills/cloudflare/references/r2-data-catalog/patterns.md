@@ -1,12 +1,16 @@
 # R2 Data Catalog Patterns
 
-Code templates with PyIceberg (lightweight, no JVM) and PySpark (full Iceberg ecosystem). For per-engine config (DuckDB, Trino, Snowflake, StarRocks) and partitioning/maintenance best practices, pull `https://developers.cloudflare.com/r2/data-catalog/config-examples/` and `.../table-maintenance/`.
+Code templates with PyIceberg (lightweight, no JVM) and PySpark (full Iceberg
+ecosystem). For per-engine config (DuckDB, Trino, Snowflake, StarRocks) and
+partitioning/maintenance best practices, pull
+`https://developers.cloudflare.com/r2/data-catalog/config-examples/` and
+`.../table-maintenance/`.
 
-| Need | Tool |
-|------|------|
-| Catalog ops, append/scan, small-medium loads | PyIceberg |
-| Batch ETL, INSERT INTO SELECT, DELETE/MERGE, write-back, >1 TB maintenance | PySpark |
-| Pure SQL analytics (no writes) | [R2 SQL](../r2-sql/) |
+| Need                                                                       | Tool                 |
+| -------------------------------------------------------------------------- | -------------------- |
+| Catalog ops, append/scan, small-medium loads                               | PyIceberg            |
+| Batch ETL, INSERT INTO SELECT, DELETE/MERGE, write-back, >1 TB maintenance | PySpark              |
+| Pure SQL analytics (no writes)                                             | [R2 SQL](../r2-sql/) |
 
 ## PyIceberg: Connect, Create, Load
 
@@ -48,7 +52,9 @@ errors = table.scan(row_filter="level = 'ERROR'").to_pandas()   # partition prun
 
 ## PySpark Session
 
-Verified template — requires Iceberg **1.6.1** and vended credentials. S3 keys are only needed for orphan-file removal. (If this drifts, cross-check `config-examples/spark-python/`.)
+Verified template — requires Iceberg **1.6.1** and vended credentials. S3 keys
+are only needed for orphan-file removal. (If this drifts, cross-check
+`config-examples/spark-python/`.)
 
 ```python
 from pyspark.sql import SparkSession
@@ -77,7 +83,9 @@ spark = SparkSession.builder \
 spark.sql("USE r2dc")
 ```
 
-> `X-Iceberg-Access-Delegation: vended-credentials` is required; `s3.remote-signing-enabled` must be `false`. First startup ~30–60s for JAR downloads (cached after).
+> `X-Iceberg-Access-Delegation: vended-credentials` is required;
+> `s3.remote-signing-enabled` must be `false`. First startup ~30–60s for JAR
+> downloads (cached after).
 
 ## PySpark: Batch ETL
 
@@ -94,7 +102,8 @@ spark.sql("INSERT INTO my_ns.target SELECT col1, col2 FROM my_ns.source WHERE co
 spark.sql("DELETE FROM my_ns.events WHERE amount < 0")
 ```
 
-> Partition large tables (`PARTITIONED BY (days(__ingest_ts))`). Unpartitioned works for small datasets (<1000 files) but degrades at scale.
+> Partition large tables (`PARTITIONED BY (days(__ingest_ts))`). Unpartitioned
+> works for small datasets (<1000 files) but degrades at scale.
 
 ## Concurrent Writes with Retry (PyIceberg)
 
@@ -111,12 +120,19 @@ def append_with_retry(table, data, max_retries=3):
             time.sleep(2 ** attempt)
 ```
 
-Optimistic locking: concurrent commits to the same table may conflict; different-partition writes are safe.
+Optimistic locking: concurrent commits to the same table may conflict;
+different-partition writes are safe.
 
 ## Connecting Any Iceberg Engine
 
-Engines connect with the Iceberg REST catalog config — Catalog URI `https://catalog.cloudflarestorage.com/{ACCOUNT_ID}/{BUCKET}`, warehouse `{ACCOUNT_ID}_{BUCKET}`, your token, and header `X-Iceberg-Access-Delegation: vended-credentials`. Copy-paste configs per engine: `config-examples/`.
+Engines connect with the Iceberg REST catalog config — Catalog URI
+`https://catalog.cloudflarestorage.com/{ACCOUNT_ID}/{BUCKET}`, warehouse
+`{ACCOUNT_ID}_{BUCKET}`, your token, and header
+`X-Iceberg-Access-Delegation: vended-credentials`. Copy-paste configs per
+engine: `config-examples/`.
 
 ## See Also
 
-- [api.md](api.md) · [gotchas.md](gotchas.md) · [pipelines/patterns.md](../pipelines/patterns.md) · [r2-sql/patterns.md](../r2-sql/patterns.md)
+- [api.md](api.md) · [gotchas.md](gotchas.md) ·
+  [pipelines/patterns.md](../pipelines/patterns.md) ·
+  [r2-sql/patterns.md](../r2-sql/patterns.md)

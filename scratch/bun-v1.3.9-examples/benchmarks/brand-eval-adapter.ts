@@ -11,9 +11,9 @@ type AdapterOptions = {
 function parseArgs(argv: string[]): AdapterOptions {
   return {
     strict: argv.includes('--strict'),
-    current: argv.find((a) => a.startsWith('--current='))?.split('=')[1],
-    baseline: argv.find((a) => a.startsWith('--baseline='))?.split('=')[1],
-    governance: argv.find((a) => a.startsWith('--governance='))?.split('=')[1],
+    current: argv.find(a => a.startsWith('--current='))?.split('=')[1],
+    baseline: argv.find(a => a.startsWith('--baseline='))?.split('=')[1],
+    governance: argv.find(a => a.startsWith('--governance='))?.split('=')[1],
   };
 }
 

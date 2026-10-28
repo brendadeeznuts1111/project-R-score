@@ -154,16 +154,16 @@ The default command is read-only. State changes require explicit `--apply` and
 The OS-level job `project-r-thread-research` runs at `06:15` system local time.
 It selects the three lowest-scoring active threads (`open`, `ready`, `local`,
 `pushed`, `incomplete`, or `planned`), excluding historical/completed records,
-empty/unscoped records, and blocked records unless
-their catalog row explicitly sets `researchEligible: true`. Each target receives a separate
-ephemeral Codex invocation with a read-only sandbox; agents may inspect and
-recommend, but may not edit, change git state, mutate thread metadata, access
-secrets, or claim success. The Codex subprocess receives an allowlisted
-environment (`HOME`, optional `CODEX_HOME`, locale, temp, terminal, and a fixed
-executable `PATH`); ambient token, password, and provider variables are not
-forwarded. Executable resolution prefers `THREAD_RESEARCH_CODEX_BIN`, then the
-current desktop-bundled Codex CLI, then `PATH`; this avoids scheduling against a
-stale Homebrew shim when the configured model requires the current client.
+empty/unscoped records, and blocked records unless their catalog row explicitly
+sets `researchEligible: true`. Each target receives a separate ephemeral Codex
+invocation with a read-only sandbox; agents may inspect and recommend, but may
+not edit, change git state, mutate thread metadata, access secrets, or claim
+success. The Codex subprocess receives an allowlisted environment (`HOME`,
+optional `CODEX_HOME`, locale, temp, terminal, and a fixed executable `PATH`);
+ambient token, password, and provider variables are not forwarded. Executable
+resolution prefers `THREAD_RESEARCH_CODEX_BIN`, then the current desktop-bundled
+Codex CLI, then `PATH`; this avoids scheduling against a stale Homebrew shim
+when the configured model requires the current client.
 
 The 45% goal means closing 45% of the remaining portfolio-score deficit:
 `target = score + ceil((100 - score) * 0.45)`. This produces meaningful targets

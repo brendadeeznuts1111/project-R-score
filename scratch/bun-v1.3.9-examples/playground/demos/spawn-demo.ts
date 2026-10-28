@@ -21,7 +21,7 @@ function registerChild(child: ReturnType<typeof Bun.spawn>) {
   });
 }
 
-function killAllChildren(signal: "SIGTERM" | "SIGKILL") {
+function killAllChildren(signal: 'SIGTERM' | 'SIGKILL') {
   for (const child of managedChildren) {
     try {
       child.kill(signal);
@@ -31,18 +31,20 @@ function killAllChildren(signal: "SIGTERM" | "SIGKILL") {
   }
 }
 
-for (const sig of ["SIGINT", "SIGTERM"] as const) {
+for (const sig of ['SIGINT', 'SIGTERM'] as const) {
   process.on(sig, () => {
-    console.info(`\n[manager] ${sig} received -> forwarding SIGTERM to ${managedChildren.size} child(ren)`);
-    killAllChildren("SIGTERM");
+    console.info(
+      `\n[manager] ${sig} received -> forwarding SIGTERM to ${managedChildren.size} child(ren)`
+    );
+    killAllChildren('SIGTERM');
   });
 }
 
 async function spawnManaged(cmd: string[], timeoutMs = 1000): Promise<ManagedResult> {
   const child = Bun.spawn({
     cmd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   registerChild(child);
 
@@ -50,13 +52,13 @@ async function spawnManaged(cmd: string[], timeoutMs = 1000): Promise<ManagedRes
   const timer = setTimeout(() => {
     timedOut = true;
     try {
-      child.kill("SIGTERM");
+      child.kill('SIGTERM');
     } catch {
       // already exited
     }
     setTimeout(() => {
       try {
-        child.kill("SIGKILL");
+        child.kill('SIGKILL');
       } catch {
         // already exited
       }
@@ -73,40 +75,40 @@ async function spawnManaged(cmd: string[], timeoutMs = 1000): Promise<ManagedRes
 }
 
 function bunEval(code: string): string[] {
-  return [process.execPath, "-e", code];
+  return [process.execPath, '-e', code];
 }
 
-console.info("🔧 Bun Spawn Demo (Process Lifecycle Hardening)\n");
-console.info("=".repeat(74));
+console.info('🔧 Bun Spawn Demo (Process Lifecycle Hardening)\n');
+console.info('='.repeat(74));
 
-console.info("\n1️⃣ Basic Spawn + Reap");
-console.info("-".repeat(74));
+console.info('\n1️⃣ Basic Spawn + Reap');
+console.info('-'.repeat(74));
 {
   const result = await spawnManaged(bunEval(`console.info("Hello from child process!")`), 1200);
-  console.info("stdout:", result.stdout.trim());
-  console.info("exitCode:", result.exitCode);
+  console.info('stdout:', result.stdout.trim());
+  console.info('exitCode:', result.exitCode);
 }
 
-console.info("\n2️⃣ Spawn with Scoped Env + cwd");
-console.info("-".repeat(74));
+console.info('\n2️⃣ Spawn with Scoped Env + cwd');
+console.info('-'.repeat(74));
 {
   const child = Bun.spawn({
     cmd: bunEval(`console.info(process.cwd()); console.info(process.env.CUSTOM_VAR || "missing")`),
-    cwd: "/tmp",
-    env: { ...process.env, CUSTOM_VAR: "hello" },
-    stdout: "pipe",
-    stderr: "pipe",
+    cwd: '/tmp',
+    env: { ...process.env, CUSTOM_VAR: 'hello' },
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   registerChild(child);
   const [stdout, exitCode] = await Promise.all([child.stdout.text(), child.exited]);
-  const lines = stdout.trim().split("\n");
-  console.info("cwd:", lines[0] || "(none)");
-  console.info("CUSTOM_VAR:", lines[1] || "(none)");
-  console.info("exitCode:", exitCode);
+  const lines = stdout.trim().split('\n');
+  console.info('cwd:', lines[0] || '(none)');
+  console.info('CUSTOM_VAR:', lines[1] || '(none)');
+  console.info('exitCode:', exitCode);
 }
 
-console.info("\n3️⃣ Stream Child Output");
-console.info("-".repeat(74));
+console.info('\n3️⃣ Stream Child Output');
+console.info('-'.repeat(74));
 {
   const child = Bun.spawn({
     cmd: bunEval(`
@@ -120,18 +122,18 @@ console.info("-".repeat(74));
         }
       }, 50);
     `),
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   registerChild(child);
   for await (const chunk of child.stdout) {
-    console.info("stream >", new TextDecoder().decode(chunk).trim());
+    console.info('stream >', new TextDecoder().decode(chunk).trim());
   }
-  console.info("exitCode:", await child.exited);
+  console.info('exitCode:', await child.exited);
 }
 
-console.info("\n4️⃣ Timeout + Forced Termination");
-console.info("-".repeat(74));
+console.info('\n4️⃣ Timeout + Forced Termination');
+console.info('-'.repeat(74));
 {
   const longRunning = await spawnManaged(
     bunEval(`
@@ -141,12 +143,12 @@ console.info("-".repeat(74));
     `),
     250
   );
-  console.info("timedOut:", longRunning.timedOut);
-  console.info("exitCode:", longRunning.exitCode);
+  console.info('timedOut:', longRunning.timedOut);
+  console.info('exitCode:', longRunning.exitCode);
 }
 
-console.info("\n5️⃣ IPC Handshake");
-console.info("-".repeat(74));
+console.info('\n5️⃣ IPC Handshake');
+console.info('-'.repeat(74));
 {
   let child: ReturnType<typeof Bun.spawn>;
   child = Bun.spawn({
@@ -158,15 +160,15 @@ console.info("-".repeat(74));
       });
     `),
     ipc(message) {
-      console.info("ipc <", JSON.stringify(message));
-      if (message && (message as any).type === "ready") {
-        child.send({ ping: "pong" });
+      console.info('ipc <', JSON.stringify(message));
+      if (message && (message as any).type === 'ready') {
+        child.send({ ping: 'pong' });
       }
     },
   });
   registerChild(child);
-  console.info("exitCode:", await child.exited);
+  console.info('exitCode:', await child.exited);
 }
 
-console.info("\n✅ Spawn demo complete (no orphan children)");
-console.info("Active child count:", managedChildren.size);
+console.info('\n✅ Spawn demo complete (no orphan children)');
+console.info('Active child count:', managedChildren.size);

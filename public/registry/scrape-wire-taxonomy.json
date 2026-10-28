@@ -28,11 +28,7 @@
       "label": "DraftKings",
       "rank": 1,
       "conceptId": "sportsbook.draftkings",
-      "aliases": [
-        "draftkings",
-        "dk",
-        "draft_kings"
-      ],
+      "aliases": ["draftkings", "dk", "draft_kings"],
       "colorKey": "draftkings",
       "hex": "#2563EB",
       "css": "#2563eb"
@@ -43,11 +39,7 @@
       "label": "FanDuel",
       "rank": 2,
       "conceptId": "sportsbook.fanduel",
-      "aliases": [
-        "fanduel",
-        "fd",
-        "fan_duel"
-      ],
+      "aliases": ["fanduel", "fd", "fan_duel"],
       "colorKey": "fanduel",
       "hex": "#14934B",
       "css": "#14934b"
@@ -58,11 +50,7 @@
       "label": "BetMGM",
       "rank": 3,
       "conceptId": "sportsbook.betmgm",
-      "aliases": [
-        "betmgm",
-        "mgm",
-        "bet_mgm"
-      ],
+      "aliases": ["betmgm", "mgm", "bet_mgm"],
       "colorKey": "betmgm",
       "hex": "#C5A572",
       "css": "#c5a572"
@@ -73,12 +61,7 @@
       "label": "Caesars",
       "rank": 4,
       "conceptId": "sportsbook.caesars",
-      "aliases": [
-        "caesars",
-        "czr",
-        "caesars_sportsbook",
-        "william_hill"
-      ],
+      "aliases": ["caesars", "czr", "caesars_sportsbook", "william_hill"],
       "colorKey": "caesars",
       "hex": "#C9A227",
       "css": "#c9a227"
@@ -89,12 +72,7 @@
       "label": "ESPN BET",
       "rank": 5,
       "conceptId": "sportsbook.espnbet",
-      "aliases": [
-        "espnbet",
-        "espn_bet",
-        "espn",
-        "espn_sportsbook"
-      ],
+      "aliases": ["espnbet", "espn_bet", "espn", "espn_sportsbook"],
       "colorKey": "espnbet",
       "hex": "#DC2626",
       "css": "#dc2626"
@@ -105,10 +83,7 @@
       "label": "Fanatics",
       "rank": 6,
       "conceptId": "sportsbook.fanatics",
-      "aliases": [
-        "fanatics",
-        "fanatics_sportsbook"
-      ],
+      "aliases": ["fanatics", "fanatics_sportsbook"],
       "colorKey": "fanatics",
       "hex": "#1D4ED8",
       "css": "#1d4ed8"
@@ -119,12 +94,7 @@
       "label": "Hard Rock Bet",
       "rank": 7,
       "conceptId": "sportsbook.hardrock",
-      "aliases": [
-        "hardrock",
-        "hard_rock_bet",
-        "hard_rock",
-        "hardrockbet"
-      ],
+      "aliases": ["hardrock", "hard_rock_bet", "hard_rock", "hardrockbet"],
       "colorKey": "hardrock",
       "hex": "#D97706",
       "css": "#d97706"
@@ -135,10 +105,7 @@
       "label": "bet365",
       "rank": 8,
       "conceptId": "sportsbook.bet365",
-      "aliases": [
-        "bet365",
-        "bet_365"
-      ],
+      "aliases": ["bet365", "bet_365"],
       "colorKey": "bet365",
       "hex": "#FBBF24",
       "css": "#fbbf24"
@@ -149,11 +116,7 @@
       "label": "BetRivers",
       "rank": 9,
       "conceptId": "sportsbook.betrivers",
-      "aliases": [
-        "betrivers",
-        "bet_rivers",
-        "rivers"
-      ],
+      "aliases": ["betrivers", "bet_rivers", "rivers"],
       "colorKey": "betrivers",
       "hex": "#1E40AF",
       "css": "#1e40af"
@@ -164,11 +127,7 @@
       "label": "Circa Sports",
       "rank": 10,
       "conceptId": "sportsbook.circa",
-      "aliases": [
-        "circa",
-        "circa_sports",
-        "circasports"
-      ],
+      "aliases": ["circa", "circa_sports", "circasports"],
       "colorKey": "circa",
       "hex": "#0D9488",
       "css": "#0d9488"
@@ -268,13 +227,8 @@
       "label": "NBA",
       "sport": "basketball",
       "conceptId": "league.nba",
-      "synonyms": [
-        "National Basketball Association"
-      ],
-      "aliases": [
-        "nba",
-        "national_basketball_association"
-      ],
+      "synonyms": ["National Basketball Association"],
+      "aliases": ["nba", "national_basketball_association"],
       "colorKey": "nba",
       "hex": "#F97316",
       "css": "#f97316"
@@ -284,13 +238,8 @@
       "label": "WNBA",
       "sport": "basketball",
       "conceptId": "league.wnba",
-      "synonyms": [
-        "Women's National Basketball Association"
-      ],
-      "aliases": [
-        "wnba",
-        "women's_national_basketball_association"
-      ],
+      "synonyms": ["Women's National Basketball Association"],
+      "aliases": ["wnba", "women's_national_basketball_association"],
       "colorKey": "wnba",
       "hex": "#FB7185",
       "css": "#fb7185"
@@ -300,13 +249,8 @@
       "label": "NFL",
       "sport": "american_football",
       "conceptId": "league.nfl",
-      "synonyms": [
-        "National Football League"
-      ],
-      "aliases": [
-        "nfl",
-        "national_football_league"
-      ],
+      "synonyms": ["National Football League"],
+      "aliases": ["nfl", "national_football_league"],
       "colorKey": "nfl",
       "hex": "#B45309",
       "css": "#b45309"
@@ -316,15 +260,8 @@
       "label": "NCAA football",
       "sport": "american_football",
       "conceptId": "league.ncaaf",
-      "synonyms": [
-        "NCAAF",
-        "college football"
-      ],
-      "aliases": [
-        "ncaaf",
-        "ncaa_football",
-        "college_football"
-      ],
+      "synonyms": ["NCAAF", "college football"],
+      "aliases": ["ncaaf", "ncaa_football", "college_football"],
       "colorKey": "ncaaf",
       "hex": "#78350F",
       "css": "#78350f"
@@ -334,17 +271,8 @@
       "label": "NCAA basketball",
       "sport": "basketball",
       "conceptId": "league.ncaab",
-      "synonyms": [
-        "NCAAB",
-        "college basketball",
-        "CBB"
-      ],
-      "aliases": [
-        "ncaab",
-        "ncaa_basketball",
-        "college_basketball",
-        "cbb"
-      ],
+      "synonyms": ["NCAAB", "college basketball", "CBB"],
+      "aliases": ["ncaab", "ncaa_basketball", "college_basketball", "cbb"],
       "colorKey": "ncaab",
       "hex": "#C2410C",
       "css": "#c2410c"
@@ -354,13 +282,8 @@
       "label": "MLB",
       "sport": "baseball",
       "conceptId": "league.mlb",
-      "synonyms": [
-        "Major League Baseball"
-      ],
-      "aliases": [
-        "mlb",
-        "major_league_baseball"
-      ],
+      "synonyms": ["Major League Baseball"],
+      "aliases": ["mlb", "major_league_baseball"],
       "colorKey": "mlb",
       "hex": "#EF4444",
       "css": "#ef4444"
@@ -370,13 +293,8 @@
       "label": "NHL",
       "sport": "hockey",
       "conceptId": "league.nhl",
-      "synonyms": [
-        "National Hockey League"
-      ],
-      "aliases": [
-        "nhl",
-        "national_hockey_league"
-      ],
+      "synonyms": ["National Hockey League"],
+      "aliases": ["nhl", "national_hockey_league"],
       "colorKey": "nhl",
       "hex": "#0284C7",
       "css": "#0284c7"
@@ -386,13 +304,8 @@
       "label": "MLS",
       "sport": "soccer",
       "conceptId": "league.mls",
-      "synonyms": [
-        "Major League Soccer"
-      ],
-      "aliases": [
-        "mls",
-        "major_league_soccer"
-      ],
+      "synonyms": ["Major League Soccer"],
+      "aliases": ["mls", "major_league_soccer"],
       "colorKey": "mls",
       "hex": "#22C55E",
       "css": "#22c55e"
@@ -402,15 +315,8 @@
       "label": "Premier League",
       "sport": "soccer",
       "conceptId": "league.epl",
-      "synonyms": [
-        "EPL",
-        "English Premier League"
-      ],
-      "aliases": [
-        "epl",
-        "premier_league",
-        "english_premier_league"
-      ],
+      "synonyms": ["EPL", "English Premier League"],
+      "aliases": ["epl", "premier_league", "english_premier_league"],
       "colorKey": "epl",
       "hex": "#3F6212",
       "css": "#3f6212"
@@ -420,15 +326,8 @@
       "label": "UEFA Champions League",
       "sport": "soccer",
       "conceptId": "league.uefa_champions_league",
-      "synonyms": [
-        "UCL",
-        "Champions League"
-      ],
-      "aliases": [
-        "uefa_champions_league",
-        "ucl",
-        "champions_league"
-      ],
+      "synonyms": ["UCL", "Champions League"],
+      "aliases": ["uefa_champions_league", "ucl", "champions_league"],
       "colorKey": "uefa_champions_league",
       "hex": "#1E3A8A",
       "css": "#1e3a8a"
@@ -438,15 +337,8 @@
       "label": "ATP Tour",
       "sport": "tennis",
       "conceptId": "league.atp",
-      "synonyms": [
-        "ATP",
-        "men's tennis"
-      ],
-      "aliases": [
-        "atp",
-        "atp_tour",
-        "men's_tennis"
-      ],
+      "synonyms": ["ATP", "men's tennis"],
+      "aliases": ["atp", "atp_tour", "men's_tennis"],
       "colorKey": "atp",
       "hex": "#4169E1",
       "css": "#4169e1"
@@ -456,15 +348,8 @@
       "label": "WTA Tour",
       "sport": "tennis",
       "conceptId": "league.wta",
-      "synonyms": [
-        "WTA",
-        "women's tennis"
-      ],
-      "aliases": [
-        "wta",
-        "wta_tour",
-        "women's_tennis"
-      ],
+      "synonyms": ["WTA", "women's tennis"],
+      "aliases": ["wta", "wta_tour", "women's_tennis"],
       "colorKey": "wta",
       "hex": "#C71585",
       "css": "#c71585"
@@ -474,15 +359,8 @@
       "label": "ITF World Tennis Tour",
       "sport": "tennis",
       "conceptId": "league.itf",
-      "synonyms": [
-        "ITF",
-        "ITF tennis"
-      ],
-      "aliases": [
-        "itf",
-        "itf_world_tennis_tour",
-        "itf_tennis"
-      ],
+      "synonyms": ["ITF", "ITF tennis"],
+      "aliases": ["itf", "itf_world_tennis_tour", "itf_tennis"],
       "colorKey": "itf",
       "hex": "#A8A29E",
       "css": "#a8a29e"
@@ -492,14 +370,8 @@
       "label": "ATP Challenger Tour",
       "sport": "tennis",
       "conceptId": "league.atp_challenger",
-      "synonyms": [
-        "Challenger Tour"
-      ],
-      "aliases": [
-        "atp_challenger",
-        "atp_challenger_tour",
-        "challenger_tour"
-      ],
+      "synonyms": ["Challenger Tour"],
+      "aliases": ["atp_challenger", "atp_challenger_tour", "challenger_tour"],
       "colorKey": "atp_challenger",
       "hex": "#38BDF8",
       "css": "#38bdf8"
@@ -509,13 +381,8 @@
       "label": "WTA 125",
       "sport": "tennis",
       "conceptId": "league.wta_125",
-      "synonyms": [
-        "WTA 125 Series"
-      ],
-      "aliases": [
-        "wta_125",
-        "wta_125_series"
-      ],
+      "synonyms": ["WTA 125 Series"],
+      "aliases": ["wta_125", "wta_125_series"],
       "colorKey": "wta_125",
       "hex": "#E879F9",
       "css": "#e879f9"
@@ -525,13 +392,8 @@
       "label": "PGA Tour",
       "sport": "golf",
       "conceptId": "league.pga_tour",
-      "synonyms": [
-        "PGA"
-      ],
-      "aliases": [
-        "pga_tour",
-        "pga"
-      ],
+      "synonyms": ["PGA"],
+      "aliases": ["pga_tour", "pga"],
       "colorKey": "pga_tour",
       "hex": "#166534",
       "css": "#166534"
@@ -541,13 +403,8 @@
       "label": "DP World Tour",
       "sport": "golf",
       "conceptId": "league.dp_world_tour",
-      "synonyms": [
-        "European Tour"
-      ],
-      "aliases": [
-        "dp_world_tour",
-        "european_tour"
-      ],
+      "synonyms": ["European Tour"],
+      "aliases": ["dp_world_tour", "european_tour"],
       "colorKey": "dp_world_tour",
       "hex": "#4ADE80",
       "css": "#4ade80"
@@ -557,13 +414,8 @@
       "label": "UFC",
       "sport": "mma",
       "conceptId": "league.ufc",
-      "synonyms": [
-        "Ultimate Fighting Championship"
-      ],
-      "aliases": [
-        "ufc",
-        "ultimate_fighting_championship"
-      ],
+      "synonyms": ["Ultimate Fighting Championship"],
+      "aliases": ["ufc", "ultimate_fighting_championship"],
       "colorKey": "ufc",
       "hex": "#991B1B",
       "css": "#991b1b"
@@ -652,12 +504,7 @@
       "label": "Team prop",
       "conceptId": "market.team_prop",
       "tier": "extended",
-      "aliases": [
-        "team_prop",
-        "team_proposition",
-        "team_market",
-        "teamprop"
-      ]
+      "aliases": ["team_prop", "team_proposition", "team_market", "teamprop"]
     },
     {
       "key": "futures",
@@ -681,16 +528,8 @@
     "team_prop",
     "futures"
   ],
-  "regulationMarkets": [
-    "match_winner",
-    "over_under",
-    "spread"
-  ],
-  "extendedMarkets": [
-    "player_prop",
-    "team_prop",
-    "futures"
-  ],
+  "regulationMarkets": ["match_winner", "over_under", "spread"],
+  "extendedMarkets": ["player_prop", "team_prop", "futures"],
   "phaseRegistry": [
     {
       "key": "pregame",
@@ -720,90 +559,63 @@
       ]
     }
   ],
-  "phases": [
-    "pregame",
-    "live"
-  ],
+  "phases": ["pregame", "live"],
   "stateRegistry": [
     {
       "code": "AL",
       "key": "AL",
       "label": "Alabama",
       "conceptId": "jurisdiction.AL",
-      "aliases": [
-        "al",
-        "alabama"
-      ]
+      "aliases": ["al", "alabama"]
     },
     {
       "code": "AK",
       "key": "AK",
       "label": "Alaska",
       "conceptId": "jurisdiction.AK",
-      "aliases": [
-        "ak",
-        "alaska"
-      ]
+      "aliases": ["ak", "alaska"]
     },
     {
       "code": "AZ",
       "key": "AZ",
       "label": "Arizona",
       "conceptId": "jurisdiction.AZ",
-      "aliases": [
-        "az",
-        "arizona"
-      ]
+      "aliases": ["az", "arizona"]
     },
     {
       "code": "AR",
       "key": "AR",
       "label": "Arkansas",
       "conceptId": "jurisdiction.AR",
-      "aliases": [
-        "ar",
-        "arkansas"
-      ]
+      "aliases": ["ar", "arkansas"]
     },
     {
       "code": "CA",
       "key": "CA",
       "label": "California",
       "conceptId": "jurisdiction.CA",
-      "aliases": [
-        "ca",
-        "california"
-      ]
+      "aliases": ["ca", "california"]
     },
     {
       "code": "CO",
       "key": "CO",
       "label": "Colorado",
       "conceptId": "jurisdiction.CO",
-      "aliases": [
-        "co",
-        "colorado"
-      ]
+      "aliases": ["co", "colorado"]
     },
     {
       "code": "CT",
       "key": "CT",
       "label": "Connecticut",
       "conceptId": "jurisdiction.CT",
-      "aliases": [
-        "ct",
-        "connecticut"
-      ]
+      "aliases": ["ct", "connecticut"]
     },
     {
       "code": "DE",
       "key": "DE",
       "label": "Delaware",
       "conceptId": "jurisdiction.DE",
-      "aliases": [
-        "de",
-        "delaware"
-      ]
+      "aliases": ["de", "delaware"]
     },
     {
       "code": "DC",
@@ -824,430 +636,294 @@
       "key": "FL",
       "label": "Florida",
       "conceptId": "jurisdiction.FL",
-      "aliases": [
-        "fl",
-        "florida"
-      ]
+      "aliases": ["fl", "florida"]
     },
     {
       "code": "GA",
       "key": "GA",
       "label": "Georgia",
       "conceptId": "jurisdiction.GA",
-      "aliases": [
-        "ga",
-        "georgia"
-      ]
+      "aliases": ["ga", "georgia"]
     },
     {
       "code": "HI",
       "key": "HI",
       "label": "Hawaii",
       "conceptId": "jurisdiction.HI",
-      "aliases": [
-        "hi",
-        "hawaii"
-      ]
+      "aliases": ["hi", "hawaii"]
     },
     {
       "code": "ID",
       "key": "ID",
       "label": "Idaho",
       "conceptId": "jurisdiction.ID",
-      "aliases": [
-        "id",
-        "idaho"
-      ]
+      "aliases": ["id", "idaho"]
     },
     {
       "code": "IL",
       "key": "IL",
       "label": "Illinois",
       "conceptId": "jurisdiction.IL",
-      "aliases": [
-        "il",
-        "illinois"
-      ]
+      "aliases": ["il", "illinois"]
     },
     {
       "code": "IN",
       "key": "IN",
       "label": "Indiana",
       "conceptId": "jurisdiction.IN",
-      "aliases": [
-        "in",
-        "indiana"
-      ]
+      "aliases": ["in", "indiana"]
     },
     {
       "code": "IA",
       "key": "IA",
       "label": "Iowa",
       "conceptId": "jurisdiction.IA",
-      "aliases": [
-        "ia",
-        "iowa"
-      ]
+      "aliases": ["ia", "iowa"]
     },
     {
       "code": "KS",
       "key": "KS",
       "label": "Kansas",
       "conceptId": "jurisdiction.KS",
-      "aliases": [
-        "ks",
-        "kansas"
-      ]
+      "aliases": ["ks", "kansas"]
     },
     {
       "code": "KY",
       "key": "KY",
       "label": "Kentucky",
       "conceptId": "jurisdiction.KY",
-      "aliases": [
-        "ky",
-        "kentucky"
-      ]
+      "aliases": ["ky", "kentucky"]
     },
     {
       "code": "LA",
       "key": "LA",
       "label": "Louisiana",
       "conceptId": "jurisdiction.LA",
-      "aliases": [
-        "la",
-        "louisiana"
-      ]
+      "aliases": ["la", "louisiana"]
     },
     {
       "code": "ME",
       "key": "ME",
       "label": "Maine",
       "conceptId": "jurisdiction.ME",
-      "aliases": [
-        "me",
-        "maine"
-      ]
+      "aliases": ["me", "maine"]
     },
     {
       "code": "MD",
       "key": "MD",
       "label": "Maryland",
       "conceptId": "jurisdiction.MD",
-      "aliases": [
-        "md",
-        "maryland"
-      ]
+      "aliases": ["md", "maryland"]
     },
     {
       "code": "MA",
       "key": "MA",
       "label": "Massachusetts",
       "conceptId": "jurisdiction.MA",
-      "aliases": [
-        "ma",
-        "massachusetts"
-      ]
+      "aliases": ["ma", "massachusetts"]
     },
     {
       "code": "MI",
       "key": "MI",
       "label": "Michigan",
       "conceptId": "jurisdiction.MI",
-      "aliases": [
-        "mi",
-        "michigan"
-      ]
+      "aliases": ["mi", "michigan"]
     },
     {
       "code": "MN",
       "key": "MN",
       "label": "Minnesota",
       "conceptId": "jurisdiction.MN",
-      "aliases": [
-        "mn",
-        "minnesota"
-      ]
+      "aliases": ["mn", "minnesota"]
     },
     {
       "code": "MS",
       "key": "MS",
       "label": "Mississippi",
       "conceptId": "jurisdiction.MS",
-      "aliases": [
-        "ms",
-        "mississippi"
-      ]
+      "aliases": ["ms", "mississippi"]
     },
     {
       "code": "MO",
       "key": "MO",
       "label": "Missouri",
       "conceptId": "jurisdiction.MO",
-      "aliases": [
-        "mo",
-        "missouri"
-      ]
+      "aliases": ["mo", "missouri"]
     },
     {
       "code": "MT",
       "key": "MT",
       "label": "Montana",
       "conceptId": "jurisdiction.MT",
-      "aliases": [
-        "mt",
-        "montana"
-      ]
+      "aliases": ["mt", "montana"]
     },
     {
       "code": "NE",
       "key": "NE",
       "label": "Nebraska",
       "conceptId": "jurisdiction.NE",
-      "aliases": [
-        "ne",
-        "nebraska"
-      ]
+      "aliases": ["ne", "nebraska"]
     },
     {
       "code": "NV",
       "key": "NV",
       "label": "Nevada",
       "conceptId": "jurisdiction.NV",
-      "aliases": [
-        "nv",
-        "nevada"
-      ]
+      "aliases": ["nv", "nevada"]
     },
     {
       "code": "NH",
       "key": "NH",
       "label": "New Hampshire",
       "conceptId": "jurisdiction.NH",
-      "aliases": [
-        "nh",
-        "new_hampshire",
-        "newhampshire"
-      ]
+      "aliases": ["nh", "new_hampshire", "newhampshire"]
     },
     {
       "code": "NJ",
       "key": "NJ",
       "label": "New Jersey",
       "conceptId": "jurisdiction.NJ",
-      "aliases": [
-        "nj",
-        "new_jersey",
-        "newjersey"
-      ]
+      "aliases": ["nj", "new_jersey", "newjersey"]
     },
     {
       "code": "NM",
       "key": "NM",
       "label": "New Mexico",
       "conceptId": "jurisdiction.NM",
-      "aliases": [
-        "nm",
-        "new_mexico",
-        "newmexico"
-      ]
+      "aliases": ["nm", "new_mexico", "newmexico"]
     },
     {
       "code": "NY",
       "key": "NY",
       "label": "New York",
       "conceptId": "jurisdiction.NY",
-      "aliases": [
-        "ny",
-        "new_york",
-        "newyork"
-      ]
+      "aliases": ["ny", "new_york", "newyork"]
     },
     {
       "code": "NC",
       "key": "NC",
       "label": "North Carolina",
       "conceptId": "jurisdiction.NC",
-      "aliases": [
-        "nc",
-        "north_carolina",
-        "northcarolina"
-      ]
+      "aliases": ["nc", "north_carolina", "northcarolina"]
     },
     {
       "code": "ND",
       "key": "ND",
       "label": "North Dakota",
       "conceptId": "jurisdiction.ND",
-      "aliases": [
-        "nd",
-        "north_dakota",
-        "northdakota"
-      ]
+      "aliases": ["nd", "north_dakota", "northdakota"]
     },
     {
       "code": "OH",
       "key": "OH",
       "label": "Ohio",
       "conceptId": "jurisdiction.OH",
-      "aliases": [
-        "oh",
-        "ohio"
-      ]
+      "aliases": ["oh", "ohio"]
     },
     {
       "code": "OK",
       "key": "OK",
       "label": "Oklahoma",
       "conceptId": "jurisdiction.OK",
-      "aliases": [
-        "ok",
-        "oklahoma"
-      ]
+      "aliases": ["ok", "oklahoma"]
     },
     {
       "code": "OR",
       "key": "OR",
       "label": "Oregon",
       "conceptId": "jurisdiction.OR",
-      "aliases": [
-        "or",
-        "oregon"
-      ]
+      "aliases": ["or", "oregon"]
     },
     {
       "code": "PA",
       "key": "PA",
       "label": "Pennsylvania",
       "conceptId": "jurisdiction.PA",
-      "aliases": [
-        "pa",
-        "pennsylvania"
-      ]
+      "aliases": ["pa", "pennsylvania"]
     },
     {
       "code": "RI",
       "key": "RI",
       "label": "Rhode Island",
       "conceptId": "jurisdiction.RI",
-      "aliases": [
-        "ri",
-        "rhode_island",
-        "rhodeisland"
-      ]
+      "aliases": ["ri", "rhode_island", "rhodeisland"]
     },
     {
       "code": "SC",
       "key": "SC",
       "label": "South Carolina",
       "conceptId": "jurisdiction.SC",
-      "aliases": [
-        "sc",
-        "south_carolina",
-        "southcarolina"
-      ]
+      "aliases": ["sc", "south_carolina", "southcarolina"]
     },
     {
       "code": "SD",
       "key": "SD",
       "label": "South Dakota",
       "conceptId": "jurisdiction.SD",
-      "aliases": [
-        "sd",
-        "south_dakota",
-        "southdakota"
-      ]
+      "aliases": ["sd", "south_dakota", "southdakota"]
     },
     {
       "code": "TN",
       "key": "TN",
       "label": "Tennessee",
       "conceptId": "jurisdiction.TN",
-      "aliases": [
-        "tn",
-        "tennessee"
-      ]
+      "aliases": ["tn", "tennessee"]
     },
     {
       "code": "TX",
       "key": "TX",
       "label": "Texas",
       "conceptId": "jurisdiction.TX",
-      "aliases": [
-        "tx",
-        "texas"
-      ]
+      "aliases": ["tx", "texas"]
     },
     {
       "code": "UT",
       "key": "UT",
       "label": "Utah",
       "conceptId": "jurisdiction.UT",
-      "aliases": [
-        "ut",
-        "utah"
-      ]
+      "aliases": ["ut", "utah"]
     },
     {
       "code": "VT",
       "key": "VT",
       "label": "Vermont",
       "conceptId": "jurisdiction.VT",
-      "aliases": [
-        "vt",
-        "vermont"
-      ]
+      "aliases": ["vt", "vermont"]
     },
     {
       "code": "VA",
       "key": "VA",
       "label": "Virginia",
       "conceptId": "jurisdiction.VA",
-      "aliases": [
-        "va",
-        "virginia"
-      ]
+      "aliases": ["va", "virginia"]
     },
     {
       "code": "WA",
       "key": "WA",
       "label": "Washington",
       "conceptId": "jurisdiction.WA",
-      "aliases": [
-        "wa",
-        "washington"
-      ]
+      "aliases": ["wa", "washington"]
     },
     {
       "code": "WV",
       "key": "WV",
       "label": "West Virginia",
       "conceptId": "jurisdiction.WV",
-      "aliases": [
-        "wv",
-        "west_virginia",
-        "westvirginia"
-      ]
+      "aliases": ["wv", "west_virginia", "westvirginia"]
     },
     {
       "code": "WI",
       "key": "WI",
       "label": "Wisconsin",
       "conceptId": "jurisdiction.WI",
-      "aliases": [
-        "wi",
-        "wisconsin"
-      ]
+      "aliases": ["wi", "wisconsin"]
     },
     {
       "code": "WY",
       "key": "WY",
       "label": "Wyoming",
       "conceptId": "jurisdiction.WY",
-      "aliases": [
-        "wy",
-        "wyoming"
-      ]
+      "aliases": ["wy", "wyoming"]
     }
   ],
   "states": [
@@ -1356,23 +1032,10 @@
     "WI",
     "WY"
   ],
-  "fixtureJurisdictions": [
-    "NJ",
-    "CO",
-    "MA"
-  ],
-  "fixtureSports": [
-    "basketball",
-    "soccer"
-  ],
-  "fixtureMarkets": [
-    "match_winner",
-    "over_under"
-  ],
-  "fixturePhases": [
-    "pregame",
-    "live"
-  ],
+  "fixtureJurisdictions": ["NJ", "CO", "MA"],
+  "fixtureSports": ["basketball", "soccer"],
+  "fixtureMarkets": ["match_winner", "over_under"],
+  "fixturePhases": ["pregame", "live"],
   "defaultJurisdiction": "NJ",
   "defaultPhase": "pregame",
   "sportAliases": {
@@ -1694,11 +1357,7 @@
       "description": "Canonical book, state, sport, league, and market keys that all Tier 4 sportsbook agents normalize vendor wire onto before LimitObservation write.",
       "category": "warehouse",
       "kind": "evidence",
-      "synonyms": [
-        "scrape taxonomy",
-        "tier-4 wire",
-        "limit observation keys"
-      ],
+      "synonyms": ["scrape taxonomy", "tier-4 wire", "limit observation keys"],
       "values": null,
       "seeAlso": [
         "scrape.book",
@@ -1721,12 +1380,7 @@
       "description": "US top-10 Tier 4 sportsbook fleet on the scrape wire (SportsbookId). Aliases (dk, czr, espn_bet, …) normalize here.",
       "category": "trading",
       "kind": "evidence",
-      "synonyms": [
-        "sportsbook",
-        "bookId",
-        "book",
-        "SportsbookId"
-      ],
+      "synonyms": ["sportsbook", "bookId", "book", "SportsbookId"],
       "values": [
         "draftkings",
         "fanduel",
@@ -1739,11 +1393,7 @@
         "betrivers",
         "circa"
       ],
-      "seeAlso": [
-        "scrape.wire",
-        "scrape.market",
-        "scrape.sport"
-      ],
+      "seeAlso": ["scrape.wire", "scrape.market", "scrape.sport"],
       "status": "active",
       "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
       "semanticType": "classification",
@@ -1755,11 +1405,7 @@
       "description": "Full sport registry on the scrape wire (competition-catalog SPORT_KEYS). League aliases (nba, nfl, ufc, …) map here before JSONL append.",
       "category": "tournament",
       "kind": "sport",
-      "synonyms": [
-        "sport_id",
-        "sportKey",
-        "vendor sport"
-      ],
+      "synonyms": ["sport_id", "sportKey", "vendor sport"],
       "values": [
         "american_football",
         "baseball",
@@ -1793,11 +1439,7 @@
       "description": "Competition-catalog league/tour codes on the scrape wire (nba, epl, ufc, …). Normalizes to league key and parent sport.",
       "category": "tournament",
       "kind": "league",
-      "synonyms": [
-        "leagueKey",
-        "tour",
-        "competition code"
-      ],
+      "synonyms": ["leagueKey", "tour", "competition code"],
       "values": [
         "nba",
         "wnba",
@@ -1836,11 +1478,7 @@
       "description": "Scrape wire markets: regulation (match_winner, over_under, spread) plus extended glossary markets (player_prop, team_prop, futures).",
       "category": "market",
       "kind": "market",
-      "synonyms": [
-        "market_id",
-        "marketKey",
-        "marketType"
-      ],
+      "synonyms": ["market_id", "marketKey", "marketType"],
       "values": [
         "match_winner",
         "over_under",
@@ -1870,17 +1508,8 @@
       "description": "Market phase on the scrape wire: pregame (before start) or live (in-play). Aliases in_play/inplay/live_betting → live; pre_match/pregame → pregame.",
       "category": "market",
       "kind": "market",
-      "synonyms": [
-        "marketPhase",
-        "phase",
-        "pregame",
-        "live",
-        "in-play"
-      ],
-      "values": [
-        "pregame",
-        "live"
-      ],
+      "synonyms": ["marketPhase", "phase", "pregame", "live", "in-play"],
+      "values": ["pregame", "live"],
       "seeAlso": [
         "market.in_play",
         "ops.limits.market_phase",
@@ -1898,19 +1527,9 @@
       "description": "Wagers placed before an event starts. Default scrape/opening-limit phase when wire omits phase.",
       "category": "market",
       "kind": "market",
-      "synonyms": [
-        "pre-game",
-        "pre-match",
-        "early"
-      ],
-      "values": [
-        "pregame"
-      ],
-      "seeAlso": [
-        "scrape.phase",
-        "market.in_play",
-        "scrape.wire"
-      ],
+      "synonyms": ["pre-game", "pre-match", "early"],
+      "values": ["pregame"],
+      "seeAlso": ["scrape.phase", "market.in_play", "scrape.wire"],
       "status": "active",
       "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
       "semanticType": "state",
@@ -1982,11 +1601,7 @@
         "WI",
         "WY"
       ],
-      "seeAlso": [
-        "jurisdiction.NJ",
-        "jurisdiction.MA",
-        "scrape.wire"
-      ],
+      "seeAlso": ["jurisdiction.NJ", "jurisdiction.MA", "scrape.wire"],
       "status": "active",
       "source": "lib/operations/scrapers/scrape-wire-taxonomy.ts",
       "semanticType": "classification",

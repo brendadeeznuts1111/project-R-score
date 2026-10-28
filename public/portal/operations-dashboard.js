@@ -952,8 +952,7 @@ class OperationsDashboard extends HTMLElement {
         {
           k: 'Operator ready',
           v: hs.available ? `${hs.operatorReady ?? 0}/${hs.partners ?? 0}` : '—',
-          tone:
-            hs.available && hs.partners > 0 && hs.operatorReady === hs.partners ? 'ok' : 'warn',
+          tone: hs.available && hs.partners > 0 && hs.operatorReady === hs.partners ? 'ok' : 'warn',
           href: '#telegram-handshake',
         },
         {
@@ -977,7 +976,8 @@ class OperationsDashboard extends HTMLElement {
         {
           k: 'Outbox pending',
           v: loop.outboxPending != null ? String(loop.outboxPending) : '—',
-          tone: (loop.outboxPending ?? 0) > 50 ? 'bad' : (loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
+          tone:
+            (loop.outboxPending ?? 0) > 50 ? 'bad' : (loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
           href: '#ops-loop',
         },
       ];
@@ -991,7 +991,11 @@ class OperationsDashboard extends HTMLElement {
         )
         .join('');
       if (deskDetail) {
-        const gen = d.generated ? String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, 'Z') : '—';
+        const gen = d.generated
+          ? String(d.generated)
+              .replace('T', ' ')
+              .replace(/\.\d+Z$/, 'Z')
+          : '—';
         deskDetail.textContent =
           `ops-summary ${gen}` +
           (hs.available ? ` · handshake ${hs.partners ?? 0} codes` : ' · handshake unavailable') +
@@ -1006,14 +1010,18 @@ class OperationsDashboard extends HTMLElement {
       const gate = document.getElementById('ops-gate');
       if (gate) {
         const gaps =
-          (hs.inviteGaps ?? 0) + (scd.incompleteOuts ?? 0) + ((loop.outboxPending ?? 0) > 100 ? 1 : 0);
+          (hs.inviteGaps ?? 0) +
+          (scd.incompleteOuts ?? 0) +
+          ((loop.outboxPending ?? 0) > 100 ? 1 : 0);
         const ok = (hs.available || scd.available) && gaps === 0;
         gate.className = `portal-gate ${ok ? 'pass' : gaps > 0 ? 'warn' : 'pass'}`;
         gate.innerHTML = `<span class="dot" aria-hidden="true"></span>${ok ? 'desk ready' : 'desk gaps'}`;
       }
       const baked = document.getElementById('ops-baked');
       if (baked && d.generated) {
-        baked.textContent = String(d.generated).replace('T', ' ').replace(/\.\d+Z$/, ' UTC');
+        baked.textContent = String(d.generated)
+          .replace('T', ' ')
+          .replace(/\.\d+Z$/, ' UTC');
       }
       // Bake-manifest "Data as of" — fail-silent if missing; worst of desk bakes.
       void mountFreshnessBadge(
@@ -1204,10 +1212,7 @@ class OperationsDashboard extends HTMLElement {
       if (m?.available && m.score != null) {
         mhMetric.textContent = String(m.score);
         mhMetric.classList.toggle('ok', m.grade === 'healthy');
-        mhMetric.classList.toggle(
-          'bad',
-          m.grade === 'critical' || m.ok === false
-        );
+        mhMetric.classList.toggle('bad', m.grade === 'critical' || m.ok === false);
         if (mhDetail) {
           mhDetail.textContent = `${m.grade || '—'} · formula v${m.formulaVersion ?? '?'}${
             m.bunVersion ? ` · bun ${m.bunVersion}` : ''
@@ -1274,8 +1279,7 @@ class OperationsDashboard extends HTMLElement {
       if (limitsDetail) {
         const raises = lims.filter(r => r.direction === 'up').length;
         const downs = lims.filter(r => r.direction === 'down').length;
-        limitsDetail.textContent =
-          `🚀${raises} ⬇️${downs} · Last: ${lims[0]?.message ?? 'none'}`;
+        limitsDetail.textContent = `🚀${raises} ⬇️${downs} · Last: ${lims[0]?.message ?? 'none'}`;
       }
       if (limitsPatternsDetail) {
         const p = d.limitPatterns;
@@ -1652,9 +1656,17 @@ class OperationsDashboard extends HTMLElement {
           [
             'Outbox pending',
             d.loop.outboxPending ?? 0,
-            (d.loop.outboxPending ?? 0) > 50 ? 'bad' : (d.loop.outboxPending ?? 0) > 0 ? 'warn' : 'ok',
+            (d.loop.outboxPending ?? 0) > 50
+              ? 'bad'
+              : (d.loop.outboxPending ?? 0) > 0
+                ? 'warn'
+                : 'ok',
           ],
-          ['Outbox failed', d.loop.outboxFailed ?? 0, (d.loop.outboxFailed ?? 0) > 0 ? 'bad' : 'ok'],
+          [
+            'Outbox failed',
+            d.loop.outboxFailed ?? 0,
+            (d.loop.outboxFailed ?? 0) > 0 ? 'bad' : 'ok',
+          ],
           ['Reserved', d.loop.reserved ?? 0, ''],
         ];
         loopGrid.innerHTML = cells
@@ -2582,8 +2594,7 @@ class OperationsDashboard extends HTMLElement {
                 ? 'High error'
                 : 'Unknown';
         const tr = cov.trend || 'unknown';
-        const w5 =
-          cov.within5Pct != null ? ` · ≤5 ${Number(cov.within5Pct).toFixed(0)}%` : '';
+        const w5 = cov.within5Pct != null ? ` · ≤5 ${Number(cov.within5Pct).toFixed(0)}%` : '';
         predQuality.textContent = `${q} · ${tr}${w5}`;
       } else {
         predQuality.textContent = '';
@@ -2736,7 +2747,8 @@ class OperationsDashboard extends HTMLElement {
       } else {
         const PURPOSE_ORDER = ['ui', 'shared', 'audit', 'script', 'other'];
         const purposeLabel = p =>
-          ({ ui: 'UI', shared: 'Shared', audit: 'Audit', script: 'Script', other: 'Other' })[p] || p;
+          ({ ui: 'UI', shared: 'Shared', audit: 'Audit', script: 'Script', other: 'Other' })[p] ||
+          p;
         const buckets = new Map();
         for (const a of arts) {
           const p = a.purpose && PURPOSE_ORDER.includes(a.purpose) ? a.purpose : 'other';
@@ -2788,7 +2800,11 @@ class OperationsDashboard extends HTMLElement {
         ? weave.scripts
         : [
             { label: 'Demo snapshot', cmd: 'bun run ops:snapshot:demo', group: 'ops' },
-            { label: 'Reference discovery', cmd: 'bun run reference:discover:check', group: 'harness' },
+            {
+              label: 'Reference discovery',
+              cmd: 'bun run reference:discover:check',
+              group: 'harness',
+            },
           ];
       /** Group order for operator scan (registry R2 first, then ops plane). */
       const GROUP_ORDER = ['registry', 'ops', 'harness', 'secrets', 'plane', 'wiki', 'other'];

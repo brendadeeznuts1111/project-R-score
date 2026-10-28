@@ -1,7 +1,8 @@
 # Examples
 
-| Dir | Run |
-|-----|-----|
+| Dir                  | Run                                          |
+| -------------------- | -------------------------------------------- |
 | `bun-v139-features/` | `cd examples/bun-v139-features && bun start` |
 
-Index: [INDEX.md](./INDEX.md). Prefer day-loop: `bun run harness:status` · [BUN_NATIVE_CAPABILITIES](../docs/BUN_NATIVE_CAPABILITIES.md).
+Index: [INDEX.md](./INDEX.md). Prefer day-loop: `bun run harness:status` ·
+[BUN_NATIVE_CAPABILITIES](../docs/BUN_NATIVE_CAPABILITIES.md).

@@ -24,69 +24,42 @@
     {
       "key": "type",
       "required": true,
-      "values": [
-        "bug",
-        "enhancement"
-      ]
+      "values": ["bug", "enhancement"]
     },
     {
       "key": "priority",
       "required": true,
-      "values": [
-        "p0",
-        "p1",
-        "p2"
-      ]
+      "values": ["p0", "p1", "p2"]
     },
     {
       "key": "plane",
       "required": true,
-      "values": [
-        "domain",
-        "governance",
-        "local",
-        "portal",
-        "public"
-      ]
+      "values": ["domain", "governance", "local", "portal", "public"]
     },
     {
       "key": "runtime",
       "required": true,
-      "values": [
-        "agnostic",
-        "bun"
-      ]
+      "values": ["agnostic", "bun"]
     },
     {
       "key": "team",
       "required": true,
-      "values": [
-        "infrastructure"
-      ]
+      "values": ["infrastructure"]
     },
     {
       "key": "status",
       "required": true,
-      "values": [
-        "active",
-        "blocked",
-        "done",
-        "planned"
-      ]
+      "values": ["active", "blocked", "done", "planned"]
     },
     {
       "key": "urgency",
       "required": false,
-      "values": [
-        "high"
-      ]
+      "values": ["high"]
     },
     {
       "key": "concern",
       "required": false,
-      "values": [
-        "resource-management"
-      ]
+      "values": ["resource-management"]
     }
   ],
   "labels": [

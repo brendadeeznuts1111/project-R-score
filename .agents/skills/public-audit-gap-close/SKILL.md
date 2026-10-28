@@ -7,7 +7,8 @@ description: |
 
 # Public audit gap close
 
-Compose **Public Discovery → Portal verify → Audit catalog → Execute → Re-gate**. Rejects prose-only closure for `public/` artifacts.
+Compose **Public Discovery → Portal verify → Audit catalog → Execute →
+Re-gate**. Rejects prose-only closure for `public/` artifacts.
 
 ## Quick start
 
@@ -32,8 +33,10 @@ bun run public:audit:verify   # bundle: public discover + portal static + audit 
    ```bash
    bun run audit:verify
    ```
-4. **Gap map** — [`docs/harness/tenants/public-plane.md`](../../../docs/harness/tenants/public-plane.md)
-   - Mark **Closed** only with discovery clean + portal verify + registry/portal proof
+4. **Gap map** —
+   [`docs/harness/tenants/public-plane.md`](../../../docs/harness/tenants/public-plane.md)
+   - Mark **Closed** only with discovery clean + portal verify + registry/portal
+     proof
 5. **Execute** — smallest fix at owning boundary
    - Portal UI → `public/portal/` · `docs/portal-foundation.md`
    - Registry bake → `bun run ops:snapshot` · `public/registry/`
@@ -59,13 +62,15 @@ bun run public:audit:verify   # bundle: public discover + portal static + audit 
 
 ## Compose with siblings
 
-| Tool | When |
-|------|------|
-| public-discovery | public/ ref + chrome drift |
-| reference-discovery | lib/config plane naming |
-| audit-gap-close | toc-ops / harness tenant rows |
-| harness-improve | commit thrash on bake loops |
+| Tool                | When                          |
+| ------------------- | ----------------------------- |
+| public-discovery    | public/ ref + chrome drift    |
+| reference-discovery | lib/config plane naming       |
+| audit-gap-close     | toc-ops / harness tenant rows |
+| harness-improve     | commit thrash on bake loops   |
 
-Runbook: [`docs/harness/tenants/public-plane.md`](../../../docs/harness/tenants/public-plane.md)
+Runbook:
+[`docs/harness/tenants/public-plane.md`](../../../docs/harness/tenants/public-plane.md)
 
-Shared agent tooling: [references/agent-tooling.md](../references/agent-tooling.md)
+Shared agent tooling:
+[references/agent-tooling.md](../references/agent-tooling.md)

@@ -11,9 +11,7 @@
     "bun-docs": {
       "type": "stdio",
       "command": "bun",
-      "args": [
-        "${workspaceFolder}/tools/bun-docs-mcp.ts"
-      ],
+      "args": ["${workspaceFolder}/tools/bun-docs-mcp.ts"],
       "env": {
         "BUN_DOCS_ROOT": "${workspaceFolder}"
       }

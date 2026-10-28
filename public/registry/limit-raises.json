@@ -1771,18 +1771,8 @@
         "avg_influence_score": 0.6171,
         "partners": 5,
         "nodes": 11,
-        "states": [
-          "MA",
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "021",
-          "070",
-          "071",
-          "072",
-          "073",
-          "075"
-        ],
+        "states": ["MA", "NJ"],
+        "zip_prefixes": ["021", "070", "071", "072", "073", "075"],
         "top_market": "totals"
       },
       {
@@ -1795,17 +1785,8 @@
         "avg_influence_score": 0.5865,
         "partners": 3,
         "nodes": 7,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070",
-          "071",
-          "072",
-          "073",
-          "075",
-          "084"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070", "071", "072", "073", "075", "084"],
         "top_market": "spread"
       },
       {
@@ -1818,15 +1799,8 @@
         "avg_influence_score": 0.5485,
         "partners": 2,
         "nodes": 3,
-        "states": [
-          "MA",
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "016",
-          "021",
-          "084"
-        ],
+        "states": ["MA", "NJ"],
+        "zip_prefixes": ["016", "021", "084"],
         "top_market": "match_winner"
       },
       {
@@ -1839,12 +1813,8 @@
         "avg_influence_score": 0.6301,
         "partners": 3,
         "nodes": 4,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "071"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["071"],
         "top_market": "spread"
       },
       {
@@ -1857,14 +1827,8 @@
         "avg_influence_score": 0.6959,
         "partners": 2,
         "nodes": 2,
-        "states": [
-          "MA",
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "021",
-          "071"
-        ],
+        "states": ["MA", "NJ"],
+        "zip_prefixes": ["021", "071"],
         "top_market": "match_winner"
       }
     ],
@@ -1879,17 +1843,8 @@
         "avg_influence_score": 0.61,
         "partners": 3,
         "nodes": 10,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070",
-          "071",
-          "072",
-          "073",
-          "075",
-          "084"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070", "071", "072", "073", "075", "084"],
         "top_market": "spread"
       },
       {
@@ -1902,13 +1857,8 @@
         "avg_influence_score": 0.6001,
         "partners": 1,
         "nodes": 3,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "016",
-          "021"
-        ],
+        "states": ["MA"],
+        "zip_prefixes": ["016", "021"],
         "top_market": "match_winner"
       }
     ],
@@ -1923,12 +1873,8 @@
         "avg_influence_score": 0.6496,
         "partners": 2,
         "nodes": 3,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "071"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["071"],
         "top_market": "match_winner"
       },
       {
@@ -1941,12 +1887,8 @@
         "avg_influence_score": 0.5633,
         "partners": 2,
         "nodes": 2,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "073"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["073"],
         "top_market": "over_under"
       },
       {
@@ -1959,12 +1901,8 @@
         "avg_influence_score": 0.6558,
         "partners": 1,
         "nodes": 2,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "021"
-        ],
+        "states": ["MA"],
+        "zip_prefixes": ["021"],
         "top_market": "over_under"
       },
       {
@@ -1977,12 +1915,8 @@
         "avg_influence_score": 0.4329,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "MA"
-        ],
-        "zip_prefixes": [
-          "016"
-        ],
+        "states": ["MA"],
+        "zip_prefixes": ["016"],
         "top_market": "match_winner"
       },
       {
@@ -1995,12 +1929,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "070"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["070"],
         "top_market": "spread"
       },
       {
@@ -2013,12 +1943,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "072"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["072"],
         "top_market": "spread"
       },
       {
@@ -2031,12 +1957,8 @@
         "avg_influence_score": 0.6051,
         "partners": 1,
         "nodes": 1,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "075"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["075"],
         "top_market": "spread"
       },
       {
@@ -2049,12 +1971,8 @@
         "avg_influence_score": 0.5758,
         "partners": 1,
         "nodes": 2,
-        "states": [
-          "NJ"
-        ],
-        "zip_prefixes": [
-          "084"
-        ],
+        "states": ["NJ"],
+        "zip_prefixes": ["084"],
         "top_market": "match_winner"
       }
     ],
@@ -2080,11 +1998,7 @@
         "net_delta": 2000,
         "avg_delta_pct": 133.33,
         "avg_influence_score": 0.6089,
-        "sportsbooks": [
-          "draftkings",
-          "fanduel",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "fanduel", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2108,10 +2022,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2135,10 +2046,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2162,10 +2070,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2189,10 +2094,7 @@
         "net_delta": 1600,
         "avg_delta_pct": 175,
         "avg_influence_score": 0.6051,
-        "sportsbooks": [
-          "draftkings",
-          "hardrock"
-        ],
+        "sportsbooks": ["draftkings", "hardrock"],
         "top_market": "spread"
       },
       {
@@ -2216,10 +2118,7 @@
         "net_delta": 1400,
         "avg_delta_pct": 125,
         "avg_influence_score": 0.5418,
-        "sportsbooks": [
-          "draftkings",
-          "fanduel"
-        ],
+        "sportsbooks": ["draftkings", "fanduel"],
         "top_market": "spread"
       },
       {
@@ -2243,9 +2142,7 @@
         "net_delta": 1000,
         "avg_delta_pct": 200,
         "avg_influence_score": 0.5936,
-        "sportsbooks": [
-          "draftkings"
-        ],
+        "sportsbooks": ["draftkings"],
         "top_market": "totals"
       },
       {
@@ -2269,9 +2166,7 @@
         "net_delta": 1000,
         "avg_delta_pct": 200,
         "avg_influence_score": 0.5936,
-        "sportsbooks": [
-          "draftkings"
-        ],
+        "sportsbooks": ["draftkings"],
         "top_market": "totals"
       },
       {
@@ -2295,10 +2190,7 @@
         "net_delta": 2000,
         "avg_delta_pct": 91.67,
         "avg_influence_score": 0.7376,
-        "sportsbooks": [
-          "draftkings",
-          "fanduel"
-        ],
+        "sportsbooks": ["draftkings", "fanduel"],
         "top_market": "match_winner"
       },
       {
@@ -2322,10 +2214,7 @@
         "net_delta": 700,
         "avg_delta_pct": 54.17,
         "avg_influence_score": 0.5957,
-        "sportsbooks": [
-          "betmgm",
-          "fanduel"
-        ],
+        "sportsbooks": ["betmgm", "fanduel"],
         "top_market": "match_winner"
       },
       {
@@ -2349,9 +2238,7 @@
         "net_delta": 300,
         "avg_delta_pct": 40,
         "avg_influence_score": 0.4799,
-        "sportsbooks": [
-          "hardrock"
-        ],
+        "sportsbooks": ["hardrock"],
         "top_market": "over_under"
       },
       {
@@ -2375,10 +2262,7 @@
         "net_delta": 1800,
         "avg_delta_pct": 97.5,
         "avg_influence_score": 0.6959,
-        "sportsbooks": [
-          "betmgm",
-          "caesars"
-        ],
+        "sportsbooks": ["betmgm", "caesars"],
         "top_market": "match_winner"
       },
       {
@@ -2402,9 +2286,7 @@
         "net_delta": 700,
         "avg_delta_pct": 116.67,
         "avg_influence_score": 0.5756,
-        "sportsbooks": [
-          "draftkings"
-        ],
+        "sportsbooks": ["draftkings"],
         "top_market": "over_under"
       },
       {
@@ -2428,9 +2310,7 @@
         "net_delta": -50,
         "avg_delta_pct": 8.12,
         "avg_influence_score": 0.4329,
-        "sportsbooks": [
-          "caesars"
-        ],
+        "sportsbooks": ["caesars"],
         "top_market": "match_winner"
       },
       {
@@ -2454,9 +2334,7 @@
         "net_delta": 1750,
         "avg_delta_pct": 140,
         "avg_influence_score": 0.635,
-        "sportsbooks": [
-          "hardrock"
-        ],
+        "sportsbooks": ["hardrock"],
         "top_market": "over_under"
       },
       {
@@ -2480,9 +2358,7 @@
         "net_delta": 700,
         "avg_delta_pct": 77.78,
         "avg_influence_score": 0.5166,
-        "sportsbooks": [
-          "caesars"
-        ],
+        "sportsbooks": ["caesars"],
         "top_market": "match_winner"
       },
       {
@@ -2506,9 +2382,7 @@
         "net_delta": 1000,
         "avg_delta_pct": 200,
         "avg_influence_score": 0.7143,
-        "sportsbooks": [
-          "draftkings"
-        ],
+        "sportsbooks": ["draftkings"],
         "top_market": "totals"
       }
     ],
@@ -2595,9 +2469,7 @@
         "marketKey": "over_under",
         "maxWager": 10000,
         "minWager": 1,
-        "allowedBetTypes": [
-          "straight"
-        ],
+        "allowedBetTypes": ["straight"],
         "specialRules": {
           "max_daily_total": 50000,
           "min_age": 21
@@ -2615,9 +2487,7 @@
         "playerAgeMin": 21,
         "identityRequired": false,
         "taxRate": null,
-        "tags": [
-          "basketball"
-        ],
+        "tags": ["basketball"],
         "exclusionGroups": [],
         "tieredLimits": [
           {
@@ -2639,10 +2509,7 @@
         "marketKey": "match_winner",
         "maxWager": 5000,
         "minWager": 0.5,
-        "allowedBetTypes": [
-          "straight",
-          "parlay"
-        ],
+        "allowedBetTypes": ["straight", "parlay"],
         "specialRules": {
           "max_daily_total": 25000,
           "min_age": 21
@@ -2660,9 +2527,7 @@
         "playerAgeMin": 21,
         "identityRequired": false,
         "taxRate": null,
-        "tags": [
-          "soccer"
-        ],
+        "tags": ["soccer"],
         "exclusionGroups": [],
         "tieredLimits": [],
         "source": "regulation-policy-catalog"
@@ -2679,10 +2544,7 @@
         "marketKey": "over_under",
         "maxWager": 15000,
         "minWager": 1,
-        "allowedBetTypes": [
-          "straight",
-          "parlay"
-        ],
+        "allowedBetTypes": ["straight", "parlay"],
         "specialRules": {
           "max_daily_total": 75000,
           "require_identity_verification": true,
@@ -2701,10 +2563,7 @@
         "playerAgeMin": 21,
         "identityRequired": true,
         "taxRate": null,
-        "tags": [
-          "basketball",
-          "identity-required"
-        ],
+        "tags": ["basketball", "identity-required"],
         "exclusionGroups": [],
         "tieredLimits": [],
         "source": "regulation-policy-catalog"
@@ -2721,11 +2580,7 @@
         "marketKey": "match_winner",
         "maxWager": 10000,
         "minWager": 1,
-        "allowedBetTypes": [
-          "straight",
-          "parlay",
-          "teaser"
-        ],
+        "allowedBetTypes": ["straight", "parlay", "teaser"],
         "specialRules": {
           "require_identity_verification": true,
           "min_age": 21
@@ -2743,13 +2598,8 @@
         "playerAgeMin": 21,
         "identityRequired": true,
         "taxRate": null,
-        "tags": [
-          "soccer",
-          "identity-required"
-        ],
-        "exclusionGroups": [
-          "soccer_single_market"
-        ],
+        "tags": ["soccer", "identity-required"],
+        "exclusionGroups": ["soccer_single_market"],
         "tieredLimits": [],
         "source": "regulation-policy-catalog"
       }
@@ -2782,11 +2632,7 @@
         ],
         "observations": {
           "dimensions": 3,
-          "sportsbooks": [
-            "draftkings",
-            "fanduel",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "fanduel", "hardrock"],
           "lastObservedAt": "2026-07-31T22:56:59.000Z",
           "raises": 3,
           "decreases": 0,
@@ -2850,10 +2696,7 @@
         "policyCodes": [],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "fanduel"
-          ],
+          "sportsbooks": ["draftkings", "fanduel"],
           "lastObservedAt": "2026-07-28T14:02:31.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3083,10 +2926,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3158,10 +2998,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3369,10 +3206,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3444,10 +3278,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "lastObservedAt": "2026-07-31T22:38:39.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3545,9 +3376,7 @@
         "policyCodes": [],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "draftkings"
-          ],
+          "sportsbooks": ["draftkings"],
           "lastObservedAt": "2026-07-28T13:24:11.000Z",
           "raises": 1,
           "decreases": 0,
@@ -3587,9 +3416,7 @@
         "policyCodes": [],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "draftkings"
-          ],
+          "sportsbooks": ["draftkings"],
           "lastObservedAt": "2026-07-28T13:24:11.000Z",
           "raises": 1,
           "decreases": 0,
@@ -3637,10 +3464,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "fanduel"
-          ],
+          "sportsbooks": ["draftkings", "fanduel"],
           "lastObservedAt": "2026-07-30T20:49:45.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3712,9 +3536,7 @@
         ],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "caesars"
-          ],
+          "sportsbooks": ["caesars"],
           "lastObservedAt": "2026-07-30T21:36:45.000Z",
           "raises": 1,
           "decreases": 0,
@@ -3792,10 +3614,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "betmgm",
-            "caesars"
-          ],
+          "sportsbooks": ["betmgm", "caesars"],
           "lastObservedAt": "2026-07-30T21:10:45.000Z",
           "raises": 2,
           "decreases": 0,
@@ -3867,9 +3686,7 @@
         ],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "draftkings"
-          ],
+          "sportsbooks": ["draftkings"],
           "lastObservedAt": "2026-07-30T21:15:45.000Z",
           "raises": 1,
           "decreases": 0,
@@ -3941,9 +3758,7 @@
         ],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "hardrock"
-          ],
+          "sportsbooks": ["hardrock"],
           "lastObservedAt": "2026-07-30T21:16:45.000Z",
           "raises": 1,
           "decreases": 1,
@@ -4027,10 +3842,7 @@
         ],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "betmgm",
-            "fanduel"
-          ],
+          "sportsbooks": ["betmgm", "fanduel"],
           "lastObservedAt": "2026-07-30T20:56:45.000Z",
           "raises": 1,
           "decreases": 1,
@@ -4108,9 +3920,7 @@
         ],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "hardrock"
-          ],
+          "sportsbooks": ["hardrock"],
           "lastObservedAt": "2026-07-30T21:29:45.000Z",
           "raises": 1,
           "decreases": 0,
@@ -4182,9 +3992,7 @@
         ],
         "observations": {
           "dimensions": 1,
-          "sportsbooks": [
-            "caesars"
-          ],
+          "sportsbooks": ["caesars"],
           "lastObservedAt": "2026-07-30T21:37:45.000Z",
           "raises": 1,
           "decreases": 1,
@@ -4260,10 +4068,7 @@
         "policyCodes": [],
         "observations": {
           "dimensions": 2,
-          "sportsbooks": [
-            "draftkings",
-            "fanduel"
-          ],
+          "sportsbooks": ["draftkings", "fanduel"],
           "lastObservedAt": "2026-07-28T03:33:20.000Z",
           "raises": 1,
           "decreases": 0,

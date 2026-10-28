@@ -30,7 +30,7 @@ export type BrandBenchViolation = {
 export type BrandBenchReport = {
   runId: string;
   createdAt: string;
-  runtime: "Bun";
+  runtime: 'Bun';
   bunVersion: string;
   bunRevision: string;
   gitCommit: string;

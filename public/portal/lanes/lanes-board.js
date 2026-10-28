@@ -160,7 +160,8 @@ function renderMeta() {
   const meta = $('lanes-meta');
   if (!state) return;
   if (gate) {
-    const ok = state.kind === 'workspace-lane-map' && state.principle === 'correlations-not-containment';
+    const ok =
+      state.kind === 'workspace-lane-map' && state.principle === 'correlations-not-containment';
     gate.textContent = ok ? 'correlations · not containment' : 'unexpected schema';
     gate.className = `portal-gate ${ok ? 'ok' : 'warn'}`;
   }

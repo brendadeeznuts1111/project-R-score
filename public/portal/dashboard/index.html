@@ -1,550 +1,957 @@
-<!DOCTYPE html>
+<!doctype html>
 <!-- @see docs/portal-foundation.md -->
 <html lang="en" data-theme="dark">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="portal-poll-ms" content="60000" />
-  <meta name="description" content="FactoryWager executive dashboard — proof KPIs, channel meta, TOC Ops glance, and release verification." />
-  <title>Executive Dashboard · FactoryWager</title>
-  <meta name="theme-color" content="#0d1117" />
-  <meta name="application-name" content="FactoryWager" />
-  <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
-  <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
-  <link rel="manifest" href="/site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/portal/style.css" />
-  <style>
-    .dash {
-      max-width: min(1400px, 100%);
-      margin: 0 auto;
-      padding: 0 var(--pad-inline, 24px) 48px;
-    }
-    .dash-hero {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-      align-items: center;
-      margin-block: 20px 8px;
-    }
-    .dash-hero h1 {
-      font-size: clamp(1.25rem, 2vw, 1.5rem);
-      font-weight: 600;
-      letter-spacing: -0.02em;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .dash-hero .sub {
-      color: var(--text-dim);
-      font-size: 13px;
-      width: 100%;
-      margin: 0;
-    }
-    .dash-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      margin-inline-start: auto;
-    }
-    .btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 6px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      font-family: inherit;
-    }
-    .btn:hover { background: var(--surface-hover); }
-    .btn-primary {
-      background: var(--accent-glow, rgba(88, 166, 255, 0.12));
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    .btn-primary:hover {
-      background: var(--accent);
-      color: var(--bg);
-    }
-    .ts {
-      color: var(--text-dim);
-      font-size: 12px;
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px;
-      margin: 16px 0 8px;
-    }
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .card::before {
-      content: "";
-      position: absolute;
-      inset-block-start: 0;
-      inset-inline: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      opacity: 0.55;
-    }
-    .card .lbl {
-      font-size: 11px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      letter-spacing: 0.5px;
-    }
-    .card .val {
-      font-size: 24px;
-      font-weight: 600;
-      margin: 6px 0 4px;
-      font-variant-numeric: tabular-nums;
-      text-decoration: none;
-      color: inherit;
-      display: inline-block;
-    }
-    .card a.val:hover { color: var(--accent); }
-    .card .d { font-size: 12px; color: var(--text-dim); line-height: 1.35; }
-    /* Structured secondary metrics (replaces jammed subtitle lines) */
-    .card .metrics {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px 14px;
-      margin: 2px 0 0;
-      padding: 6px 0 0;
-      border-top: 1px solid var(--border, rgba(48, 54, 61, 0.6));
-    }
-    .card .metrics .metric { display: flex; flex-direction: column; min-width: 0; }
-    .card .metrics dt {
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: var(--text-dim);
-    }
-    .card .metrics dd {
-      margin: 0;
-      font-size: 12px;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .ok { color: var(--green, #3fb950); }
-    .warn { color: var(--yellow, #d29922); }
-    .err { color: var(--red, #f85149); }
-    .section {
-      margin: 28px 0;
-    }
-    .section h2 {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    .section-sub {
-      font-size: 12px;
-      color: var(--text-dim);
-      margin: -4px 0 12px;
-    }
-    .ops-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-    .ops-table th {
-      text-align: left;
-      padding: 8px 10px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-dim);
-      font-weight: 500;
-      background: var(--surface-hover);
-    }
-    .ops-table td {
-      padding: 7px 10px;
-      border-bottom: 1px solid rgba(48, 54, 61, 0.45);
-    }
-    .ops-table tbody tr:nth-child(odd) { background: rgba(22, 27, 34, 0.35); }
-    .mono { font-family: var(--font-mono); font-size: 11px; }
-    .phash {
-      font-family: var(--font-mono);
-      background: var(--surface-hover);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-    .proof-line { margin-top: 10px; }
-    .ops-link { font-size: 12px; color: var(--accent); margin-inline-end: 12px; }
-    .proof-index-list { list-style: none; padding: 0; margin: 0; font-size: 12px; }
-    .proof-index-list li {
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(48,54,61,.35);
-      font-family: var(--font-mono, ui-monospace, monospace);
-    }
-    .proof-index-list a { color: var(--accent); }
-    .proof-fam { color: var(--text-dim); text-transform: uppercase; font-size: 10px; letter-spacing: .04em; }
-    .proof-index-list .st-ok { color: var(--green, #3fb950); }
-    .proof-index-list .st-bad { color: var(--red, #f85149); }
-    .empty-hint {
-      font-size: 13px;
-      color: var(--text-dim);
-      padding: 12px 0;
-    }
-    .empty-hint code {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      background: var(--surface-hover);
-      padding: 1px 6px;
-      border-radius: 4px;
-    }
-    .err-box {
-      background: rgba(248, 81, 73, 0.1);
-      border: 1px solid var(--red);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      margin: 12px 0;
-      font-size: 13px;
-      color: var(--red);
-    }
-    .err-box ul { margin: 8px 0 12px 1.2em; color: var(--text); }
-    .err-box .btn { margin-inline-end: 10px; }
-    .hidden { display: none !important; }
-    .nav-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 16px;
-      margin: 8px 0 4px;
-      font-size: 13px;
-    }
-    .verification-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .skeleton-card {
-      min-height: 88px;
-      background: linear-gradient(
-        90deg,
-        var(--surface) 25%,
-        var(--surface-hover) 50%,
-        var(--surface) 75%
-      );
-      background-size: 200% 100%;
-      animation: shimmer 1.2s ease-in-out infinite;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-    }
-    @keyframes shimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
-    }
-    channel-filter {
-      display: block;
-      margin: 12px 0;
-    }
-    .plane {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 14px;
-      margin: 16px 0 4px;
-    }
-    @media (max-width: 900px) {
-      .plane { grid-template-columns: 1fr; }
-    }
-    .plane-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 18px;
-      position: relative;
-      overflow: hidden;
-    }
-    .plane-card::before {
-      content: "";
-      position: absolute;
-      inset-block-start: 0;
-      inset-inline: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      opacity: 0.55;
-    }
-    .plane-card h3 {
-      margin: 0 0 6px;
-      font-size: 13px;
-      font-weight: 600;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-    }
-    .plane-metric {
-      font-size: clamp(1.6rem, 3vw, 2rem);
-      font-weight: 650;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
-      margin: 4px 0 8px;
-      line-height: 1.1;
-    }
-    .plane-detail,
-    .plane-sub {
-      font-size: 12px;
-      color: var(--text-dim);
-      line-height: 1.45;
-      margin: 0 0 6px;
-    }
-    .plane-sub { font-family: var(--font-mono); font-size: 11px; }
-    .plane-gap-list {
-      margin: 6px 0 0;
-      padding-left: 1.1rem;
-      font-size: 12px;
-      color: var(--text-dim);
-      line-height: 1.45;
-    }
-    .plane-gap-list code { font-size: 11px; }
-    .plane-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px 14px;
-      margin-top: 10px;
-      font-size: 12px;
-    }
-    .badge-demo {
-      font-size: 10px;
-      font-weight: 650;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 1px 6px;
-    }
-    @media (max-width: 640px) {
-      .grid { grid-template-columns: 1fr 1fr; }
-      .card .val { font-size: 20px; }
-    }
-  </style>
-</head>
-<body>
-  <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <h1 class="logo">
-        <span class="logo-icon" aria-hidden="true"></span>
-        <span class="brand-wordmark">FactoryWager</span>
-        <span class="brand-badge">ops</span>
-        <span class="logo-page">Dashboard</span>
-      </h1>
-      <nav class="topbar-nav" aria-label="Primary">
-        <a href="/" class="nav-link" title="public lander · portal entry" data-group="other" data-domain="platform">Home</a>
-        <a href="/portal/ops/" class="nav-link" title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot" data-registry="/registry/ops-summary.json">Ops</a>
-        <a href="/portal/" class="nav-link" title="portal hub · board index · weave surfaces" data-group="registry" data-domain="platform">Registry</a>
-        <a href="/portal/health/" class="nav-link" title="system health · monorepo score · bun run monorepo:health:bake" data-group="harness" data-domain="platform" data-cli="bun run monorepo:health:bake" data-registry="/registry/monorepo-health.json">Health</a>
-        <a href="/portal/dod/" class="nav-link" title="visual proof review · public-plane gate · bun run public:audit:verify" data-group="plane" data-domain="platform" data-cli="bun run public:audit:verify">DOD</a>
-        <a href="/portal/compliance/" class="nav-link" title="MA/NJ board · shadow matrix · bun run compliance:bake" data-group="ops" data-domain="control" data-cli="bun run compliance:bake" data-registry="/registry/compliance-board.json">Compliance</a>
-        <div class="nav-overflow">
-          <button type="button" class="nav-more" aria-label="More navigation" aria-expanded="false" aria-haspopup="true">⋯</button>
-          <div class="nav-dropdown" role="menu">
-          <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
-            <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
-            <a href="/portal/desk/" class="nav-link" title="morning board · logins · limits · balances · soft net · telegram · freezes · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Desk</a>
-            <a href="/portal/partners/" class="nav-link" title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:dashboard:bake" data-registry="/registry/partners-dashboard.json" role="menuitem">Partners</a>
-            <a href="/portal/partner/" class="nav-link" title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake" data-group="ops" data-domain="partner" data-cli="bun run partner:health:bake" data-registry="/registry/partner-health.json" role="menuitem">Partner health</a>
-            <a href="/portal/account/" class="nav-link" title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed" data-group="ops" data-domain="partner" data-cli="bun run ops:dossier:seed" data-registry="/registry/partners-dashboard.json" role="menuitem">Account</a>
-            <a href="/portal/partner-history/" class="nav-link" title="per-partner limit history board · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Partner history</a>
-            <a href="/portal/limits/" class="nav-link" title="multi-factor partner limit raises · CLV · bun run ops:limits:demo" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:demo" data-registry="/registry/limit-raises.json" role="menuitem">Limits</a>
-            <a href="/portal/limits-lab/" class="nav-link" title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict" data-group="ops" data-domain="partner" data-cli="bun run ops:limits:predict" data-registry="/registry/limit-forecast-lab.json" role="menuitem">Limits lab</a>
-            <a href="/portal/bookmakers/" class="nav-link" title="@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop) · bun run bookmakers:bake" data-group="ops" data-domain="partner" data-cli="bun run bookmakers:bake" data-registry="/registry/bookmakers.json" role="menuitem">Bookmakers</a>
-            <a href="/portal/factory/" class="nav-link" title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify" data-group="ops" data-domain="partner" data-cli="bun run telegram:verify" data-registry="/registry/telegram-handshake.json" role="menuitem">Factory</a>
-            <a href="/portal/tennis/" class="nav-link" title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake" data-group="ops" data-domain="trading" data-cli="bun run tennis:board:bake" data-registry="/registry/tennis/agent-auth.json" role="menuitem">Tennis</a>
-            <a href="/registry/prediction/report/" class="nav-link" title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction" data-group="ops" data-domain="trading" data-cli="bun run portal-cli snapshot last --scope prediction" role="menuitem">Prediction</a>
-            <a href="/portal/dashboard/" class="nav-link active" aria-current="page" title="KPIs · TOC · compliance plane · proof-index pins" data-group="ops" data-domain="control" role="menuitem">Dashboard</a>
-            <a href="/portal/toc/" class="nav-link" title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc" data-group="ops" data-domain="control" data-cli="bun run ops:seed:toc" data-registry="/registry/toc-ops.json" role="menuitem">TOC</a>
-            <a href="/monitoring/" class="nav-link" title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed" data-group="ops" data-domain="control" data-cli="bun run ops:snapshot --no-seed" data-registry="/registry/monitoring.json" role="menuitem">Monitoring</a>
-            <a href="/portal/identity/" class="nav-link" title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts" data-group="ops" data-domain="identity" data-cli="bun test tests/identity-*.test.ts" data-registry="/registry/identity-board.json" role="menuitem">Identity</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="portal-poll-ms" content="60000" />
+    <meta
+      name="description"
+      content="FactoryWager executive dashboard — proof KPIs, channel meta, TOC Ops glance, and release verification."
+    />
+    <title>Executive Dashboard · FactoryWager</title>
+    <meta name="theme-color" content="#0d1117" />
+    <meta name="application-name" content="FactoryWager" />
+    <link rel="icon" type="image/svg+xml" href="/icons/factory/mark.svg" />
+    <link rel="apple-touch-icon" href="/icons/factory/mark.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/portal/style.css" />
+    <style>
+      .dash {
+        max-width: min(1400px, 100%);
+        margin: 0 auto;
+        padding: 0 var(--pad-inline, 24px) 48px;
+      }
+      .dash-hero {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        align-items: center;
+        margin-block: 20px 8px;
+      }
+      .dash-hero h1 {
+        font-size: clamp(1.25rem, 2vw, 1.5rem);
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .dash-hero .sub {
+        color: var(--text-dim);
+        font-size: 13px;
+        width: 100%;
+        margin: 0;
+      }
+      .dash-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-inline-start: auto;
+      }
+      .btn {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 6px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .btn:hover {
+        background: var(--surface-hover);
+      }
+      .btn-primary {
+        background: var(--accent-glow, rgba(88, 166, 255, 0.12));
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      .btn-primary:hover {
+        background: var(--accent);
+        color: var(--bg);
+      }
+      .ts {
+        color: var(--text-dim);
+        font-size: 12px;
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 14px;
+        margin: 16px 0 8px;
+      }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .card::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        opacity: 0.55;
+      }
+      .card .lbl {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        letter-spacing: 0.5px;
+      }
+      .card .val {
+        font-size: 24px;
+        font-weight: 600;
+        margin: 6px 0 4px;
+        font-variant-numeric: tabular-nums;
+        text-decoration: none;
+        color: inherit;
+        display: inline-block;
+      }
+      .card a.val:hover {
+        color: var(--accent);
+      }
+      .card .d {
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.35;
+      }
+      /* Structured secondary metrics (replaces jammed subtitle lines) */
+      .card .metrics {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 14px;
+        margin: 2px 0 0;
+        padding: 6px 0 0;
+        border-top: 1px solid var(--border, rgba(48, 54, 61, 0.6));
+      }
+      .card .metrics .metric {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .card .metrics dt {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+        color: var(--text-dim);
+      }
+      .card .metrics dd {
+        margin: 0;
+        font-size: 12px;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+      .ok {
+        color: var(--green, #3fb950);
+      }
+      .warn {
+        color: var(--yellow, #d29922);
+      }
+      .err {
+        color: var(--red, #f85149);
+      }
+      .section {
+        margin: 28px 0;
+      }
+      .section h2 {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 8px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .section-sub {
+        font-size: 12px;
+        color: var(--text-dim);
+        margin: -4px 0 12px;
+      }
+      .ops-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+      .ops-table th {
+        text-align: left;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-dim);
+        font-weight: 500;
+        background: var(--surface-hover);
+      }
+      .ops-table td {
+        padding: 7px 10px;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.45);
+      }
+      .ops-table tbody tr:nth-child(odd) {
+        background: rgba(22, 27, 34, 0.35);
+      }
+      .mono {
+        font-family: var(--font-mono);
+        font-size: 11px;
+      }
+      .phash {
+        font-family: var(--font-mono);
+        background: var(--surface-hover);
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+      }
+      .proof-line {
+        margin-top: 10px;
+      }
+      .ops-link {
+        font-size: 12px;
+        color: var(--accent);
+        margin-inline-end: 12px;
+      }
+      .proof-index-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        font-size: 12px;
+      }
+      .proof-index-list li {
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(48, 54, 61, 0.35);
+        font-family: var(--font-mono, ui-monospace, monospace);
+      }
+      .proof-index-list a {
+        color: var(--accent);
+      }
+      .proof-fam {
+        color: var(--text-dim);
+        text-transform: uppercase;
+        font-size: 10px;
+        letter-spacing: 0.04em;
+      }
+      .proof-index-list .st-ok {
+        color: var(--green, #3fb950);
+      }
+      .proof-index-list .st-bad {
+        color: var(--red, #f85149);
+      }
+      .empty-hint {
+        font-size: 13px;
+        color: var(--text-dim);
+        padding: 12px 0;
+      }
+      .empty-hint code {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        background: var(--surface-hover);
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
+      .err-box {
+        background: rgba(248, 81, 73, 0.1);
+        border: 1px solid var(--red);
+        border-radius: var(--radius);
+        padding: 14px 16px;
+        margin: 12px 0;
+        font-size: 13px;
+        color: var(--red);
+      }
+      .err-box ul {
+        margin: 8px 0 12px 1.2em;
+        color: var(--text);
+      }
+      .err-box .btn {
+        margin-inline-end: 10px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        margin: 8px 0 4px;
+        font-size: 13px;
+      }
+      .verification-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .skeleton-card {
+        min-height: 88px;
+        background: linear-gradient(
+          90deg,
+          var(--surface) 25%,
+          var(--surface-hover) 50%,
+          var(--surface) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.2s ease-in-out infinite;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+      }
+      @keyframes shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+      channel-filter {
+        display: block;
+        margin: 12px 0;
+      }
+      .plane {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 14px;
+        margin: 16px 0 4px;
+      }
+      @media (max-width: 900px) {
+        .plane {
+          grid-template-columns: 1fr;
+        }
+      }
+      .plane-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 16px 18px;
+        position: relative;
+        overflow: hidden;
+      }
+      .plane-card::before {
+        content: '';
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), transparent);
+        opacity: 0.55;
+      }
+      .plane-card h3 {
+        margin: 0 0 6px;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .plane-metric {
+        font-size: clamp(1.6rem, 3vw, 2rem);
+        font-weight: 650;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.02em;
+        margin: 4px 0 8px;
+        line-height: 1.1;
+      }
+      .plane-detail,
+      .plane-sub {
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.45;
+        margin: 0 0 6px;
+      }
+      .plane-sub {
+        font-family: var(--font-mono);
+        font-size: 11px;
+      }
+      .plane-gap-list {
+        margin: 6px 0 0;
+        padding-left: 1.1rem;
+        font-size: 12px;
+        color: var(--text-dim);
+        line-height: 1.45;
+      }
+      .plane-gap-list code {
+        font-size: 11px;
+      }
+      .plane-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 14px;
+        margin-top: 10px;
+        font-size: 12px;
+      }
+      .badge-demo {
+        font-size: 10px;
+        font-weight: 650;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 1px 6px;
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        .card .val {
+          font-size: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="tenant-sidebar" class="tenant-sidebar" aria-label="Tenants"></nav>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <h1 class="logo">
+          <span class="logo-icon" aria-hidden="true"></span>
+          <span class="brand-wordmark">FactoryWager</span>
+          <span class="brand-badge">ops</span>
+          <span class="logo-page">Dashboard</span>
+        </h1>
+        <nav class="topbar-nav" aria-label="Primary">
+          <a
+            href="/"
+            class="nav-link"
+            title="public lander · portal entry"
+            data-group="other"
+            data-domain="platform"
+            >Home</a
+          >
+          <a
+            href="/portal/ops/"
+            class="nav-link"
+            title="ops-summary rollup · C4/C5 loop · partner handshake panel · bun run ops:snapshot"
+            data-group="ops"
+            data-domain="control"
+            data-cli="bun run ops:snapshot"
+            data-registry="/registry/ops-summary.json"
+            >Ops</a
+          >
+          <a
+            href="/portal/"
+            class="nav-link"
+            title="portal hub · board index · weave surfaces"
+            data-group="registry"
+            data-domain="platform"
+            >Registry</a
+          >
+          <a
+            href="/portal/health/"
+            class="nav-link"
+            title="system health · monorepo score · bun run monorepo:health:bake"
+            data-group="harness"
+            data-domain="platform"
+            data-cli="bun run monorepo:health:bake"
+            data-registry="/registry/monorepo-health.json"
+            >Health</a
+          >
+          <a
+            href="/portal/dod/"
+            class="nav-link"
+            title="visual proof review · public-plane gate · bun run public:audit:verify"
+            data-group="plane"
+            data-domain="platform"
+            data-cli="bun run public:audit:verify"
+            >DOD</a
+          >
+          <a
+            href="/portal/compliance/"
+            class="nav-link"
+            title="MA/NJ board · shadow matrix · bun run compliance:bake"
+            data-group="ops"
+            data-domain="control"
+            data-cli="bun run compliance:bake"
+            data-registry="/registry/compliance-board.json"
+            >Compliance</a
+          >
+          <div class="nav-overflow">
+            <button
+              type="button"
+              class="nav-more"
+              aria-label="More navigation"
+              aria-expanded="false"
+              aria-haspopup="true"
+            >
+              ⋯
+            </button>
+            <div class="nav-dropdown" role="menu">
+              <div class="nav-group" role="group" aria-label="Ops · domain" data-group="ops">
+                <div class="nav-group-label" aria-hidden="true">Ops · domain</div>
+                <a
+                  href="/portal/desk/"
+                  class="nav-link"
+                  title="morning board · logins · limits · balances · soft net · telegram · freezes · bun run partner:dashboard:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:dashboard:bake"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Desk</a
+                >
+                <a
+                  href="/portal/partners/"
+                  class="nav-link"
+                  title="package groups · telegram forums · accounting · deposits · seat capital · bun run partner:dashboard:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:dashboard:bake"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Partners</a
+                >
+                <a
+                  href="/portal/partner/"
+                  class="nav-link"
+                  title="partner domain readiness · profile alignment · per-out checks · bun run partner:health:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run partner:health:bake"
+                  data-registry="/registry/partner-health.json"
+                  role="menuitem"
+                  >Partner health</a
+                >
+                <a
+                  href="/portal/account/"
+                  class="nav-link"
+                  title="single-account dossier · tree · telemetry · betlog · ops.view.per_account · bun run ops:dossier:seed"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:dossier:seed"
+                  data-registry="/registry/partners-dashboard.json"
+                  role="menuitem"
+                  >Account</a
+                >
+                <a
+                  href="/portal/partner-history/"
+                  class="nav-link"
+                  title="per-partner limit history board · bun run ops:limits:demo"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:demo"
+                  data-registry="/registry/limit-raises.json"
+                  role="menuitem"
+                  >Partner history</a
+                >
+                <a
+                  href="/portal/limits/"
+                  class="nav-link"
+                  title="multi-factor partner limit raises · CLV · bun run ops:limits:demo"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:demo"
+                  data-registry="/registry/limit-raises.json"
+                  role="menuitem"
+                  >Limits</a
+                >
+                <a
+                  href="/portal/limits-lab/"
+                  class="nav-link"
+                  title="forecast / predict lab · multi-factor backtest · bun run ops:limits:predict"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run ops:limits:predict"
+                  data-registry="/registry/limit-forecast-lab.json"
+                  role="menuitem"
+                  >Limits lab</a
+                >
+                <a
+                  href="/portal/bookmakers/"
+                  class="nav-link"
+                  title="@factorywager/bookmakers catalog (Tenant=bookmakers; Domain=partner = desk loop) · bun run bookmakers:bake"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run bookmakers:bake"
+                  data-registry="/registry/bookmakers.json"
+                  role="menuitem"
+                  >Bookmakers</a
+                >
+                <a
+                  href="/portal/factory/"
+                  class="nav-link"
+                  title="Factory Telegram ops · package-group wire · handshake · bun run telegram:verify"
+                  data-group="ops"
+                  data-domain="partner"
+                  data-cli="bun run telegram:verify"
+                  data-registry="/registry/telegram-handshake.json"
+                  role="menuitem"
+                  >Factory</a
+                >
+                <a
+                  href="/portal/tennis/"
+                  class="nav-link"
+                  title="Tennis HQ desk · agent-auth · live matches · bun run tennis:board:bake"
+                  data-group="ops"
+                  data-domain="trading"
+                  data-cli="bun run tennis:board:bake"
+                  data-registry="/registry/tennis/agent-auth.json"
+                  role="menuitem"
+                  >Tennis</a
+                >
+                <a
+                  href="/registry/prediction/report/"
+                  class="nav-link"
+                  title="latest prediction report · snapshot scope · bun run portal-cli snapshot last --scope prediction"
+                  data-group="ops"
+                  data-domain="trading"
+                  data-cli="bun run portal-cli snapshot last --scope prediction"
+                  role="menuitem"
+                  >Prediction</a
+                >
+                <a
+                  href="/portal/dashboard/"
+                  class="nav-link active"
+                  aria-current="page"
+                  title="KPIs · TOC · compliance plane · proof-index pins"
+                  data-group="ops"
+                  data-domain="control"
+                  role="menuitem"
+                  >Dashboard</a
+                >
+                <a
+                  href="/portal/toc/"
+                  class="nav-link"
+                  title="Drum/Buffer/Rope fixture board · bun run ops:seed:toc"
+                  data-group="ops"
+                  data-domain="control"
+                  data-cli="bun run ops:seed:toc"
+                  data-registry="/registry/toc-ops.json"
+                  role="menuitem"
+                  >TOC</a
+                >
+                <a
+                  href="/monitoring/"
+                  class="nav-link"
+                  title="routing · env · compliance tile · proof status · bun run ops:snapshot --no-seed"
+                  data-group="ops"
+                  data-domain="control"
+                  data-cli="bun run ops:snapshot --no-seed"
+                  data-registry="/registry/monitoring.json"
+                  role="menuitem"
+                  >Monitoring</a
+                >
+                <a
+                  href="/portal/identity/"
+                  class="nav-link"
+                  title="auth board · lockout · anomaly · geo · JIT · bun test tests/identity-*.test.ts"
+                  data-group="ops"
+                  data-domain="identity"
+                  data-cli="bun test tests/identity-*.test.ts"
+                  data-registry="/registry/identity-board.json"
+                  role="menuitem"
+                  >Identity</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
+                <div class="nav-group-label" aria-hidden="true">Secrets</div>
+                <a
+                  href="/portal/vault/"
+                  class="nav-link"
+                  title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                  data-group="secrets"
+                  data-domain="identity"
+                  data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps"
+                  data-registry="/registry/vault-health.json"
+                  role="menuitem"
+                  >Vault</a
+                >
+                <a
+                  href="/portal/env/"
+                  class="nav-link"
+                  title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed"
+                  data-group="secrets"
+                  data-domain="identity"
+                  data-cli="bun run portal-cli secret map  # no secret values printed"
+                  role="menuitem"
+                  >Env</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
+                <div class="nav-group-label" aria-hidden="true">Registry</div>
+                <a
+                  href="/portal/catalog/"
+                  class="nav-link"
+                  title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run bake:scrape-wire-taxonomy"
+                  role="menuitem"
+                  >Catalog</a
+                >
+                <a
+                  href="/portal/packages/"
+                  class="nav-link"
+                  title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save"
+                  data-group="registry"
+                  data-domain="platform"
+                  data-cli="bun run ssot:flow:soft && bun run verify:pm:save"
+                  data-registry="/registry/packages-graph-map.json"
+                  role="menuitem"
+                  >Packages</a
+                >
+                <a
+                  href="/portal/brands/"
+                  class="nav-link"
+                  title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run brand:keymap"
+                  role="menuitem"
+                  >Brands</a
+                >
+                <a
+                  href="/portal/glossary/"
+                  class="nav-link"
+                  title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run glossary:portal"
+                  data-registry="/registry/domain-glossary.json"
+                  role="menuitem"
+                  >Glossary</a
+                >
+                <a
+                  href="/portal/lanes/"
+                  class="nav-link"
+                  title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run workspace-taxonomy:bake"
+                  data-registry="/registry/workspace-lane-map.json"
+                  role="menuitem"
+                  >Lanes</a
+                >
+                <a
+                  href="/portal/issues/"
+                  class="nav-link"
+                  title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run github-issue-taxonomy:check"
+                  data-registry="/registry/github-issue-taxonomy.json"
+                  role="menuitem"
+                  >Issues</a
+                >
+                <a
+                  href="/portal/surfaces/"
+                  class="nav-link"
+                  title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json"
+                  data-registry="/registry/surfaces-state.json"
+                  role="menuitem"
+                  >Surfaces</a
+                >
+                <a
+                  href="/portal/skills/"
+                  class="nav-link"
+                  title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run skills:validate"
+                  data-registry="/registry/harness-skills-catalog.json"
+                  role="menuitem"
+                  >Skills</a
+                >
+                <a
+                  href="/portal/concepts/"
+                  class="nav-link"
+                  title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run concepts:bake  # → /registry/concepts-state.json"
+                  role="menuitem"
+                  >Concepts</a
+                >
+                <a
+                  href="/portal/concepts/graph/"
+                  class="nav-link"
+                  title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                  data-group="registry"
+                  data-domain="knowledge"
+                  data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json"
+                  role="menuitem"
+                  >Concept graph</a
+                >
+              </div>
+              <div class="nav-group" role="group" aria-label="More" data-group="other">
+                <div class="nav-group-label" aria-hidden="true">More</div>
+                <a
+                  href="https://wiki.factory-wager.com/wiki-index.html"
+                  class="nav-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="GitHub Pages hub · wiki-index"
+                  data-group="other"
+                  data-domain="platform"
+                  role="menuitem"
+                  >Wiki</a
+                >
+              </div>
+            </div>
           </div>
-          <div class="nav-group" role="group" aria-label="Secrets" data-group="secrets">
-            <div class="nav-group-label" aria-hidden="true">Secrets</div>
-            <a href="/portal/vault/" class="nav-link" title="Proton Pass health bake · gate: portal-cli vault health · bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli vault health  # offline SSOT · --update to refresh snaps" data-registry="/registry/vault-health.json" role="menuitem">Vault</a>
-            <a href="/portal/env/" class="nav-link" title="vault-map inject · secret autofill mapping · bun run portal-cli secret map  # no secret values printed" data-group="secrets" data-domain="identity" data-cli="bun run portal-cli secret map  # no secret values printed" role="menuitem">Env</a>
+        </nav>
+        <div class="topbar-status">
+          <a href="/portal/health" class="topbar-health-link" title="System health">
+            <span id="health-dot" class="health-dot unknown"></span>
+            <span id="health-label" class="health-label">…</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="dash portal-page">
+      <section class="dash-hero portal-hero portal-hero--card" aria-labelledby="dash-hero-title">
+        <p class="portal-eyebrow">Proof command center</p>
+        <h1 id="dash-hero-title">Executive Dashboard</h1>
+        <p class="sub hero-sub">
+          At-a-glance proof command center — release taxonomy, install/bundler proofs, plus TOC Ops
+          and loop slices from <code>ops-summary</code> (not a Full Ops duplicate).
+        </p>
+        <div class="portal-hero-meta">
+          <span id="dash-gate" class="portal-gate" aria-live="polite">Loading dashboard…</span>
+          <span id="dash-baked" class="portal-baked">—</span>
+          <div class="dash-actions">
+            <button type="button" class="btn" id="refresh-btn">Refresh</button>
+            <a class="btn" href="/portal/toc/">TOC board</a>
+            <a class="btn btn-primary" href="/portal/ops/">Full Ops</a>
+            <span class="ts" id="ts">—</span>
           </div>
-          <div class="nav-group" role="group" aria-label="Registry" data-group="registry">
-            <div class="nav-group-label" aria-hidden="true">Registry</div>
-            <a href="/portal/catalog/" class="nav-link" title="account catalog · scrape-wire sports/states registry · bun run bake:scrape-wire-taxonomy" data-group="registry" data-domain="knowledge" data-cli="bun run bake:scrape-wire-taxonomy" role="menuitem">Catalog</a>
-            <a href="/portal/packages/" class="nav-link" title="graph map · publish soft-pass · weave related.ssotFlowSoft/pmProof · color kernel publish.* · bun run ssot:flow:soft && bun run verify:pm:save" data-group="registry" data-domain="platform" data-cli="bun run ssot:flow:soft && bun run verify:pm:save" data-registry="/registry/packages-graph-map.json" role="menuitem">Packages</a>
-            <a href="/portal/brands/" class="nav-link" title="domain-value glossary · constructor tiers · project adoption · bun run brand:keymap" data-group="registry" data-domain="knowledge" data-cli="bun run brand:keymap" role="menuitem">Brands</a>
-            <a href="/portal/glossary/" class="nav-link" title="market · model · trading · warehouse · pipeline concepts · bun run glossary:portal" data-group="registry" data-domain="knowledge" data-cli="bun run glossary:portal" data-registry="/registry/domain-glossary.json" role="menuitem">Glossary</a>
-            <a href="/portal/lanes/" class="nav-link" title="session · chrome · concept crosswalk · correlations not containment · bun run workspace-taxonomy:bake" data-group="registry" data-domain="knowledge" data-cli="bun run workspace-taxonomy:bake" data-registry="/registry/workspace-lane-map.json" role="menuitem">Lanes</a>
-            <a href="/portal/issues/" class="nav-link" title="repository issue spine · labels · ownership · public drift health · bun run github-issue-taxonomy:check" data-group="registry" data-domain="knowledge" data-cli="bun run github-issue-taxonomy:check" data-registry="/registry/github-issue-taxonomy.json" role="menuitem">Issues</a>
-            <a href="/portal/surfaces/" class="nav-link" title="edge host inventory · Access domains · backend shortcodes · schema v2 · bun run surfaces:bake  # → /registry/surfaces-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run surfaces:bake  # → /registry/surfaces-state.json" data-registry="/registry/surfaces-state.json" role="menuitem">Surfaces</a>
-            <a href="/portal/skills/" class="nav-link" title="harness + Kimi skill catalogs · loop registry alignment · bun run skills:validate" data-group="registry" data-domain="knowledge" data-cli="bun run skills:validate" data-registry="/registry/harness-skills-catalog.json" role="menuitem">Skills</a>
-            <a href="/portal/concepts/" class="nav-link" title="semantic vocabulary · domain summary · usage + provenance · bun run concepts:bake  # → /registry/concepts-state.json" data-group="registry" data-domain="knowledge" data-cli="bun run concepts:bake  # → /registry/concepts-state.json" role="menuitem">Concepts</a>
-            <a href="/portal/concepts/graph/" class="nav-link" title="seeAlso · surface · domain hubs · interactive board · bun run concept:graph:bake  # → /registry/concepts-graph.json" data-group="registry" data-domain="knowledge" data-cli="bun run concept:graph:bake  # → /registry/concepts-graph.json" role="menuitem">Concept graph</a>
-          </div>
-          <div class="nav-group" role="group" aria-label="More" data-group="other">
-            <div class="nav-group-label" aria-hidden="true">More</div>
-            <a href="https://wiki.factory-wager.com/wiki-index.html" class="nav-link" target="_blank" rel="noopener noreferrer" title="GitHub Pages hub · wiki-index" data-group="other" data-domain="platform" role="menuitem">Wiki</a>
-          </div>
+          <div class="portal-source-links" aria-label="Proof artifacts">
+            <a href="/registry/ops-summary.json">ops-summary</a>
+            <a href="/registry/toc-ops.json">toc-ops</a>
+            <a href="/registry/portal-weave.json">portal-weave</a>
+            <a href="/registry/release-features.json">release-features</a>
+            <a href="/portal/toc/">TOC Ops</a>
+            <a href="/portal/ops/">Full Ops</a>
           </div>
         </div>
+      </section>
+
+      <nav class="nav-links" aria-label="Proof artifacts">
+        <a class="ops-link" href="/portal/toc/">TOC Ops</a>
+        <a class="ops-link" href="/portal/ops/">Full Ops</a>
+        <a class="ops-link" href="/portal/dod/">DOD queue</a>
+        <a class="ops-link" href="/monitoring/">Monitoring</a>
+        <a class="ops-link" href="/registry/ops-summary.json">ops-summary</a>
+        <a class="ops-link" href="/registry/toc-ops.json">toc-ops</a>
+        <a class="ops-link" href="/registry/portal-weave.json">Portal weave</a>
+        <a class="ops-link" href="/registry/release-features.json">release-features</a>
+        <a class="ops-link" href="/registry/proof-taxonomy-audit.json">taxonomy audit</a>
+        <a class="ops-link" href="/registry/bundler-loaders-proof.json">bundler</a>
+        <a class="ops-link" href="/registry/install-platform.json">install platform</a>
+        <a class="ops-link" href="/registry/channel-meta-bake.json">channel meta bake</a>
       </nav>
-      <div class="topbar-status">
-        <a href="/portal/health" class="topbar-health-link" title="System health">
-          <span id="health-dot" class="health-dot unknown"></span>
-          <span id="health-label" class="health-label">…</span>
-        </a>
-      </div>
-    </div>
-  </header>
 
-  <main class="dash portal-page">
-    <section class="dash-hero portal-hero portal-hero--card" aria-labelledby="dash-hero-title">
-      <p class="portal-eyebrow">Proof command center</p>
-      <h1 id="dash-hero-title">Executive Dashboard</h1>
-      <p class="sub hero-sub">
-        At-a-glance proof command center — release taxonomy, install/bundler proofs,
-        plus TOC Ops and loop slices from <code>ops-summary</code> (not a Full Ops duplicate).
+      <div id="errors" class="hidden" aria-live="polite"></div>
+
+      <section class="section" aria-labelledby="plane-heading">
+        <h2 id="plane-heading">Operate planes</h2>
+        <p class="section-sub">
+          Snapshot slices from <code>ops-summary</code> — TOC desk is demo-readonly on Pages; Soft
+          mutations stay in <code>toc-ops-repo</code>.
+        </p>
+        <div class="plane" id="ops-plane" aria-live="polite"></div>
+      </section>
+
+      <section class="section" aria-labelledby="kpi-heading">
+        <h2 id="kpi-heading">Proof KPIs</h2>
+        <div class="grid" id="kpi-grid"></div>
+      </section>
+
+      <section class="section" aria-labelledby="sub-heading">
+        <h2 id="sub-heading">Release by subsystem</h2>
+        <p class="section-sub">
+          Rollup from <code>summary.bySubsystem</code> on the meta release proof.
+        </p>
+        <div class="grid" id="subsystem-grid"></div>
+      </section>
+
+      <section class="section" aria-labelledby="release-heading">
+        <h2 id="release-heading">
+          Release verification
+          <span class="version-badge" id="release-mode">—</span>
+        </h2>
+        <p class="section-sub" id="release-detail">Loading release proof…</p>
+        <p class="mono" id="release-hash"></p>
+        <channel-filter></channel-filter>
+        <div id="release-cards" class="verification-cards"></div>
+        <p class="proof-line">
+          <a class="ops-link" href="/registry/release-features.json">Full release JSON</a>
+          <a class="ops-link" href="/portal/ops/">Ops deep dive</a>
+          <a class="ops-link" href="/portal/toc/">TOC board</a>
+        </p>
+      </section>
+
+      <section class="section" id="proof-pins" aria-labelledby="pins-heading">
+        <h2 id="pins-heading">Verification · proof pins</h2>
+        <div id="proof-index-host" class="proof-index-host"></div>
+      </section>
+
+      <section class="section" id="taxonomy-tbl" aria-labelledby="tax-heading">
+        <h2 id="tax-heading">Proof taxonomy</h2>
+      </section>
+
+      <section class="section" id="defaults-tbl" aria-labelledby="def-heading">
+        <h2 id="def-heading">Bun defaults</h2>
+      </section>
+    </main>
+
+    <notification-center aria-live="polite"></notification-center>
+
+    <footer class="footer" data-portal-chrome="footer">
+      <p>
+        <strong>FactoryWager</strong> ·
+        <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a>
+        · <a href="/portal/ops/">Ops</a> · <a href="/portal/toc/">TOC</a> ·
+        <a href="/portal/desk/">Desk</a> · <a href="/portal/partners/">Partners</a> ·
+        <a href="/portal/tennis/">Tennis</a> · <a href="/portal/bookmakers/">Bookmakers</a> ·
+        <a href="/portal/packages/">Packages</a> · <a href="/portal/brands/">Brands</a> ·
+        <a href="/portal/glossary/">Glossary</a> · <a href="/portal/issues/">Issues</a> ·
+        <a href="/portal/surfaces/">Surfaces</a> · <a href="/portal/health/">Health</a> ·
+        <a href="/registry/portal-weave.json">Portal proof</a> ·
+        <a href="/portal/compliance/">Compliance</a> · <a href="/portal/limits/">Limits</a> ·
+        <a href="/portal/dod/">DOD</a> · <a href="/portal/env/">Env</a> ·
+        <a href="/portal/vault/">Vault</a> ·
+        <a
+          href="https://wiki.factory-wager.com/wiki-index.html"
+          target="_blank"
+          rel="noopener noreferrer"
+          >Wiki</a
+        >
+        · <a href="/registry/monorepo-health.json">Monorepo health</a> ·
+        <a
+          href="https://github.com/brendadeeznuts1111/project-R-score"
+          target="_blank"
+          rel="noopener noreferrer"
+          >GitHub</a
+        >
       </p>
-      <div class="portal-hero-meta">
-        <span id="dash-gate" class="portal-gate" aria-live="polite">Loading dashboard…</span>
-        <span id="dash-baked" class="portal-baked">—</span>
-        <div class="dash-actions">
-          <button type="button" class="btn" id="refresh-btn">Refresh</button>
-          <a class="btn" href="/portal/toc/">TOC board</a>
-          <a class="btn btn-primary" href="/portal/ops/">Full Ops</a>
-          <span class="ts" id="ts">—</span>
-        </div>
-        <div class="portal-source-links" aria-label="Proof artifacts">
-          <a href="/registry/ops-summary.json">ops-summary</a>
-          <a href="/registry/toc-ops.json">toc-ops</a>
-          <a href="/registry/portal-weave.json">portal-weave</a>
-          <a href="/registry/release-features.json">release-features</a>
-          <a href="/portal/toc/">TOC Ops</a>
-          <a href="/portal/ops/">Full Ops</a>
-        </div>
-      </div>
-    </section>
-
-    <nav class="nav-links" aria-label="Proof artifacts">
-      <a class="ops-link" href="/portal/toc/">TOC Ops</a>
-      <a class="ops-link" href="/portal/ops/">Full Ops</a>
-      <a class="ops-link" href="/portal/dod/">DOD queue</a>
-      <a class="ops-link" href="/monitoring/">Monitoring</a>
-      <a class="ops-link" href="/registry/ops-summary.json">ops-summary</a>
-      <a class="ops-link" href="/registry/toc-ops.json">toc-ops</a>
-      <a class="ops-link" href="/registry/portal-weave.json">Portal weave</a>
-      <a class="ops-link" href="/registry/release-features.json">release-features</a>
-      <a class="ops-link" href="/registry/proof-taxonomy-audit.json">taxonomy audit</a>
-      <a class="ops-link" href="/registry/bundler-loaders-proof.json">bundler</a>
-      <a class="ops-link" href="/registry/install-platform.json">install platform</a>
-      <a class="ops-link" href="/registry/channel-meta-bake.json">channel meta bake</a>
-    </nav>
-
-    <div id="errors" class="hidden" aria-live="polite"></div>
-
-    <section class="section" aria-labelledby="plane-heading">
-      <h2 id="plane-heading">Operate planes</h2>
-      <p class="section-sub">
-        Snapshot slices from <code>ops-summary</code> — TOC desk is demo-readonly on Pages;
-        Soft mutations stay in <code>toc-ops-repo</code>.
+      <p class="footer-meta">
+        project-R-score · chrome
+        <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a> ·
+        <span data-footer-bun></span> · <span data-footer-ts>…</span>
       </p>
-      <div class="plane" id="ops-plane" aria-live="polite"></div>
-    </section>
+    </footer>
 
-    <section class="section" aria-labelledby="kpi-heading">
-      <h2 id="kpi-heading">Proof KPIs</h2>
-      <div class="grid" id="kpi-grid"></div>
-    </section>
-
-    <section class="section" aria-labelledby="sub-heading">
-      <h2 id="sub-heading">Release by subsystem</h2>
-      <p class="section-sub">Rollup from <code>summary.bySubsystem</code> on the meta release proof.</p>
-      <div class="grid" id="subsystem-grid"></div>
-    </section>
-
-    <section class="section" aria-labelledby="release-heading">
-      <h2 id="release-heading">
-        Release verification
-        <span class="version-badge" id="release-mode">—</span>
-      </h2>
-      <p class="section-sub" id="release-detail">Loading release proof…</p>
-      <p class="mono" id="release-hash"></p>
-      <channel-filter></channel-filter>
-      <div id="release-cards" class="verification-cards"></div>
-      <p class="proof-line">
-        <a class="ops-link" href="/registry/release-features.json">Full release JSON</a>
-        <a class="ops-link" href="/portal/ops/">Ops deep dive</a>
-        <a class="ops-link" href="/portal/toc/">TOC board</a>
-      </p>
-    </section>
-
-    <section class="section" id="proof-pins" aria-labelledby="pins-heading">
-      <h2 id="pins-heading">Verification · proof pins</h2>
-      <div id="proof-index-host" class="proof-index-host"></div>
-    </section>
-
-    <section class="section" id="taxonomy-tbl" aria-labelledby="tax-heading">
-      <h2 id="tax-heading">Proof taxonomy</h2>
-    </section>
-
-    <section class="section" id="defaults-tbl" aria-labelledby="def-heading">
-      <h2 id="def-heading">Bun defaults</h2>
-    </section>
-  </main>
-
-  <notification-center aria-live="polite"></notification-center>
-
-  <footer class="footer" data-portal-chrome="footer">
-    <p>
-      <strong>FactoryWager</strong> ·
-      <a href="https://factory-wager.com" target="_blank" rel="noopener noreferrer">Dashboard</a> ·
-      <a href="/portal/ops/">Ops</a> ·
-      <a href="/portal/toc/">TOC</a> ·
-      <a href="/portal/desk/">Desk</a> ·
-      <a href="/portal/partners/">Partners</a> ·
-      <a href="/portal/tennis/">Tennis</a> ·
-      <a href="/portal/bookmakers/">Bookmakers</a> ·
-      <a href="/portal/packages/">Packages</a> ·
-      <a href="/portal/brands/">Brands</a> ·
-      <a href="/portal/glossary/">Glossary</a> ·
-      <a href="/portal/issues/">Issues</a> ·
-      <a href="/portal/surfaces/">Surfaces</a> ·
-      <a href="/portal/health/">Health</a> ·
-      <a href="/registry/portal-weave.json">Portal proof</a> ·
-      <a href="/portal/compliance/">Compliance</a> ·
-      <a href="/portal/limits/">Limits</a> ·
-      <a href="/portal/dod/">DOD</a> ·
-      <a href="/portal/env/">Env</a> ·
-      <a href="/portal/vault/">Vault</a> ·
-      <a href="https://wiki.factory-wager.com/wiki-index.html" target="_blank" rel="noopener noreferrer">Wiki</a> ·
-      <a href="/registry/monorepo-health.json">Monorepo health</a> ·
-      <a href="https://github.com/brendadeeznuts1111/project-R-score" target="_blank" rel="noopener noreferrer">GitHub</a>
-    </p>
-    <p class="footer-meta">
-      project-R-score · chrome <a href="/registry/portal-chrome.json"><code>portal-chrome.json</code></a>
-      · <span data-footer-bun></span>
-      · <span data-footer-ts>…</span>
-    </p>
-  </footer>
-
-  <script type="module" src="/portal/data.js"></script>
-  <script type="module" src="/portal/topbar.js"></script>
-  <script type="module" src="/portal/dashboard-app.js"></script>
-  <script type="module" src="/portal/components/sidebar.js"></script>
-  <script type="module" src="/portal/components/notification.js"></script>
-  <script type="module" src="/portal/components/footer.js"></script>
-</body>
+    <script type="module" src="/portal/data.js"></script>
+    <script type="module" src="/portal/topbar.js"></script>
+    <script type="module" src="/portal/dashboard-app.js"></script>
+    <script type="module" src="/portal/components/sidebar.js"></script>
+    <script type="module" src="/portal/components/notification.js"></script>
+    <script type="module" src="/portal/components/footer.js"></script>
+  </body>
 </html>

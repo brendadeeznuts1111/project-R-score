@@ -23,9 +23,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 13
     },
@@ -41,9 +39,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 17
     },
@@ -59,9 +55,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 21
     },
@@ -77,9 +71,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 25
     },
@@ -95,9 +87,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 29
     },
@@ -113,9 +103,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 34
     },
@@ -128,17 +116,11 @@
       "language": "sh",
       "code": "$ bun upgrade",
       "stability": "stable",
-      "api": [
-        "bun upgrade"
-      ],
+      "api": ["bun upgrade"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/blog/bun-v1.3.12#to-upgrade-bun"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/blog/bun-v1.3.12#to-upgrade-bun"],
       "sourceLine": 43
     },
     {
@@ -215,17 +197,10 @@
       "language": "js",
       "code": "return new Response(new Bun.Image(upload).resize(200).jpeg());",
       "stability": "stable",
-      "api": [
-        "Bun.Image",
-        "Bun.Image.jpeg",
-        "Bun.Image.resize"
-      ],
+      "api": ["Bun.Image", "Bun.Image.jpeg", "Bun.Image.resize"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "embedding-context",
-        "external-bindings"
-      ],
+      "requiresSetup": ["embedding-context", "external-bindings"],
       "docsLinks": [
         "https://bun.com/docs/runtime/image",
         "https://bun.com/docs/runtime/image#output-formats",
@@ -242,18 +217,11 @@
       "language": "toml",
       "code": "# bunfig.toml\n[install]\nglobalStore = true",
       "stability": "experimental",
-      "api": [
-        "bunfig.toml",
-        "globalStore"
-      ],
+      "api": ["bunfig.toml", "globalStore"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/bunfig"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/runtime/bunfig"],
       "sourceLine": 145
     },
     {
@@ -265,17 +233,11 @@
       "language": "bash",
       "code": "BUN_INSTALL_GLOBAL_STORE=1 bun install",
       "stability": "experimental",
-      "api": [
-        "bun install"
-      ],
+      "api": ["bun install"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/pm/cli/install"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/pm/cli/install"],
       "sourceLine": 153
     },
     {
@@ -287,11 +249,7 @@
       "language": "ts",
       "code": "Bun.serve({\n  port: 443,\n  tls: { cert, key },\n  http3: true, // also listen on UDP/443 for HTTP/3\n  fetch(req) {\n    return new Response(\"hi\");\n  },\n});",
       "stability": "highly-experimental",
-      "api": [
-        "Bun.serve",
-        "http3",
-        "UDP"
-      ],
+      "api": ["Bun.serve", "http3", "UDP"],
       "dependencies": [],
       "runnable": false,
       "requiresSetup": [
@@ -314,11 +272,7 @@
       "language": "ts",
       "code": "Bun.serve({\n  port: 443,\n  tls: { cert, key },\n  http3: true,\n  http1: false, // disable HTTP/1.1\n  fetch(req) {\n    return new Response(\"h3 only\");\n  },\n});",
       "stability": "highly-experimental",
-      "api": [
-        "Bun.serve",
-        "http1: false",
-        "http3"
-      ],
+      "api": ["Bun.serve", "http1: false", "http3"],
       "dependencies": [],
       "runnable": false,
       "requiresSetup": [
@@ -341,15 +295,10 @@
       "language": "js",
       "code": "// Opt in globally:\n//   BUN_FEATURE_FLAG_EXPERIMENTAL_HTTP2_CLIENT=1 bun run app.js\n//   bun run --experimental-http2-fetch app.js\n\n// Or per-request (works without the env flag):\nconst res = await fetch(\"https://example.com\", { protocol: \"http2\" });",
       "stability": "experimental",
-      "api": [
-        "bun run -",
-        "env"
-      ],
+      "api": ["bun run -", "env"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [
         "https://bun.com/docs/runtime#bun-run-to-pipe-code-from-stdin",
         "https://bun.com/docs/runtime/bunfig#env"
@@ -368,9 +317,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 241
     },
@@ -383,17 +330,11 @@
       "language": "js",
       "code": "const res = await fetch(\"https://example.com/\", { protocol: \"http3\" });\nconsole.log(await res.text());",
       "stability": "highly-experimental",
-      "api": [
-        "http3"
-      ],
+      "api": ["http3"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "requiresSetup": ["network-access"],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 282
     },
     {
@@ -405,17 +346,11 @@
       "language": "sh",
       "code": "# CLI flag\nbun --experimental-http3-fetch app.ts\n\n# Environment variable\nBUN_FEATURE_FLAG_EXPERIMENTAL_HTTP3_CLIENT=1 bun app.ts",
       "stability": "highly-experimental",
-      "api": [
-        "http3"
-      ],
+      "api": ["http3"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/server"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
+      "docsLinks": ["https://bun.com/docs/runtime/http/server"],
       "sourceLine": 308
     },
     {
@@ -427,15 +362,10 @@
       "language": "js",
       "code": "// First request goes over TCP/TLS as usual\nconst res1 = await fetch(\"https://example.com/api\");\n// If the response includes `Alt-Svc: h3=\":443\"`,\n// the next request to the same origin uses QUIC/HTTP-3\nconst res2 = await fetch(\"https://example.com/api\");",
       "stability": "highly-experimental",
-      "api": [
-        "TCP",
-        "TLS"
-      ],
+      "api": ["TCP", "TLS"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [
         "https://bun.com/docs/runtime/http/tls",
         "https://bun.com/docs/runtime/networking/tcp"
@@ -451,19 +381,11 @@
       "language": "js",
       "code": "import fs from \"node:fs\";\n\n// Now correctly detects changes inside directories created after watch() starts\nfs.watch(\"./src\", { recursive: true }, (event, filename) => {\n  console.log(event, filename);\n});\n\n// mkdir src/newDir && touch src/newDir/file.txt\n// Previously: only \"rename newDir\" — file.txt was missed\n// Now: \"rename newDir\", \"rename newDir/file.txt\", \"change newDir/file.txt\"",
       "stability": "stable",
-      "api": [
-        "fs.watch"
-      ],
-      "dependencies": [
-        "node:fs"
-      ],
+      "api": ["fs.watch"],
+      "dependencies": ["node:fs"],
       "runnable": false,
-      "requiresSetup": [
-        "long-running-watcher"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/file-io"
-      ],
+      "requiresSetup": ["long-running-watcher"],
+      "docsLinks": ["https://bun.com/docs/runtime/file-io"],
       "sourceLine": 334
     },
     {
@@ -483,9 +405,7 @@
       ],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [
         "https://bun.com/blog/bun-v1.3.14#no-orphans-exit-when-the-parent-process-dies",
         "https://bun.com/docs/runtime/bunfig"
@@ -501,15 +421,10 @@
       "language": "js",
       "code": "// Replace the current process with a new one\nprocess.execve(\"/usr/bin/echo\", [\"echo\", \"hello from execve\"], {\n  PATH: process.env.PATH,\n});\n\n// ^ If successful, this line is never reached",
       "stability": "stable",
-      "api": [
-        "process.env",
-        "process.execve"
-      ],
+      "api": ["process.env", "process.execve"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "process-replacement"
-      ],
+      "requiresSetup": ["process-replacement"],
       "docsLinks": [
         "https://bun.com/docs/runtime/node-api",
         "https://bun.com/docs/runtime/utils"
@@ -525,10 +440,7 @@
       "language": "js",
       "code": "const terminal = new Bun.Terminal({\n  cols: 80,\n  rows: 24,\n  onData(data) {\n    process.stdout.write(data);\n  },\n});\n\nconst proc = Bun.spawn({\n  cmd: [\"cmd.exe\", \"/c\", \"echo\", \"hello from ConPTY\"],\n  terminal,\n});\n\nawait proc.exited;\nterminal.close();",
       "stability": "stable",
-      "api": [
-        "Bun.spawn",
-        "Bun.Terminal"
-      ],
+      "api": ["Bun.spawn", "Bun.Terminal"],
       "dependencies": [],
       "runnable": true,
       "requiresSetup": [],
@@ -547,15 +459,10 @@
       "language": "js",
       "code": "// bun build --target=bun entry.js\nvar __using = (stack, value, async) => {\n  /* ... */\n};\nvar __callDispose = (stack, error, hasError) => {\n  /* ... */\n};\n{\n  let __stack = [];\n  try {\n    const x = __using(\n      __stack,\n      {\n        [Symbol.dispose]() {\n          /* ... */\n        },\n      },\n      0,\n    );\n    console.log(\"hi\");\n  } catch (_catch) {\n    var _err = _catch,\n      _hasErr = 1;\n  } finally {\n    __callDispose(__stack, _err, _hasErr);\n  }\n}",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "using / await using"
-      ],
+      "api": ["bun build", "using / await using"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [
         "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
         "https://bun.com/docs/bundler/index#basic-example"
@@ -571,15 +478,10 @@
       "language": "js",
       "code": "// bun build --target=bun entry.js\n{\n  using x = {\n    [Symbol.dispose]() {\n      /* ... */\n    },\n  };\n  console.log(\"hi\");\n}",
       "stability": "stable",
-      "api": [
-        "bun build",
-        "using / await using"
-      ],
+      "api": ["bun build", "using / await using"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "placeholders"
-      ],
+      "requiresSetup": ["placeholders"],
       "docsLinks": [
         "https://bun.com/blog/bun-v1.3.14#using-await-using-no-longer-lowered-when-targeting-bun",
         "https://bun.com/docs/bundler/index#basic-example"
@@ -598,9 +500,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "external-bindings"
-      ],
+      "requiresSetup": ["external-bindings"],
       "docsLinks": [],
       "sourceLine": 519
     },
@@ -613,17 +513,11 @@
       "language": "js",
       "code": "const WebSocket = require(\"ws\");\n\n// Extension header is now correctly omitted\nconst ws = new WebSocket(\"ws://localhost:3000\", {\n  perMessageDeflate: false,\n});\n\n// Also works with globalThis.WebSocket\nconst ws2 = new WebSocket(\"ws://localhost:3000\", {\n  perMessageDeflate: false,\n});",
       "stability": "stable",
-      "api": [
-        "WebSocket"
-      ],
-      "dependencies": [
-        "ws"
-      ],
+      "api": ["WebSocket"],
+      "dependencies": ["ws"],
       "runnable": true,
       "requiresSetup": [],
-      "docsLinks": [
-        "https://bun.com/docs/runtime/http/websockets"
-      ],
+      "docsLinks": ["https://bun.com/docs/runtime/http/websockets"],
       "sourceLine": 541
     },
     {
@@ -635,18 +529,10 @@
       "language": "js",
       "code": "import { SQL } from \"bun\";\n\n// All connections in this pool now share a single SSL_CTX\nconst db = new SQL(\"postgres://user:pass@host/db?sslmode=require\");\n\n// These also share the same cached SSL_CTX since the config is identical\nconst conn1 = await Bun.connect({\n  hostname: \"example.com\",\n  port: 443,\n  tls: true,\n  socket: {\n    /* ... */\n  },\n});\nconst conn2 = await Bun.connect({\n  hostname: \"example.com\",\n  port: 443,\n  tls: true,\n  socket: {\n    /* ... */\n  },\n});",
       "stability": "stable",
-      "api": [
-        "Bun.connect",
-        "SQL"
-      ],
-      "dependencies": [
-        "bun"
-      ],
+      "api": ["Bun.connect", "SQL"],
+      "dependencies": ["bun"],
       "runnable": false,
-      "requiresSetup": [
-        "network-access",
-        "placeholders"
-      ],
+      "requiresSetup": ["network-access", "placeholders"],
       "docsLinks": [
         "https://bun.com/docs/runtime/networking/tcp#create-a-connection-bun-connect",
         "https://bun.com/docs/runtime/sql"
@@ -665,9 +551,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "network-access"
-      ],
+      "requiresSetup": ["network-access"],
       "docsLinks": [],
       "sourceLine": 596
     },
@@ -680,18 +564,11 @@
       "language": "sh",
       "code": "# Before: registry API returned empty readme\nnpm view @my-scope/my-package readme  # \"\"\n\n# After: readme contents are properly sent\nnpm view @my-scope/my-package readme  # \"# my-package\\n\\nA great package...\"",
       "stability": "stable",
-      "api": [
-        "bun publish"
-      ],
+      "api": ["bun publish"],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime",
-        "placeholders"
-      ],
-      "docsLinks": [
-        "https://bun.com/docs/pm/cli/publish"
-      ],
+      "requiresSetup": ["non-javascript-runtime", "placeholders"],
+      "docsLinks": ["https://bun.com/docs/pm/cli/publish"],
       "sourceLine": 653
     },
     {
@@ -708,9 +585,7 @@
         "tls.getCACertificates",
         "tls.getCACertificates('system')"
       ],
-      "dependencies": [
-        "node:tls"
-      ],
+      "dependencies": ["node:tls"],
       "runnable": true,
       "requiresSetup": [],
       "docsLinks": [
@@ -731,9 +606,7 @@
       "api": [],
       "dependencies": [],
       "runnable": false,
-      "requiresSetup": [
-        "non-javascript-runtime"
-      ],
+      "requiresSetup": ["non-javascript-runtime"],
       "docsLinks": [],
       "sourceLine": 1045
     }

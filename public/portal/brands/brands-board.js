@@ -226,7 +226,8 @@ function renderSummary() {
   const totalBrands = graph.totalCanonicalBrands ?? graph.brands ?? 0;
   const matched = graph.matched ?? 0;
   const observed = graph.observed ?? 0;
-  const baselineUndeclared = graph.baselineUndeclared ?? graph.legacyUndeclared ?? graph.undeclared ?? 0;
+  const baselineUndeclared =
+    graph.baselineUndeclared ?? graph.legacyUndeclared ?? graph.undeclared ?? 0;
   const newUndeclared = graph.newUndeclared ?? 0;
   const undeclaredTotal = Number(baselineUndeclared) + Number(newUndeclared);
   const target = document.getElementById('brand-summary');
@@ -849,9 +850,7 @@ async function bootstrap() {
     .at(-1);
   const summary = bunBrandMap?.summary ?? {};
   const topApis = topUndeclaredApis(3);
-  const undeclaredNote = topApis.length
-    ? ` · top undeclared: ${topApis.join(', ')}`
-    : '';
+  const undeclaredNote = topApis.length ? ` · top undeclared: ${topApis.join(', ')}` : '';
   document.getElementById('brand-generated').textContent = generated
     ? `Latest registry generation ${generated} · ${summary.matched ?? 0}/${summary.observed ?? 0} matched · ${summary.mappedBrands ?? 0}/${summary.totalCanonicalBrands ?? 0} brands mapped${undeclaredNote}`
     : 'Registry artifacts unavailable; use the raw JSON links to inspect recovery state.';

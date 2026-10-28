@@ -1,10 +1,15 @@
 # Design System Reference
 
-Plan documents use Plannotator's semantic theme tokens. This makes them theme-aware: standalone files render with bundled defaults; embedded in the Plannotator UI, they inherit whatever theme is active (30+ themes, light and dark variants).
+Plan documents use Plannotator's semantic theme tokens. This makes them
+theme-aware: standalone files render with bundled defaults; embedded in the
+Plannotator UI, they inherit whatever theme is active (30+ themes, light and
+dark variants).
 
 ## Standalone defaults
 
-Include this `:root` block so the plan works when opened directly in a browser. These are the Plannotator light theme values — they get overridden when embedded.
+Include this `:root` block so the plan works when opened directly in a browser.
+These are the Plannotator light theme values — they get overridden when
+embedded.
 
 ```css
 :root {
@@ -38,33 +43,41 @@ Include this `:root` block so the plan works when opened directly in a browser. 
 }
 ```
 
-`--font-display` is plan-specific — used for headings and titles to create visual contrast with the body. It's not part of the core Plannotator theme, so it won't be overridden when embedded (which is the desired behavior).
+`--font-display` is plan-specific — used for headings and titles to create
+visual contrast with the body. It's not part of the core Plannotator theme, so
+it won't be overridden when embedded (which is the desired behavior).
 
 ## Token usage map
 
-| Role | Token | SVG equivalent |
-|------|-------|----------------|
-| Page background | `--background` | — |
-| Primary text | `--foreground` | `fill` on text |
-| Card / panel background | `--card` | `fill` on rects |
-| Subdued text, labels, captions | `--muted-foreground` | `fill` on labels |
-| Soft backgrounds, secondary fills | `--muted` | `fill` on secondary rects |
-| Primary accent (CTA, attention, keywords) | `--primary` | `stroke` / `fill` on highlighted elements |
-| Warm accent | `--accent` | — |
-| Positive / success | `--success` | `stroke` / `fill` on success paths |
-| Caution | `--warning` | `fill` on warning badges |
-| Error / destructive | `--destructive` | `stroke` / `fill` on error paths |
-| Borders, dividers | `--border` | `stroke` on box outlines |
-| Arrow strokes, diagram lines | `--muted-foreground` | `stroke` on connectors |
-| Code block background | `--code-bg` | — |
-| Body font | `--font-sans` | `font-family` on SVG body text |
-| Code / labels font | `--font-mono` | `font-family` on SVG labels |
-| Display / heading font | `--font-display` | `font-family` on SVG titles |
+| Role                                      | Token                | SVG equivalent                            |
+| ----------------------------------------- | -------------------- | ----------------------------------------- |
+| Page background                           | `--background`       | —                                         |
+| Primary text                              | `--foreground`       | `fill` on text                            |
+| Card / panel background                   | `--card`             | `fill` on rects                           |
+| Subdued text, labels, captions            | `--muted-foreground` | `fill` on labels                          |
+| Soft backgrounds, secondary fills         | `--muted`            | `fill` on secondary rects                 |
+| Primary accent (CTA, attention, keywords) | `--primary`          | `stroke` / `fill` on highlighted elements |
+| Warm accent                               | `--accent`           | —                                         |
+| Positive / success                        | `--success`          | `stroke` / `fill` on success paths        |
+| Caution                                   | `--warning`          | `fill` on warning badges                  |
+| Error / destructive                       | `--destructive`      | `stroke` / `fill` on error paths          |
+| Borders, dividers                         | `--border`           | `stroke` on box outlines                  |
+| Arrow strokes, diagram lines              | `--muted-foreground` | `stroke` on connectors                    |
+| Code block background                     | `--code-bg`          | —                                         |
+| Body font                                 | `--font-sans`        | `font-family` on SVG body text            |
+| Code / labels font                        | `--font-mono`        | `font-family` on SVG labels               |
+| Display / heading font                    | `--font-display`     | `font-family` on SVG titles               |
 
 ## Base styles
 
 ```css
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: var(--font-sans);
@@ -85,13 +98,16 @@ body {
 ## Typography
 
 **Headings** — `var(--font-display)`, weight 500, `var(--foreground)`.
+
 - H1: `2rem` page title
 - H2: `1.4rem` section headers
 - H3: `1.15rem` subsection headers
 
-**Body** — `var(--font-sans)`, weight 400, `0.95rem`, line-height `1.65`. Max paragraph width `65ch`.
+**Body** — `var(--font-sans)`, weight 400, `0.95rem`, line-height `1.65`. Max
+paragraph width `65ch`.
 
-**Labels & metadata** — `var(--font-mono)`, `0.7–0.8rem`, weight 500, uppercase, letter-spacing `0.06em`, `var(--muted-foreground)`.
+**Labels & metadata** — `var(--font-mono)`, `0.7–0.8rem`, weight 500, uppercase,
+letter-spacing `0.06em`, `var(--muted-foreground)`.
 
 **Code** — `var(--font-mono)`, `0.85rem`, line-height `1.55`.
 
@@ -214,7 +230,9 @@ header h1 {
 ```
 
 ```css
-section { margin-top: 64px; }
+section {
+  margin-top: 64px;
+}
 
 .section-header {
   display: flex;
@@ -278,11 +296,22 @@ section { margin-top: 64px; }
 }
 
 /* Syntax tokens — these use semantic roles, not fixed colors */
-.code-panel .kw  { color: var(--primary); }         /* keywords */
-.code-panel .fn  { color: var(--accent); }           /* identifiers, types */
-.code-panel .str { color: var(--success); }          /* strings */
-.code-panel .cm  { color: var(--muted-foreground); font-style: italic; } /* comments */
-.code-panel .num { color: var(--warning); }          /* numbers */
+.code-panel .kw {
+  color: var(--primary);
+} /* keywords */
+.code-panel .fn {
+  color: var(--accent);
+} /* identifiers, types */
+.code-panel .str {
+  color: var(--success);
+} /* strings */
+.code-panel .cm {
+  color: var(--muted-foreground);
+  font-style: italic;
+} /* comments */
+.code-panel .num {
+  color: var(--warning);
+} /* numbers */
 ```
 
 ### Risk table
@@ -314,9 +343,16 @@ section { margin-top: 64px; }
   border-bottom: 1px solid var(--border);
 }
 
-.risk-row:last-child { border-bottom: none; }
-.risk-name { font-weight: 500; }
-.risk-mitigation { font-size: 0.9rem; color: var(--muted-foreground); }
+.risk-row:last-child {
+  border-bottom: none;
+}
+.risk-name {
+  font-weight: 500;
+}
+.risk-mitigation {
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+}
 
 .badge {
   font-family: var(--font-mono);
@@ -347,7 +383,9 @@ section { margin-top: 64px; }
 ```html
 <div class="callout">
   <h3>Should we use WebSockets or SSE?</h3>
-  <p>SSE is simpler but unidirectional. WebSockets add infrastructure complexity.</p>
+  <p>
+    SSE is simpler but unidirectional. WebSockets add infrastructure complexity.
+  </p>
   <span class="decide-with">Decide with: infrastructure team</span>
 </div>
 ```
@@ -394,7 +432,12 @@ section { margin-top: 64px; }
 ```
 
 ```css
-.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
 
 .tag {
   font-family: var(--font-mono);
@@ -417,7 +460,11 @@ Wraps SVG diagrams in a bordered container:
 
 ```html
 <div class="diagram-panel">
-  <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+  <svg
+    viewBox="0 0 720 280"
+    xmlns="http://www.w3.org/2000/svg"
+    style="width:100%"
+  >
     <!-- diagram content -->
   </svg>
   <span class="diagram-caption">Request flow through the API gateway</span>
@@ -453,7 +500,9 @@ Wraps SVG diagrams in a bordered container:
 }
 
 @media (max-width: 720px) {
-  .two-col { grid-template-columns: 1fr; }
+  .two-col {
+    grid-template-columns: 1fr;
+  }
 }
 ```
 
@@ -488,9 +537,13 @@ summary::before {
   transition: transform 0.2s;
 }
 
-details[open] summary::before { transform: rotate(90deg); }
+details[open] summary::before {
+  transform: rotate(90deg);
+}
 
-.details-body { padding: 0 24px 24px; }
+.details-body {
+  padding: 0 24px 24px;
+}
 ```
 
 ### Milestone timeline
@@ -501,7 +554,9 @@ Vertical timeline showing phases without time estimates.
 <div class="milestones">
   <div class="milestone">
     <div class="when">Phase 1</div>
-    <div class="dot-col"><span class="dot done"></span><span class="line"></span></div>
+    <div class="dot-col">
+      <span class="dot done"></span><span class="line"></span>
+    </div>
     <div class="body">
       <h3>Foundation</h3>
       <p>Set up core infrastructure and initial integrations.</p>
@@ -512,7 +567,11 @@ Vertical timeline showing phases without time estimates.
 ```
 
 ```css
-.milestones { display: flex; flex-direction: column; gap: 0; }
+.milestones {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
 
 .milestone {
   display: grid;
@@ -528,21 +587,39 @@ Vertical timeline showing phases without time estimates.
   padding-top: 4px;
 }
 
-.milestone .dot-col { display: flex; flex-direction: column; align-items: center; }
+.milestone .dot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .milestone .dot {
-  width: 14px; height: 14px; border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   background: var(--card);
   border: 3px solid var(--primary);
   flex-shrink: 0;
 }
 
-.milestone .dot.done { background: var(--success); border-color: var(--success); }
+.milestone .dot.done {
+  background: var(--success);
+  border-color: var(--success);
+}
 
-.milestone .line { width: 2px; flex: 1; background: var(--border); margin: 4px 0; }
-.milestone:last-child .line { display: none; }
+.milestone .line {
+  width: 2px;
+  flex: 1;
+  background: var(--border);
+  margin: 4px 0;
+}
+.milestone:last-child .line {
+  display: none;
+}
 
-.milestone .body { padding-bottom: 36px; }
+.milestone .body {
+  padding-bottom: 36px;
+}
 
 .milestone .body h3 {
   font-family: var(--font-display);

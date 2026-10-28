@@ -1,44 +1,45 @@
 # Bookmaker registry tenant
 
 <!-- REF:ID 0.1.bookmakers-registry -->
+
 <a id="0.1.bookmakers-registry"></a>
 
 Canonical bookmaker registry for the sportsbook deep-link pipeline, exposed as a
 first-class portal surface on the live domain.
 
-| Role | Path |
-|------|------|
-| Board | [`/portal/bookmakers/`](../../../public/portal/bookmakers/index.html) |
-| Markdown companion | [`/portal/bookmakers.md`](../../../public/portal/bookmakers.md) · routing audit [`routing.md`](../../../public/portal/routing.md) |
-| Registry artifact (Pages public mirror) | [`/registry/bookmakers.json`](../../../public/registry/bookmakers.json) — **v0.4 public catalog only** (`schemaVersion: 2`) |
-| Artifact split (v0.4.0) | [`artifact-registry/bookmakers/v0.4.0/`](../../../artifact-registry/bookmakers/v0.4.0/) — `public/books.json` + `ops/books.json` (**ops never on Pages**) |
-| Bake | `bun run bookmakers:bake` · check `bookmakers:bake:check` · script [`scripts/bake-bookmakers-board.ts`](../../../scripts/bake-bookmakers-board.ts) |
-| Migrate | `bun run bookmakers:migrate` · [`scripts/migrate-bookmakers-v0.3-to-v0.4.ts`](../../../scripts/migrate-bookmakers-v0.3-to-v0.4.ts) |
-| Desk coverage | `bun run bookmakers:desk-coverage` · [`scripts/bookmakers-desk-coverage.ts`](../../../scripts/bookmakers-desk-coverage.ts) |
-| Prepare publish | `bun run bookmakers:prepare-publish` · local package under `artifacts/deeplink-automation/packages/bookmakers/` |
-| Bake local | `bun run bookmakers:bake -- --local` (uses local 0.4 package, no registry fetch) |
-| Weave | surface `bookmakers` · artifact `bookmakers-registry` ([`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts)) |
-| Route manifest | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts)) |
-| Chrome nav | `bookmakers` (overflow, ops) — **Domain** `partner` = partner-desk loop (outs → books → limits → liquidity); entity is bookmaker, not partner CODE ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts)) |
-| Suite | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) · [`tests/bookmakers-migrate-v04.test.ts`](../../../tests/bookmakers-migrate-v04.test.ts) · [`tests/bookmakers-board.test.ts`](../../../tests/bookmakers-board.test.ts) |
-| Open issues | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Tenant=`bookmakers` · BM-1 blocked · BM-3/BM-4 open · BM-2/BM-5 done (Owner=`platform`) · routing [ISSUE-ROUTING.md](../ISSUE-ROUTING.md) |
+| Role                                    | Path                                                                                                                                                                                                                                                                |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Board                                   | [`/portal/bookmakers/`](../../../public/portal/bookmakers/index.html)                                                                                                                                                                                               |
+| Markdown companion                      | [`/portal/bookmakers.md`](../../../public/portal/bookmakers.md) · routing audit [`routing.md`](../../../public/portal/routing.md)                                                                                                                                   |
+| Registry artifact (Pages public mirror) | [`/registry/bookmakers.json`](../../../public/registry/bookmakers.json) — **v0.4 public catalog only** (`schemaVersion: 2`)                                                                                                                                         |
+| Artifact split (v0.4.0)                 | [`artifact-registry/bookmakers/v0.4.0/`](../../../artifact-registry/bookmakers/v0.4.0/) — `public/books.json` + `ops/books.json` (**ops never on Pages**)                                                                                                           |
+| Bake                                    | `bun run bookmakers:bake` · check `bookmakers:bake:check` · script [`scripts/bake-bookmakers-board.ts`](../../../scripts/bake-bookmakers-board.ts)                                                                                                                  |
+| Migrate                                 | `bun run bookmakers:migrate` · [`scripts/migrate-bookmakers-v0.3-to-v0.4.ts`](../../../scripts/migrate-bookmakers-v0.3-to-v0.4.ts)                                                                                                                                  |
+| Desk coverage                           | `bun run bookmakers:desk-coverage` · [`scripts/bookmakers-desk-coverage.ts`](../../../scripts/bookmakers-desk-coverage.ts)                                                                                                                                          |
+| Prepare publish                         | `bun run bookmakers:prepare-publish` · local package under `artifacts/deeplink-automation/packages/bookmakers/`                                                                                                                                                     |
+| Bake local                              | `bun run bookmakers:bake -- --local` (uses local 0.4 package, no registry fetch)                                                                                                                                                                                    |
+| Weave                                   | surface `bookmakers` · artifact `bookmakers-registry` ([`lib/http/portal-weave.ts`](../../../lib/http/portal-weave.ts))                                                                                                                                             |
+| Route manifest                          | `/portal/bookmakers/` ([`lib/http/portal-route-manifest.ts`](../../../lib/http/portal-route-manifest.ts))                                                                                                                                                           |
+| Chrome nav                              | `bookmakers` (overflow, ops) — **Domain** `partner` = partner-desk loop (outs → books → limits → liquidity); entity is bookmaker, not partner CODE ([`lib/portal/chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts))                                        |
+| Suite                                   | [`tests/bookmakers-registry-bake.test.ts`](../../../tests/bookmakers-registry-bake.test.ts) · [`tests/bookmakers-migrate-v04.test.ts`](../../../tests/bookmakers-migrate-v04.test.ts) · [`tests/bookmakers-board.test.ts`](../../../tests/bookmakers-board.test.ts) |
+| Open issues                             | [`bookmakers-open-issues.md`](./bookmakers-open-issues.md) — Tenant=`bookmakers` · BM-1 blocked · BM-3/BM-4 open · BM-2/BM-5 done (Owner=`platform`) · routing [ISSUE-ROUTING.md](../ISSUE-ROUTING.md)                                                              |
 
 ## v0.4 public vs ops
 
-| Plane | Contents | Deploy |
-|-------|----------|--------|
+| Plane      | Contents                                                                                                                                            | Deploy                            |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
 | **Public** | `id`/`slug` (equal), `label`, `skin`, `brandGroup`, `urls`, `fetcher`, `lifecycle`, `sports`, `regions`, `limits`, `color`, `webViewConfig`, `note` | Pages `/registry/bookmakers.json` |
-| **Ops** | `restBaseUrl`, `restProtocol`, `apiKeyEnv`, `envVars`, `balance`/`health` placeholders, `contact` | `artifact-registry/.../ops/` only |
+| **Ops**    | `restBaseUrl`, `restProtocol`, `apiKeyEnv`, `envVars`, `balance`/`health` placeholders, `contact`                                                   | `artifact-registry/.../ops/` only |
 
 ### Decisions
 
-| Question | Choice |
-|----------|--------|
-| ID format | **A** — `id === slug` (route primary key; no UUID migration) |
+| Question      | Choice                                                       |
+| ------------- | ------------------------------------------------------------ |
+| ID format     | **A** — `id === slug` (route primary key; no UUID migration) |
 | Region format | **A** — `{ country, stateCode? }` objects (board-compatible) |
-| Keep public | `color`, `webViewConfig`, `note` |
-| Move to ops | `restBaseUrl`, `restProtocol`, `apiKeyEnv`, `envVars` |
-| Never public | `balance`, `health` |
+| Keep public   | `color`, `webViewConfig`, `note`                             |
+| Move to ops   | `restBaseUrl`, `restProtocol`, `apiKeyEnv`, `envVars`        |
+| Never public  | `balance`, `health`                                          |
 
 ## Purpose
 
@@ -63,17 +64,18 @@ Local v0.3 → v0.4 without a published package: `bun run bookmakers:migrate`.
 1. Edit canonical registry / package → bump **0.4.x** → publish with
    `PUBLIC_BOOKMAKERS` export (Pages-safe).
 2. Or migrate: `bun run bookmakers:migrate` from a v0.3 bake.
-3. Commit `public/registry/bookmakers.json` + `artifact-registry/bookmakers/v0.4.0/`.
+3. Commit `public/registry/bookmakers.json` +
+   `artifact-registry/bookmakers/v0.4.0/`.
 
 ## Desk coverage
 
 Seat capital desk free-text `book` fields are classified against the registry:
 
-| Class | Examples |
-|-------|----------|
-| matched | `Hard Rock Florida` → `hard-rock-florida` · `parlay21.com` → `parlay21-com` |
-| placeholder | `Partner book TBD` · `SouthFL PPH Desk` |
-| unmatched | `Orange777` (no domain SSOT yet — do not invent a registry id) |
+| Class       | Examples                                                                    |
+| ----------- | --------------------------------------------------------------------------- |
+| matched     | `Hard Rock Florida` → `hard-rock-florida` · `parlay21.com` → `parlay21-com` |
+| placeholder | `Partner book TBD` · `SouthFL PPH Desk`                                     |
+| unmatched   | `Orange777` (no domain SSOT yet — do not invent a registry id)              |
 
 ```bash
 bun run bookmakers:desk-coverage
@@ -91,8 +93,8 @@ bun lib/factory/cli.ts snapshot public/registry/registry.json
 bun run bookmakers:bake   # or bookmakers:bake -- --local offline
 ```
 
-Factory publish **defaults to the README inside the `.tgz` / package dir**
-(BM-5 closed). Explicit `--readme <path>` still wins when the tarball omits one;
+Factory publish **defaults to the README inside the `.tgz` / package dir** (BM-5
+closed). Explicit `--readme <path>` still wins when the tarball omits one;
 `--readme true` is legacy CWD-only.
 
 **Published:** `@factorywager/bookmakers@0.4.1` is on R2 and on Pages

@@ -3,13 +3,7 @@
 export type DomainConfig = Record<string, unknown>;
 
 export type DomainResource =
-  | 'DOM'
-  | 'CSS'
-  | 'BASE_JS'
-  | 'CHARTS'
-  | 'ANIMATION'
-  | 'A11Y_AUDIT'
-  | 'THEME_PRESETS';
+  'DOM' | 'CSS' | 'BASE_JS' | 'CHARTS' | 'ANIMATION' | 'A11Y_AUDIT' | 'THEME_PRESETS';
 
 export type DomainResources = {
   core: DomainResource[];

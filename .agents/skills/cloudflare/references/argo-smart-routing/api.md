@@ -1,13 +1,17 @@
 ## API Reference
 
-**Note on Smart Shield:** Argo Smart Routing is being integrated into Cloudflare's Smart Shield product. API endpoints remain stable; existing integrations continue to work without changes.
+**Note on Smart Shield:** Argo Smart Routing is being integrated into
+Cloudflare's Smart Shield product. API endpoints remain stable; existing
+integrations continue to work without changes.
 
 ### Base Endpoint
+
 ```
 https://api.cloudflare.com/client/v4
 ```
 
 ### Authentication
+
 Use API tokens with Zone:Argo Smart Routing:Edit permissions:
 
 ```bash
@@ -23,6 +27,7 @@ Authorization: Bearer YOUR_API_TOKEN
 **Description:** Retrieves current Argo Smart Routing enablement status.
 
 **cURL Example:**
+
 ```bash
 curl -X GET "https://api.cloudflare.com/client/v4/zones/{zone_id}/argo/smart_routing" \
   -H "Authorization: Bearer YOUR_API_TOKEN" \
@@ -30,6 +35,7 @@ curl -X GET "https://api.cloudflare.com/client/v4/zones/{zone_id}/argo/smart_rou
 ```
 
 **Response:**
+
 ```json
 {
   "result": {
@@ -45,11 +51,12 @@ curl -X GET "https://api.cloudflare.com/client/v4/zones/{zone_id}/argo/smart_rou
 ```
 
 **TypeScript SDK Example:**
+
 ```typescript
 import Cloudflare from 'cloudflare';
 
 const client = new Cloudflare({
-  apiToken: process.env.CLOUDFLARE_API_TOKEN
+  apiToken: process.env.CLOUDFLARE_API_TOKEN,
 });
 
 const status = await client.argo.smartRouting.get({ zone_id: 'your-zone-id' });
@@ -57,6 +64,7 @@ console.log(`Argo status: ${status.value}, editable: ${status.editable}`);
 ```
 
 **Python SDK Example:**
+
 ```python
 from cloudflare import Cloudflare
 
@@ -73,13 +81,15 @@ print(f"Argo status: {status.value}, editable: {status.editable}")
 **Description:** Enable or disable Argo Smart Routing for a zone.
 
 **Request Body:**
+
 ```json
 {
-  "value": "on"  // or "off"
+  "value": "on" // or "off"
 }
 ```
 
 **cURL Example:**
+
 ```bash
 curl -X PATCH "https://api.cloudflare.com/client/v4/zones/{zone_id}/argo/smart_routing" \
   -H "Authorization: Bearer YOUR_API_TOKEN" \
@@ -88,6 +98,7 @@ curl -X PATCH "https://api.cloudflare.com/client/v4/zones/{zone_id}/argo/smart_r
 ```
 
 **TypeScript SDK Example:**
+
 ```typescript
 const result = await client.argo.smartRouting.edit({
   zone_id: 'your-zone-id',
@@ -97,6 +108,7 @@ console.log(`Updated: ${result.value} at ${result.modified_on}`);
 ```
 
 **Python SDK Example:**
+
 ```python
 result = client.argo.smart_routing.edit(
     zone_id='your-zone-id',
@@ -107,23 +119,31 @@ print(f"Updated: {result.value} at {result.modified_on}")
 
 ## Checking Editability Before Updates
 
-**Critical:** Always check the `editable` field before attempting to enable/disable Argo. When `editable: false`, the zone has restrictions (billing not configured, insufficient permissions, or plan limitations).
+**Critical:** Always check the `editable` field before attempting to
+enable/disable Argo. When `editable: false`, the zone has restrictions (billing
+not configured, insufficient permissions, or plan limitations).
 
 **Pattern:**
+
 ```typescript
-async function safelyEnableArgo(client: Cloudflare, zoneId: string): Promise<boolean> {
+async function safelyEnableArgo(
+  client: Cloudflare,
+  zoneId: string
+): Promise<boolean> {
   const status = await client.argo.smartRouting.get({ zone_id: zoneId });
-  
+
   if (!status.editable) {
-    console.error('Cannot modify Argo: editable=false (check billing/permissions)');
+    console.error(
+      'Cannot modify Argo: editable=false (check billing/permissions)'
+    );
     return false;
   }
-  
+
   if (status.value === 'on') {
     console.log('Argo already enabled');
     return true;
   }
-  
+
   await client.argo.smartRouting.edit({ zone_id: zoneId, value: 'on' });
   console.log('Argo enabled successfully');
   return true;
@@ -131,6 +151,7 @@ async function safelyEnableArgo(client: Cloudflare, zoneId: string): Promise<boo
 ```
 
 **Python Pattern:**
+
 ```python
 def safely_enable_argo(client: Cloudflare, zone_id: str) -> bool:
     status = client.argo.smart_routing.get(zone_id=zone_id)
@@ -165,7 +186,10 @@ async function enableArgoWithErrorHandling(client: Cloudflare, zoneId: string) {
     return result;
   } catch (error) {
     if (error instanceof RateLimitError) {
-      console.error('Rate limited. Retry after:', error.response?.headers.get('retry-after'));
+      console.error(
+        'Rate limited. Retry after:',
+        error.response?.headers.get('retry-after')
+      );
       // Implement exponential backoff
     } else if (error instanceof APIError) {
       console.error('API error:', error.status, error.message);
@@ -186,6 +210,7 @@ async function enableArgoWithErrorHandling(client: Cloudflare, zoneId: string) {
 ```
 
 **Python Error Handling:**
+
 ```python
 from cloudflare import Cloudflare, APIError, RateLimitError
 
@@ -231,10 +256,10 @@ interface ArgoSmartRoutingResponse {
 
 ## Key Response Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `value` | `"on" \| "off"` | Current enablement status |
-| `editable` | `boolean` | Whether changes are allowed (check before PATCH) |
-| `modified_on` | `string` | ISO timestamp of last modification |
-| `success` | `boolean` | Whether request succeeded |
-| `errors` | `Array` | Error details if `success: false`
+| Field         | Type            | Description                                      |
+| ------------- | --------------- | ------------------------------------------------ |
+| `value`       | `"on" \| "off"` | Current enablement status                        |
+| `editable`    | `boolean`       | Whether changes are allowed (check before PATCH) |
+| `modified_on` | `string`        | ISO timestamp of last modification               |
+| `success`     | `boolean`       | Whether request succeeded                        |
+| `errors`      | `Array`         | Error details if `success: false`                |

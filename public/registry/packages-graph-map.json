@@ -171,9 +171,7 @@
         "plane": "bare",
         "targetPrefix": "bare:util",
         "weight": 1,
-        "samples": [
-          "packages/bun-release-contracts/src/cli.ts → util"
-        ]
+        "samples": ["packages/bun-release-contracts/src/cli.ts → util"]
       },
       {
         "fromPackage": "bun-release-contracts",
@@ -207,9 +205,7 @@
         "plane": "bare",
         "targetPrefix": "bare:bun",
         "weight": 1,
-        "samples": [
-          "packages/business/src/habits-classifier.ts → bun"
-        ]
+        "samples": ["packages/business/src/habits-classifier.ts → bun"]
       },
       {
         "fromPackage": "business",
@@ -263,93 +259,54 @@
         "fileCount": 5,
         "depth": 5,
         "layers": [
-          [
-            "src/index.ts"
-          ],
-          [
-            "src/cli.ts"
-          ],
-          [
-            "src/catalog.ts"
-          ],
-          [
-            "src/feed.ts"
-          ],
-          [
-            "src/generator.ts"
-          ]
+          ["src/index.ts"],
+          ["src/cli.ts"],
+          ["src/catalog.ts"],
+          ["src/feed.ts"],
+          ["src/generator.ts"]
         ],
-        "entryFiles": [
-          "src/cli.ts",
-          "src/index.ts"
-        ]
+        "entryFiles": ["src/cli.ts", "src/index.ts"]
       },
       "business": {
         "fileCount": 4,
         "depth": 3,
         "layers": [
-          [
-            "src/index.ts"
-          ],
-          [
-            "src/habits-classifier.ts",
-            "src/reference-manager.ts"
-          ],
-          [
-            "src/habits-pure.ts"
-          ]
+          ["src/index.ts"],
+          ["src/habits-classifier.ts", "src/reference-manager.ts"],
+          ["src/habits-pure.ts"]
         ],
-        "entryFiles": [
-          "src/index.ts"
-        ]
+        "entryFiles": ["src/index.ts"]
       },
       "docs-tools": {
         "fileCount": 6,
         "depth": 3,
         "layers": [
-          [
-            "src/index.ts"
-          ],
+          ["src/index.ts"],
           [
             "src/builders/url-builder.ts",
             "src/builders/validator-enhanced.ts",
             "src/builders/validator.ts",
             "src/documentation-validator.ts"
           ],
-          [
-            "src/documentation-validator.internal.ts"
-          ]
+          ["src/documentation-validator.internal.ts"]
         ],
-        "entryFiles": [
-          "src/index.ts"
-        ]
+        "entryFiles": ["src/index.ts"]
       },
       "p2p": {
         "fileCount": 4,
         "depth": 3,
         "layers": [
-          [
-            "src/index.ts"
-          ],
-          [
-            "src/customer-notifier.ts",
-            "src/migration-workflow.ts"
-          ],
-          [
-            "src/business-continuity.ts"
-          ]
+          ["src/index.ts"],
+          ["src/customer-notifier.ts", "src/migration-workflow.ts"],
+          ["src/business-continuity.ts"]
         ],
-        "entryFiles": [
-          "src/index.ts"
-        ]
+        "entryFiles": ["src/index.ts"]
       },
       "partners": {
         "fileCount": 30,
         "depth": 5,
         "layers": [
-          [
-            "src/index.ts"
-          ],
+          ["src/index.ts"],
           [
             "src/adapters/index.ts",
             "src/boundary/index.ts",
@@ -401,12 +358,8 @@
         "fileCount": 15,
         "depth": 5,
         "layers": [
-          [
-            "bin/proton-pass.ts"
-          ],
-          [
-            "src/index.ts"
-          ],
+          ["bin/proton-pass.ts"],
+          ["src/index.ts"],
           [
             "src/agents.ts",
             "src/argv.ts",
@@ -414,11 +367,7 @@
             "src/health.ts",
             "src/inject.ts"
           ],
-          [
-            "src/env-file.ts",
-            "src/parallel-fetch.ts",
-            "src/session.ts"
-          ],
+          ["src/env-file.ts", "src/parallel-fetch.ts", "src/session.ts"],
           [
             "src/cache.ts",
             "src/cli-locate.ts",
@@ -427,30 +376,17 @@
             "src/timeout.ts"
           ]
         ],
-        "entryFiles": [
-          "bin/proton-pass.ts",
-          "src/index.ts"
-        ]
+        "entryFiles": ["bin/proton-pass.ts", "src/index.ts"]
       },
       "rip": {
         "fileCount": 4,
         "depth": 3,
         "layers": [
-          [
-            "src/cli.ts"
-          ],
-          [
-            "src/index.ts"
-          ],
-          [
-            "src/config.ts",
-            "src/utils.ts"
-          ]
+          ["src/cli.ts"],
+          ["src/index.ts"],
+          ["src/config.ts", "src/utils.ts"]
         ],
-        "entryFiles": [
-          "src/cli.ts",
-          "src/index.ts"
-        ]
+        "entryFiles": ["src/cli.ts", "src/index.ts"]
       }
     },
     "outsideConsumers": [
@@ -511,18 +447,14 @@
       {
         "package": "rip",
         "count": 1,
-        "consumers": [
-          "scripts/bun-rules.ts"
-        ],
+        "consumers": ["scripts/bun-rules.ts"],
         "workspaceImports": 1,
         "relativeImports": 0
       },
       {
         "package": "shade-pipeline",
         "count": 1,
-        "consumers": [
-          "tests/shade-pipeline-package.test.ts"
-        ],
+        "consumers": ["tests/shade-pipeline-package.test.ts"],
         "workspaceImports": 0,
         "relativeImports": 1
       }
@@ -530,16 +462,11 @@
     "scriptRefs": [
       {
         "package": "docs-tools",
-        "scripts": [
-          "precommit:check",
-          "search:bench:snapshot:core:wide:local"
-        ]
+        "scripts": ["precommit:check", "search:bench:snapshot:core:wide:local"]
       },
       {
         "package": "proton-pass",
-        "scripts": [
-          "proton-pass:test"
-        ]
+        "scripts": ["proton-pass:test"]
       }
     ],
     "declared": [
@@ -630,78 +557,55 @@
         "targetPrefix": "lib/docs",
         "plane": "lib",
         "weight": 13,
-        "fromPackages": [
-          "bun-release-contracts",
-          "business",
-          "docs-tools"
-        ]
+        "fromPackages": ["bun-release-contracts", "business", "docs-tools"]
       },
       {
         "targetPrefix": "bare:path",
         "plane": "bare",
         "weight": 8,
-        "fromPackages": [
-          "bun-release-contracts",
-          "proton-pass"
-        ]
+        "fromPackages": ["bun-release-contracts", "proton-pass"]
       },
       {
         "targetPrefix": "bare:bun",
         "plane": "bare",
         "weight": 7,
-        "fromPackages": [
-          "business",
-          "p2p",
-          "rip"
-        ]
+        "fromPackages": ["business", "p2p", "rip"]
       },
       {
         "targetPrefix": "bare:fs",
         "plane": "bare",
         "weight": 3,
-        "fromPackages": [
-          "proton-pass"
-        ]
+        "fromPackages": ["proton-pass"]
       },
       {
         "targetPrefix": "bare:os",
         "plane": "bare",
         "weight": 3,
-        "fromPackages": [
-          "proton-pass"
-        ]
+        "fromPackages": ["proton-pass"]
       },
       {
         "targetPrefix": "lib/types",
         "plane": "lib",
         "weight": 2,
-        "fromPackages": [
-          "partners"
-        ]
+        "fromPackages": ["partners"]
       },
       {
         "targetPrefix": "bare:util",
         "plane": "bare",
         "weight": 1,
-        "fromPackages": [
-          "bun-release-contracts"
-        ]
+        "fromPackages": ["bun-release-contracts"]
       },
       {
         "targetPrefix": "lib/console",
         "plane": "lib",
         "weight": 1,
-        "fromPackages": [
-          "bun-release-contracts"
-        ]
+        "fromPackages": ["bun-release-contracts"]
       },
       {
         "targetPrefix": "lib/repo-containment.ts",
         "plane": "lib",
         "weight": 1,
-        "fromPackages": [
-          "bun-release-contracts"
-        ]
+        "fromPackages": ["bun-release-contracts"]
       }
     ],
     "coupling": [
@@ -890,25 +794,19 @@
         "package": "business",
         "score": 85,
         "grade": "needs-improvement",
-        "reasons": [
-          "dormant library"
-        ]
+        "reasons": ["dormant library"]
       },
       {
         "package": "docs-tools",
         "score": 100,
         "grade": "healthy",
-        "reasons": [
-          "aligned"
-        ]
+        "reasons": ["aligned"]
       },
       {
         "package": "p2p",
         "score": 85,
         "grade": "needs-improvement",
-        "reasons": [
-          "dormant library"
-        ]
+        "reasons": ["dormant library"]
       },
       {
         "package": "partners",
@@ -923,25 +821,19 @@
         "package": "proton-pass",
         "score": 100,
         "grade": "healthy",
-        "reasons": [
-          "aligned"
-        ]
+        "reasons": ["aligned"]
       },
       {
         "package": "registry-client",
         "score": 100,
         "grade": "healthy",
-        "reasons": [
-          "aligned"
-        ]
+        "reasons": ["aligned"]
       },
       {
         "package": "rip",
         "score": 100,
         "grade": "healthy",
-        "reasons": [
-          "aligned"
-        ]
+        "reasons": ["aligned"]
       },
       {
         "package": "shade-pipeline",
@@ -1225,10 +1117,7 @@
           "slug": "agent-odds",
           "hasIndex": true,
           "hasMd": false,
-          "scripts": [
-            "/portal/data.js",
-            "/portal/topbar.js"
-          ]
+          "scripts": ["/portal/data.js", "/portal/topbar.js"]
         },
         {
           "href": "/portal/bookmakers/",
@@ -2203,11 +2092,7 @@
         "styleCss": true,
         "darkTokenCount": 15,
         "lightTokenCount": 15,
-        "fontKeys": [
-          "brand",
-          "mono",
-          "sans"
-        ],
+        "fontKeys": ["brand", "mono", "sans"],
         "layoutKeys": [
           "fontHero",
           "fontMetric",
@@ -2236,12 +2121,7 @@
       }
     },
     "brand": {
-      "tenants": [
-        "factory",
-        "science",
-        "telegram",
-        "tennis"
-      ],
+      "tenants": ["factory", "science", "telegram", "tennis"],
       "assets": [
         {
           "path": "public/brand/telegram/toc-ops-profile.jpg",
@@ -3048,16 +2928,12 @@
       "portalRefs": [
         {
           "path": "/registry/@factorywager/bun-utils-test/latest.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
           "path": "/registry/@factorywager/routing-test/latest.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
@@ -3193,9 +3069,7 @@
         },
         {
           "path": "/registry/capability-map-full.json",
-          "from": [
-            "public/portal/tools/tools-hub.js"
-          ],
+          "from": ["public/portal/tools/tools-hub.js"],
           "exists": true
         },
         {
@@ -3229,16 +3103,12 @@
         },
         {
           "path": "/registry/cloudflare-pages-preflight.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
           "path": "/registry/cloudflare-token-scope-proof.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
@@ -3289,16 +3159,12 @@
         },
         {
           "path": "/registry/compliance-enhancements.json",
-          "from": [
-            "public/portal/compliance/index.html"
-          ],
+          "from": ["public/portal/compliance/index.html"],
           "exists": true
         },
         {
           "path": "/registry/compliance-shadow.json",
-          "from": [
-            "public/portal/compliance/index.html"
-          ],
+          "from": ["public/portal/compliance/index.html"],
           "exists": true
         },
         {
@@ -3413,16 +3279,12 @@
         },
         {
           "path": "/registry/doc-index.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
           "path": "/registry/docs-coverage-proof.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
@@ -3447,9 +3309,7 @@
         },
         {
           "path": "/registry/dod-registry.json",
-          "from": [
-            "public/portal/compliance/index.html"
-          ],
+          "from": ["public/portal/compliance/index.html"],
           "exists": true
         },
         {
@@ -3523,9 +3383,7 @@
         },
         {
           "path": "/registry/formdata-proof.json",
-          "from": [
-            "public/portal/proof-index.js"
-          ],
+          "from": ["public/portal/proof-index.js"],
           "exists": true
         },
         {
@@ -3572,9 +3430,7 @@
         },
         {
           "path": "/registry/guides-proof.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
@@ -3876,9 +3732,7 @@
         },
         {
           "path": "/registry/networking-channel-proof.json",
-          "from": [
-            "public/portal/proof-index.js"
-          ],
+          "from": ["public/portal/proof-index.js"],
           "exists": true
         },
         {
@@ -3939,9 +3793,7 @@
         },
         {
           "path": "/registry/package-info.json",
-          "from": [
-            "public/portal/packages/packages-board.js"
-          ],
+          "from": ["public/portal/packages/packages-board.js"],
           "exists": true
         },
         {
@@ -4044,9 +3896,7 @@
         },
         {
           "path": "/registry/partner-surface-inventory.json",
-          "from": [
-            "public/portal/lanes/index.html"
-          ],
+          "from": ["public/portal/lanes/index.html"],
           "exists": true
         },
         {
@@ -4212,9 +4062,7 @@
         },
         {
           "path": "/registry/projects-registry.json",
-          "from": [
-            "public/portal/toc/toc-dashboard.js"
-          ],
+          "from": ["public/portal/toc/toc-dashboard.js"],
           "exists": true
         },
         {
@@ -4229,16 +4077,12 @@
         },
         {
           "path": "/registry/ratchet.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
           "path": "/registry/registry-client-proof.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
@@ -4302,9 +4146,7 @@
         },
         {
           "path": "/registry/skills-catalog.json",
-          "from": [
-            "public/portal/skills/index.html"
-          ],
+          "from": ["public/portal/skills/index.html"],
           "exists": true
         },
         {
@@ -4329,9 +4171,7 @@
         },
         {
           "path": "/registry/sports-terminal/partner-integration-health.json",
-          "from": [
-            "public/portal/partners/index.html"
-          ],
+          "from": ["public/portal/partners/index.html"],
           "exists": true
         },
         {
@@ -4503,9 +4343,7 @@
         },
         {
           "path": "/registry/tennis/avatar-index.json",
-          "from": [
-            "public/portal/components/tennis-desk.js"
-          ],
+          "from": ["public/portal/components/tennis-desk.js"],
           "exists": true
         },
         {
@@ -4551,9 +4389,7 @@
         },
         {
           "path": "/registry/toc-ops-bake-proof.json",
-          "from": [
-            "public/portal/operations-dashboard.js"
-          ],
+          "from": ["public/portal/operations-dashboard.js"],
           "exists": true
         },
         {
@@ -4665,37 +4501,27 @@
         },
         {
           "path": "/registry/verification-pinned-1.3.14.json",
-          "from": [
-            "public/portal/proof-index.js"
-          ],
+          "from": ["public/portal/proof-index.js"],
           "exists": true
         },
         {
           "path": "/registry/verification-stable-1.4.0-bundler.json",
-          "from": [
-            "public/portal/proof-index.js"
-          ],
+          "from": ["public/portal/proof-index.js"],
           "exists": true
         },
         {
           "path": "/registry/verification-stable-1.4.0-networking.json",
-          "from": [
-            "public/portal/proof-index.js"
-          ],
+          "from": ["public/portal/proof-index.js"],
           "exists": true
         },
         {
           "path": "/registry/verification-stable-1.4.0.json",
-          "from": [
-            "public/portal/proof-index.js"
-          ],
+          "from": ["public/portal/proof-index.js"],
           "exists": true
         },
         {
           "path": "/registry/vps-health.json",
-          "from": [
-            "public/portal/health-page.js"
-          ],
+          "from": ["public/portal/health-page.js"],
           "exists": true
         },
         {
@@ -11798,32 +11624,22 @@
         {
           "targetPrefix": "lib/docs",
           "weight": 13,
-          "fromPackages": [
-            "bun-release-contracts",
-            "business",
-            "docs-tools"
-          ]
+          "fromPackages": ["bun-release-contracts", "business", "docs-tools"]
         },
         {
           "targetPrefix": "lib/types",
           "weight": 2,
-          "fromPackages": [
-            "partners"
-          ]
+          "fromPackages": ["partners"]
         },
         {
           "targetPrefix": "lib/console",
           "weight": 1,
-          "fromPackages": [
-            "bun-release-contracts"
-          ]
+          "fromPackages": ["bun-release-contracts"]
         },
         {
           "targetPrefix": "lib/repo-containment.ts",
           "weight": 1,
-          "fromPackages": [
-            "bun-release-contracts"
-          ]
+          "fromPackages": ["bun-release-contracts"]
         }
       ]
     },

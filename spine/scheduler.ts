@@ -61,9 +61,7 @@ async function runTenantsDaemon(tenants: SpineTenant[]): Promise<void> {
       await t.run();
     })
   );
-  console.info(
-    `⏰ spine multi-tenant · ${tenants.length} tenant(s) · in-process complement (UTC)`
-  );
+  console.info(`⏰ spine multi-tenant · ${tenants.length} tenant(s) · in-process complement (UTC)`);
   for (const t of tenants) {
     console.info(`   · ${t.id} @ "${t.schedule}"`);
   }

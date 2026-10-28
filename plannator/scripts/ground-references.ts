@@ -6,10 +6,10 @@
  * With --online, it also HEAD-checks the canonical ecosystem URLs.
  */
 
-import { join } from "node:path";
+import { join } from 'node:path';
 
-const REPO_ROOT = import.meta.dir.replace(/\/scripts$/, "");
-const MANIFEST_PATH = join(REPO_ROOT, "docs", "references", "canonical-references.json");
+const REPO_ROOT = import.meta.dir.replace(/\/scripts$/, '');
+const MANIFEST_PATH = join(REPO_ROOT, 'docs', 'references', 'canonical-references.json');
 
 type ReferenceManifest = {
   schemaVersion: number;
@@ -59,7 +59,7 @@ async function checkLocalDocs(manifest: ReferenceManifest): Promise<string[]> {
 
 async function checkOnlineUrl(url: string, id: string): Promise<string | null> {
   try {
-    const res = await fetch(url, { method: "HEAD", redirect: "follow" });
+    const res = await fetch(url, { method: 'HEAD', redirect: 'follow' });
     if (res.ok) return null;
     return `${id}: ${url} returned ${res.status}`;
   } catch (err) {
@@ -77,7 +77,7 @@ async function checkOnline(manifest: ReferenceManifest): Promise<string[]> {
     if (eco.rss) urls.push({ url: eco.rss, id: `${eco.id}-rss` });
   }
 
-  const results = await Promise.all(urls.map((u) => checkOnlineUrl(u.url, u.id)));
+  const results = await Promise.all(urls.map(u => checkOnlineUrl(u.url, u.id)));
   for (const error of results) {
     if (error) errors.push(error);
   }
@@ -85,17 +85,17 @@ async function checkOnline(manifest: ReferenceManifest): Promise<string[]> {
 }
 
 function printUsage(): void {
-  console.log("Usage: bun run scripts/ground-references.ts [--online]");
-  console.log("  --online   HEAD-check canonical ecosystem URLs (requires network)");
+  console.log('Usage: bun run scripts/ground-references.ts [--online]');
+  console.log('  --online   HEAD-check canonical ecosystem URLs (requires network)');
 }
 
 async function main(): Promise<number> {
   const args = Bun.argv.slice(2);
-  if (args.includes("--help") || args.includes("-h")) {
+  if (args.includes('--help') || args.includes('-h')) {
     printUsage();
     return 0;
   }
-  const online = args.includes("--online");
+  const online = args.includes('--online');
 
   const manifest = await readManifest();
   console.log(`Grounding references (manifest v${manifest.schemaVersion})`);
@@ -105,29 +105,29 @@ async function main(): Promise<number> {
   if (localErrors.length === 0) {
     console.log(`  local docs: OK (${manifest.localDocs.length} files)`);
   } else {
-    console.error("  local docs: FAIL");
+    console.error('  local docs: FAIL');
     for (const err of localErrors) console.error(`    - ${err}`);
   }
 
   if (online) {
-    console.log("  online checks: running …");
+    console.log('  online checks: running …');
     const onlineErrors = await checkOnline(manifest);
     if (onlineErrors.length === 0) {
-      console.log("  online checks: OK");
+      console.log('  online checks: OK');
     } else {
-      console.error("  online checks: FAIL");
+      console.error('  online checks: FAIL');
       for (const err of onlineErrors) console.error(`    - ${err}`);
     }
     return localErrors.length + onlineErrors.length === 0 ? 0 : 1;
   }
 
-  console.log("  online checks: skipped (pass --online to check canonical URLs)");
+  console.log('  online checks: skipped (pass --online to check canonical URLs)');
   return localErrors.length === 0 ? 0 : 1;
 }
 
 main().then(
-  (code) => process.exit(code),
-  (err) => {
+  code => process.exit(code),
+  err => {
     console.error(err);
     process.exit(1);
   }

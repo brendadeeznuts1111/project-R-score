@@ -34,8 +34,8 @@ bun run harness:status
 | `bun run bun:remediation` | Human lookup by exact ID, search term, random tip, table, or JSON              |
 
 ESLint is the only source scanner. The retired line-based guard duplicated the
-same restricted imports and syntax, produced false positives inside strings,
-and made reports count the same policy twice.
+same restricted imports and syntax, produced false positives inside strings, and
+made reports count the same policy twice.
 
 The rollout is intentionally repository-owned. It scans `lib/`, `scripts/`,
 `packages/`, `server/`, `config/`, and `tools/`. Nested products under

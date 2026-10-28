@@ -45,13 +45,7 @@
     "manifestPath": "package/registry/contracts/v1/manifest.json",
     "contractSet": "tennis-hq/v1",
     "schemaVersion": 1,
-    "domains": [
-      "marketdata",
-      "research",
-      "trading",
-      "partners",
-      "accounting"
-    ]
+    "domains": ["marketdata", "research", "trading", "partners", "accounting"]
   },
   "steps": [
     {

@@ -1,14 +1,16 @@
-import type { Registry, PackageViolation } from "./registry.ts";
-import { suggestRemediation } from "./remediation.ts";
-import { meetsSeverity, normalizeSeverity } from "./rule-engine.ts";
-import type { ResolvedDependency } from "./dependency-resolver.ts";
-import type { ScanResult, ScanRemediation, Severity, ViolationKind } from "./types.ts";
+import type { Registry, PackageViolation } from './registry.ts';
+import { suggestRemediation } from './remediation.ts';
+import { meetsSeverity, normalizeSeverity } from './rule-engine.ts';
+import type { ResolvedDependency } from './dependency-resolver.ts';
+import type { ScanResult, ScanRemediation, Severity, ViolationKind } from './types.ts';
 
-function violationType(kind: ViolationKind): ScanResult["type"] {
-  return kind === "threat" ? "threat" : "semver";
+function violationType(kind: ViolationKind): ScanResult['type'] {
+  return kind === 'threat' ? 'threat' : 'semver';
 }
 
-function toRemediation(hint: Awaited<ReturnType<typeof suggestRemediation>>): ScanRemediation | undefined {
+function toRemediation(
+  hint: Awaited<ReturnType<typeof suggestRemediation>>
+): ScanRemediation | undefined {
   if (!hint) return undefined;
   return {
     action: hint.action,
@@ -23,10 +25,10 @@ function toRemediation(hint: Awaited<ReturnType<typeof suggestRemediation>>): Sc
 export function violationToFinding(
   v: PackageViolation,
   remediation?: ScanRemediation,
-  source?: string,
+  source?: string
 ): ScanResult {
   const detail = v.vulnRange
-    ? `range ${v.vulnRange}${source ? ` [${source}]` : ""}`
+    ? `range ${v.vulnRange}${source ? ` [${source}]` : ''}`
     : source
       ? `[${source}]`
       : undefined;
@@ -37,8 +39,8 @@ export function violationToFinding(
     column: 0,
     ruleId: v.ruleId,
     severity: normalizeSeverity(v.severity),
-    message: v.kind === "threat" && v.cve ? `${v.message} (${v.cve})` : v.message,
-    layer: "deps",
+    message: v.kind === 'threat' && v.cve ? `${v.message} (${v.cve})` : v.message,
+    layer: 'deps',
     detail,
     cve: v.cve,
     violationKind: v.kind,
@@ -71,13 +73,7 @@ export async function scanDependencyViolations(options: {
       safeRange: v.safeRange,
       vulnRange: v.vulnRange,
     });
-    findings.push(
-      violationToFinding(
-        v,
-        toRemediation(hint),
-        options.sourceByPackage?.[v.package],
-      ),
-    );
+    findings.push(violationToFinding(v, toRemediation(hint), options.sourceByPackage?.[v.package]));
   }
   return findings;
 }

@@ -7,16 +7,20 @@
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-</head>
-<body>
-  <form action="/submit" method="POST">
-    <input type="email" name="email" required>
-    <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
-    <button type="submit">Submit</button>
-  </form>
-</body>
+  <head>
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
+  </head>
+  <body>
+    <form action="/submit" method="POST">
+      <input type="email" name="email" required />
+      <div class="cf-turnstile" data-sitekey="YOUR_SITE_KEY"></div>
+      <button type="submit">Submit</button>
+    </form>
+  </body>
 </html>
 ```
 
@@ -57,14 +61,16 @@ export default function Form() {
   const [token, setToken] = useState<string | null>(null);
 
   return (
-    <form onSubmit={async (e) => {
-      e.preventDefault();
-      if (!token) return;
-      await fetch('/api/submit', { 
-        method: 'POST',
-        body: JSON.stringify({ 'cf-turnstile-response': token })
-      });
-    }}>
+    <form
+      onSubmit={async e => {
+        e.preventDefault();
+        if (!token) return;
+        await fetch('/api/submit', {
+          method: 'POST',
+          body: JSON.stringify({ 'cf-turnstile-response': token }),
+        });
+      }}
+    >
       <Turnstile siteKey="YOUR_SITE_KEY" onSuccess={setToken} />
       <button disabled={!token}>Submit</button>
     </form>
@@ -96,35 +102,38 @@ export default {
     if (request.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
     }
-    
+
     const formData = await request.formData();
     const token = formData.get('cf-turnstile-response');
-    
+
     if (!token) {
       return new Response('Missing token', { status: 400 });
     }
-    
+
     // Validate token
     const ip = request.headers.get('CF-Connecting-IP');
-    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        secret: env.TURNSTILE_SECRET,
-        response: token,
-        remoteip: ip
-      })
-    });
-    
+    const result = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          secret: env.TURNSTILE_SECRET,
+          response: token,
+          remoteip: ip,
+        }),
+      }
+    );
+
     const validation = await result.json();
-    
+
     if (!validation.success) {
       return new Response('CAPTCHA validation failed', { status: 403 });
     }
-    
+
     // Process form...
     return new Response('Success');
-  }
+  },
 };
 ```
 
@@ -132,7 +141,9 @@ export default {
 
 ```typescript
 // functions/submit.ts - same pattern as Workers, use ctx.env and ctx.request
-export const onRequestPost: PagesFunction<{ TURNSTILE_SECRET: string }> = async (ctx) => {
+export const onRequestPost: PagesFunction<{
+  TURNSTILE_SECRET: string;
+}> = async ctx => {
   const token = (await ctx.request.formData()).get('cf-turnstile-response');
   // Validate with ctx.env.TURNSTILE_SECRET (same as Workers pattern above)
 };
@@ -150,18 +161,18 @@ export const onRequestPost: PagesFunction<{ TURNSTILE_SECRET: string }> = async 
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"></script>
 <script>
-let cachedToken = null;
+  let cachedToken = null;
 
-window.onload = () => {
-  window.turnstile.render('#turnstile-precheck', {
-    sitekey: 'YOUR_SITE_KEY',
-    size: 'invisible',
-    callback: (token) => {
-      cachedToken = token;
-      document.getElementById('protected-form').style.display = 'block';
-    }
-  });
-};
+  window.onload = () => {
+    window.turnstile.render('#turnstile-precheck', {
+      sitekey: 'YOUR_SITE_KEY',
+      size: 'invisible',
+      callback: token => {
+        cachedToken = token;
+        document.getElementById('protected-form').style.display = 'block';
+      },
+    });
+  };
 </script>
 ```
 
@@ -174,7 +185,7 @@ let widgetId = window.turnstile.render('#container', {
   'expired-callback': () => {
     console.log('Token expired, refreshing...');
     window.turnstile.reset(widgetId);
-  }
+  },
 });
 ```
 
@@ -183,11 +194,13 @@ let widgetId = window.turnstile.render('#container', {
 ### Environment-Based Keys
 
 ```javascript
-const SITE_KEY = process.env.NODE_ENV === 'production'
-  ? 'YOUR_PRODUCTION_SITE_KEY'
-  : '1x00000000000000000000AA'; // Always passes
+const SITE_KEY =
+  process.env.NODE_ENV === 'production'
+    ? 'YOUR_PRODUCTION_SITE_KEY'
+    : '1x00000000000000000000AA'; // Always passes
 
-const SECRET_KEY = process.env.NODE_ENV === 'production'
-  ? process.env.TURNSTILE_SECRET
-  : '1x0000000000000000000000000000000AA';
+const SECRET_KEY =
+  process.env.NODE_ENV === 'production'
+    ? process.env.TURNSTILE_SECRET
+    : '1x0000000000000000000000000000000AA';
 ```

@@ -1,31 +1,31 @@
 # TOC Ops — Pages fixture plane
 
-Fixture-first Drum / Buffer / Rope surface for Cloudflare Pages + portal.
-Theory SSOT stays in `toc-ops-repo` (TOC-REF · ACCOUNTING · SOPs).
+Fixture-first Drum / Buffer / Rope surface for Cloudflare Pages + portal. Theory
+SSOT stays in `toc-ops-repo` (TOC-REF · ACCOUNTING · SOPs).
 
-**Schema** `factorywager.toc-ops.portal-fixture.v2` — ONB→FUND→LIMIT→WARM→PLAY→WD,
-account limits, rails, Soft/Gate 12, recent plays, switchback experiments,
-operate-lite Hard Gate bake (`enforcement` slice).
+**Schema** `factorywager.toc-ops.portal-fixture.v2` —
+ONB→FUND→LIMIT→WARM→PLAY→WD, account limits, rails, Soft/Gate 12, recent plays,
+switchback experiments, operate-lite Hard Gate bake (`enforcement` slice).
 
 ## Files
 
-| File | Purpose |
-|------|---------|
-| [`types.ts`](types.ts) | Snapshot + ops-summary slice types |
-| [`fixture.ts`](fixture.ts) | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only) |
-| [`presence.ts`](presence.ts) | Geo · ZIP · IPv4/IPv6 · DNS · ASN presence + rollup metrics |
-| [`venues.ts`](venues.ts) | Sportsbooks · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · legal-by-state |
-| [`profiles.ts`](profiles.ts) | Partner + agent profiles: phones · telegram · deals · CLV · expert liquidity |
-| [`seed-deepen.ts`](seed-deepen.ts) | … · BIC/warm/phone/liquidity · FUND corridor/task timeline/rail util/drum gates |
-| [`enforcement.ts`](enforcement.ts) | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis |
-| [`bake-proof.ts`](bake-proof.ts) | `/registry/toc-ops-bake-proof.json` evidence on export |
-| [`return-efficiency.ts`](return-efficiency.ts) | R_P · CE · LE · dynamic buffer · ranked next actions |
-| [`identity.ts`](identity.ts) | TOC ↔ ops binding types |
-| [`export-snapshot.ts`](export-snapshot.ts) | Bake via `withTocMetrics` + summary slice |
-| [`index.ts`](index.ts) | Barrel exports |
-| [`../operations/toc-identity-bridge.ts`](../operations/toc-identity-bridge.ts) | Seed/bind `tree_nodes.call_sign` · hardrock `sb_accounts` |
-| [`../operations/toc-soft-balance.ts`](../operations/toc-soft-balance.ts) | Append-only Soft journal in ops SQLite (+ `toc.soft.posted`) |
-| [`../channels/toc-outbox.ts`](../channels/toc-outbox.ts) | Outbox topic `toc` — bake · gates · ranked · Soft |
+| File                                                                           | Purpose                                                                                    |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| [`types.ts`](types.ts)                                                         | Snapshot + ops-summary slice types                                                         |
+| [`fixture.ts`](fixture.ts)                                                     | ASH (Drum) · PAT (PLAY) · NOV (ONB); bottleneck keys (`reconcile_*` is CT-only)            |
+| [`presence.ts`](presence.ts)                                                   | Geo · ZIP · IPv4/IPv6 · DNS · ASN presence + rollup metrics                                |
+| [`venues.ts`](venues.ts)                                                       | Sportsbooks · Kalshi/Polymarket · crypto · PPH · post-up · casino · kiosk · legal-by-state |
+| [`profiles.ts`](profiles.ts)                                                   | Partner + agent profiles: phones · telegram · deals · CLV · expert liquidity               |
+| [`seed-deepen.ts`](seed-deepen.ts)                                             | … · BIC/warm/phone/liquidity · FUND corridor/task timeline/rail util/drum gates            |
+| [`enforcement.ts`](enforcement.ts)                                             | Operate-lite Hard Gates · T/I/OE · Rope→Drum→Buffer diagnosis                              |
+| [`bake-proof.ts`](bake-proof.ts)                                               | `/registry/toc-ops-bake-proof.json` evidence on export                                     |
+| [`return-efficiency.ts`](return-efficiency.ts)                                 | R_P · CE · LE · dynamic buffer · ranked next actions                                       |
+| [`identity.ts`](identity.ts)                                                   | TOC ↔ ops binding types                                                                    |
+| [`export-snapshot.ts`](export-snapshot.ts)                                     | Bake via `withTocMetrics` + summary slice                                                  |
+| [`index.ts`](index.ts)                                                         | Barrel exports                                                                             |
+| [`../operations/toc-identity-bridge.ts`](../operations/toc-identity-bridge.ts) | Seed/bind `tree_nodes.call_sign` · hardrock `sb_accounts`                                  |
+| [`../operations/toc-soft-balance.ts`](../operations/toc-soft-balance.ts)       | Append-only Soft journal in ops SQLite (+ `toc.soft.posted`)                               |
+| [`../channels/toc-outbox.ts`](../channels/toc-outbox.ts)                       | Outbox topic `toc` — bake · gates · ranked · Soft                                          |
 
 ## Commands
 
@@ -51,14 +51,16 @@ casino blobs. Catalog on `catalog.venues`; rollup on `venues` + ops-summary.
 
 ## Profiles (partners + agents)
 
-`partner.profile` — phones/data plans, assets, telegram group/channel/bot,
-play channels, payments, Soft/hard accounting, deals, history, limits,
-wager places. `expert.profile` — style, CLV, **liquidity pool by market**,
-telegram/bot, deals, accounting. Rollup: `profiles` + ops-summary.
+`partner.profile` — phones/data plans, assets, telegram group/channel/bot, play
+channels, payments, Soft/hard accounting, deals, history, limits, wager places.
+`expert.profile` — style, CLV, **liquidity pool by market**, telegram/bot,
+deals, accounting. Rollup: `profiles` + ops-summary.
 
 ## Return efficiency
 
-`return-efficiency.ts` bakes R_P / CE_asset / LE, dynamic buffer (`floatTarget`, `settlementFloatRatio`, `throttleOnboarding`), and `rankedActions` into the fixture at export. Theory SSOT: `toc-ops-repo/docs/system/ACCOUNTING.md`.
+`return-efficiency.ts` bakes R_P / CE_asset / LE, dynamic buffer (`floatTarget`,
+`settlementFloatRatio`, `throttleOnboarding`), and `rankedActions` into the
+fixture at export. Theory SSOT: `toc-ops-repo/docs/system/ACCOUNTING.md`.
 
 ## Portal
 
@@ -69,12 +71,13 @@ telegram/bot, deals, accounting. Rollup: `profiles` + ops-summary.
 
 ## Planes (do not conflate)
 
-| Plane | Owns |
-|-------|------|
-| This fixture (`lib/toc-ops`) | Pages-safe mirror for `/portal/toc` |
-| Operate-lite bake | Hard Gate eval + Soft seed (local); no Pages mutations |
-| `toc-ops-repo` Central Tool | Live Soft, Gate 12, MessageLog, phones, rails confirm, package bot |
-| `/portal/ops` FactoryWager | Partner-profile bridge, channel outbox, phone inventory + TOC rollup card |
-| Cloudflare MCP | Pages/account deploy + observability — **not** TOC desk |
+| Plane                        | Owns                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| This fixture (`lib/toc-ops`) | Pages-safe mirror for `/portal/toc`                                       |
+| Operate-lite bake            | Hard Gate eval + Soft seed (local); no Pages mutations                    |
+| `toc-ops-repo` Central Tool  | Live Soft, Gate 12, MessageLog, phones, rails confirm, package bot        |
+| `/portal/ops` FactoryWager   | Partner-profile bridge, channel outbox, phone inventory + TOC rollup card |
+| Cloudflare MCP               | Pages/account deploy + observability — **not** TOC desk                   |
 
-Runbook + full concern matrix: [`docs/harness/tenants/toc-ops.md`](../../docs/harness/tenants/toc-ops.md)
+Runbook + full concern matrix:
+[`docs/harness/tenants/toc-ops.md`](../../docs/harness/tenants/toc-ops.md)

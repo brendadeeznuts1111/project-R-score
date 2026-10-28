@@ -1,13 +1,10 @@
-import {
-  loadOpenApiCatalog,
-  type EndpointCatalog,
-} from "./endpoint-catalog.ts";
-import type { NetworkBaselineDelta } from "./network-baseline.ts";
-import { formatNetworkHerdrTab, formatNetworkLoopJson } from "./herdr-tab.ts";
-import type { NetworkLoopTick } from "./network-loop.ts";
-import type { BundleScanReport } from "./types.ts";
+import { loadOpenApiCatalog, type EndpointCatalog } from './endpoint-catalog.ts';
+import type { NetworkBaselineDelta } from './network-baseline.ts';
+import { formatNetworkHerdrTab, formatNetworkLoopJson } from './herdr-tab.ts';
+import type { NetworkLoopTick } from './network-loop.ts';
+import type { BundleScanReport } from './types.ts';
 
-export type NetworkAuditOutputFormat = "table" | "json" | "herdr";
+export type NetworkAuditOutputFormat = 'table' | 'json' | 'herdr';
 
 export type NetworkAuditDetails = {
   catalog?: EndpointCatalog;
@@ -36,7 +33,7 @@ function countPatternMatches(report: BundleScanReport): number {
   let n = 0;
   for (const target of report.targets ?? []) {
     for (const finding of target.findings) {
-      if (finding.layer === "network") n++;
+      if (finding.layer === 'network') n++;
     }
   }
   return n;
@@ -46,23 +43,23 @@ function countSemverViolations(report: BundleScanReport): number {
   let n = 0;
   for (const target of report.targets ?? []) {
     for (const finding of target.findings) {
-      if (finding.violationKind === "semver_rule" || finding.type === "semver") n++;
+      if (finding.violationKind === 'semver_rule' || finding.type === 'semver') n++;
     }
   }
   return n;
 }
 
 function firstHealthLatency(tick: NetworkLoopTick): number | undefined {
-  const probe = tick.health?.probes.find((p) => p.ok);
+  const probe = tick.health?.probes.find(p => p.ok);
   return probe?.latency_ms;
 }
 
 export async function collectEndpointDetails(
-  report: BundleScanReport,
+  report: BundleScanReport
 ): Promise<NetworkAuditDetails> {
   const routes = report.endpoints?.route_fingerprints?.length
     ? [...report.endpoints.route_fingerprints]
-    : (report.endpoints?.health_routes ?? []).map((r) => `${r.method} ${r.path}`);
+    : (report.endpoints?.health_routes ?? []).map(r => `${r.method} ${r.path}`);
 
   let catalog: EndpointCatalog | undefined;
   if (report.endpoints?.source) {
@@ -75,7 +72,7 @@ export async function collectEndpointDetails(
 
   const hotspots = (report.network?.hotspots ?? report.network?.by_file ?? [])
     .slice(0, 20)
-    .map((row) => ({
+    .map(row => ({
       file: row.basename ?? row.file,
       hits: row.hits,
       surfaces: row.surfaces,
@@ -91,13 +88,14 @@ export async function collectEndpointDetails(
 
 export function auditResultFromTick(
   tick: NetworkLoopTick,
-  details?: NetworkAuditDetails,
+  details?: NetworkAuditDetails
 ): NetworkAuditResult {
   const report = tick.report;
   const endpoints = report?.endpoints?.total ?? 0;
-  const routes = report?.endpoints?.route_fingerprints?.length
-    ?? report?.endpoints?.health_routes?.length
-    ?? endpoints;
+  const routes =
+    report?.endpoints?.route_fingerprints?.length ??
+    report?.endpoints?.health_routes?.length ??
+    endpoints;
 
   const result: NetworkAuditResult = {
     networkUnique: report?.network?.unique_total ?? 0,
@@ -125,43 +123,44 @@ export function auditResultFromTick(
 }
 
 export function resolveAuditOutputFormat(
-  opts: Record<string, string | boolean | number>,
+  opts: Record<string, string | boolean | number>
 ): NetworkAuditOutputFormat {
   const output = opts.output;
-  if (output === "json" || output === "herdr" || output === "table") {
+  if (output === 'json' || output === 'herdr' || output === 'table') {
     return output;
   }
-  if (opts.json === true) return "json";
-  if (opts["herdr-tab"] === true) return "herdr";
-  return "table";
+  if (opts.json === true) return 'json';
+  if (opts['herdr-tab'] === true) return 'herdr';
+  return 'table';
 }
 
 export function formatAuditTable(result: NetworkAuditResult): string {
   const rows: Array<Record<string, string | number>> = [
-    { metric: "networkUnique", value: result.networkUnique },
-    { metric: "networkRaw", value: result.networkRaw },
-    { metric: "endpoints", value: result.endpoints },
-    { metric: "routes", value: result.routes },
+    { metric: 'networkUnique', value: result.networkUnique },
+    { metric: 'networkRaw', value: result.networkRaw },
+    { metric: 'endpoints', value: result.endpoints },
+    { metric: 'routes', value: result.routes },
   ];
-  if (result.healthStatus) rows.push({ metric: "healthStatus", value: result.healthStatus });
-  if (result.healthLatency !== undefined) rows.push({ metric: "healthLatencyMs", value: result.healthLatency });
-  rows.push({ metric: "patternMatches", value: result.patternMatches });
-  rows.push({ metric: "semverViolations", value: result.semverViolations });
+  if (result.healthStatus) rows.push({ metric: 'healthStatus', value: result.healthStatus });
+  if (result.healthLatency !== undefined)
+    rows.push({ metric: 'healthLatencyMs', value: result.healthLatency });
+  rows.push({ metric: 'patternMatches', value: result.patternMatches });
+  rows.push({ metric: 'semverViolations', value: result.semverViolations });
   if (result.baselineDrift) {
-    rows.push({ metric: "baselineDriftEndpoints", value: result.baselineDrift.endpoints });
-    rows.push({ metric: "baselineDriftRoutes", value: result.baselineDrift.routes });
+    rows.push({ metric: 'baselineDriftEndpoints', value: result.baselineDrift.endpoints });
+    rows.push({ metric: 'baselineDriftRoutes', value: result.baselineDrift.routes });
   }
   if (result.delta) {
-    rows.push({ metric: "drift", value: result.delta.drift ? 1 : 0 });
+    rows.push({ metric: 'drift', value: result.delta.drift ? 1 : 0 });
   }
 
-  const width = Math.max(...rows.map((r) => String(r.metric).length), 6);
-  const lines = rows.map((r) => `${String(r.metric).padEnd(width)}  ${r.value}`);
-  const out = [lines.join("\n")];
+  const width = Math.max(...rows.map(r => String(r.metric).length), 6);
+  const lines = rows.map(r => `${String(r.metric).padEnd(width)}  ${r.value}`);
+  const out = [lines.join('\n')];
 
   if (result.details) {
-    out.push("");
-    out.push("endpoint catalog");
+    out.push('');
+    out.push('endpoint catalog');
     if (result.details.catalog?.title) {
       out.push(`  title: ${result.details.catalog.title}`);
     }
@@ -177,27 +176,27 @@ export function formatAuditTable(result: NetworkAuditResult): string {
     }
     const surfaces = Object.entries(result.details.networkSurfaces);
     if (surfaces.length) {
-      out.push("network surfaces");
+      out.push('network surfaces');
       for (const [surface, hits] of surfaces.slice(0, 8)) {
         out.push(`  ${surface}: ${hits}`);
       }
     }
     if (result.details.hotspots.length) {
-      out.push("hotspots");
+      out.push('hotspots');
       for (const h of result.details.hotspots.slice(0, 6)) {
         out.push(`  ${h.file}: ${h.hits}`);
       }
     }
   }
 
-  return `${out.join("\n")}\n`;
+  return `${out.join('\n')}\n`;
 }
 
 export function formatAuditJson(result: NetworkAuditResult): string {
   const payload = {
     schemaVersion: 1,
-    tool: "supply-chain-network",
-    mode: "dry-run",
+    tool: 'supply-chain-network',
+    mode: 'dry-run',
     at: new Date(result.at).toISOString(),
     summary: {
       networkUnique: result.networkUnique,
@@ -246,18 +245,18 @@ export function formatAuditHerdr(result: NetworkAuditResult): string {
       lines.push(`  … +${result.details.routes.length - 8} more`);
     }
   }
-  return `${lines.join("\n")}\n`;
+  return `${lines.join('\n')}\n`;
 }
 
 export function emitAuditResult(
   result: NetworkAuditResult,
-  format: NetworkAuditOutputFormat,
+  format: NetworkAuditOutputFormat
 ): void {
-  if (format === "json") {
+  if (format === 'json') {
     process.stdout.write(formatAuditJson(result));
     return;
   }
-  if (format === "herdr") {
+  if (format === 'herdr') {
     process.stdout.write(formatAuditHerdr(result));
     return;
   }

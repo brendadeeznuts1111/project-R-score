@@ -1,21 +1,22 @@
 # Bun Agent – Live Odds Intelligence
 
-Partner-adjacent **portal board** + optional **local Bun agent** (not Tennis HQ Worker).
+Partner-adjacent **portal board** + optional **local Bun agent** (not Tennis HQ
+Worker).
 
-| Plane | URL | What works |
-|-------|-----|------------|
-| **Pages / serve-public** | `/portal/agent-odds/` on `score.factory-wager.com` | Static desk · partner chips from `/registry/bookmakers.json` + `partners-ops.json` |
-| **Live agent** | `bun run agent:odds-dashboard` → `http://127.0.0.1:3000/` | Edges · WS · mock bet · backtest · full APIs |
+| Plane                    | URL                                                       | What works                                                                         |
+| ------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| **Pages / serve-public** | `/portal/agent-odds/` on `score.factory-wager.com`        | Static desk · partner chips from `/registry/bookmakers.json` + `partners-ops.json` |
+| **Live agent**           | `bun run agent:odds-dashboard` → `http://127.0.0.1:3000/` | Edges · WS · mock bet · backtest · full APIs                                       |
 
 Linked from **Partners** desk nav (`/portal/partners/` → Agent odds).
 
-| Version | Route / file | Notes |
-|---------|--------------|--------|
+| Version                   | Route / file                                   | Notes                                                                   |
+| ------------------------- | ---------------------------------------------- | ----------------------------------------------------------------------- |
 | **v1.07** (default index) | `/portal/agent-odds/` · `dashboard-v1.07.html` | Trading desk · static registry fallback · WS · mock bet · backtest · ML |
-| v1.12 | `dashboard-v1.12.html` | System + Registry tabs (agent process) |
-| v1.06 | `dashboard-v1.06.html` | Uncovered Edges |
-| v1.05 | `dashboard-v1.05.html` | Events desk · CSRF mutations |
-| v1.03+liquidity | `dashboard-v1.03.html` | Partner health · liquidity filters |
+| v1.12                     | `dashboard-v1.12.html`                         | System + Registry tabs (agent process)                                  |
+| v1.06                     | `dashboard-v1.06.html`                         | Uncovered Edges                                                         |
+| v1.05                     | `dashboard-v1.05.html`                         | Events desk · CSRF mutations                                            |
+| v1.03+liquidity           | `dashboard-v1.03.html`                         | Partner health · liquidity filters                                      |
 
 ## Run
 
@@ -30,9 +31,11 @@ bun run agent:odds-dashboard
 # → http://127.0.0.1:3000/
 ```
 
-Handlers: `lib/operator-research/agent-odds-http.ts` (shared by both entrypoints).
+Handlers: `lib/operator-research/agent-odds-http.ts` (shared by both
+entrypoints).
 
-On Cloudflare Pages (static only), partner chips still load from registry bakes when APIs are absent.
+On Cloudflare Pages (static only), partner chips still load from registry bakes
+when APIs are absent.
 
 ## Demo login (local mock only)
 
@@ -65,44 +68,44 @@ Or set `AGENT_DEMO_USER` / `AGENT_DEMO_PASS`. **Not for production.**
 
 ## APIs
 
-| Method   | Path                                           | Role                                                                  |
-| -------- | ---------------------------------------------- | --------------------------------------------------------------------- |
-| GET      | `/api/edges`                                   | Opportunities (+ `ml`)                                                |
-| POST     | `/api/bet`                                     | Mock place `{ edgeId, stake, bookmaker }` → `{ mock: true, orderId }` |
-| GET      | `/api/bets`                                    | Recent mock orders                                                    |
-| POST     | `/api/backtest`                                | `{ ruleId, startDate, endDate, seed? }`                               |
-| GET      | `/api/events` · `/:id` · `/:id/history`        | Events + charts                                                       |
-| GET/POST | `/api/alerts/rules`                            | Rules CRUD                                                            |
-| GET      | `/api/alerts/history` · `/performance`         | Feed + snapshot                                                       |
-| GET      | `/api/partners/health`                         | Merged registry                                                       |
-| GET      | `/api/odds/*`                                  | Partner-enriched odds                                                 |
-| WS       | `/ws`                                          | Live feed topic `agent-odds`                                          |
-| GET      | `/api/platform`                                | Capabilities                                                          |
-| GET      | `/api/system/info`                             | Bun.version / revision / which / Bun.color                            |
-| GET/POST | `/api/system/fs/ls` · `/fs/read` · `/fs/write` | Sandboxed file explorer (project root only)                           |
-| GET      | `/api/system/processes`                        | `Bun.spawn(['ps','aux'])`                                             |
-| GET/POST | `/api/system/env`                              | Bun.env view; set `DESK_*` / `OPERATOR_RESEARCH_*` only               |
-| POST     | `/api/system/password/hash` · `/verify`        | `Bun.password`                                                        |
-| POST     | `/api/system/search`                           | `Bun.Glob`                                                            |
-| POST     | `/api/system/inspect`                          | `Bun.inspect`                                                         |
-| GET      | `/api/system/peek`                             | Desk task `Bun.peek` statuses                                         |
-| GET      | `/api/system/jobs` · `/api/desk/jobs`          | Research agent · odds dashboard · optional `Bun.cron` monitor status  |
-| GET      | `/api/registry/presets`                        | Allowlisted registry presets (`local` · `prod`)                       |
-| GET      | `/api/registry/packages?q=`                    | Search `public/registry/registry.json` (Phase 0 snapshot)             |
+| Method   | Path                                           | Role                                                                               |
+| -------- | ---------------------------------------------- | ---------------------------------------------------------------------------------- |
+| GET      | `/api/edges`                                   | Opportunities (+ `ml`)                                                             |
+| POST     | `/api/bet`                                     | Mock place `{ edgeId, stake, bookmaker }` → `{ mock: true, orderId }`              |
+| GET      | `/api/bets`                                    | Recent mock orders                                                                 |
+| POST     | `/api/backtest`                                | `{ ruleId, startDate, endDate, seed? }`                                            |
+| GET      | `/api/events` · `/:id` · `/:id/history`        | Events + charts                                                                    |
+| GET/POST | `/api/alerts/rules`                            | Rules CRUD                                                                         |
+| GET      | `/api/alerts/history` · `/performance`         | Feed + snapshot                                                                    |
+| GET      | `/api/partners/health`                         | Merged registry                                                                    |
+| GET      | `/api/odds/*`                                  | Partner-enriched odds                                                              |
+| WS       | `/ws`                                          | Live feed topic `agent-odds`                                                       |
+| GET      | `/api/platform`                                | Capabilities                                                                       |
+| GET      | `/api/system/info`                             | Bun.version / revision / which / Bun.color                                         |
+| GET/POST | `/api/system/fs/ls` · `/fs/read` · `/fs/write` | Sandboxed file explorer (project root only)                                        |
+| GET      | `/api/system/processes`                        | `Bun.spawn(['ps','aux'])`                                                          |
+| GET/POST | `/api/system/env`                              | Bun.env view; set `DESK_*` / `OPERATOR_RESEARCH_*` only                            |
+| POST     | `/api/system/password/hash` · `/verify`        | `Bun.password`                                                                     |
+| POST     | `/api/system/search`                           | `Bun.Glob`                                                                         |
+| POST     | `/api/system/inspect`                          | `Bun.inspect`                                                                      |
+| GET      | `/api/system/peek`                             | Desk task `Bun.peek` statuses                                                      |
+| GET      | `/api/system/jobs` · `/api/desk/jobs`          | Research agent · odds dashboard · optional `Bun.cron` monitor status               |
+| GET      | `/api/registry/presets`                        | Allowlisted registry presets (`local` · `prod`)                                    |
+| GET      | `/api/registry/packages?q=`                    | Search `public/registry/registry.json` (Phase 0 snapshot)                          |
 | GET      | `/api/registry/packages/:name`                 | Detail (`?version=` · `?live=1` · `?preset=` · `readme` / `readmeHtml` · `source`) |
-| GET      | `/api/registry/health?preset=`                 | Snapshot + optional local `/-/ping`                                   |
-| GET      | `/api/registry/workspaces`                     | Publishable `packages/*` workspaces                                   |
-| POST     | `/api/registry/publish`                        | Local `bun publish --registry` (CSRF · dry-run default · `confirm`)   |
-| POST     | `/api/registry/factory-publish`                | Factory/R2 publish lane (CSRF · dry-run default · `confirm`)          |
+| GET      | `/api/registry/health?preset=`                 | Snapshot + optional local `/-/ping`                                                |
+| GET      | `/api/registry/workspaces`                     | Publishable `packages/*` workspaces                                                |
+| POST     | `/api/registry/publish`                        | Local `bun publish --registry` (CSRF · dry-run default · `confirm`)                |
+| POST     | `/api/registry/factory-publish`                | Factory/R2 publish lane (CSRF · dry-run default · `confirm`)                       |
 
 ## Registry tab (v1.12)
 
 Allowlisted presets only (no free-form registry URL):
 
-| Preset  | URL                                              | Browse (Phase 0)     | Publish                                      |
-| ------- | ------------------------------------------------ | -------------------- | -------------------------------------------- |
-| `local` | `http://localhost:3000/`                         | Snapshot + ping      | `bun publish --registry` (dry-run default)   |
-| `prod`  | `https://registry.factory-wager.com/api/npm`     | Snapshot only        | `factory publish` (not `bun publish`→Pages)  |
+| Preset  | URL                                          | Browse (Phase 0) | Publish                                     |
+| ------- | -------------------------------------------- | ---------------- | ------------------------------------------- |
+| `local` | `http://localhost:3000/`                     | Snapshot + ping  | `bun publish --registry` (dry-run default)  |
+| `prod`  | `https://registry.factory-wager.com/api/npm` | Snapshot only    | `factory publish` (not `bun publish`→Pages) |
 
 **Snapshot refresh** (do not invent `build:registry` / `npm install`→index):
 
@@ -111,9 +114,10 @@ bun run factory:snapshot
 bun run ops:snapshot
 ```
 
-Detail modal shows `readme` / `readmeFilename` / `readmeHtml` (`Bun.markdown.html` + `tagFilter`).
-**Rendered** / **Raw** toggle. Check **Live packument** to fetch the allowlisted preset
-(`local` / `prod`) with snapshot fallback (`source`, `liveError` on failure).
+Detail modal shows `readme` / `readmeFilename` / `readmeHtml`
+(`Bun.markdown.html` + `tagFilter`). **Rendered** / **Raw** toggle. Check **Live
+packument** to fetch the allowlisted preset (`local` / `prod`) with snapshot
+fallback (`source`, `liveError` on failure).
 
 ```
 GET /api/registry/packages/event-store?live=1&preset=local&version=1.0.0
@@ -146,8 +150,10 @@ bun run agent registry-readme event-store --version 1.0.0
 /dashboard-v1.12.html?tab=registry&registry=prod&package=@factorywager/registry-client&version=1.0.0&live=1
 ```
 
-Pages / public score hosts are **not** publish targets ([ADR-0002](../../../docs/adr/0002-registry-index-ssot.md)).
+Pages / public score hosts are **not** publish targets
+([ADR-0002](../../../docs/adr/0002-registry-index-ssot.md)).
 
 ## Tabs (v1.12)
 
-Packages · **Registry** · **System** · Events · Detail · Edges · Live · Backtest · Rules
+Packages · **Registry** · **System** · Events · Detail · Edges · Live · Backtest
+· Rules

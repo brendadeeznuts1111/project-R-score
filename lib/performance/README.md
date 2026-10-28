@@ -4,6 +4,6 @@ Performance helpers.
 
 Inventory: [`../README.md`](../README.md).
 
-| Entry |
-|-------|
+| Entry                                    |
+| ---------------------------------------- |
 | [`cache-manager.ts`](./cache-manager.ts) |

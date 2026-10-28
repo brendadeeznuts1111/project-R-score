@@ -722,10 +722,7 @@ async function enrichPackageRegistryDetail(pkgId, npmGuess, el) {
       const j = await res.json();
       const results = Array.isArray(j.results) ? j.results : [];
       const hit = results.find(
-        r =>
-          r.name === npmGuess ||
-          r.name === pkgId ||
-          String(r.name || '').endsWith('/' + pkgId)
+        r => r.name === npmGuess || r.name === pkgId || String(r.name || '').endsWith('/' + pkgId)
       );
       if (hit) {
         infoEl.innerHTML = `package-info: <strong>${escapeHtml(hit.status || '—')}</strong> · ${escapeHtml(hit.registry || '')} · v${escapeHtml(String(hit.version || '—'))} · readme ${escapeHtml(String(hit.readme || '—'))}`;
@@ -758,8 +755,7 @@ async function enrichPackageRegistryDetail(pkgId, npmGuess, el) {
             )
             .join(' · ');
       } else {
-        capEl.innerHTML =
-          'capabilities: none matched · <a href="/portal/tools/">tools hub</a>';
+        capEl.innerHTML = 'capabilities: none matched · <a href="/portal/tools/">tools hub</a>';
       }
     } else if (capEl) {
       capEl.textContent = `capabilities: HTTP ${res.status}`;
@@ -852,7 +848,7 @@ export async function loadPackageInfoRelated(doc = document) {
     }
     const j = await res.json();
     const summary = j.summary || {};
-    const n = Array.isArray(j.results) ? j.results.length : summary.total ?? '—';
+    const n = Array.isArray(j.results) ? j.results.length : (summary.total ?? '—');
     const passed = summary.passed ?? '—';
     el.innerHTML = `Related: <a href="/registry/package-info.json"><code>package-info.json</code></a> · ${passed}/${n} ok · bun ${escapeHtml(String(j.bunVersion || '?'))}`;
   } catch (err) {
@@ -891,9 +887,7 @@ export function normalizePublishPlaneRow(proof, fallbacks) {
       ? /** @type {Record<string, unknown>} */ (p.tarball)
       : null;
   const color =
-    p.color && typeof p.color === 'object'
-      ? /** @type {Record<string, unknown>} */ (p.color)
-      : {};
+    p.color && typeof p.color === 'object' ? /** @type {Record<string, unknown>} */ (p.color) : {};
   const modeColor =
     p.modeColor && typeof p.modeColor === 'object'
       ? /** @type {Record<string, unknown>} */ (p.modeColor)
@@ -937,7 +931,11 @@ export function renderPublishPlaneCards(rows) {
   return rows
     .map(r => {
       const statusClass =
-        r.status === 'pass' ? 'grade-healthy' : r.status === 'fail' ? 'grade-critical' : 'pkg-empty';
+        r.status === 'pass'
+          ? 'grade-healthy'
+          : r.status === 'fail'
+            ? 'grade-critical'
+            : 'pkg-empty';
       const mark = r.status === 'pass' ? 'pass' : r.status === 'fail' ? 'fail' : 'missing';
       const counts = r.missing
         ? 'missing bake'
@@ -989,7 +987,11 @@ export function renderPublishPlaneTable(rows) {
     cols,
     rows.map(r => {
       const statusClass =
-        r.status === 'pass' ? 'grade-healthy' : r.status === 'fail' ? 'grade-critical' : 'pkg-empty';
+        r.status === 'pass'
+          ? 'grade-healthy'
+          : r.status === 'fail'
+            ? 'grade-critical'
+            : 'pkg-empty';
       const mark = r.status === 'pass' ? '✅' : r.status === 'fail' ? '❌' : '—';
       const counts = r.missing
         ? 'missing bake'
@@ -1101,7 +1103,9 @@ export async function loadPublishPlaneSoftPass(doc = document) {
     const scriptCmds = Array.isArray(plane.scripts)
       ? plane.scripts
       : (Array.isArray(weave.scripts) ? weave.scripts : [])
-          .filter(s => s.id === 'ssot-flow-soft' || s.id === 'verify-pm-save' || s.id === 'verify-weave')
+          .filter(
+            s => s.id === 'ssot-flow-soft' || s.id === 'verify-pm-save' || s.id === 'verify-weave'
+          )
           .map(s => s.cmd);
     const packages = (Array.isArray(weave.surfaces) ? weave.surfaces : []).find(
       s => s.id === 'packages'
@@ -1110,9 +1114,7 @@ export async function loadPublishPlaneSoftPass(doc = document) {
       ? packages.relatedArtifactIds.join(', ')
       : '';
     const hexByKey = Object.fromEntries(
-      rows
-        .filter(r => r.colorKey && r.colorHex)
-        .map(r => [r.colorKey, r.colorHex])
+      rows.filter(r => r.colorKey && r.colorHex).map(r => [r.colorKey, r.colorHex])
     );
     const planeSource = planeArts.length
       ? planeArts
@@ -1146,7 +1148,9 @@ export async function loadPublishPlaneSoftPass(doc = document) {
       (related.ssotFlowSoft
         ? ` · related.ssotFlowSoft=<code>${escapeHtml(String(related.ssotFlowSoft))}</code>`
         : '') +
-      (related.pmProof ? ` · related.pmProof=<code>${escapeHtml(String(related.pmProof))}</code>` : '') +
+      (related.pmProof
+        ? ` · related.pmProof=<code>${escapeHtml(String(related.pmProof))}</code>`
+        : '') +
       (swatches ? ` · ${swatches}` : '') +
       (scriptCmds.length
         ? ` · scripts: ${scriptCmds.map(c => `<code>${escapeHtml(String(c))}</code>`).join(' · ')}`
@@ -1280,7 +1284,7 @@ function renderCrossPlanePanel(surfaces, doc = document) {
       ? hubs
           .map(
             h =>
-              `<li><code>${escapeHtml(h.targetPrefix)}</code> · w=${h.weight} · from ${ (h.fromPackages || []).map(escapeHtml).join(', ') }</li>`
+              `<li><code>${escapeHtml(h.targetPrefix)}</code> · w=${h.weight} · from ${(h.fromPackages || []).map(escapeHtml).join(', ')}</li>`
           )
           .join('')
       : '<li>No lib hubs (bake without packageExternalEdges?)</li>';
@@ -1543,14 +1547,18 @@ export function sortPackageRows(packages, sortKey) {
   const scoreOf = p => (typeof p.score === 'number' ? p.score : -1);
   const bytesOf = p => (typeof p.bytes === 'number' ? p.bytes : 0);
   rows.sort((a, b) => {
-    if (sortKey === 'score-desc') return scoreOf(b) - scoreOf(a) || nameOf(a).localeCompare(nameOf(b));
-    if (sortKey === 'score-asc') return scoreOf(a) - scoreOf(b) || nameOf(a).localeCompare(nameOf(b));
+    if (sortKey === 'score-desc')
+      return scoreOf(b) - scoreOf(a) || nameOf(a).localeCompare(nameOf(b));
+    if (sortKey === 'score-asc')
+      return scoreOf(a) - scoreOf(b) || nameOf(a).localeCompare(nameOf(b));
     if (sortKey === 'role') {
       return (
-        String(a.role || '').localeCompare(String(b.role || '')) || nameOf(a).localeCompare(nameOf(b))
+        String(a.role || '').localeCompare(String(b.role || '')) ||
+        nameOf(a).localeCompare(nameOf(b))
       );
     }
-    if (sortKey === 'size-desc') return bytesOf(b) - bytesOf(a) || nameOf(a).localeCompare(nameOf(b));
+    if (sortKey === 'size-desc')
+      return bytesOf(b) - bytesOf(a) || nameOf(a).localeCompare(nameOf(b));
     return nameOf(a).localeCompare(nameOf(b));
   });
   return rows;
@@ -1661,7 +1669,8 @@ function renderPackagesBoard(data, doc = document) {
     } else {
       orphanAlert.hidden = false;
       orphanAlert.className = 'meta grade-healthy';
-      orphanAlert.textContent = 'Orphan files: 0 (all scanned package sources reachable from entrypoints).';
+      orphanAlert.textContent =
+        'Orphan files: 0 (all scanned package sources reachable from entrypoints).';
     }
   }
 

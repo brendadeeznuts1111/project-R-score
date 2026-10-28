@@ -4,4 +4,4 @@ valid:
   - "fetch(endpoint)"
 invalid:
   - "fetch('https://api.example.com/v1/data')"
-  - "await fetch(\"https://moonshot.cn/v1/chat/completions\")"
+  - 'await fetch("https://moonshot.cn/v1/chat/completions")'

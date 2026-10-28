@@ -5,8 +5,8 @@
  * https://bun.com/docs/guides/process/os-signals
  */
 
-console.info("📡 Bun OS Signals Demo (Deterministic Cleanup)\n");
-console.info("=".repeat(74));
+console.info('📡 Bun OS Signals Demo (Deterministic Cleanup)\n');
+console.info('='.repeat(74));
 
 const managedChildren = new Set<ReturnType<typeof Bun.spawn>>();
 let shuttingDown = false;
@@ -29,12 +29,12 @@ async function gracefulShutdown(signal: string, exitCode = 0) {
   console.info(`   step 2/4: forward SIGTERM to ${managedChildren.size} child(ren)`);
   for (const child of managedChildren) {
     try {
-      child.kill("SIGTERM");
+      child.kill('SIGTERM');
     } catch {
       // already exited
     }
   }
-  console.info("   step 3/4: wait for child drain");
+  console.info('   step 3/4: wait for child drain');
   const drainStart = Date.now();
   while (managedChildren.size > 0 && Date.now() - drainStart < 800) {
     await sleep(25);
@@ -43,7 +43,7 @@ async function gracefulShutdown(signal: string, exitCode = 0) {
     console.info(`   drain timeout -> force SIGKILL ${managedChildren.size} child(ren)`);
     for (const child of managedChildren) {
       try {
-        child.kill("SIGKILL");
+        child.kill('SIGKILL');
       } catch {
         // already exited
       }
@@ -53,24 +53,24 @@ async function gracefulShutdown(signal: string, exitCode = 0) {
   process.exit(exitCode);
 }
 
-process.on("SIGINT", () => void gracefulShutdown("SIGINT"));
-process.on("SIGTERM", () => void gracefulShutdown("SIGTERM"));
-process.on("SIGHUP", () => void gracefulShutdown("SIGHUP"));
+process.on('SIGINT', () => void gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => void gracefulShutdown('SIGTERM'));
+process.on('SIGHUP', () => void gracefulShutdown('SIGHUP'));
 
-process.on("beforeExit", (code) => {
+process.on('beforeExit', code => {
   console.info(`[lifecycle] beforeExit code=${code}`);
 });
-process.on("exit", (code) => {
+process.on('exit', code => {
   console.info(`[lifecycle] exit code=${code}`);
 });
 
-console.info("\n1️⃣ Parent/Child choreography");
-console.info("-".repeat(74));
+console.info('\n1️⃣ Parent/Child choreography');
+console.info('-'.repeat(74));
 console.info(`parent pid: ${process.pid}`);
 const child = Bun.spawn({
   cmd: [
     process.execPath,
-    "-e",
+    '-e',
     `
       process.on("SIGTERM", () => {
         console.info("[child] SIGTERM received");
@@ -79,8 +79,8 @@ const child = Bun.spawn({
       setInterval(() => console.info("[child] tick"), 120);
     `,
   ],
-  stdout: "pipe",
-  stderr: "pipe",
+  stdout: 'pipe',
+  stderr: 'pipe',
 });
 registerChild(child);
 
@@ -91,15 +91,12 @@ const reader = (async () => {
   }
 })();
 
-console.info("\n2️⃣ Deterministic signal simulation");
-console.info("-".repeat(74));
-console.info("sending SIGTERM to parent in 400ms...");
+console.info('\n2️⃣ Deterministic signal simulation');
+console.info('-'.repeat(74));
+console.info('sending SIGTERM to parent in 400ms...');
 setTimeout(() => {
-  process.kill(process.pid, "SIGTERM");
+  process.kill(process.pid, 'SIGTERM');
 }, 400);
 
-await Promise.race([
-  child.exited,
-  sleep(1500),
-]);
+await Promise.race([child.exited, sleep(1500)]);
 await reader;

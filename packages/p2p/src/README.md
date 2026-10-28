@@ -6,7 +6,8 @@ Library package (no root `package.json` scripts). Import from workspace:
 import { BusinessContinuity, CustomerNotifier } from '@factorywager/p2p';
 ```
 
-Sources: `business-continuity.ts`, `customer-notifier.ts`, `migration-workflow.ts`.
+Sources: `business-continuity.ts`, `customer-notifier.ts`,
+`migration-workflow.ts`.
 
 Test via nearest package / root tests when present:
 
@@ -14,4 +15,5 @@ Test via nearest package / root tests when present:
 bun test packages/p2p
 ```
 
-Branding notes: [BRANDING.md](./BRANDING.md). Monorepo hub: [../../../README.md](../../../README.md).
+Branding notes: [BRANDING.md](./BRANDING.md). Monorepo hub:
+[../../../README.md](../../../README.md).

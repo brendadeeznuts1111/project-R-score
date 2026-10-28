@@ -7,14 +7,14 @@
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const showNewUI = await env.FLAGS.getBooleanValue("new-ui", false, {
-      userId: "user-42",
+    const showNewUI = await env.FLAGS.getBooleanValue('new-ui', false, {
+      userId: 'user-42',
     });
 
     if (showNewUI) {
-      return new Response("New UI");
+      return new Response('New UI');
     }
-    return new Response("Classic UI");
+    return new Response('Classic UI');
   },
 };
 ```
@@ -23,15 +23,15 @@ export default {
 
 ```typescript
 const checkoutFlow = await env.FLAGS.getStringValue(
-  "checkout-flow",
-  "original",
-  { userId, country: "US" },
+  'checkout-flow',
+  'original',
+  { userId, country: 'US' }
 );
 
 switch (checkoutFlow) {
-  case "streamlined":
+  case 'streamlined':
     return handleStreamlined(request);
-  case "one-click":
+  case 'one-click':
     return handleOneClick(request);
   default:
     return handleOriginal(request);
@@ -47,22 +47,22 @@ interface RateLimitConfig {
 }
 
 const limits = await env.FLAGS.getObjectValue<RateLimitConfig>(
-  "rate-limits",
+  'rate-limits',
   { rpm: 100, burst: 20 },
-  { plan: userPlan },
+  { plan: userPlan }
 );
 ```
 
 ### Using Details for Observability
 
 ```typescript
-const details = await env.FLAGS.getBooleanDetails("new-checkout", false, {
-  userId: "user-42",
+const details = await env.FLAGS.getBooleanDetails('new-checkout', false, {
+  userId: 'user-42',
 });
 
-console.log(details.value);     // true
-console.log(details.variant);   // "on"
-console.log(details.reason);    // "TARGETING_MATCH"
+console.log(details.value); // true
+console.log(details.variant); // "on"
+console.log(details.reason); // "TARGETING_MATCH"
 console.log(details.errorCode); // undefined (no error)
 ```
 
@@ -73,23 +73,23 @@ console.log(details.errorCode); // undefined (no error)
 ### Binding Passthrough (Recommended)
 
 ```typescript
-import { OpenFeature } from "@openfeature/server-sdk";
-import { FlagshipServerProvider } from "@cloudflare/flagship";
+import { OpenFeature } from '@openfeature/server-sdk';
+import { FlagshipServerProvider } from '@cloudflare/flagship';
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     await OpenFeature.setProviderAndWait(
-      new FlagshipServerProvider({ binding: env.FLAGS }),
+      new FlagshipServerProvider({ binding: env.FLAGS })
     );
     const client = OpenFeature.getClient();
 
-    const enabled = await client.getBooleanValue("new-checkout", false, {
-      targetingKey: "user-42",
-      plan: "enterprise",
-      country: "US",
+    const enabled = await client.getBooleanValue('new-checkout', false, {
+      targetingKey: 'user-42',
+      plan: 'enterprise',
+      country: 'US',
     });
 
-    return new Response(enabled ? "New checkout" : "Standard checkout");
+    return new Response(enabled ? 'New checkout' : 'Standard checkout');
   },
 };
 ```
@@ -101,17 +101,17 @@ Only the provider initialization changes — evaluation call sites stay the same
 ```typescript
 // ❌ Before (LaunchDarkly)
 await OpenFeature.setProviderAndWait(
-  new LaunchDarklyProvider({ sdkKey: "..." }),
+  new LaunchDarklyProvider({ sdkKey: '...' })
 );
 
 // ✅ After (Flagship)
 await OpenFeature.setProviderAndWait(
-  new FlagshipServerProvider({ binding: env.FLAGS }),
+  new FlagshipServerProvider({ binding: env.FLAGS })
 );
 
 // Evaluation code is unchanged
-const enabled = await client.getBooleanValue("my-flag", false, {
-  targetingKey: "user-42",
+const enabled = await client.getBooleanValue('my-flag', false, {
+  targetingKey: 'user-42',
 });
 ```
 
@@ -119,7 +119,8 @@ const enabled = await client.getBooleanValue("my-flag", false, {
 
 ## Managing Flags via REST API
 
-All examples use `api.cloudflare.com`. Set `CLOUDFLARE_ACCOUNT_ID`, `FLAGSHIP_APP_ID`, and `CLOUDFLARE_API_TOKEN` first.
+All examples use `api.cloudflare.com`. Set `CLOUDFLARE_ACCOUNT_ID`,
+`FLAGSHIP_APP_ID`, and `CLOUDFLARE_API_TOKEN` first.
 
 ### Create a Boolean Flag
 
@@ -214,7 +215,8 @@ curl -s -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 
 ### Update a Flag (Full Replace)
 
-Updates use PUT with the full `FlagDefinition`. Always GET first, modify, then PUT back.
+Updates use PUT with the full `FlagDefinition`. Always GET first, modify, then
+PUT back.
 
 ```bash
 # 1. Read current flag
@@ -249,7 +251,8 @@ echo "$UPDATED" | curl -s -X PUT \
 
 ### Toggle a Flag Off (Disable)
 
-Same pattern, set `enabled: false`. The flag immediately returns its default variation for all evaluations.
+Same pattern, set `enabled: false`. The flag immediately returns its default
+variation for all evaluations.
 
 ```bash
 BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/flagship/apps/$FLAGSHIP_APP_ID/flags"
@@ -264,7 +267,8 @@ echo "$UPDATED" | curl -s -X PUT \
 
 ### Add a Targeting Rule to an Existing Flag
 
-Append a rule to the existing rules array. Pick a priority that doesn't collide with existing rules.
+Append a rule to the existing rules array. Pick a priority that doesn't collide
+with existing rules.
 
 ```bash
 BASE="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/flagship/apps/$FLAGSHIP_APP_ID/flags"
@@ -407,14 +411,22 @@ Gradually roll out to 10% of users:
 
 ### A/B/n (Multi-Variant) Testing
 
-To split traffic across N variants, create one rule per variant with **cumulative** rollout percentages. Flagship evaluates rules in priority order. If a rule's conditions match but the user misses that rule's rollout percentage, evaluation continues to the next rule. Use the same stable rollout attribute on every rule so each user is compared against the same bucket as the thresholds increase.
+To split traffic across N variants, create one rule per variant with
+**cumulative** rollout percentages. Flagship evaluates rules in priority order.
+If a rule's conditions match but the user misses that rule's rollout percentage,
+evaluation continues to the next rule. Use the same stable rollout attribute on
+every rule so each user is compared against the same bucket as the thresholds
+increase.
 
-The example uses `conditions: []` because the rules are intended to match every context. For sticky user assignment, callers must still pass the configured bucketing attribute (`targetingKey` here); otherwise Flagship uses a random bucket per request.
+The example uses `conditions: []` because the rules are intended to match every
+context. For sticky user assignment, callers must still pass the configured
+bucketing attribute (`targetingKey` here); otherwise Flagship uses a random
+bucket per request.
 
 For example, to split traffic 30% / 40% / 30% across variants A, B, and C:
 
 | Variant | Share | Cumulative threshold |
-|---------|-------|----------------------|
+| ------- | ----- | -------------------- |
 | A       | 30%   | 30                   |
 | B       | 40%   | 70                   |
 | C       | 30%   | 100                  |
@@ -443,11 +455,17 @@ For example, to split traffic 30% / 40% / 30% across variants A, B, and C:
 ```
 
 Key points:
-- Rules are evaluated lowest-priority-number first. A user who falls into rule 1's 0-30% bucket gets `variant-a` and is not evaluated further.
+
+- Rules are evaluated lowest-priority-number first. A user who falls into rule
+  1's 0-30% bucket gets `variant-a` and is not evaluated further.
 - Rule 2's 70% threshold covers the next 40% of users (31-70%).
 - Rule 3's 100% threshold catches the remaining 30% (71-100%).
-- Always set the last rule to `100` so every context with the bucketing attribute is assigned a variant.
-- For sticky A/B/n assignment, pass a stable `targetingKey` or configured bucketing attribute. Without it, rollout assignment is random per request, which can be useful for request-level sampling but is usually wrong for user experiments.
+- Always set the last rule to `100` so every context with the bucketing
+  attribute is assigned a variant.
+- For sticky A/B/n assignment, pass a stable `targetingKey` or configured
+  bucketing attribute. Without it, rollout assignment is random per request,
+  which can be useful for request-level sampling but is usually wrong for user
+  experiments.
 - A percentage rollout match reports reason `SPLIT` in evaluation details.
 
 ### Progressive Rollout Workflow
@@ -455,14 +473,16 @@ Key points:
 1. Create flag with 5% rollout, enable it
 2. Monitor metrics
 3. Increase to 25% → 50% → 100% by updating the `rollout.percentage`
-4. Once at 100%, remove the rule and set `default_variation` to the winning variation
+4. Once at 100%, remove the rule and set `default_variation` to the winning
+   variation
 5. Eventually remove the flag and the code branch
 
 ---
 
 ## Safe Deletion Workflow
 
-1. **Disable** the flag first (`enabled: false`) — confirms nothing depends on it being active
+1. **Disable** the flag first (`enabled: false`) — confirms nothing depends on
+   it being active
 2. **Monitor** for unexpected behavior
 3. **Remove** flag evaluation code from your application
 4. **Deploy** the code change

@@ -1,26 +1,29 @@
 # Bun-only API handlers (not Cloudflare Pages)
 
 These modules import `bun:sqlite`, missing monorepo paths, or local-only auth.
-They must **not** live under root `functions/` — Pages bundler fails on `bun:sqlite`.
+They must **not** live under root `functions/` — Pages bundler fails on
+`bun:sqlite`.
 
-| Path | Runtime |
-|------|---------|
-| Root `functions/` | Cloudflare Pages (Workers) — edge-safe only |
+| Path                  | Runtime                                           |
+| --------------------- | ------------------------------------------------- |
+| Root `functions/`     | Cloudflare Pages (Workers) — edge-safe only       |
 | `functions-bun-only/` | Local Bun / self-hosted (optional future wire-up) |
 
 ## Ops summary alignment
 
-| Runtime | Handler | Data |
-|---------|---------|------|
-| **Local Bun** | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite via `buildOpsSummary` (`source: "live"`) |
-| **Local Bun-only module** | `functions-bun-only/api/operations/summary.ts` | Same live builder |
-| **Cloudflare Pages** | `functions/api/operations/summary.ts` | **Snapshot** `public/registry/ops-summary.json` (no bun:sqlite) |
-| **Cloudflare Pages** | `functions/api/dod/[[path]].ts` | **Snapshot** `public/registry/dod-queue.json` (GET only; POST → 503) |
-| **Local Bun-only module** | `functions-bun-only/api/dod/index.ts` | Live SQLite + approve/reject |
+| Runtime                   | Handler                                            | Data                                                                 |
+| ------------------------- | -------------------------------------------------- | -------------------------------------------------------------------- |
+| **Local Bun**             | `bun run serve:public` → `/api/operations/summary` | **Live** SQLite via `buildOpsSummary` (`source: "live"`)             |
+| **Local Bun-only module** | `functions-bun-only/api/operations/summary.ts`     | Same live builder                                                    |
+| **Cloudflare Pages**      | `functions/api/operations/summary.ts`              | **Snapshot** `public/registry/ops-summary.json` (no bun:sqlite)      |
+| **Cloudflare Pages**      | `functions/api/dod/[[path]].ts`                    | **Snapshot** `public/registry/dod-queue.json` (GET only; POST → 503) |
+| **Local Bun-only module** | `functions-bun-only/api/dod/index.ts`              | Live SQLite + approve/reject                                         |
 
 Same JSON contract: `lib/operations/ops-summary.ts` (`OpsSummaryPayload`).
 
-Triage runbook: [`docs/harness/ops-summary-endpoint.md`](../docs/harness/ops-summary-endpoint.md) · `bun run ops:diagnose`
+Triage runbook:
+[`docs/harness/ops-summary-endpoint.md`](../docs/harness/ops-summary-endpoint.md)
+· `bun run ops:diagnose`
 
 ```bash
 bun run ops:snapshot          # refresh Pages snapshot (+ prediction report assets)
@@ -31,4 +34,5 @@ bun run serve:public:watch    # full process restart (bun --watch)
 # http://localhost:3000/api/operations/summary
 ```
 
-Dev reload layers (Bun flags, browser SSE): [`docs/portal-foundation.md`](../docs/portal-foundation.md#dev-reload-watch-hot-browser-sse).
+Dev reload layers (Bun flags, browser SSE):
+[`docs/portal-foundation.md`](../docs/portal-foundation.md#dev-reload-watch-hot-browser-sse).

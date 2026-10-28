@@ -37,8 +37,8 @@ Simple, space-free arguments are the portable shape:
 BUN_OPTIONS="--console-depth=5 --no-clear-screen" bun run dev
 ```
 
-Do not use shell quoting to smuggle spaces into a flag value. On stable Bun 1.4.0,
-this keeps the quotes as part of `process.title`:
+Do not use shell quoting to smuggle spaces into a flag value. On stable Bun
+1.4.0, this keeps the quotes as part of `process.title`:
 
 ```bash
 BUN_OPTIONS='--title="hello world"' bun app.ts

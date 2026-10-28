@@ -1,6 +1,7 @@
 # Partner dashboard field lineage and risk audit
 
 <!-- REF:ID 0.1.partner-dashboard-field-lineage -->
+
 <a id="0.1.partner-dashboard-field-lineage"></a>
 
 Status: executable-contract audit (2026-08-06)
@@ -100,7 +101,7 @@ facts. Summary fields and attention rows are derived by the projection.
 | `partners[].communication`                   | Telegram              | handshake/forum adapter                                                   | readiness summary only                                                                 | exact keys, unique topic strings, nonnegative count              | handshake/topic vocabularies and provenance are unconstrained                                          |
 | `partners[].limits`                          | compliance            | limits adapter                                                            | derived tracked/missing counts                                                         | exact ratio consistency                                          | coverage subject/denominator is implicit                                                               |
 | `partners[].integrations.tennis`             | trading/operations    | Tennis connector snapshot                                                 | partner-keyed availability                                                             | status/time shape                                                | duplicates global snapshot without an explicit linkage invariant                                       |
-| `partners[].integrations.sportsTerminal`     | trading/operations    | `parseSportsTerminalIntegrationHealth` + bake/reconcile                     | partner-keyed availability from integration-health fixture/live path                   | status/time shape                                                | money-free; ExternalPartnerRefs joined from the same observation                                         |
+| `partners[].integrations.sportsTerminal`     | trading/operations    | `parseSportsTerminalIntegrationHealth` + bake/reconcile                   | partner-keyed availability from integration-health fixture/live path                   | status/time shape                                                | money-free; ExternalPartnerRefs joined from the same observation                                       |
 | `partners[].attention[]`                     | projection            | validation, freshness, conflicts, missing facts                           | deterministic reason catalog and action mapping                                        | reason ID, severity, exact keys                                  | label/action strings are unconstrained; action command allow-list absent                               |
 
 ## Type fitness

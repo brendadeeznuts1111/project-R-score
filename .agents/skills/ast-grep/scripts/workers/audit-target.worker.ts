@@ -36,8 +36,8 @@ self.onmessage = async (event: MessageEvent<AuditScanJob>) => {
       skipped: true,
       scan_error: null,
       returncode: 0,
-      stdout: "",
-      stderr: "",
+      stdout: '',
+      stderr: '',
       worker_ms: 0,
     };
     self.postMessage(result);
@@ -45,11 +45,11 @@ self.onmessage = async (event: MessageEvent<AuditScanJob>) => {
   }
 
   const args = [...sgBaseArgs];
-  for (const g of globs) args.push("--globs", g);
+  for (const g of globs) args.push('--globs', g);
   args.push(fullPath);
 
   try {
-    const proc = Bun.spawn([binary, ...args], { stdout: "pipe", stderr: "pipe" });
+    const proc = Bun.spawn([binary, ...args], { stdout: 'pipe', stderr: 'pipe' });
     const returncode = await proc.exited;
     const stdout = await new Response(proc.stdout).text();
     const stderr = await new Response(proc.stderr).text();
@@ -57,7 +57,7 @@ self.onmessage = async (event: MessageEvent<AuditScanJob>) => {
       id,
       path: relPath,
       skipped: false,
-      scan_error: returncode > 1 ? (stderr.trim() || `ast-grep exit ${returncode}`) : null,
+      scan_error: returncode > 1 ? stderr.trim() || `ast-grep exit ${returncode}` : null,
       returncode,
       stdout,
       stderr,
@@ -71,7 +71,7 @@ self.onmessage = async (event: MessageEvent<AuditScanJob>) => {
       skipped: false,
       scan_error: String(e),
       returncode: 99,
-      stdout: "",
+      stdout: '',
       stderr: String(e),
       worker_ms: Math.round(performance.now() - started),
     };

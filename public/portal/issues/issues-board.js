@@ -104,10 +104,7 @@ export function validateIssueTaxonomy(value) {
     }
     legalRuleIds.push(rule.id);
   }
-  if (
-    legalCombinations.length === 0 ||
-    new Set(legalRuleIds).size !== legalCombinations.length
-  ) {
+  if (legalCombinations.length === 0 || new Set(legalRuleIds).size !== legalCombinations.length) {
     errors.push('legal rules are missing, malformed, or duplicated');
   }
 

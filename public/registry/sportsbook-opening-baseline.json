@@ -8,14 +8,8 @@
     "sportsbooks": 10,
     "sports": 5,
     "markets": 3,
-    "structures": [
-      "straight",
-      "parlay"
-    ],
-    "phases": [
-      "pregame",
-      "live"
-    ]
+    "structures": ["straight", "parlay"],
+    "phases": ["pregame", "live"]
   },
   "sources": {
     "tiers": {

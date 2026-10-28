@@ -16,7 +16,13 @@
     },
     "bun": {
       "description": "Bun-native hygiene — node:fs hints + CI autofix rules",
-      "rules": ["node-fs-in-bun", "prefer-bun-spawn", "no-as-any", "no-double-cast", "empty-catch"],
+      "rules": [
+        "node-fs-in-bun",
+        "prefer-bun-spawn",
+        "no-as-any",
+        "no-double-cast",
+        "empty-catch"
+      ],
       "min_severity": "hint"
     },
     "bun-hygiene": {
@@ -26,7 +32,12 @@
     },
     "kimi-toolchain": {
       "description": "Kimi-toolchain bun hygiene — type casts + Bun-native hints",
-      "rules": ["node-fs-in-bun", "prefer-bun-spawn", "no-as-any", "no-double-cast"],
+      "rules": [
+        "node-fs-in-bun",
+        "prefer-bun-spawn",
+        "no-as-any",
+        "no-double-cast"
+      ],
       "min_severity": "hint"
     }
   }

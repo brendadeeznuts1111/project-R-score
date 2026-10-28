@@ -1,14 +1,17 @@
 # ADR-0002: Registry index — R2 is the SSOT, the file is a snapshot
 
-> Status: **decided** (2026-07-24) · Supersedes the P3 discovery finding "two sources of truth"  
-> **Linked from:** [`registry-index.md`](../../registry-index.md) · [`docs/README.md`](../README.md) · guides registry stack
+> Status: **decided** (2026-07-24) · Supersedes the P3 discovery finding "two
+> sources of truth"  
+> **Linked from:** [`registry-index.md`](../../registry-index.md) ·
+> [`docs/README.md`](../README.md) · guides registry stack
 
 ## Context
 
 Three writers touched two registry indexes:
 
 - `RegistryClient` (CLI/SDK) → R2 `registry.json` (canonical, etag-guarded)
-- serve-public PUT endpoints (`publishVersion`, `npmPublish`) → `public/registry/registry.json` + local `storage/` only, **never R2**
+- serve-public PUT endpoints (`publishVersion`, `npmPublish`) →
+  `public/registry/registry.json` + local `storage/` only, **never R2**
 
 Consequences observed during the alignment sweep: double-scoped r2Keys
 (`@factorywager/@factorywager/...`), phantom versions (versions listed with no
@@ -21,13 +24,13 @@ consumer (portal reads file, Pages Functions read R2, monitoring reads file).
 2. **`public/registry/registry.json` is a generated snapshot**, refreshed by
    `bun run factory:snapshot` / `ops:snapshot` — never hand-edited, never a
    write target for new writers.
-3. **serve-public PUT endpoints** are a **local dev lane** (loopback only).
-   They may keep writing the local file for dev, but every response must say so
+3. **serve-public PUT endpoints** are a **local dev lane** (loopback only). They
+   may keep writing the local file for dev, but every response must say so
    (`X-Registry-Lane: local-dev`) and docs must not present them as the
    production path.
 4. **Production publish** goes through `RegistryClient.publish` (R2), then a
-   snapshot refresh. The Pages Functions stay read-only (405 for non-GET)
-   until an authenticated edge writer is deliberately designed.
+   snapshot refresh. The Pages Functions stay read-only (405 for non-GET) until
+   an authenticated edge writer is deliberately designed.
 
 ## Consequences
 
@@ -54,9 +57,9 @@ Verified via SigV4 `ListObjectsV2` against `factory-wager-registry`:
 
 1. **The R2 artifact plane was activated on 2026-08-04.** The first canonical
    object is `@tennis-hq/ssot/1.5.0.tgz`: 11,204 bytes with SHA-256
-   `a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55`.
-   A direct `RegistryClient.install()` download verified the stored byte length
-   and checksum after `factory publish`; the R2 index now resolves `latest` to
+   `a6c0e9502cdb1c30d37e7579ed3d90e475cc28e6e0f46e0837394524f8cc8f55`. A direct
+   `RegistryClient.install()` download verified the stored byte length and
+   checksum after `factory publish`; the R2 index now resolves `latest` to
    `1.5.0`. The committed static snapshot remains the Pages fallback, refreshed
    from R2 with `factory snapshot`.
 2. **Bucket multi-tenancy is accepted.** The registry index and the telegram

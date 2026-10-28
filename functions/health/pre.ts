@@ -13,10 +13,7 @@ import {
   type HealthEnv,
 } from '../../lib/http/portal-health-edge.ts';
 
-export async function onRequest(context: {
-  request: Request;
-  env: HealthEnv;
-}): Promise<Response> {
+export async function onRequest(context: { request: Request; env: HealthEnv }): Promise<Response> {
   if (context.request.method === 'OPTIONS') {
     return edgeHealthOptionsResponse();
   }

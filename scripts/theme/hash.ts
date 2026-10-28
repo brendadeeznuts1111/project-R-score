@@ -1,6 +1,6 @@
-import { CryptoHasher } from "bun";
+import { CryptoHasher } from 'bun';
 export function hashCss(css: string): string {
-  const h = new CryptoHasher("sha256");
+  const h = new CryptoHasher('sha256');
   h.update(css);
-  return h.digest("hex");
+  return h.digest('hex');
 }

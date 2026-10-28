@@ -10,60 +10,70 @@ export default {
     ctx: ExecutionContext
   ): Promise<void> {
     // Process events
-  }
+  },
 } satisfies ExportedHandler<Env>;
 ```
 
 **Parameters:**
+
 - `events`: Array of `TraceItem` objects (one per producer invocation)
 - `env`: Bindings (KV, D1, R2, env vars, etc.)
 - `ctx`: Context with `waitUntil()` for async work
 
-**CRITICAL:** Tail handlers don't return values. Use `ctx.waitUntil()` for async operations.
+**CRITICAL:** Tail handlers don't return values. Use `ctx.waitUntil()` for async
+operations.
 
 ## TraceItem Type
 
 ```typescript
 interface TraceItem {
-  scriptName: string;           // Producer Worker name
-  eventTimestamp: number;        // Epoch milliseconds
-  outcome: 'ok' | 'exception' | 'exceededCpu' | 'exceededMemory' 
-         | 'canceled' | 'scriptNotFound' | 'responseStreamDisconnected' | 'unknown';
-  
+  scriptName: string; // Producer Worker name
+  eventTimestamp: number; // Epoch milliseconds
+  outcome:
+    | 'ok'
+    | 'exception'
+    | 'exceededCpu'
+    | 'exceededMemory'
+    | 'canceled'
+    | 'scriptNotFound'
+    | 'responseStreamDisconnected'
+    | 'unknown';
+
   event?: {
     request?: {
-      url: string;               // Redacted by default
+      url: string; // Redacted by default
       method: string;
-      headers: Record<string, string>;  // Sensitive headers redacted
+      headers: Record<string, string>; // Sensitive headers redacted
       cf?: IncomingRequestCfProperties;
-      getUnredacted(): TraceRequest;    // Bypass redaction (use carefully)
+      getUnredacted(): TraceRequest; // Bypass redaction (use carefully)
     };
     response?: {
       status: number;
     };
   };
-  
+
   logs: Array<{
-    timestamp: number;           // Epoch milliseconds
+    timestamp: number; // Epoch milliseconds
     level: 'debug' | 'info' | 'log' | 'warn' | 'error';
-    message: unknown[];          // Args passed to console function
+    message: unknown[]; // Args passed to console function
   }>;
-  
+
   exceptions: Array<{
-    timestamp: number;           // Epoch milliseconds
-    name: string;                // Error type (Error, TypeError, etc.)
-    message: string;             // Error description
+    timestamp: number; // Epoch milliseconds
+    name: string; // Error type (Error, TypeError, etc.)
+    message: string; // Error description
   }>;
-  
+
   diagnosticsChannelEvents: Array<{
     channel: string;
     message: unknown;
-    timestamp: number;           // Epoch milliseconds
+    timestamp: number; // Epoch milliseconds
   }>;
 }
 ```
 
-**Note:** Official SDK uses `TraceItem`, not `TailItem`. Use `@cloudflare/workers-types` for accurate types.
+**Note:** Official SDK uses `TraceItem`, not `TailItem`. Use
+`@cloudflare/workers-types` for accurate types.
 
 ## Timestamp Handling
 
@@ -84,6 +94,7 @@ By default, sensitive data is redacted from `TraceRequest`:
 ### Header Redaction
 
 Headers containing these substrings (case-insensitive):
+
 - `auth`, `key`, `secret`, `token`, `jwt`
 - `cookie`, `set-cookie`
 
@@ -104,11 +115,12 @@ export default {
       const unredacted = event.event?.request?.getUnredacted();
       // unredacted.url and unredacted.headers contain raw values
     }
-  }
+  },
 };
 ```
 
 **Best practices:**
+
 - Only call `getUnredacted()` when absolutely necessary
 - Never log unredacted sensitive data
 - Implement additional filtering before external transmission
@@ -137,15 +149,15 @@ export default {
       url: event.event?.request?.url,
       status: event.event?.response?.status,
     }));
-    
+
     ctx.waitUntil(
       fetch(env.LOG_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
     );
-  }
+  },
 } satisfies ExportedHandler<Env>;
 ```
 
@@ -188,12 +200,13 @@ const safePayload = events.map(event => ({
       } catch {
         return String(m);
       }
-    })
-  }))
+    }),
+  })),
 }));
 ```
 
 **Common serialization issues:**
+
 - Circular references in logged objects
 - `BigInt` values (not JSON-serializable)
 - Functions or symbols in console.log arguments

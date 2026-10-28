@@ -10,14 +10,7 @@
     "domain": "toc-ops-repo/docs/DOMAIN_CONSTANTS.md"
   },
   "catalog": {
-    "taskTypes": [
-      "ONB",
-      "FUND",
-      "LIMIT",
-      "WARM",
-      "PLAY",
-      "WD"
-    ],
+    "taskTypes": ["ONB", "FUND", "LIMIT", "WARM", "PLAY", "WD"],
     "accountStatuses": [
       "New",
       "Funded",
@@ -57,15 +50,7 @@
       "LIMIT": "LIMIT-EX-",
       "ONB": "ONB-EX-"
     },
-    "flowOrder": [
-      "ONB",
-      "FUND",
-      "LIMIT",
-      "WARM",
-      "PLAY",
-      "WD",
-      "RECYCLE"
-    ],
+    "flowOrder": ["ONB", "FUND", "LIMIT", "WARM", "PLAY", "WD", "RECYCLE"],
     "depositCorridor": {
       "min": 4500,
       "max": 5500,
@@ -78,14 +63,7 @@
       "settlementThrottleRatio": 0.6,
       "tVelocityWindowDays": 30,
       "defaultExpectedPlayT": 840,
-      "processRank": [
-        "LIMIT",
-        "ONB",
-        "WD",
-        "PLAY",
-        "WARM",
-        "FUND"
-      ]
+      "processRank": ["LIMIT", "ONB", "WD", "PLAY", "WARM", "FUND"]
     },
     "venues": {
       "kinds": [
@@ -132,19 +110,8 @@
         "Crypto",
         "Other"
       ],
-      "legalStatuses": [
-        "legal",
-        "restricted",
-        "prohibited",
-        "grey",
-        "unknown"
-      ],
-      "accessModes": [
-        "online",
-        "in_person",
-        "kiosk",
-        "hybrid"
-      ]
+      "legalStatuses": ["legal", "restricted", "prohibited", "grey", "unknown"],
+      "accessModes": ["online", "in_person", "kiosk", "hybrid"]
     }
   },
   "buffer": {
@@ -241,15 +208,9 @@
       "dns": {
         "hostname": "ops.factory-wager.com",
         "resolvedAt": "2026-07-23T18:00:00.000Z",
-        "a": [
-          "104.21.48.12"
-        ],
-        "aaaa": [
-          "2606:4700:3030::ac43:3012"
-        ],
-        "cname": [
-          "pages.factory-wager.com"
-        ],
+        "a": ["104.21.48.12"],
+        "aaaa": ["2606:4700:3030::ac43:3012"],
+        "cname": ["pages.factory-wager.com"],
         "ttlSec": 300,
         "resolver": "1.1.1.1"
       },
@@ -262,11 +223,7 @@
     {
       "expertId": "marcus",
       "displayName": "Marcus",
-      "markets": [
-        "NFL",
-        "NBA",
-        "MLB"
-      ],
+      "markets": ["NFL", "NBA", "MLB"],
       "weight": 1.2,
       "profile": {
         "handle": "@marcus.nfl",
@@ -277,11 +234,7 @@
             "max": 2500,
             "typical": 1200
           },
-          "marketFocus": [
-            "NFL",
-            "NBA",
-            "MLB"
-          ],
+          "marketFocus": ["NFL", "NBA", "MLB"],
           "holdTimeHint": "early",
           "notes": "Favors sides with CLV history on HR / DK"
         },
@@ -308,16 +261,7 @@
               "avgClvBps": 12
             }
           ],
-          "weeklySeriesBps": [
-            12,
-            14,
-            16,
-            19,
-            18,
-            21,
-            22,
-            21.2
-          ]
+          "weeklySeriesBps": [12, 14, 16, 19, 18, 21, 22, 21.2]
         },
         "liquidity": {
           "allocated": 40000,
@@ -498,11 +442,7 @@
             "status": "active"
           }
         ],
-        "markets": [
-          "NFL",
-          "NBA",
-          "MLB"
-        ],
+        "markets": ["NFL", "NBA", "MLB"],
         "wagerPlaces": [
           {
             "venueId": "hardrock",
@@ -529,29 +469,19 @@
             "venueId": "hardrock",
             "allowed": true,
             "maxStake": 2500,
-            "markets": [
-              "NFL",
-              "NBA",
-              "MLB"
-            ]
+            "markets": ["NFL", "NBA", "MLB"]
           },
           {
             "venueId": "draftkings",
             "allowed": true,
             "maxStake": 2500,
-            "markets": [
-              "NFL",
-              "NBA",
-              "MLB"
-            ]
+            "markets": ["NFL", "NBA", "MLB"]
           },
           {
             "venueId": "fanduel",
             "allowed": false,
             "maxStake": 0,
-            "markets": [
-              "NFL"
-            ],
+            "markets": ["NFL"],
             "note": "Pending state KYC mirror"
           }
         ],
@@ -576,27 +506,8 @@
           }
         ],
         "clvDailyBps": [
-          11,
-          12,
-          12,
-          13,
-          14,
-          15,
-          15,
-          16,
-          16,
-          18,
-          19,
-          20,
-          17,
-          18,
-          18,
-          20,
-          21,
-          22,
-          21,
-          22,
-          22
+          11, 12, 12, 13, 14, 15, 15, 16, 16, 18, 19, 20, 17, 18, 18, 20, 21,
+          22, 21, 22, 22
         ],
         "liquidityUtilSeries": [
           {
@@ -764,10 +675,7 @@
     {
       "expertId": "elena",
       "displayName": "Elena",
-      "markets": [
-        "NFL",
-        "Tennis"
-      ],
+      "markets": ["NFL", "Tennis"],
       "weight": 1,
       "profile": {
         "handle": "@elena.edges",
@@ -778,11 +686,7 @@
             "max": 1800,
             "typical": 900
           },
-          "marketFocus": [
-            "NFL",
-            "Tennis",
-            "NBA"
-          ],
+          "marketFocus": ["NFL", "Tennis", "NBA"],
           "holdTimeHint": "mixed",
           "notes": "Tennis CLV specialist; smaller tickets"
         },
@@ -809,16 +713,7 @@
               "avgClvBps": 14.8
             }
           ],
-          "weeklySeriesBps": [
-            18,
-            20,
-            22,
-            24,
-            25,
-            27,
-            28,
-            26.8
-          ]
+          "weeklySeriesBps": [18, 20, 22, 24, 25, 27, 28, 26.8]
         },
         "liquidity": {
           "allocated": 25000,
@@ -994,11 +889,7 @@
             "status": "active"
           }
         ],
-        "markets": [
-          "NFL",
-          "Tennis",
-          "NBA"
-        ],
+        "markets": ["NFL", "Tennis", "NBA"],
         "wagerPlaces": [
           {
             "venueId": "draftkings",
@@ -1029,31 +920,19 @@
             "venueId": "draftkings",
             "allowed": true,
             "maxStake": 1800,
-            "markets": [
-              "NFL",
-              "Tennis",
-              "NBA"
-            ]
+            "markets": ["NFL", "Tennis", "NBA"]
           },
           {
             "venueId": "fanduel",
             "allowed": true,
             "maxStake": 1800,
-            "markets": [
-              "NFL",
-              "Tennis",
-              "NBA"
-            ]
+            "markets": ["NFL", "Tennis", "NBA"]
           },
           {
             "venueId": "hardrock",
             "allowed": true,
             "maxStake": 1800,
-            "markets": [
-              "NFL",
-              "Tennis",
-              "NBA"
-            ]
+            "markets": ["NFL", "Tennis", "NBA"]
           }
         ],
         "exposureLadder": [
@@ -1077,27 +956,8 @@
           }
         ],
         "clvDailyBps": [
-          17,
-          18,
-          18,
-          19,
-          20,
-          21,
-          21,
-          22,
-          22,
-          23,
-          24,
-          25,
-          24,
-          25,
-          25,
-          26,
-          27,
-          28,
-          27,
-          28,
-          28
+          17, 18, 18, 19, 20, 21, 21, 22, 22, 23, 24, 25, 24, 25, 25, 26, 27,
+          28, 27, 28, 28
         ],
         "liquidityUtilSeries": [
           {
@@ -1240,10 +1100,7 @@
     {
       "expertId": "kai",
       "displayName": "Kai",
-      "markets": [
-        "MLB",
-        "Soccer"
-      ],
+      "markets": ["MLB", "Soccer"],
       "weight": 0.95,
       "profile": {
         "handle": "@kai.alts",
@@ -1254,12 +1111,7 @@
             "max": 3000,
             "typical": 800
           },
-          "marketFocus": [
-            "MLB",
-            "Soccer",
-            "Crypto",
-            "Politics"
-          ],
+          "marketFocus": ["MLB", "Soccer", "Crypto", "Politics"],
           "holdTimeHint": "same_game",
           "notes": "Alt venues: Stake · Kalshi · Polymarket"
         },
@@ -1291,16 +1143,7 @@
               "avgClvBps": 4
             }
           ],
-          "weeklySeriesBps": [
-            4,
-            5,
-            7,
-            8,
-            9,
-            10,
-            12,
-            11
-          ]
+          "weeklySeriesBps": [4, 5, 7, 8, 9, 10, 12, 11]
         },
         "liquidity": {
           "allocated": 18000,
@@ -1481,12 +1324,7 @@
             "status": "active"
           }
         ],
-        "markets": [
-          "MLB",
-          "Soccer",
-          "Crypto",
-          "Politics"
-        ],
+        "markets": ["MLB", "Soccer", "Crypto", "Politics"],
         "wagerPlaces": [
           {
             "venueId": "stake",
@@ -1517,33 +1355,20 @@
             "venueId": "stake",
             "allowed": true,
             "maxStake": 3000,
-            "markets": [
-              "MLB",
-              "Soccer",
-              "Crypto"
-            ],
+            "markets": ["MLB", "Soccer", "Crypto"],
             "note": "alts cut applies"
           },
           {
             "venueId": "kalshi",
             "allowed": true,
             "maxStake": 3000,
-            "markets": [
-              "MLB",
-              "Soccer",
-              "Crypto",
-              "Politics"
-            ]
+            "markets": ["MLB", "Soccer", "Crypto", "Politics"]
           },
           {
             "venueId": "polymarket",
             "allowed": true,
             "maxStake": 3000,
-            "markets": [
-              "MLB",
-              "Soccer",
-              "Crypto"
-            ],
+            "markets": ["MLB", "Soccer", "Crypto"],
             "note": "alts cut applies"
           }
         ],
@@ -1568,27 +1393,7 @@
           }
         ],
         "clvDailyBps": [
-          3,
-          4,
-          4,
-          4,
-          5,
-          6,
-          6,
-          7,
-          7,
-          7,
-          8,
-          9,
-          8,
-          9,
-          9,
-          9,
-          10,
-          11,
-          11,
-          12,
-          12
+          3, 4, 4, 4, 5, 6, 6, 7, 7, 7, 8, 9, 8, 9, 9, 9, 10, 11, 11, 12, 12
         ],
         "liquidityUtilSeries": [
           {
@@ -1769,10 +1574,7 @@
       "factors": [
         {
           "name": "routing",
-          "levels": [
-            "static",
-            "dynamic"
-          ]
+          "levels": ["static", "dynamic"]
         }
       ],
       "variants": [
@@ -1817,10 +1619,7 @@
         "controlMetric": 0.6,
         "treatmentMetric": 0.714,
         "liftPct": 0.19,
-        "ci95": [
-          0.14,
-          0.24
-        ],
+        "ci95": [0.14, 0.24],
         "decision": "iterate",
         "byVariant": [
           {
@@ -1873,10 +1672,7 @@
       "factors": [
         {
           "name": "cut",
-          "levels": [
-            "std_70",
-            "alt_65"
-          ]
+          "levels": ["std_70", "alt_65"]
         }
       ],
       "variants": [
@@ -1915,10 +1711,7 @@
         "controlMetric": 0,
         "treatmentMetric": 0,
         "liftPct": 0,
-        "ci95": [
-          -0.05,
-          0.05
-        ],
+        "ci95": [-0.05, 0.05],
         "decidedAt": "2026-07-01T00:00:00.000Z",
         "decision": "keep",
         "byVariant": [
@@ -1964,10 +1757,7 @@
       "factors": [
         {
           "name": "liq_mode",
-          "levels": [
-            "static_cap",
-            "dynamic_weight"
-          ]
+          "levels": ["static_cap", "dynamic_weight"]
         }
       ],
       "variants": [
@@ -2006,10 +1796,7 @@
         "controlMetric": 0.66,
         "treatmentMetric": 0,
         "liftPct": -1,
-        "ci95": [
-          -1.05,
-          -0.95
-        ],
+        "ci95": [-1.05, -0.95],
         "decision": "pending",
         "byVariant": [
           {
@@ -2193,11 +1980,7 @@
           "warmupProgress": {
             "completed": 2,
             "required": 2,
-            "tags": [
-              "#WARMED",
-              "#CYCLE-2",
-              "#PRIMED"
-            ]
+            "tags": ["#WARMED", "#CYCLE-2", "#PRIMED"]
           },
           "capitalLocation": "HouseFloat",
           "hardBalance": 0,
@@ -2222,13 +2005,7 @@
             "venueId": "hardrock",
             "displayName": "Hard Rock Bet (Florida)",
             "access": "hybrid",
-            "sports": [
-              "NFL",
-              "NBA",
-              "MLB",
-              "NHL",
-              "Tennis"
-            ],
+            "sports": ["NFL", "NBA", "MLB", "NHL", "Tennis"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -2282,12 +2059,8 @@
               "dns": {
                 "hostname": "ash-001.drum.toc.local",
                 "resolvedAt": "2026-07-21T10:30:00.000Z",
-                "a": [
-                  "73.145.22.92"
-                ],
-                "aaaa": [
-                  "2601:58:4000:a1b2::10"
-                ],
+                "a": ["73.145.22.92"],
+                "aaaa": ["2601:58:4000:a1b2::10"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -2347,10 +2120,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": "2026-07-15T18:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CYCLE-2"
-              ],
+              "tags": ["#WARMED", "#CYCLE-2"],
               "wdTaskId": "WD-ASH-001-cycle1",
               "returnedAmount": 750,
               "status": "completed"
@@ -2359,11 +2129,7 @@
               "cycle": 2,
               "startedAt": "2026-07-16T12:00:00.000Z",
               "completedAt": "2026-07-19T16:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CYCLE-2",
-                "#PRIMED"
-              ],
+              "tags": ["#WARMED", "#CYCLE-2", "#PRIMED"],
               "wdTaskId": "WD-ASH-001-cycle2",
               "returnedAmount": 1000,
               "status": "completed"
@@ -2662,10 +2428,7 @@
           "warmupProgress": {
             "completed": 1,
             "required": 2,
-            "tags": [
-              "#CYCLE-1",
-              "#WARMUP-CYCLE"
-            ]
+            "tags": ["#CYCLE-1", "#WARMUP-CYCLE"]
           },
           "capitalLocation": "InSportsbook",
           "hardBalance": 5010,
@@ -2687,11 +2450,7 @@
             "venueId": "hardrock",
             "displayName": "Hard Rock — Retail Counter",
             "access": "in_person",
-            "sports": [
-              "NFL",
-              "NBA",
-              "MLB"
-            ],
+            "sports": ["NFL", "NBA", "MLB"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -2749,12 +2508,8 @@
               "dns": {
                 "hostname": "ash-002.drum.toc.local",
                 "resolvedAt": "2026-07-22T11:30:00.000Z",
-                "a": [
-                  "73.145.22.93"
-                ],
-                "aaaa": [
-                  "2601:58:4000:a1b2::11"
-                ],
+                "a": ["73.145.22.93"],
+                "aaaa": ["2601:58:4000:a1b2::11"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -2790,10 +2545,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": null,
-              "tags": [
-                "#CYCLE-1",
-                "#WARMUP-CYCLE"
-              ],
+              "tags": ["#CYCLE-1", "#WARMUP-CYCLE"],
               "wdTaskId": "WD-ASH-002-cycle1",
               "status": "open"
             }
@@ -2943,11 +2695,7 @@
           "warmupProgress": {
             "completed": 2,
             "required": 2,
-            "tags": [
-              "#WARMED",
-              "#LIMIT-EX-02",
-              "#REALLOCATE"
-            ]
+            "tags": ["#WARMED", "#LIMIT-EX-02", "#REALLOCATE"]
           },
           "capitalLocation": "InSportsbook",
           "hardBalance": 4800,
@@ -2972,9 +2720,7 @@
             "venueId": "hr_casino_tampa",
             "displayName": "Seminole Hard Rock Casino Tampa",
             "access": "in_person",
-            "sports": [
-              "Other"
-            ],
+            "sports": ["Other"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -3025,12 +2771,8 @@
               "dns": {
                 "hostname": "ash-003.drum.toc.local",
                 "resolvedAt": "2026-07-23T12:30:00.000Z",
-                "a": [
-                  "73.145.22.94"
-                ],
-                "aaaa": [
-                  "2601:58:4000:a1b2::12"
-                ],
+                "a": ["73.145.22.94"],
+                "aaaa": ["2601:58:4000:a1b2::12"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -3082,10 +2824,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": "2026-07-15T18:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#LIMIT-EX-02"
-              ],
+              "tags": ["#WARMED", "#LIMIT-EX-02"],
               "wdTaskId": "WD-ASH-003-cycle1",
               "returnedAmount": 750,
               "status": "completed"
@@ -3094,11 +2833,7 @@
               "cycle": 2,
               "startedAt": "2026-07-16T12:00:00.000Z",
               "completedAt": null,
-              "tags": [
-                "#WARMED",
-                "#LIMIT-EX-02",
-                "#REALLOCATE"
-              ],
+              "tags": ["#WARMED", "#LIMIT-EX-02", "#REALLOCATE"],
               "wdTaskId": "WD-ASH-003-cycle2",
               "status": "open"
             }
@@ -3295,10 +3030,7 @@
           "warmupProgress": {
             "completed": 0,
             "required": 2,
-            "tags": [
-              "#KIOSK",
-              "#FUNDED"
-            ]
+            "tags": ["#KIOSK", "#FUNDED"]
           },
           "capitalLocation": "WithPartner",
           "hardBalance": 500,
@@ -3322,11 +3054,7 @@
             "venueId": "hr_kiosk_mia",
             "displayName": "Hard Rock Bet Kiosk — Miami Beach",
             "access": "kiosk",
-            "sports": [
-              "NFL",
-              "NBA",
-              "MLB"
-            ],
+            "sports": ["NFL", "NBA", "MLB"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -3384,12 +3112,8 @@
               "dns": {
                 "hostname": "ash-004.drum.toc.local",
                 "resolvedAt": "2026-07-23T13:30:00.000Z",
-                "a": [
-                  "73.145.22.95"
-                ],
-                "aaaa": [
-                  "2601:58:4000:a1b2::13"
-                ],
+                "a": ["73.145.22.95"],
+                "aaaa": ["2601:58:4000:a1b2::13"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -3562,9 +3286,7 @@
           "status": "Completed",
           "ballInCourt": "Ops",
           "nextAction": "Done — partner Ready + package bound",
-          "proofRefs": [
-            "proof:ash-onb-kyc"
-          ],
+          "proofRefs": ["proof:ash-onb-kyc"],
           "createdAt": "2026-07-10T08:00:00.000Z"
         },
         {
@@ -4162,12 +3884,8 @@
           "dns": {
             "hostname": "ash.partner.toc.local",
             "resolvedAt": "2026-07-23T16:00:00.000Z",
-            "a": [
-              "73.145.22.91"
-            ],
-            "aaaa": [
-              "2601:58:4000:a1b2::91"
-            ],
+            "a": ["73.145.22.91"],
+            "aaaa": ["2601:58:4000:a1b2::91"],
             "ttlSec": 600,
             "resolver": "1.1.1.1"
           },
@@ -4483,22 +4201,11 @@
             "kind": "kiosk"
           }
         ],
-        "preferredMarkets": [
-          "NFL",
-          "NBA",
-          "MLB",
-          "NHL",
-          "Tennis",
-          "Other"
-        ],
+        "preferredMarkets": ["NFL", "NBA", "MLB", "NHL", "Tennis", "Other"],
         "bot": {
           "username": "@TOC_Ash_bot",
           "status": "live",
-          "commands": [
-            "/status",
-            "/limits",
-            "/rails"
-          ]
+          "commands": ["/status", "/limits", "/rails"]
         },
         "commsLog": [
           {
@@ -5510,11 +5217,7 @@
           "warmupProgress": {
             "completed": 2,
             "required": 2,
-            "tags": [
-              "#WARMED",
-              "#CYCLE-2",
-              "#READY"
-            ]
+            "tags": ["#WARMED", "#CYCLE-2", "#READY"]
           },
           "capitalLocation": "InSportsbook",
           "hardBalance": 5200,
@@ -5539,14 +5242,7 @@
             "venueId": "draftkings",
             "displayName": "DraftKings",
             "access": "online",
-            "sports": [
-              "NFL",
-              "NBA",
-              "MLB",
-              "NCAAF",
-              "Soccer",
-              "MMA"
-            ],
+            "sports": ["NFL", "NBA", "MLB", "NCAAF", "Soccer", "MMA"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -5600,12 +5296,8 @@
               "dns": {
                 "hostname": "pat-001.drum.toc.local",
                 "resolvedAt": "2026-07-21T10:30:00.000Z",
-                "a": [
-                  "98.203.44.18"
-                ],
-                "aaaa": [
-                  "2600:1700:2a10:8c80::10"
-                ],
+                "a": ["98.203.44.18"],
+                "aaaa": ["2600:1700:2a10:8c80::10"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -5657,10 +5349,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": "2026-07-15T18:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CYCLE-2"
-              ],
+              "tags": ["#WARMED", "#CYCLE-2"],
               "wdTaskId": "WD-PAT-001-cycle1",
               "returnedAmount": 780,
               "status": "completed"
@@ -5669,11 +5358,7 @@
               "cycle": 2,
               "startedAt": "2026-07-16T12:00:00.000Z",
               "completedAt": "2026-07-19T16:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CYCLE-2",
-                "#READY"
-              ],
+              "tags": ["#WARMED", "#CYCLE-2", "#READY"],
               "wdTaskId": "WD-PAT-001-cycle2",
               "returnedAmount": 1040,
               "status": "completed"
@@ -5949,10 +5634,7 @@
           "warmupProgress": {
             "completed": 2,
             "required": 2,
-            "tags": [
-              "#WARMED",
-              "#CYCLE-2"
-            ]
+            "tags": ["#WARMED", "#CYCLE-2"]
           },
           "capitalLocation": "InSportsbook",
           "hardBalance": 4800,
@@ -5977,12 +5659,7 @@
             "venueId": "kalshi",
             "displayName": "Kalshi",
             "access": "online",
-            "sports": [
-              "Politics",
-              "Economics",
-              "NFL",
-              "Other"
-            ],
+            "sports": ["Politics", "Economics", "NFL", "Other"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -6009,11 +5686,7 @@
             },
             "exchange": {
               "clearing": "cftc",
-              "markets": [
-                "politics",
-                "economics",
-                "sports_event_contracts"
-              ]
+              "markets": ["politics", "economics", "sports_event_contracts"]
             }
           },
           "presence": {
@@ -6041,12 +5714,8 @@
               "dns": {
                 "hostname": "pat-002.drum.toc.local",
                 "resolvedAt": "2026-07-22T11:30:00.000Z",
-                "a": [
-                  "98.203.44.19"
-                ],
-                "aaaa": [
-                  "2600:1700:2a10:8c80::11"
-                ],
+                "a": ["98.203.44.19"],
+                "aaaa": ["2600:1700:2a10:8c80::11"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -6106,10 +5775,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": "2026-07-15T18:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CYCLE-2"
-              ],
+              "tags": ["#WARMED", "#CYCLE-2"],
               "wdTaskId": "WD-PAT-002-cycle1",
               "returnedAmount": 750,
               "status": "completed"
@@ -6118,10 +5784,7 @@
               "cycle": 2,
               "startedAt": "2026-07-16T12:00:00.000Z",
               "completedAt": "2026-07-19T16:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CYCLE-2"
-              ],
+              "tags": ["#WARMED", "#CYCLE-2"],
               "wdTaskId": "WD-PAT-002-cycle2",
               "returnedAmount": 1000,
               "status": "completed"
@@ -6362,10 +6025,7 @@
           "warmupProgress": {
             "completed": 0,
             "required": 2,
-            "tags": [
-              "#FUNDED",
-              "#AWAIT-WARM"
-            ]
+            "tags": ["#FUNDED", "#AWAIT-WARM"]
           },
           "capitalLocation": "WithPartner",
           "hardBalance": 5000,
@@ -6388,12 +6048,7 @@
             "venueId": "polymarket",
             "displayName": "Polymarket",
             "access": "online",
-            "sports": [
-              "Politics",
-              "Crypto",
-              "Economics",
-              "Other"
-            ],
+            "sports": ["Politics", "Crypto", "Economics", "Other"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -6419,22 +6074,13 @@
               "currency": "USDC"
             },
             "crypto": {
-              "networks": [
-                "polygon",
-                "ethereum"
-              ],
-              "assets": [
-                "USDC"
-              ],
+              "networks": ["polygon", "ethereum"],
+              "assets": ["USDC"],
               "walletHint": "0xpat…demo"
             },
             "exchange": {
               "clearing": "p2p",
-              "markets": [
-                "politics",
-                "crypto",
-                "culture"
-              ]
+              "markets": ["politics", "crypto", "culture"]
             }
           },
           "presence": {
@@ -6462,12 +6108,8 @@
               "dns": {
                 "hostname": "pat-003.drum.toc.local",
                 "resolvedAt": "2026-07-23T12:30:00.000Z",
-                "a": [
-                  "98.203.44.20"
-                ],
-                "aaaa": [
-                  "2600:1700:2a10:8c80::12"
-                ],
+                "a": ["98.203.44.20"],
+                "aaaa": ["2600:1700:2a10:8c80::12"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -6629,11 +6271,7 @@
           "warmupProgress": {
             "completed": 2,
             "required": 2,
-            "tags": [
-              "#WARMED",
-              "#CRYPTO",
-              "#STAKE"
-            ]
+            "tags": ["#WARMED", "#CRYPTO", "#STAKE"]
           },
           "capitalLocation": "InSportsbook",
           "hardBalance": 2400,
@@ -6658,13 +6296,7 @@
             "venueId": "stake",
             "displayName": "Stake.com",
             "access": "online",
-            "sports": [
-              "NFL",
-              "Soccer",
-              "Tennis",
-              "MMA",
-              "Crypto"
-            ],
+            "sports": ["NFL", "Soccer", "Tennis", "MMA", "Crypto"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -6690,16 +6322,8 @@
               "currency": "USDT"
             },
             "crypto": {
-              "networks": [
-                "ethereum",
-                "tron",
-                "bitcoin"
-              ],
-              "assets": [
-                "USDT",
-                "BTC",
-                "ETH"
-              ],
+              "networks": ["ethereum", "tron", "bitcoin"],
+              "assets": ["USDT", "BTC", "ETH"],
               "walletHint": "stake:pat-demo"
             }
           },
@@ -6728,12 +6352,8 @@
               "dns": {
                 "hostname": "pat-004.drum.toc.local",
                 "resolvedAt": "2026-07-23T13:30:00.000Z",
-                "a": [
-                  "98.203.44.21"
-                ],
-                "aaaa": [
-                  "2600:1700:2a10:8c80::13"
-                ],
+                "a": ["98.203.44.21"],
+                "aaaa": ["2600:1700:2a10:8c80::13"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -6785,10 +6405,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": "2026-07-15T18:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CRYPTO"
-              ],
+              "tags": ["#WARMED", "#CRYPTO"],
               "wdTaskId": "WD-PAT-004-cycle1",
               "returnedAmount": 750,
               "status": "completed"
@@ -6797,11 +6414,7 @@
               "cycle": 2,
               "startedAt": "2026-07-16T12:00:00.000Z",
               "completedAt": "2026-07-19T16:00:00.000Z",
-              "tags": [
-                "#WARMED",
-                "#CRYPTO",
-                "#STAKE"
-              ],
+              "tags": ["#WARMED", "#CRYPTO", "#STAKE"],
               "wdTaskId": "WD-PAT-004-cycle2",
               "returnedAmount": 1000,
               "status": "completed"
@@ -7043,10 +6656,7 @@
           "warmupProgress": {
             "completed": 1,
             "required": 2,
-            "tags": [
-              "#CYCLE-1",
-              "#FANDUEL"
-            ]
+            "tags": ["#CYCLE-1", "#FANDUEL"]
           },
           "capitalLocation": "InSportsbook",
           "hardBalance": 5100,
@@ -7069,12 +6679,7 @@
             "venueId": "fanduel",
             "displayName": "FanDuel",
             "access": "online",
-            "sports": [
-              "NFL",
-              "NBA",
-              "NCAAB",
-              "Golf"
-            ],
+            "sports": ["NFL", "NBA", "NCAAB", "Golf"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -7128,12 +6733,8 @@
               "dns": {
                 "hostname": "pat-005.drum.toc.local",
                 "resolvedAt": "2026-07-23T14:30:00.000Z",
-                "a": [
-                  "98.203.44.22"
-                ],
-                "aaaa": [
-                  "2600:1700:2a10:8c80::14"
-                ],
+                "a": ["98.203.44.22"],
+                "aaaa": ["2600:1700:2a10:8c80::14"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -7169,10 +6770,7 @@
               "cycle": 1,
               "startedAt": "2026-07-13T12:00:00.000Z",
               "completedAt": null,
-              "tags": [
-                "#CYCLE-1",
-                "#FANDUEL"
-              ],
+              "tags": ["#CYCLE-1", "#FANDUEL"],
               "wdTaskId": "WD-PAT-005-cycle1",
               "status": "open"
             }
@@ -7322,9 +6920,7 @@
           "status": "Completed",
           "ballInCourt": "Ops",
           "nextAction": "Done — FUND $5000 corridor",
-          "proofRefs": [
-            "proof:pat-001-fund"
-          ],
+          "proofRefs": ["proof:pat-001-fund"],
           "createdAt": "2026-07-18T10:00:00.000Z"
         },
         {
@@ -7334,9 +6930,7 @@
           "status": "Completed",
           "ballInCourt": "Ops",
           "nextAction": "Done — limits fresh for PLAY",
-          "proofRefs": [
-            "proof:pat-001-limits"
-          ],
+          "proofRefs": ["proof:pat-001-limits"],
           "createdAt": "2026-07-21T14:00:00.000Z"
         },
         {
@@ -7368,9 +6962,7 @@
           "status": "Completed",
           "ballInCourt": "Ops",
           "nextAction": "Done — Soft location WithPartner → InSportsbook verified",
-          "proofRefs": [
-            "proof:pat-002-fund"
-          ],
+          "proofRefs": ["proof:pat-002-fund"],
           "createdAt": "2026-07-21T11:00:00.000Z"
         },
         {
@@ -7380,10 +6972,7 @@
           "status": "Completed",
           "ballInCourt": "Ops",
           "nextAction": "Done — PayPal corridor funded; Soft pending InSportsbook confirm",
-          "proofRefs": [
-            "proof:pat-003-fund",
-            "proof:pat-paypal-profile"
-          ],
+          "proofRefs": ["proof:pat-003-fund", "proof:pat-paypal-profile"],
           "createdAt": "2026-07-23T09:00:00.000Z"
         },
         {
@@ -8201,12 +7790,8 @@
           "dns": {
             "hostname": "pat.partner.toc.local",
             "resolvedAt": "2026-07-23T16:00:00.000Z",
-            "a": [
-              "98.203.44.17"
-            ],
-            "aaaa": [
-              "2600:1700:2a10:8c80::17"
-            ],
+            "a": ["98.203.44.17"],
+            "aaaa": ["2600:1700:2a10:8c80::17"],
             "ttlSec": 600,
             "resolver": "1.1.1.1"
           },
@@ -8578,12 +8163,7 @@
         "bot": {
           "username": "@TOC_Pat_bot",
           "status": "live",
-          "commands": [
-            "/status",
-            "/play",
-            "/kalshi",
-            "/stake"
-          ]
+          "commands": ["/status", "/play", "/kalshi", "/stake"]
         },
         "commsLog": [
           {
@@ -9683,9 +9263,7 @@
           "warmupProgress": {
             "completed": 0,
             "required": 2,
-            "tags": [
-              "#RAIL-OK"
-            ]
+            "tags": ["#RAIL-OK"]
           },
           "capitalLocation": "HouseFloat",
           "hardBalance": 0,
@@ -9707,13 +9285,7 @@
             "venueId": "pph_southfl",
             "displayName": "SouthFL PPH Desk",
             "access": "online",
-            "sports": [
-              "NFL",
-              "NBA",
-              "MLB",
-              "Soccer",
-              "Boxing"
-            ],
+            "sports": ["NFL", "NBA", "MLB", "Soccer", "Boxing"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -9767,12 +9339,8 @@
               "dns": {
                 "hostname": "nov-001.drum.toc.local",
                 "resolvedAt": "2026-07-21T10:30:00.000Z",
-                "a": [
-                  "174.64.88.204"
-                ],
-                "aaaa": [
-                  "2607:fb90:1a2b:3c4d::10"
-                ],
+                "a": ["174.64.88.204"],
+                "aaaa": ["2607:fb90:1a2b:3c4d::10"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -9931,9 +9499,7 @@
           "warmupProgress": {
             "completed": 0,
             "required": 2,
-            "tags": [
-              "#FUNDED"
-            ]
+            "tags": ["#FUNDED"]
           },
           "capitalLocation": "WithPartner",
           "hardBalance": 5000,
@@ -9955,12 +9521,7 @@
             "venueId": "postup_desk",
             "displayName": "House Post-Up Credit Line",
             "access": "hybrid",
-            "sports": [
-              "NFL",
-              "NBA",
-              "MLB",
-              "Tennis"
-            ],
+            "sports": ["NFL", "NBA", "MLB", "Tennis"],
             "primaryState": "FL",
             "legalByState": [
               {
@@ -10016,12 +9577,8 @@
               "dns": {
                 "hostname": "nov-002.drum.toc.local",
                 "resolvedAt": "2026-07-22T11:30:00.000Z",
-                "a": [
-                  "174.64.88.205"
-                ],
-                "aaaa": [
-                  "2607:fb90:1a2b:3c4d::11"
-                ],
+                "a": ["174.64.88.205"],
+                "aaaa": ["2607:fb90:1a2b:3c4d::11"],
                 "ttlSec": 600,
                 "resolver": "1.1.1.1"
               },
@@ -10193,9 +9750,7 @@
           "status": "PendingPartner",
           "ballInCourt": "Partner",
           "nextAction": "Finish KYC checklist + Ready ack (Venmo rail already confirmed)",
-          "proofRefs": [
-            "proof:nov-venmo-profile"
-          ],
+          "proofRefs": ["proof:nov-venmo-profile"],
           "createdAt": "2026-07-22T10:00:00.000Z",
           "ageMin": 2280,
           "slaDueAt": "2026-07-22T11:00:00.000Z"
@@ -10208,9 +9763,7 @@
           "ballInCourt": "Partner",
           "nextAction": "Confirm receipt screenshot before Soft location → InSportsbook (FUND-EX-02 if idle)",
           "linkedExceptionId": "FUND-EX-02",
-          "proofRefs": [
-            "proof:nov-002-send"
-          ],
+          "proofRefs": ["proof:nov-002-send"],
           "createdAt": "2026-07-22T14:00:00.000Z",
           "ageMin": 2040,
           "slaDueAt": "2026-07-22T15:00:00.000Z"
@@ -10384,12 +9937,8 @@
           "dns": {
             "hostname": "nov.partner.toc.local",
             "resolvedAt": "2026-07-23T16:00:00.000Z",
-            "a": [
-              "174.64.88.203"
-            ],
-            "aaaa": [
-              "2607:fb90:1a2b:3c4d::203"
-            ],
+            "a": ["174.64.88.203"],
+            "aaaa": ["2607:fb90:1a2b:3c4d::203"],
             "ttlSec": 600,
             "resolver": "1.1.1.1"
           },
@@ -10609,22 +10158,11 @@
             "kind": "postup_credit"
           }
         ],
-        "preferredMarkets": [
-          "NFL",
-          "NBA",
-          "MLB",
-          "Soccer",
-          "Boxing",
-          "Tennis"
-        ],
+        "preferredMarkets": ["NFL", "NBA", "MLB", "Soccer", "Boxing", "Tennis"],
         "bot": {
           "username": "@TOC_Onboard_bot",
           "status": "setup",
-          "commands": [
-            "/start",
-            "/upload",
-            "/ready"
-          ]
+          "commands": ["/start", "/upload", "/ready"]
         },
         "commsLog": [
           {
@@ -12878,12 +12416,7 @@
       }
     },
     "diagnosis": {
-      "order": [
-        "rope",
-        "drum",
-        "buffer",
-        "elevate"
-      ],
+      "order": ["rope", "drum", "buffer", "elevate"],
       "focus": "rope",
       "summary": "Rope broken — fix Hard Gates / Soft / screenshots before elevating",
       "ropeBroken": true,

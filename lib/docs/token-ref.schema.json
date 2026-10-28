@@ -4,7 +4,18 @@
   "title": "TokenRef",
   "description": "Self-contained Bun documentation token knowledge unit",
   "type": "object",
-  "required": ["id", "name", "kind", "stability", "locus", "examples", "history", "relations", "allPages", "section"],
+  "required": [
+    "id",
+    "name",
+    "kind",
+    "stability",
+    "locus",
+    "examples",
+    "history",
+    "relations",
+    "allPages",
+    "section"
+  ],
   "properties": {
     "id": { "type": "string", "description": "Branded DocTokenId wire form" },
     "name": { "type": "string" },
@@ -28,7 +39,10 @@
         "other"
       ]
     },
-    "stability": { "type": "string", "enum": ["stable", "experimental", "deprecated"] },
+    "stability": {
+      "type": "string",
+      "enum": ["stable", "experimental", "deprecated"]
+    },
     "note": { "type": "string" },
     "locus": {
       "type": "object",
@@ -75,7 +89,10 @@
         }
       }
     },
-    "allPages": { "type": "array", "items": { "type": "string", "format": "uri" } },
+    "allPages": {
+      "type": "array",
+      "items": { "type": "string", "format": "uri" }
+    },
     "section": { "type": "string" },
     "buildPin": { "type": "string" },
     "provenance": { "type": "array", "items": { "$ref": "#/$defs/provenance" } }
@@ -87,7 +104,15 @@
       "properties": {
         "source": {
           "type": "string",
-          "enum": ["canonical-refs", "docs-index", "catalog-scrape", "release-scrape", "curated", "supplement", "manual"]
+          "enum": [
+            "canonical-refs",
+            "docs-index",
+            "catalog-scrape",
+            "release-scrape",
+            "curated",
+            "supplement",
+            "manual"
+          ]
         },
         "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
         "observedAt": { "type": "string", "format": "date-time" }

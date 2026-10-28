@@ -141,9 +141,7 @@ export async function getFreshness(registryKey, opts = {}) {
   const now = opts.now ?? Date.now();
   const manifest = opts.manifest !== undefined ? opts.manifest : await loadBakeManifest();
   const entries = Array.isArray(manifest?.entries) ? manifest.entries : [];
-  const byPath = new Map(
-    entries.map(e => [normalizeRegistryPath(e.path), e]).filter(([p]) => p)
-  );
+  const byPath = new Map(entries.map(e => [normalizeRegistryPath(e.path), e]).filter(([p]) => p));
 
   /** @type {{ path: string, bakedAt: string, source: string | null }[]} */
   const hits = [];

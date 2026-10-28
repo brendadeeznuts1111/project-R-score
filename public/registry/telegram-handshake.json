@@ -31,9 +31,7 @@
       "lanesTotal": 23,
       "lanesBlocked": [],
       "laneFails": [],
-      "nextSteps": [
-        "ready for welcome DM + bot commands"
-      ]
+      "nextSteps": ["ready for welcome DM + bot commands"]
     },
     {
       "partnerCode": "BIL",
@@ -54,9 +52,7 @@
       "lanesTotal": 23,
       "lanesBlocked": [],
       "laneFails": [],
-      "nextSteps": [
-        "ready for welcome DM + bot commands"
-      ]
+      "nextSteps": ["ready for welcome DM + bot commands"]
     },
     {
       "partnerCode": "NOV",
@@ -77,9 +73,7 @@
       "lanesTotal": 23,
       "lanesBlocked": [],
       "laneFails": [],
-      "nextSteps": [
-        "ready for welcome DM + bot commands"
-      ]
+      "nextSteps": ["ready for welcome DM + bot commands"]
     },
     {
       "partnerCode": "SPEN",
@@ -100,9 +94,7 @@
       "lanesTotal": 23,
       "lanesBlocked": [],
       "laneFails": [],
-      "nextSteps": [
-        "ready for welcome DM + bot commands"
-      ]
+      "nextSteps": ["ready for welcome DM + bot commands"]
     }
   ],
   "commands": {

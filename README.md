@@ -8,15 +8,15 @@ from `public/` and `functions/`, backed by committed registry proofs in
 
 ## Start here
 
-| Need | Owner |
-| --- | --- |
-| Browse the platform | [`wiki-index.md`](wiki-index.md) |
-| Find a registry artifact | [`registry-index.md`](registry-index.md) |
-| Work as an agent | [`AGENTS.md`](AGENTS.md) → [`docs/AGENTS.md`](docs/AGENTS.md) |
-| Find a path or repository boundary | [`STRUCTURE.md`](STRUCTURE.md) |
-| Find a command | `bun run help` · generated [`docs/CLI.md`](docs/CLI.md) |
-| Operate the harness | [`docs/harness/README.md`](docs/harness/) |
-| Browse documentation by subject | [`docs/README.md`](docs/) |
+| Need                               | Owner                                                         |
+| ---------------------------------- | ------------------------------------------------------------- |
+| Browse the platform                | [`wiki-index.md`](wiki-index.md)                              |
+| Find a registry artifact           | [`registry-index.md`](registry-index.md)                      |
+| Work as an agent                   | [`AGENTS.md`](AGENTS.md) → [`docs/AGENTS.md`](docs/AGENTS.md) |
+| Find a path or repository boundary | [`STRUCTURE.md`](STRUCTURE.md)                                |
+| Find a command                     | `bun run help` · generated [`docs/CLI.md`](docs/CLI.md)       |
+| Operate the harness                | [`docs/harness/README.md`](docs/harness/)                     |
+| Browse documentation by subject    | [`docs/README.md`](docs/)                                     |
 
 These are routing surfaces, not competing sources of truth. Domain guides,
 runbooks, and generated catalogs remain with the owner linked from them.

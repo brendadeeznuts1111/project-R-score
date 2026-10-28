@@ -1,11 +1,7 @@
-import type { NetworkBaseline } from "../network-baseline.ts";
-import type {
-  WorkflowDrift,
-  WorkflowEffectDeps,
-  WorkflowScannerResult,
-} from "../workflow-loop.ts";
-import type { Severity } from "../types.ts";
-import type { BunDriftInfo, BunRuntimeInfo, WorkflowTlsOptions } from "./runtime.ts";
+import type { NetworkBaseline } from '../network-baseline.ts';
+import type { WorkflowDrift, WorkflowEffectDeps, WorkflowScannerResult } from '../workflow-loop.ts';
+import type { Severity } from '../types.ts';
+import type { BunDriftInfo, BunRuntimeInfo, WorkflowTlsOptions } from './runtime.ts';
 
 export type EffectContext = {
   domain: string;

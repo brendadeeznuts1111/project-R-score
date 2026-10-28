@@ -170,11 +170,31 @@
   // --subsystem-* variables for portal consumers and CSS-only pages.
   "identity": {
     "venue": {
-      "polymarket": { "border": "#2e5cff", "text": "#58a6ff", "bg": "rgba(46, 92, 255, 0.08)" },
-      "pinnacle": { "border": "#1a73e8", "text": "#79c0ff", "bg": "rgba(26, 115, 232, 0.08)" },
-      "betfair": { "border": "#f5b942", "text": "#e3b341", "bg": "rgba(245, 185, 66, 0.08)" },
-      "kalshi": { "border": "#7dd3fc", "text": "#a5d6ff", "bg": "rgba(125, 211, 252, 0.08)" },
-      "unknown": { "border": "#30363d", "text": "#8b949e", "bg": "rgba(139, 148, 158, 0.08)" },
+      "polymarket": {
+        "border": "#2e5cff",
+        "text": "#58a6ff",
+        "bg": "rgba(46, 92, 255, 0.08)",
+      },
+      "pinnacle": {
+        "border": "#1a73e8",
+        "text": "#79c0ff",
+        "bg": "rgba(26, 115, 232, 0.08)",
+      },
+      "betfair": {
+        "border": "#f5b942",
+        "text": "#e3b341",
+        "bg": "rgba(245, 185, 66, 0.08)",
+      },
+      "kalshi": {
+        "border": "#7dd3fc",
+        "text": "#a5d6ff",
+        "bg": "rgba(125, 211, 252, 0.08)",
+      },
+      "unknown": {
+        "border": "#30363d",
+        "text": "#8b949e",
+        "bg": "rgba(139, 148, 158, 0.08)",
+      },
     },
     "subsystem": {
       "packageManager": "#a371f7",
@@ -211,27 +231,27 @@
       "canvas": "var(--bg-canvas)",
       "card": "var(--bg-card)",
       "elevated": "var(--bg-elevated)",
-      "inverse": "var(--bg-inverse)"
+      "inverse": "var(--bg-inverse)",
     },
     "text": {
       "primary": "var(--text)",
       "muted": "var(--text-dim)",
-      "onStrong": "var(--tone-on-strong)"
+      "onStrong": "var(--tone-on-strong)",
     },
     "border": {
-      "default": "var(--layer-border)"
+      "default": "var(--layer-border)",
     },
     "accent": {
       "default": "var(--tone-info)",
       "hover": "var(--link-hover)",
-      "soft": "var(--accent-glow)"
+      "soft": "var(--accent-glow)",
     },
     "status": {
       "success": "var(--tone-ok)",
       "warning": "var(--tone-warn)",
       "danger": "var(--tone-bad)",
-      "info": "var(--tone-info)"
-    }
+      "info": "var(--tone-info)",
+    },
   },
 
   "namespaces": {

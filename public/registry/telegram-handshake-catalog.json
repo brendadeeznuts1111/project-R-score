@@ -14,12 +14,7 @@
     "callSignRegex": "^[A-Z]{3,6}-\\d{3}(?:-SUB\\d{2}){0,2}$",
     "membersHouseOnly": 2,
     "membersWithPartner": 3,
-    "membershipCells": [
-      "2·house",
-      "2·house!",
-      "3·OK",
-      "N·ext"
-    ],
+    "membershipCells": ["2·house", "2·house!", "3·OK", "N·ext"],
     "jsonlPath": "reports/telegram/pending-package-groups.jsonl",
     "forumsMetaDir": "reports/telegram/forums",
     "registryTable": "package_group_registry",
@@ -27,19 +22,8 @@
   },
   "packageForumTopics": {
     "kind": "partner-package-forum",
-    "plan": [
-      "General",
-      "Ops",
-      "Alerts",
-      "Liquidity/Outs",
-      "Accounting"
-    ],
-    "mtproto": [
-      "Ops",
-      "Alerts",
-      "Liquidity/Outs",
-      "Accounting"
-    ],
+    "plan": ["General", "Ops", "Alerts", "Liquidity/Outs", "Accounting"],
+    "mtproto": ["Ops", "Alerts", "Liquidity/Outs", "Accounting"],
     "rows": [
       {
         "title": "General",
@@ -104,12 +88,7 @@
     "surfaces": {
       "hq": {
         "groupTitle": "TOC Ops · HQ",
-        "topicSlugs": [
-          "alerts",
-          "day-ops",
-          "aar",
-          "identity"
-        ],
+        "topicSlugs": ["alerts", "day-ops", "aar", "identity"],
         "groupDescription": "TOC Ops · HQ — Production ops desk — alerts, day-ops, AAR. Humans + pager traffic only.",
         "topicIcons": {
           "alerts": {
@@ -132,12 +111,7 @@
       },
       "ash-staging": {
         "groupTitle": "TOC Ops · ASH · staging",
-        "topicSlugs": [
-          "plays",
-          "balances",
-          "onboard",
-          "alerts"
-        ],
+        "topicSlugs": ["plays", "balances", "onboard", "alerts"],
         "groupDescription": "TOC Ops · ASH · staging — ASH partner desk (staging) — Soft balances, plays, onboard. Not production alerts.",
         "topicIcons": {
           "plays": {
@@ -160,11 +134,7 @@
       },
       "all-accounting": {
         "groupTitle": "TOC Ops · Accounting",
-        "topicSlugs": [
-          "deposits",
-          "withdrawals",
-          "reconcile"
-        ],
+        "topicSlugs": ["deposits", "withdrawals", "reconcile"],
         "groupDescription": "TOC Ops · Accounting — Cross-partner deposit/withdraw proof rollup — ops mirror; partners post in package forum Accounting topic.",
         "topicIcons": {
           "deposits": {
@@ -183,10 +153,7 @@
       },
       "sandbox": {
         "groupTitle": "TOC Ops · sandbox",
-        "topicSlugs": [
-          "scratch",
-          "experiments"
-        ],
+        "topicSlugs": ["scratch", "experiments"],
         "groupDescription": "TOC Ops · sandbox — Bot / brand / template experiments. Disposable. Never route partner Soft here.",
         "topicIcons": {
           "scratch": {
@@ -200,11 +167,7 @@
         }
       }
     },
-    "allAccountingForumTitles": [
-      "Deposits",
-      "Withdrawals",
-      "Reconcile"
-    ]
+    "allAccountingForumTitles": ["Deposits", "Withdrawals", "Reconcile"]
   },
   "seatDeskTemplates": {
     "partner": {
@@ -230,9 +193,7 @@
         "purpose": "One line per incomplete out — mirrors Copy todo button.",
         "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
         "postable": false,
-        "dynamicFields": [
-          "perOutMissing"
-        ]
+        "dynamicFields": ["perOutMissing"]
       },
       "reply-hint": {
         "id": "reply-hint",
@@ -241,9 +202,7 @@
         "purpose": "Single pipe line for first incomplete out.",
         "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
         "postable": false,
-        "dynamicFields": [
-          "firstIncompleteOutNum"
-        ]
+        "dynamicFields": ["firstIncompleteOutNum"]
       },
       "topic-intake": {
         "id": "topic-intake",
@@ -294,11 +253,7 @@
       "thread": "all-accounting",
       "purpose": "Ops rollup — partners post in package forum Accounting; ops mirror here.",
       "cli": "bun run telegram:all-accounting --chat CHAT_ID --brand --post-prompt",
-      "forumTopics": [
-        "Deposits",
-        "Withdrawals",
-        "Reconcile"
-      ],
+      "forumTopics": ["Deposits", "Withdrawals", "Reconcile"],
       "builder": "buildAllAccountingChannelPrompt"
     },
     "pinnedTemplateRefs": {
@@ -425,18 +380,8 @@
     "ack_dm_seat_designated",
     "ack_forum_invite_sent"
   ],
-  "readinessPhases": [
-    "blocked",
-    "forum_ready",
-    "designated",
-    "operator_ready"
-  ],
-  "dmSeatStatuses": [
-    "none",
-    "designated",
-    "linked",
-    "shared"
-  ],
+  "readinessPhases": ["blocked", "forum_ready", "designated", "operator_ready"],
+  "dmSeatStatuses": ["none", "designated", "linked", "shared"],
   "membershipStatuses": [
     "unknown",
     "understaffed",
@@ -591,39 +536,25 @@
       "id": "link-package-group",
       "script": "bun run telegram:ops -- link-package-group",
       "ref": "partner CODE",
-      "flags": [
-        "--invite",
-        "--no-dm",
-        "--no-ack",
-        "--requested-by"
-      ]
+      "flags": ["--invite", "--no-dm", "--no-ack", "--requested-by"]
     },
     {
       "id": "designate-dm-seat",
       "script": "bun run telegram:ops -- designate-dm-seat",
       "ref": "partner CODE + call-sign",
-      "flags": [
-        "--force"
-      ]
+      "flags": ["--force"]
     },
     {
       "id": "send-forum-invite",
       "script": "bun run telegram:ops -- send-forum-invite",
       "ref": "partner CODE",
-      "flags": [
-        "--all",
-        "--dry-run",
-        "--force"
-      ]
+      "flags": ["--all", "--dry-run", "--force"]
     },
     {
       "id": "handshake-verify",
       "script": "bun run telegram:handshake:verify",
       "ref": "partner CODE",
-      "flags": [
-        "--live",
-        "--json"
-      ]
+      "flags": ["--live", "--json"]
     },
     {
       "id": "handshake-desk",
@@ -647,14 +578,7 @@
       "id": "handshake-readiness",
       "script": "bun run telegram:handshake:readiness",
       "ref": "optional CODE",
-      "flags": [
-        "--detail",
-        "--deep",
-        "--live",
-        "--json",
-        "--db",
-        "--path"
-      ],
+      "flags": ["--detail", "--deep", "--live", "--json", "--db", "--path"],
       "exitCodes": {
         "0": "ok",
         "1": "any row phase blocked"
@@ -665,13 +589,7 @@
       "id": "handshake-invite-gap",
       "script": "bun run telegram:handshake:invite-gap",
       "ref": "optional CODE",
-      "flags": [
-        "--refresh",
-        "--send",
-        "--dry-run",
-        "--force",
-        "--json"
-      ],
+      "flags": ["--refresh", "--send", "--dry-run", "--force", "--json"],
       "exitCodes": {
         "0": "no gaps",
         "1": "2·house! rows remain"
@@ -691,72 +609,49 @@
       "id": "seat-desk-partner-message",
       "script": "bun run seat:desk:partner-message",
       "ref": "call-sign",
-      "flags": [
-        "--template",
-        "--post",
-        "--json"
-      ],
+      "flags": ["--template", "--post", "--json"],
       "note": "Templates: confirm-active · todo · reply-hint · topic-intake · topic-rails · topic-accounting"
     },
     {
       "id": "seat-desk-topic-prompts",
       "script": "bun run seat:desk:topic-prompts",
       "ref": "call-sign",
-      "flags": [
-        "--post"
-      ],
+      "flags": ["--post"],
       "note": "Posts topic-intake + topic-rails to Liquidity/Outs thread"
     },
     {
       "id": "seat-desk-accounting-prompt",
       "script": "bun run seat:desk:accounting-prompt",
       "ref": "call-sign",
-      "flags": [
-        "--post",
-        "--thread-id"
-      ],
+      "flags": ["--post", "--thread-id"],
       "note": "Accounting topic bootstrap when bot lacks can_manage_topics"
     },
     {
       "id": "package-group-accounting",
       "script": "bun run telegram:package-group:accounting",
       "ref": "optional partner CODE",
-      "flags": [
-        "--all",
-        "--ensure-topics",
-        "--accounting-prompt"
-      ],
+      "flags": ["--all", "--ensure-topics", "--accounting-prompt"],
       "note": "Bulk ensure Accounting topic + prompt for all linked forums"
     },
     {
       "id": "all-accounting-channel",
       "script": "bun run telegram:all-accounting",
       "ref": "chat id",
-      "flags": [
-        "--brand",
-        "--post-prompt"
-      ],
+      "flags": ["--brand", "--post-prompt"],
       "note": "House rollup supergroup — TELEGRAM_ACCOUNTING_CHAT_ID"
     },
     {
       "id": "catalog-research",
       "script": "bun run telegram:catalog:research",
       "ref": "none",
-      "flags": [
-        "--json",
-        "--llm",
-        "--partner"
-      ],
+      "flags": ["--json", "--llm", "--partner"],
       "note": "Enhancement proposals → reports/telegram/catalog-enhancements.json"
     },
     {
       "id": "catalog-apply-enhancements",
       "script": "bun run telegram:catalog:apply-enhancements",
       "ref": "none",
-      "flags": [
-        "--dry-run",
-        "--all"
-      ],
+      "flags": ["--dry-run", "--all"],
       "note": "Merge safe changes → catalog-overrides.json + regenerate handshake catalog"
     }
   ],

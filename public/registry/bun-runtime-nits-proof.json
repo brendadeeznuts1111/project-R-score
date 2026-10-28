@@ -17,9 +17,7 @@
     "arch": "arm64",
     "channelResolveSource": "runtime",
     "githubAuthSource": "none",
-    "subsystems": [
-      "runtime"
-    ]
+    "subsystems": ["runtime"]
   },
   "reportPath": "/registry/bun-runtime-nits-proof.json",
   "results": [

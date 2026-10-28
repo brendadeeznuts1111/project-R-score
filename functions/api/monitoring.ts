@@ -8,10 +8,7 @@ export type PagesEnv = {
   ASSETS?: { fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response> };
 };
 
-export async function onRequest(context: {
-  request: Request;
-  env: PagesEnv;
-}): Promise<Response> {
+export async function onRequest(context: { request: Request; env: PagesEnv }): Promise<Response> {
   const url = new URL(context.request.url);
   const snapUrl = new URL('/registry/monitoring.json', url.origin);
 

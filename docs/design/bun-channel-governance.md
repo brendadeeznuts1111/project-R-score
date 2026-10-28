@@ -24,12 +24,12 @@ local manifests ─────┤                            ├─ check/CI ex
 installed runtime ───┘                            └─ optional derived artifact
 ```
 
-| Observation   | TOML key / source     | Role                                                              | Outage kind      |
-| ------------- | --------------------- | ----------------------------------------------------------------- | ---------------- |
-| `bun-blog`    | `sources.blog`        | Marketing HTML index reachability (research only)                 | informational    |
-| `bun-rss`     | `sources.rss`         | Dated publication feed; stable-version corroboration              | source-error     |
-| `github-atom` | `sources.atom`        | Independent release-event signal                                  | source-error     |
-| `github-tip`  | `sources.tip_api`     | Upstream tip vs reviewed pinned-tip (never promotion authority)   | informational    |
+| Observation   | TOML key / source | Role                                                            | Outage kind   |
+| ------------- | ----------------- | --------------------------------------------------------------- | ------------- |
+| `bun-blog`    | `sources.blog`    | Marketing HTML index reachability (research only)               | informational |
+| `bun-rss`     | `sources.rss`     | Dated publication feed; stable-version corroboration            | source-error  |
+| `github-atom` | `sources.atom`    | Independent release-event signal                                | source-error  |
+| `github-tip`  | `sources.tip_api` | Upstream tip vs reviewed pinned-tip (never promotion authority) | informational |
 
 Docs ingestion and release-contract generation share a separate
 parse/canonicalize path under `lib/docs/` (`bun-rss.ts` + `bun-blog-url.ts`) —
@@ -53,15 +53,15 @@ If two files disagree, the TOML owns policy and the typed doctor owns how that
 policy is evaluated. A generated report, dashboard, skill, or global DX context
 may point to those owners but cannot override them.
 
-| Concern                         | Policy                                      | Reason                                                                                                                          |
-| ------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Production runtime              | `stable`                                    | Release and CI behavior must be reproducible.                                                                                   |
-| `@types/bun` wrapper            | npm `latest` policy, repository pin         | The wrapper remains on the stable public type surface.                                                                          |
-| direct `bun-types` declarations | Reviewed Bun `main` snapshot (`pinned-tip`) | Project R deliberately exercises a forward declaration surface without moving the runtime or floating on every upstream commit. |
-| Promotion                       | reviewed change                             | A human-reviewed lane updates pins and lockfile after the report is understood.                                                 |
-| Mutation                        | never in the doctor                         | Observation, promotion, and installation are separate authorities.                                                              |
-| OS schedule                     | system-local, as stable Bun 1.4.0 defines it | Persistent `Bun.cron(path, schedule, title)` follows the host scheduler.                                                       |
-| In-process schedule             | UTC on selected stable Bun 1.4.0            | Do not expose a timezone option until the selected runtime and declarations both ship one.                                     |
+| Concern                         | Policy                                       | Reason                                                                                                                          |
+| ------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Production runtime              | `stable`                                     | Release and CI behavior must be reproducible.                                                                                   |
+| `@types/bun` wrapper            | npm `latest` policy, repository pin          | The wrapper remains on the stable public type surface.                                                                          |
+| direct `bun-types` declarations | Reviewed Bun `main` snapshot (`pinned-tip`)  | Project R deliberately exercises a forward declaration surface without moving the runtime or floating on every upstream commit. |
+| Promotion                       | reviewed change                              | A human-reviewed lane updates pins and lockfile after the report is understood.                                                 |
+| Mutation                        | never in the doctor                          | Observation, promotion, and installation are separate authorities.                                                              |
+| OS schedule                     | system-local, as stable Bun 1.4.0 defines it | Persistent `Bun.cron(path, schedule, title)` follows the host scheduler.                                                        |
+| In-process schedule             | UTC on selected stable Bun 1.4.0             | Do not expose a timezone option until the selected runtime and declarations both ship one.                                      |
 
 The stable wrapper and pinned-tip declaration versions are intentionally
 different. A same-version lint would erase the experiment boundary and is
@@ -85,15 +85,15 @@ active agent session.
 
 ## Source interpretation
 
-| Signal              | Meaning                                                                                          |
-| ------------------- | ------------------------------------------------------------------------------------------------ |
-| Stable updater API  | Latest stable runtime version                                                                    |
-| Rolling canary      | Observed upstream signal                                                                         |
-| `main` tip commit   | Promotion drift vs reviewed pinned-tip; does not invalidate the pin                              |
-| Blog index (`blog`) | Marketing HTML reachable; not a release-version feed                                             |
-| RSS (`rss`)         | Stable release announced on Bun's publication feed                                               |
-| GitHub Atom         | Independent release-event signal; prerelease/consolidation is not promotion authority            |
-| npm dist-tags       | Wrapper / declaration pins match selected channels                                               |
+| Signal              | Meaning                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------- |
+| Stable updater API  | Latest stable runtime version                                                                  |
+| Rolling canary      | Observed upstream signal                                                                       |
+| `main` tip commit   | Promotion drift vs reviewed pinned-tip; does not invalidate the pin                            |
+| Blog index (`blog`) | Marketing HTML reachable; not a release-version feed                                           |
+| RSS (`rss`)         | Stable release announced on Bun's publication feed                                             |
+| GitHub Atom         | Independent release-event signal; prerelease/consolidation is not promotion authority          |
+| npm dist-tags       | Wrapper / declaration pins match selected channels                                             |
 | Local evidence      | `.bun-version`, `packageManager`, `engines.bun`, catalog, lockfile, executing version/revision |
 
 A source outage is reported separately from version drift. Missing evidence is

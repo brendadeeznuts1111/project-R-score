@@ -54,7 +54,15 @@
     "description": "Lockfile stores normalized cpu/os; optional deps skipped at runtime per target",
     "lockfile_note": "bun.lock unchanged across platforms — installed packages may differ",
     "cpu_values": ["arm64", "x64", "ia32", "ppc64", "s390x"],
-    "os_values": ["linux", "darwin", "win32", "freebsd", "openbsd", "sunos", "aix"],
+    "os_values": [
+      "linux",
+      "darwin",
+      "win32",
+      "freebsd",
+      "openbsd",
+      "sunos",
+      "aix"
+    ],
     "cli_example": "bun install --cpu=x64 --os=linux"
   },
   "peer_dependencies": {
@@ -170,30 +178,128 @@
     ]
   },
   "cli_flags": {
-    "config": { "flag": "--config", "type": "string", "description": "Path to bunfig.toml" },
-    "cwd": { "flag": "--cwd", "type": "string", "description": "Set working directory" },
-    "production": { "flag": "--production", "type": "boolean", "description": "Skip devDependencies" },
-    "no_save": { "flag": "--no-save", "type": "boolean", "description": "Don't update package.json or save lockfile" },
-    "save": { "flag": "--save", "type": "boolean", "default": true, "description": "Save to package.json" },
-    "omit": { "flag": "--omit", "type": "string", "description": "Exclude dev, optional, or peer" },
-    "only_missing": { "flag": "--only-missing", "type": "boolean", "description": "Add deps only if not already in package.json" },
-    "dev": { "flag": "--dev", "type": "boolean", "description": "Add to devDependencies" },
-    "optional": { "flag": "--optional", "type": "boolean", "description": "Add to optionalDependencies" },
-    "peer": { "flag": "--peer", "type": "boolean", "description": "Add to peerDependencies" },
-    "exact": { "flag": "--exact", "type": "boolean", "description": "Pin exact version instead of ^range" },
-    "yarn": { "flag": "--yarn", "type": "boolean", "description": "Write yarn.lock v1" },
-    "frozen_lockfile": { "flag": "--frozen-lockfile", "type": "boolean", "description": "Disallow lockfile changes" },
-    "save_text_lockfile": { "flag": "--save-text-lockfile", "type": "boolean", "description": "Text bun.lock" },
-    "lockfile_only": { "flag": "--lockfile-only", "type": "boolean", "description": "Generate lockfile only" },
-    "ca": { "flag": "--ca", "type": "string", "description": "Certificate Authority signing certificate" },
-    "cafile": { "flag": "--cafile", "type": "string", "description": "Path to CA certificate file" },
-    "registry": { "flag": "--registry", "type": "string", "description": "Override registry (.npmrc, bunfig, env)" },
-    "dry_run": { "flag": "--dry-run", "type": "boolean", "description": "Resolve without installing" },
-    "force": { "flag": "--force", "type": "boolean", "description": "Latest versions + reinstall all" },
-    "global": { "flag": "--global", "type": "boolean", "description": "Install globally" },
-    "backend": { "flag": "--backend", "type": "string", "default": "clonefile", "description": "hardlink|clonefile|clonefile_each_dir|copyfile|symlink" },
-    "cpu": { "flag": "--cpu", "type": "string", "description": "Target CPU for optional deps (arm64|x64|ia32|ppc64|s390x)" },
-    "os": { "flag": "--os", "type": "string", "description": "Target OS for optional deps (linux|darwin|win32|...)" },
+    "config": {
+      "flag": "--config",
+      "type": "string",
+      "description": "Path to bunfig.toml"
+    },
+    "cwd": {
+      "flag": "--cwd",
+      "type": "string",
+      "description": "Set working directory"
+    },
+    "production": {
+      "flag": "--production",
+      "type": "boolean",
+      "description": "Skip devDependencies"
+    },
+    "no_save": {
+      "flag": "--no-save",
+      "type": "boolean",
+      "description": "Don't update package.json or save lockfile"
+    },
+    "save": {
+      "flag": "--save",
+      "type": "boolean",
+      "default": true,
+      "description": "Save to package.json"
+    },
+    "omit": {
+      "flag": "--omit",
+      "type": "string",
+      "description": "Exclude dev, optional, or peer"
+    },
+    "only_missing": {
+      "flag": "--only-missing",
+      "type": "boolean",
+      "description": "Add deps only if not already in package.json"
+    },
+    "dev": {
+      "flag": "--dev",
+      "type": "boolean",
+      "description": "Add to devDependencies"
+    },
+    "optional": {
+      "flag": "--optional",
+      "type": "boolean",
+      "description": "Add to optionalDependencies"
+    },
+    "peer": {
+      "flag": "--peer",
+      "type": "boolean",
+      "description": "Add to peerDependencies"
+    },
+    "exact": {
+      "flag": "--exact",
+      "type": "boolean",
+      "description": "Pin exact version instead of ^range"
+    },
+    "yarn": {
+      "flag": "--yarn",
+      "type": "boolean",
+      "description": "Write yarn.lock v1"
+    },
+    "frozen_lockfile": {
+      "flag": "--frozen-lockfile",
+      "type": "boolean",
+      "description": "Disallow lockfile changes"
+    },
+    "save_text_lockfile": {
+      "flag": "--save-text-lockfile",
+      "type": "boolean",
+      "description": "Text bun.lock"
+    },
+    "lockfile_only": {
+      "flag": "--lockfile-only",
+      "type": "boolean",
+      "description": "Generate lockfile only"
+    },
+    "ca": {
+      "flag": "--ca",
+      "type": "string",
+      "description": "Certificate Authority signing certificate"
+    },
+    "cafile": {
+      "flag": "--cafile",
+      "type": "string",
+      "description": "Path to CA certificate file"
+    },
+    "registry": {
+      "flag": "--registry",
+      "type": "string",
+      "description": "Override registry (.npmrc, bunfig, env)"
+    },
+    "dry_run": {
+      "flag": "--dry-run",
+      "type": "boolean",
+      "description": "Resolve without installing"
+    },
+    "force": {
+      "flag": "--force",
+      "type": "boolean",
+      "description": "Latest versions + reinstall all"
+    },
+    "global": {
+      "flag": "--global",
+      "type": "boolean",
+      "description": "Install globally"
+    },
+    "backend": {
+      "flag": "--backend",
+      "type": "string",
+      "default": "clonefile",
+      "description": "hardlink|clonefile|clonefile_each_dir|copyfile|symlink"
+    },
+    "cpu": {
+      "flag": "--cpu",
+      "type": "string",
+      "description": "Target CPU for optional deps (arm64|x64|ia32|ppc64|s390x)"
+    },
+    "os": {
+      "flag": "--os",
+      "type": "string",
+      "description": "Target OS for optional deps (linux|darwin|win32|...)"
+    },
     "filter": {
       "flag": "--filter",
       "alias": "-F",
@@ -202,19 +308,73 @@
       "docs": "https://bun.com/docs/pm/filter",
       "runtime_docs": "https://bun.com/docs/runtime#filtering"
     },
-    "analyze": { "flag": "--analyze", "type": "boolean", "description": "Install deps of passed files recursively" },
-    "cache_dir": { "flag": "--cache-dir", "type": "string", "description": "Custom cache directory" },
-    "no_cache": { "flag": "--no-cache", "type": "boolean", "description": "Ignore manifest cache" },
-    "silent": { "flag": "--silent", "type": "boolean", "description": "Suppress output" },
-    "verbose": { "flag": "--verbose", "type": "boolean", "description": "Verbose logging" },
-    "no_progress": { "flag": "--no-progress", "type": "boolean", "description": "Disable progress bar" },
-    "no_summary": { "flag": "--no-summary", "type": "boolean", "description": "Skip install summary" },
-    "no_verify": { "flag": "--no-verify", "type": "boolean", "description": "Skip integrity verification" },
-    "trust": { "flag": "--trust", "type": "boolean", "description": "Add to trustedDependencies" },
-    "concurrent_scripts": { "flag": "--concurrent-scripts", "type": "number", "default": 5, "description": "Max concurrent lifecycle scripts" },
-    "network_concurrency": { "flag": "--network-concurrency", "type": "number", "default": 48, "description": "Max concurrent network requests" },
-    "ignore_scripts": { "flag": "--ignore-scripts", "type": "boolean", "description": "Skip root lifecycle scripts" },
-    "minimum_release_age": { "flag": "--minimum-release-age", "type": "number", "description": "Age gate seconds" }
+    "analyze": {
+      "flag": "--analyze",
+      "type": "boolean",
+      "description": "Install deps of passed files recursively"
+    },
+    "cache_dir": {
+      "flag": "--cache-dir",
+      "type": "string",
+      "description": "Custom cache directory"
+    },
+    "no_cache": {
+      "flag": "--no-cache",
+      "type": "boolean",
+      "description": "Ignore manifest cache"
+    },
+    "silent": {
+      "flag": "--silent",
+      "type": "boolean",
+      "description": "Suppress output"
+    },
+    "verbose": {
+      "flag": "--verbose",
+      "type": "boolean",
+      "description": "Verbose logging"
+    },
+    "no_progress": {
+      "flag": "--no-progress",
+      "type": "boolean",
+      "description": "Disable progress bar"
+    },
+    "no_summary": {
+      "flag": "--no-summary",
+      "type": "boolean",
+      "description": "Skip install summary"
+    },
+    "no_verify": {
+      "flag": "--no-verify",
+      "type": "boolean",
+      "description": "Skip integrity verification"
+    },
+    "trust": {
+      "flag": "--trust",
+      "type": "boolean",
+      "description": "Add to trustedDependencies"
+    },
+    "concurrent_scripts": {
+      "flag": "--concurrent-scripts",
+      "type": "number",
+      "default": 5,
+      "description": "Max concurrent lifecycle scripts"
+    },
+    "network_concurrency": {
+      "flag": "--network-concurrency",
+      "type": "number",
+      "default": 48,
+      "description": "Max concurrent network requests"
+    },
+    "ignore_scripts": {
+      "flag": "--ignore-scripts",
+      "type": "boolean",
+      "description": "Skip root lifecycle scripts"
+    },
+    "minimum_release_age": {
+      "flag": "--minimum-release-age",
+      "type": "number",
+      "description": "Age gate seconds"
+    }
   },
   "bunfig": {
     "search_paths": [
@@ -247,11 +407,29 @@
   "env_vars": [
     { "name": "BUN_CONFIG_REGISTRY", "description": "npm registry URL" },
     { "name": "BUN_CONFIG_TOKEN", "description": "Auth token" },
-    { "name": "BUN_CONFIG_YARN_LOCKFILE", "description": "Save Yarn v1 yarn.lock" },
-    { "name": "BUN_CONFIG_LINK_NATIVE_BINS", "description": "Platform-specific bin linking" },
-    { "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE", "description": "Skip saving lockfile" },
-    { "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE", "description": "Skip loading lockfile" },
-    { "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES", "description": "Skip installing packages" },
-    { "name": "BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL", "description": "Disable streaming tarball extract (v1.3.13)" }
+    {
+      "name": "BUN_CONFIG_YARN_LOCKFILE",
+      "description": "Save Yarn v1 yarn.lock"
+    },
+    {
+      "name": "BUN_CONFIG_LINK_NATIVE_BINS",
+      "description": "Platform-specific bin linking"
+    },
+    {
+      "name": "BUN_CONFIG_SKIP_SAVE_LOCKFILE",
+      "description": "Skip saving lockfile"
+    },
+    {
+      "name": "BUN_CONFIG_SKIP_LOAD_LOCKFILE",
+      "description": "Skip loading lockfile"
+    },
+    {
+      "name": "BUN_CONFIG_SKIP_INSTALL_PACKAGES",
+      "description": "Skip installing packages"
+    },
+    {
+      "name": "BUN_FEATURE_FLAG_DISABLE_STREAMING_INSTALL",
+      "description": "Disable streaming tarball extract (v1.3.13)"
+    }
   ]
 }

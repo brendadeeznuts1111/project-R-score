@@ -29,7 +29,14 @@
       "Plugins",
       "File System Router"
     ],
-    "HTTP server": ["Server", "Routing", "Cookies", "TLS", "Error Handling", "Metrics"],
+    "HTTP server": [
+      "Server",
+      "Routing",
+      "Cookies",
+      "TLS",
+      "Error Handling",
+      "Metrics"
+    ],
     "Networking": ["Fetch", "WebSockets", "TCP", "UDP", "DNS"],
     "Data & Storage": [
       "Cookies",
@@ -43,7 +50,13 @@
       "Redis"
     ],
     "Concurrency": ["Workers"],
-    "Process & System": ["Environment Variables", "Shell", "Spawn", "WebView", "Cron"],
+    "Process & System": [
+      "Environment Variables",
+      "Shell",
+      "Spawn",
+      "WebView",
+      "Cron"
+    ],
     "Interop & Tooling": [
       "Node-API",
       "FFI",
@@ -66,7 +79,19 @@
       "Color",
       "Utils"
     ],
-    "Standards & Compatibility": ["Globals", "Bun APIs", "Web APIs", "Node.js Compatibility"],
-    "Contributing": ["Roadmap", "Benchmarking", "Contributing", "Building Windows", "Bindgen", "License"]
+    "Standards & Compatibility": [
+      "Globals",
+      "Bun APIs",
+      "Web APIs",
+      "Node.js Compatibility"
+    ],
+    "Contributing": [
+      "Roadmap",
+      "Benchmarking",
+      "Contributing",
+      "Building Windows",
+      "Bindgen",
+      "License"
+    ]
   }
 }

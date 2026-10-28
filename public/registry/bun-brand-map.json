@@ -108,9 +108,7 @@
         }
       ],
       "evidenceState": "verified",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 4,
       "attention": []
     },
@@ -155,13 +153,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-image-release-contract-audit",
@@ -196,13 +190,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-image-release-asset-validation",
@@ -237,13 +227,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-webview-dod-evidence",
@@ -286,15 +272,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven",
-        "experimental",
-        "lab-only"
-      ]
+      "attention": ["declared-unproven", "experimental", "lab-only"]
     },
     {
       "id": "bun-randomuuidv7-evidence-mint",
@@ -337,13 +317,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 3,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-secrets-request-id",
@@ -378,13 +354,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "projects/active/dashboards/secrets-dashboard"
-      ],
+      "projects": ["projects/active/dashboards/secrets-dashboard"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-wagering-demo-handle",
@@ -419,13 +391,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "projects/active/development/kal-poly-bot"
-      ],
+      "projects": ["projects/active/development/kal-poly-bot"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-limit-forecast-issue",
@@ -460,13 +428,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-phone-sportsbook-journal",
@@ -501,13 +465,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-funding-mint",
@@ -542,13 +502,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-ops-channel-event",
@@ -583,13 +539,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-command-mint",
@@ -624,13 +576,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-correlation-mint",
@@ -673,13 +621,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-toc-tree-node",
@@ -718,13 +662,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-toc-opaque-rows",
@@ -763,13 +703,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-partner-ledger-opaque",
@@ -812,13 +748,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-scratch-temp-dirs",
@@ -861,13 +793,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-token-mint",
@@ -902,13 +830,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-identity-mint",
@@ -943,13 +867,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-gate-decision",
@@ -1000,13 +920,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 6,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-experiment-mints",
@@ -1067,13 +983,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 4,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-tree-node-account",
@@ -1108,13 +1020,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-ops-seed-demo",
@@ -1149,13 +1057,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 21,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-ops-oneliners-demo",
@@ -1198,13 +1102,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 8,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-anomaly-opaque",
@@ -1263,13 +1163,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 5,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-ops-loop-fixture",
@@ -1312,13 +1208,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 4,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-telegram-broadcast-opaque",
@@ -1369,13 +1261,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 5,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-time-encoding-hex",
@@ -1410,13 +1298,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-time-encoding-buffer",
@@ -1451,13 +1335,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-randomuuidv7-experiment-ab-opaque",
@@ -1508,13 +1388,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 4,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-cron-in-process-monitoring",
@@ -1549,13 +1425,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 0,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-cron-lane-status-watch",
@@ -1590,13 +1462,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-cron-lane-status-preview",
@@ -1631,13 +1499,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-cron-os-persistent",
@@ -1672,13 +1536,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-cron-brand-status-watch",
@@ -1713,13 +1573,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-cron-factory-template-preview",
@@ -1754,13 +1610,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-sliceansi-terminal-output",
@@ -1803,13 +1655,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 0,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-terminal-pty",
@@ -1850,9 +1698,7 @@
         }
       ],
       "evidenceState": "verified",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
       "attention": []
     },
@@ -1889,13 +1735,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-test-parallel",
@@ -1974,13 +1816,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 10,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-no-orphans-factory-template",
@@ -2019,13 +1857,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 2,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-test-isolate",
@@ -2060,13 +1894,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 1,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-test-shard",
@@ -2125,13 +1955,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 5,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "bun-test-changed",
@@ -2166,13 +1992,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "project-R-score"
-      ],
+      "projects": ["project-R-score"],
       "observations": 0,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     },
     {
       "id": "fetch-http2-client",
@@ -2207,13 +2029,9 @@
       ],
       "proofs": [],
       "evidenceState": "declared-unproven",
-      "projects": [
-        "projects/active/sports-terminal-os"
-      ],
+      "projects": ["projects/active/sports-terminal-os"],
       "observations": 0,
-      "attention": [
-        "declared-unproven"
-      ]
+      "attention": ["declared-unproven"]
     }
   ],
   "relationships": [
@@ -4051,24 +3869,16 @@
     {
       "name": "RequestId",
       "domain": "session",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "projects/active/dashboards/secrets-dashboard"
-      ]
+      "projects": ["projects/active/dashboards/secrets-dashboard"]
     },
     {
       "name": "CorrelationId",
       "domain": "session",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 2,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "SnapshotId",
@@ -4094,13 +3904,9 @@
     {
       "name": "IdentityId",
       "domain": "identity",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "OidcClientId",
@@ -4119,13 +3925,9 @@
     {
       "name": "TokenId",
       "domain": "identity",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "DocumentId",
@@ -4214,15 +4016,9 @@
     {
       "name": "EvidenceId",
       "domain": "audit",
-      "capabilities": [
-        "Bun.Image",
-        "Bun.WebView",
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.Image", "Bun.WebView", "Bun.randomUUIDv7"],
       "relationships": 8,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "DodId",
@@ -4388,13 +4184,9 @@
     {
       "name": "ReleaseAssetId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.Image"
-      ],
+      "capabilities": ["Bun.Image"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "ReleaseCapabilityId",
@@ -4427,13 +4219,9 @@
     {
       "name": "TreeNodeId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 3,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "RailId",
@@ -4445,57 +4233,37 @@
     {
       "name": "FundingId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "CommandId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "ExperimentId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 3,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "ExperimentVariantId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 3,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "ExperimentAssignmentId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 3,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "PartnerProfileKey",
@@ -4591,35 +4359,23 @@
     {
       "name": "GateDecisionId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 3,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "OpsChannelEventId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "LimitForecastIssueId",
       "domain": "operations",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "projects": [
-        "project-R-score"
-      ]
+      "projects": ["project-R-score"]
     },
     {
       "name": "EventId",
@@ -4881,13 +4637,9 @@
     {
       "path": "projects/active/dashboards/secrets-dashboard",
       "status": "governed-no-usage",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
-      "brands": [
-        "RequestId"
-      ],
+      "brands": ["RequestId"],
       "verified": 0,
       "attention": 1,
       "observed": 1,
@@ -4933,9 +4685,7 @@
     {
       "path": "projects/active/development/kal-poly-bot",
       "status": "governed-no-usage",
-      "capabilities": [
-        "Bun.randomUUIDv7"
-      ],
+      "capabilities": ["Bun.randomUUIDv7"],
       "relationships": 1,
       "brands": [],
       "verified": 0,
@@ -5067,9 +4817,7 @@
     {
       "path": "projects/active/sports-terminal-os",
       "status": "adopted",
-      "capabilities": [
-        "fetch protocol http2"
-      ],
+      "capabilities": ["fetch protocol http2"],
       "relationships": 1,
       "brands": [],
       "verified": 0,

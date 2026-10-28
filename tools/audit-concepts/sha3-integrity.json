@@ -14,9 +14,7 @@
     "jacobian-nullspace",
     "nagata-map"
   ],
-  "relatedDocs": [
-    "SHA3-256"
-  ],
+  "relatedDocs": ["SHA3-256"],
   "meta": {
     "buildPin": "1.4.0",
     "emitter": "audit-curated"

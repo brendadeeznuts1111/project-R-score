@@ -2,11 +2,15 @@
 
 Network shared types and helpers.
 
-| File | Purpose |
-|------|---------|
+| File                   | Purpose                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
 | [`proxy.ts`](proxy.ts) | `FetchProxyOptions` — Bun fetch `proxy` option, CONNECT reuse dimensions, and `isProxyObjectForm` guard |
 
-HTTPS proxy pooling is runtime-owned: Bun ≥1.3.12 reuses a CONNECT tunnel and its inner TLS session only for the same proxy host/port, proxy credentials, target host/port, and TLS configuration. The loopback proof changes each dimension independently and asserts the resulting tunnel count: `bun test tests/fetch-proxy-keepalive.test.ts`.
+HTTPS proxy pooling is runtime-owned: Bun ≥1.3.12 reuses a CONNECT tunnel and
+its inner TLS session only for the same proxy host/port, proxy credentials,
+target host/port, and TLS configuration. The loopback proof changes each
+dimension independently and asserts the resulting tunnel count:
+`bun test tests/fetch-proxy-keepalive.test.ts`.
 
-Related: Kalshi WS proxy handling (`Kalshi-bot/src/bot/kalshi-ws.ts`)
-uses the same object shape for the client `WebSocket` `proxy` option.
+Related: Kalshi WS proxy handling (`Kalshi-bot/src/bot/kalshi-ws.ts`) uses the
+same object shape for the client `WebSocket` `proxy` option.

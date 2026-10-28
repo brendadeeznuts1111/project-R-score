@@ -19,15 +19,8 @@
         "termsPage": null
       },
       "fetcher": "rest",
-      "lifecycle": [
-        "pre_match",
-        "live"
-      ],
-      "sports": [
-        "tennis",
-        "tabletennis",
-        "soccer"
-      ],
+      "lifecycle": ["pre_match", "live"],
+      "sports": ["tennis", "tabletennis", "soccer"],
       "regions": [
         {
           "country": "US"
@@ -58,10 +51,7 @@
         "termsPage": null
       },
       "fetcher": "webview",
-      "lifecycle": [
-        "pre_match",
-        "live"
-      ],
+      "lifecycle": ["pre_match", "live"],
       "sports": [
         "tennis",
         "tabletennis",
@@ -101,10 +91,7 @@
         "termsPage": null
       },
       "fetcher": "webview",
-      "lifecycle": [
-        "pre_match",
-        "live"
-      ],
+      "lifecycle": ["pre_match", "live"],
       "sports": [
         "tennis",
         "american-football",
@@ -145,10 +132,7 @@
         "termsPage": null
       },
       "fetcher": "webview",
-      "lifecycle": [
-        "pre_match",
-        "live"
-      ],
+      "lifecycle": ["pre_match", "live"],
       "sports": [
         "tennis",
         "american-football",
@@ -188,10 +172,7 @@
         "termsPage": null
       },
       "fetcher": "webview",
-      "lifecycle": [
-        "pre_match",
-        "live"
-      ],
+      "lifecycle": ["pre_match", "live"],
       "sports": [
         "tennis",
         "american-football",
@@ -232,12 +213,8 @@
         "termsPage": null
       },
       "fetcher": "seat",
-      "lifecycle": [
-        "pre_match"
-      ],
-      "sports": [
-        "basketball"
-      ],
+      "lifecycle": ["pre_match"],
+      "sports": ["basketball"],
       "regions": [
         {
           "country": "US",
@@ -265,12 +242,8 @@
         "termsPage": null
       },
       "fetcher": "seat",
-      "lifecycle": [
-        "pre_match"
-      ],
-      "sports": [
-        "basketball"
-      ],
+      "lifecycle": ["pre_match"],
+      "sports": ["basketball"],
       "regions": [
         {
           "country": "US"
@@ -297,12 +270,8 @@
         "termsPage": null
       },
       "fetcher": "seat",
-      "lifecycle": [
-        "pre_match"
-      ],
-      "sports": [
-        "basketball"
-      ],
+      "lifecycle": ["pre_match"],
+      "sports": ["basketball"],
       "regions": [
         {
           "country": "US"
@@ -329,12 +298,8 @@
         "termsPage": null
       },
       "fetcher": "seat",
-      "lifecycle": [
-        "pre_match"
-      ],
-      "sports": [
-        "basketball"
-      ],
+      "lifecycle": ["pre_match"],
+      "sports": ["basketball"],
       "regions": [
         {
           "country": "US"
@@ -361,12 +326,8 @@
         "termsPage": null
       },
       "fetcher": "seat",
-      "lifecycle": [
-        "pre_match"
-      ],
-      "sports": [
-        "basketball"
-      ],
+      "lifecycle": ["pre_match"],
+      "sports": ["basketball"],
       "regions": [
         {
           "country": "US"

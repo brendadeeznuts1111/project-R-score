@@ -1,9 +1,11 @@
 ---
-description: ast-grep structural tools — outline, search, audit, semver gates, skill loop
+description:
+  ast-grep structural tools — outline, search, audit, semver gates, skill loop
 user_invocable: true
 ---
 
-Use ast-grep for syntax-aware exploration before broad file reads. Prefer MCP `ast-grep` tools when available.
+Use ast-grep for syntax-aware exploration before broad file reads. Prefer MCP
+`ast-grep` tools when available.
 
 ## Quick start
 
@@ -34,6 +36,9 @@ bun run skill-loop:matrix -- --phases doctor,precommit,rate
 
 ## MCP tools
 
-`ast_grep_outline`, `ast_grep_search`, `ast_grep_audit`, `ast_grep_test`, `ast_grep_network`, `ast_grep_skill_loop`, `ast_grep_precommit`, `ast_grep_workflow`
+`ast_grep_outline`, `ast_grep_search`, `ast_grep_audit`, `ast_grep_test`,
+`ast_grep_network`, `ast_grep_skill_loop`, `ast_grep_precommit`,
+`ast_grep_workflow`
 
-Full skill: `.agents/skills/ast-grep/SKILL.md` · shared tooling: `.agents/skills/references/agent-tooling.md`
+Full skill: `.agents/skills/ast-grep/SKILL.md` · shared tooling:
+`.agents/skills/references/agent-tooling.md`

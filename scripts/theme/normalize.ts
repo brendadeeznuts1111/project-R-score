@@ -5,7 +5,7 @@ export function normalize(theme: any): any {
 }
 
 export function hasCycle(obj: any, seen = new Set<any>()): boolean {
-  if (obj && typeof obj === "object") {
+  if (obj && typeof obj === 'object') {
     if (seen.has(obj)) return true;
     seen.add(obj);
     for (const v of Object.values(obj)) {

@@ -5,11 +5,7 @@
   "packageCount": 17,
   "packages": {
     "event-store": {
-      "versions": [
-        "1.0.0",
-        "1.1.0",
-        "2.0.0-beta"
-      ],
+      "versions": ["1.0.0", "1.1.0", "2.0.0-beta"],
       "dist-tags": {
         "latest": "1.1.0",
         "beta": "2.0.0-beta"
@@ -21,11 +17,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Event sourcing and CQRS primitives for sports trading pipelines",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "trading"
-          ],
+          "tags": ["event-sourcing", "cqrs", "trading"],
           "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
           "publishedAt": "2026-07-15T10:30:00Z",
           "publisher": "factory-cli",
@@ -42,12 +34,7 @@
           "version": "1.1.0",
           "type": "library",
           "description": "Event sourcing with snapshot support and R2 persistence",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "r2",
-            "snapshots"
-          ],
+          "tags": ["event-sourcing", "cqrs", "r2", "snapshots"],
           "publishedAt": "2026-07-20T14:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -63,12 +50,7 @@
           "version": "2.0.0-beta",
           "type": "library",
           "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
-          "tags": [
-            "event-sourcing",
-            "multi-tenant",
-            "streaming",
-            "beta"
-          ],
+          "tags": ["event-sourcing", "multi-tenant", "streaming", "beta"],
           "publishedAt": "2026-07-22T09:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -81,10 +63,7 @@
       }
     },
     "bet-ticker": {
-      "versions": [
-        "1.0.0",
-        "1.2.0"
-      ],
+      "versions": ["1.0.0", "1.2.0"],
       "dist-tags": {
         "latest": "1.2.0"
       },
@@ -95,11 +74,7 @@
           "version": "1.0.0",
           "type": "worker",
           "description": "Cloudflare Worker for live wager broadcast via WebSocket",
-          "tags": [
-            "worker",
-            "websocket",
-            "betting"
-          ],
+          "tags": ["worker", "websocket", "betting"],
           "publishedAt": "2026-06-01T08:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -115,12 +90,7 @@
           "version": "1.2.0",
           "type": "worker",
           "description": "Bet Ticker Worker v1.2 with Durable Object coordination and Zod validation",
-          "tags": [
-            "worker",
-            "websocket",
-            "durable-object",
-            "zod"
-          ],
+          "tags": ["worker", "websocket", "durable-object", "zod"],
           "publishedAt": "2026-07-18T16:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -133,9 +103,7 @@
       }
     },
     "odds-engine": {
-      "versions": [
-        "0.7.0"
-      ],
+      "versions": ["0.7.0"],
       "dist-tags": {
         "latest": "0.7.0"
       },
@@ -146,11 +114,7 @@
           "version": "0.7.0",
           "type": "library",
           "description": "Real-time odds computation with Bayesian adjustment and market normalization",
-          "tags": [
-            "odds",
-            "bayesian",
-            "trading"
-          ],
+          "tags": ["odds", "bayesian", "trading"],
           "publishedAt": "2026-05-10T12:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -163,10 +127,7 @@
       }
     },
     "cascade-mover": {
-      "versions": [
-        "3.0.0",
-        "3.1.1"
-      ],
+      "versions": ["3.0.0", "3.1.1"],
       "dist-tags": {
         "latest": "3.1.1",
         "stable": "3.0.0"
@@ -178,11 +139,7 @@
           "version": "3.1.1",
           "type": "project",
           "description": "Global Liquidity & Predictive Risk Command Center — 6-indicator confidence engine",
-          "tags": [
-            "risk",
-            "liquidity",
-            "confidence-engine"
-          ],
+          "tags": ["risk", "liquidity", "confidence-engine"],
           "publishedAt": "2026-07-21T22:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -198,10 +155,7 @@
           "version": "3.0.0",
           "type": "project",
           "description": "Cascade Mover v3 stable — recursive multi-market cascade detection",
-          "tags": [
-            "risk",
-            "stable"
-          ],
+          "tags": ["risk", "stable"],
           "publishedAt": "2026-04-01T00:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -214,9 +168,7 @@
       }
     },
     "sports-terminal-os": {
-      "versions": [
-        "5.2.0"
-      ],
+      "versions": ["5.2.0"],
       "dist-tags": {
         "latest": "5.2.0"
       },
@@ -227,11 +179,7 @@
           "version": "5.2.0",
           "type": "project",
           "description": "Partner Profile OS for Sports Terminal v5.2 — TOML templates, PartnerGateway kernel",
-          "tags": [
-            "partner",
-            "toml",
-            "gateway"
-          ],
+          "tags": ["partner", "toml", "gateway"],
           "publishedAt": "2026-07-22T18:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -244,9 +192,7 @@
       }
     },
     "factory-cli": {
-      "versions": [
-        "0.1.0"
-      ],
+      "versions": ["0.1.0"],
       "dist-tags": {
         "latest": "0.1.0"
       },
@@ -273,9 +219,7 @@
       }
     },
     "kimi-toolchain": {
-      "versions": [
-        "2.1.0"
-      ],
+      "versions": ["2.1.0"],
       "dist-tags": {
         "latest": "2.1.0"
       },
@@ -286,11 +230,7 @@
           "version": "2.1.0",
           "type": "cli-tool",
           "description": "Kimi governance and doctor toolchain for harness health checks",
-          "tags": [
-            "governance",
-            "doctor",
-            "harness"
-          ],
+          "tags": ["governance", "doctor", "harness"],
           "publishedAt": "2026-07-19T08:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -303,9 +243,7 @@
       }
     },
     "quantum-domain-ops": {
-      "versions": [
-        "0.1.0"
-      ],
+      "versions": ["0.1.0"],
       "dist-tags": {
         "latest": "0.1.0"
       },
@@ -316,11 +254,7 @@
           "version": "0.1.0",
           "type": "library",
           "description": "Protocols for operating QuantumDomain instances — state collapse, entanglement, coherence monitoring",
-          "tags": [
-            "quantum",
-            "state-management",
-            "experimental"
-          ],
+          "tags": ["quantum", "state-management", "experimental"],
           "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> ⚠️ Requires Bun ≥1.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
           "publishedAt": "2026-07-20T03:00:00Z",
           "publisher": "factory-cli",
@@ -334,9 +268,7 @@
       }
     },
     "test-plugin": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0",
         "stable": "1.0.0"
@@ -348,10 +280,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Test plugin",
-          "tags": [
-            "latest",
-            "stable"
-          ],
+          "tags": ["latest", "stable"],
           "publishedAt": "2026-07-23T17:14:57.086Z",
           "publisher": "api",
           "storage": {
@@ -364,9 +293,7 @@
       }
     },
     "test-npm-pkg": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -389,10 +316,7 @@
       }
     },
     "@factorywager/bun-test": {
-      "versions": [
-        "0.1.0",
-        "0.2.0"
-      ],
+      "versions": ["0.1.0", "0.2.0"],
       "dist-tags": {
         "latest": "0.2.0",
         "beta": "0.2.0"
@@ -419,10 +343,7 @@
           "version": "0.2.0",
           "type": "library",
           "description": "Updated test",
-          "tags": [
-            "latest",
-            "beta"
-          ],
+          "tags": ["latest", "beta"],
           "publishedAt": "2026-07-23T17:23:18.841Z",
           "publisher": "api",
           "storage": {
@@ -435,9 +356,7 @@
       }
     },
     "@factorywager/final-test": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -460,10 +379,7 @@
       }
     },
     "@factory/health-check": {
-      "versions": [
-        "1.0.0",
-        "1.1.0"
-      ],
+      "versions": ["1.0.0", "1.1.0"],
       "dist-tags": {
         "latest": "1.1.0",
         "stable": "1.1.0"
@@ -475,9 +391,7 @@
           "version": "1.0.0",
           "type": "cli-tool",
           "description": "Registry health check CLI",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T17:24:45.991Z",
           "publisher": "api",
           "storage": {
@@ -496,10 +410,7 @@
           "version": "1.1.0",
           "type": "cli-tool",
           "description": "Updated health check",
-          "tags": [
-            "latest",
-            "stable"
-          ],
+          "tags": ["latest", "stable"],
           "publishedAt": "2026-07-23T17:26:35.935Z",
           "publisher": "api",
           "storage": {
@@ -512,9 +423,7 @@
       }
     },
     "@factorywager/registry-client": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -538,9 +447,7 @@
       }
     },
     "formdata-test": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -551,9 +458,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "FormData per Bun docs",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T19:29:06.047Z",
           "publisher": "api",
           "storage": {
@@ -566,9 +471,7 @@
       }
     },
     "__formdata-test": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0",
         "formdata-test": "1.0.0"
@@ -580,10 +483,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "FormData: Markdown doc",
-          "tags": [
-            "latest",
-            "formdata-test"
-          ],
+          "tags": ["latest", "formdata-test"],
           "publishedAt": "2026-07-23T19:30:36.020Z",
           "publisher": "api",
           "storage": {
@@ -596,9 +496,7 @@
       }
     },
     "sdk-test-pkg": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -609,9 +507,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "SDK publish test",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T22:45:20.173Z",
           "publisher": "api",
           "storage": {
@@ -665,10 +561,7 @@
       "hmac": true,
       "zipWindowOk": true,
       "scoreHint": "integrity+hmac",
-      "states": [
-        "MA",
-        "NJ"
-      ],
+      "states": ["MA", "NJ"],
       "generatedAt": "2026-08-01T21:28:29.678Z",
       "path": "/registry/compliance-board.json",
       "portal": "/portal/compliance/"
@@ -1545,9 +1438,7 @@
           "lanesTotal": 23,
           "lanesBlocked": [],
           "laneFails": [],
-          "nextSteps": [
-            "ready for welcome DM + bot commands"
-          ]
+          "nextSteps": ["ready for welcome DM + bot commands"]
         },
         {
           "partnerCode": "BIL",
@@ -1568,9 +1459,7 @@
           "lanesTotal": 23,
           "lanesBlocked": [],
           "laneFails": [],
-          "nextSteps": [
-            "ready for welcome DM + bot commands"
-          ]
+          "nextSteps": ["ready for welcome DM + bot commands"]
         },
         {
           "partnerCode": "NOV",
@@ -1591,9 +1480,7 @@
           "lanesTotal": 23,
           "lanesBlocked": [],
           "laneFails": [],
-          "nextSteps": [
-            "ready for welcome DM + bot commands"
-          ]
+          "nextSteps": ["ready for welcome DM + bot commands"]
         },
         {
           "partnerCode": "SPEN",
@@ -1614,9 +1501,7 @@
           "lanesTotal": 23,
           "lanesBlocked": [],
           "laneFails": [],
-          "nextSteps": [
-            "ready for welcome DM + bot commands"
-          ]
+          "nextSteps": ["ready for welcome DM + bot commands"]
         }
       ],
       "commands": {
@@ -1910,14 +1795,8 @@
               "book": "Hard Rock Florida",
               "username": "—",
               "missingFund": [],
-              "missingBookTerms": [
-                "max bet",
-                "freeplay % on deposit"
-              ],
-              "missingAll": [
-                "max bet",
-                "freeplay % on deposit"
-              ],
+              "missingBookTerms": ["max bet", "freeplay % on deposit"],
+              "missingAll": ["max bet", "freeplay % on deposit"],
               "deferred": true,
               "complete": false
             }
@@ -1976,14 +1855,8 @@
               "book": "SouthFL PPH Desk",
               "username": "—",
               "missingFund": [],
-              "missingBookTerms": [
-                "max bet",
-                "freeplay % on deposit"
-              ],
-              "missingAll": [
-                "max bet",
-                "freeplay % on deposit"
-              ],
+              "missingBookTerms": ["max bet", "freeplay % on deposit"],
+              "missingAll": ["max bet", "freeplay % on deposit"],
               "deferred": true,
               "complete": false
             }
@@ -2051,14 +1924,8 @@
               "book": "Orange777",
               "username": "dmk1064",
               "missingFund": [],
-              "missingBookTerms": [
-                "max bet",
-                "freeplay % on deposit"
-              ],
-              "missingAll": [
-                "max bet",
-                "freeplay % on deposit"
-              ],
+              "missingBookTerms": ["max bet", "freeplay % on deposit"],
+              "missingAll": ["max bet", "freeplay % on deposit"],
               "deferred": true,
               "complete": false
             }
@@ -2090,9 +1957,7 @@
           "purpose": "One line per incomplete out — mirrors Copy todo button.",
           "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
           "postable": false,
-          "dynamicFields": [
-            "perOutMissing"
-          ]
+          "dynamicFields": ["perOutMissing"]
         },
         {
           "id": "reply-hint",
@@ -2101,9 +1966,7 @@
           "purpose": "Single pipe line for first incomplete out.",
           "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
           "postable": false,
-          "dynamicFields": [
-            "firstIncompleteOutNum"
-          ]
+          "dynamicFields": ["firstIncompleteOutNum"]
         },
         {
           "id": "topic-intake",
@@ -2167,10 +2030,7 @@
       "hmac": true,
       "zipWindowOk": true,
       "scoreHint": "integrity+hmac",
-      "states": [
-        "MA",
-        "NJ"
-      ],
+      "states": ["MA", "NJ"],
       "generatedAt": "2026-08-01T21:28:29.678Z",
       "path": "/registry/compliance-board.json",
       "portal": "/portal/compliance/"
@@ -2591,17 +2451,8 @@
           "avg_influence_score": 0.6043,
           "partners": 2,
           "nodes": 6,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "070",
-            "071",
-            "072",
-            "073",
-            "075",
-            "084"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["070", "071", "072", "073", "075", "084"],
           "top_market": "spread"
         },
         {
@@ -2614,16 +2465,8 @@
           "avg_influence_score": 0.6166,
           "partners": 1,
           "nodes": 5,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "070",
-            "071",
-            "072",
-            "073",
-            "075"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["070", "071", "072", "073", "075"],
           "top_market": "totals"
         },
         {
@@ -2636,14 +2479,8 @@
           "avg_influence_score": 0.2583,
           "partners": 2,
           "nodes": 2,
-          "states": [
-            "MA",
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "016",
-            "084"
-          ],
+          "states": ["MA", "NJ"],
+          "zip_prefixes": ["016", "084"],
           "top_market": "match_winner"
         },
         {
@@ -2656,12 +2493,8 @@
           "avg_influence_score": 0.5936,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "071"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["071"],
           "top_market": "spread"
         }
       ],
@@ -2676,17 +2509,8 @@
           "avg_influence_score": 0.6015,
           "partners": 2,
           "nodes": 7,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "070",
-            "071",
-            "072",
-            "073",
-            "075",
-            "084"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["070", "071", "072", "073", "075", "084"],
           "top_market": "spread"
         },
         {
@@ -2699,12 +2523,8 @@
           "avg_influence_score": 0,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "MA"
-          ],
-          "zip_prefixes": [
-            "016"
-          ],
+          "states": ["MA"],
+          "zip_prefixes": ["016"],
           "top_market": "match_winner"
         }
       ],
@@ -2719,12 +2539,8 @@
           "avg_influence_score": 0.6089,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "071"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["071"],
           "top_market": "spread"
         },
         {
@@ -2737,12 +2553,8 @@
           "avg_influence_score": 0.6051,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "070"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["070"],
           "top_market": "spread"
         },
         {
@@ -2755,12 +2567,8 @@
           "avg_influence_score": 0.6051,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "072"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["072"],
           "top_market": "spread"
         },
         {
@@ -2773,12 +2581,8 @@
           "avg_influence_score": 0.6051,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "073"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["073"],
           "top_market": "spread"
         },
         {
@@ -2791,12 +2595,8 @@
           "avg_influence_score": 0.6051,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "075"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["075"],
           "top_market": "spread"
         },
         {
@@ -2809,12 +2609,8 @@
           "avg_influence_score": 0.5758,
           "partners": 1,
           "nodes": 2,
-          "states": [
-            "NJ"
-          ],
-          "zip_prefixes": [
-            "084"
-          ],
+          "states": ["NJ"],
+          "zip_prefixes": ["084"],
           "top_market": "match_winner"
         },
         {
@@ -2827,12 +2623,8 @@
           "avg_influence_score": 0,
           "partners": 1,
           "nodes": 1,
-          "states": [
-            "MA"
-          ],
-          "zip_prefixes": [
-            "016"
-          ],
+          "states": ["MA"],
+          "zip_prefixes": ["016"],
           "top_market": "match_winner"
         }
       ],
@@ -2858,11 +2650,7 @@
           "net_delta": 2000,
           "avg_delta_pct": 133.33,
           "avg_influence_score": 0.6089,
-          "sportsbooks": [
-            "draftkings",
-            "fanduel",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "fanduel", "hardrock"],
           "top_market": "spread"
         },
         {
@@ -2886,10 +2674,7 @@
           "net_delta": 1600,
           "avg_delta_pct": 175,
           "avg_influence_score": 0.6051,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "top_market": "spread"
         },
         {
@@ -2913,10 +2698,7 @@
           "net_delta": 1600,
           "avg_delta_pct": 175,
           "avg_influence_score": 0.6051,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "top_market": "spread"
         },
         {
@@ -2940,10 +2722,7 @@
           "net_delta": 1600,
           "avg_delta_pct": 175,
           "avg_influence_score": 0.6051,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "top_market": "spread"
         },
         {
@@ -2967,10 +2746,7 @@
           "net_delta": 1600,
           "avg_delta_pct": 175,
           "avg_influence_score": 0.6051,
-          "sportsbooks": [
-            "draftkings",
-            "hardrock"
-          ],
+          "sportsbooks": ["draftkings", "hardrock"],
           "top_market": "spread"
         },
         {
@@ -2994,9 +2770,7 @@
           "net_delta": -450,
           "avg_delta_pct": -40.91,
           "avg_influence_score": 0,
-          "sportsbooks": [
-            "caesars"
-          ],
+          "sportsbooks": ["caesars"],
           "top_market": "match_winner"
         },
         {
@@ -3020,9 +2794,7 @@
           "net_delta": 1750,
           "avg_delta_pct": 140,
           "avg_influence_score": 0.635,
-          "sportsbooks": [
-            "hardrock"
-          ],
+          "sportsbooks": ["hardrock"],
           "top_market": "over_under"
         },
         {
@@ -3046,9 +2818,7 @@
           "net_delta": 700,
           "avg_delta_pct": 77.78,
           "avg_influence_score": 0.5166,
-          "sportsbooks": [
-            "caesars"
-          ],
+          "sportsbooks": ["caesars"],
           "top_market": "match_winner"
         }
       ],
@@ -3082,10 +2852,7 @@
     "hmac": true,
     "zipWindowOk": true,
     "scoreHint": "integrity+hmac",
-    "states": [
-      "MA",
-      "NJ"
-    ],
+    "states": ["MA", "NJ"],
     "generatedAt": "2026-08-01T21:28:29.678Z",
     "path": "/registry/compliance-board.json",
     "portal": "/portal/compliance/"
@@ -3522,9 +3289,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       },
       {
         "partnerCode": "BIL",
@@ -3545,9 +3310,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       },
       {
         "partnerCode": "NOV",
@@ -3568,9 +3331,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       },
       {
         "partnerCode": "SPEN",
@@ -3591,9 +3352,7 @@
         "lanesTotal": 23,
         "lanesBlocked": [],
         "laneFails": [],
-        "nextSteps": [
-          "ready for welcome DM + bot commands"
-        ]
+        "nextSteps": ["ready for welcome DM + bot commands"]
       }
     ],
     "commands": {
@@ -3887,14 +3646,8 @@
             "book": "Hard Rock Florida",
             "username": "—",
             "missingFund": [],
-            "missingBookTerms": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
-            "missingAll": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
+            "missingBookTerms": ["max bet", "freeplay % on deposit"],
+            "missingAll": ["max bet", "freeplay % on deposit"],
             "deferred": true,
             "complete": false
           }
@@ -3953,14 +3706,8 @@
             "book": "SouthFL PPH Desk",
             "username": "—",
             "missingFund": [],
-            "missingBookTerms": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
-            "missingAll": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
+            "missingBookTerms": ["max bet", "freeplay % on deposit"],
+            "missingAll": ["max bet", "freeplay % on deposit"],
             "deferred": true,
             "complete": false
           }
@@ -4028,14 +3775,8 @@
             "book": "Orange777",
             "username": "dmk1064",
             "missingFund": [],
-            "missingBookTerms": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
-            "missingAll": [
-              "max bet",
-              "freeplay % on deposit"
-            ],
+            "missingBookTerms": ["max bet", "freeplay % on deposit"],
+            "missingAll": ["max bet", "freeplay % on deposit"],
             "deferred": true,
             "complete": false
           }
@@ -4067,9 +3808,7 @@
         "purpose": "One line per incomplete out — mirrors Copy todo button.",
         "cli": "bun run seat:desk:partner-message CALL-SIGN --template todo",
         "postable": false,
-        "dynamicFields": [
-          "perOutMissing"
-        ]
+        "dynamicFields": ["perOutMissing"]
       },
       {
         "id": "reply-hint",
@@ -4078,9 +3817,7 @@
         "purpose": "Single pipe line for first incomplete out.",
         "cli": "bun run seat:desk:partner-message CALL-SIGN --template reply-hint",
         "postable": false,
-        "dynamicFields": [
-          "firstIncompleteOutNum"
-        ]
+        "dynamicFields": ["firstIncompleteOutNum"]
       },
       {
         "id": "topic-intake",

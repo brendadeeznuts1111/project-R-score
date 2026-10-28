@@ -21,7 +21,10 @@ export function evaluateStrictWarnings(
   if (metrics.slopDelta !== null && metrics.slopDelta > thresholds.slopRiseWarn) {
     warnings.push('slop_rise_warn');
   }
-  if (metrics.reliabilityDelta !== null && metrics.reliabilityDelta < thresholds.reliabilityDropWarn) {
+  if (
+    metrics.reliabilityDelta !== null &&
+    metrics.reliabilityDelta < thresholds.reliabilityDropWarn
+  ) {
     warnings.push('reliability_drop_warn');
   }
   if (metrics.latencyP95Ms !== null && metrics.latencyP95Ms > thresholds.strictLatencyP95WarnMs) {
@@ -33,7 +36,10 @@ export function evaluateStrictWarnings(
   if (metrics.peakRssMB !== null && metrics.peakRssMB > thresholds.strictPeakRssWarnMB) {
     warnings.push('rss_peak_warn');
   }
-  if (metrics.reliabilityNow !== null && metrics.reliabilityNow < thresholds.strictReliabilityFloor) {
+  if (
+    metrics.reliabilityNow !== null &&
+    metrics.reliabilityNow < thresholds.strictReliabilityFloor
+  ) {
     warnings.push('strict_reliability_floor_warn');
   }
   return warnings;

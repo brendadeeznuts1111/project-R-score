@@ -1,13 +1,13 @@
-import { readFile } from "node:fs/promises";
-import { join } from "node:path";
-import { SemverMatcher } from "./semver-matcher.ts";
-import type { SemverRule, SecurityPolicy } from "./policy-loader.ts";
-import { loadPolicyFromSkill } from "./policy-loader.ts";
-import { FeedParser, type ThreatMatch } from "./feed.ts";
-import type { RepoTarget } from "./bundle-scanner.ts";
-import type { Severity } from "./types.ts";
-import { SEVERITY_RANK, normalizeSeverity } from "./rule-engine.ts";
-import { strictestSafeRange, evaluateAgainstPolicy } from "./policy-engine.ts";
+import { readFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import { SemverMatcher } from './semver-matcher.ts';
+import type { SemverRule, SecurityPolicy } from './policy-loader.ts';
+import { loadPolicyFromSkill } from './policy-loader.ts';
+import { FeedParser, type ThreatMatch } from './feed.ts';
+import type { RepoTarget } from './bundle-scanner.ts';
+import type { Severity } from './types.ts';
+import { SEVERITY_RANK, normalizeSeverity } from './rule-engine.ts';
+import { strictestSafeRange, evaluateAgainstPolicy } from './policy-engine.ts';
 
 export type SemverViolation = {
   rule: SemverRule;
@@ -15,7 +15,7 @@ export type SemverViolation = {
   version: string;
 };
 
-export type ViolationKind = "semver_rule" | "allowed" | "blocked" | "threat";
+export type ViolationKind = 'semver_rule' | 'allowed' | 'blocked' | 'threat';
 
 export type PackageViolation = {
   kind: ViolationKind;
@@ -52,7 +52,7 @@ export function dedupeViolations(rows: PackageViolation[]): PackageViolation[] {
       continue;
     }
 
-    const kinds = [...new Set(group.map((g) => g.kind))];
+    const kinds = [...new Set(group.map(g => g.kind))];
     const primary = group.reduce((best, cur) => {
       const bp = KIND_PRIORITY[best.kind];
       const cp = KIND_PRIORITY[cur.kind];
@@ -67,16 +67,17 @@ export function dedupeViolations(rows: PackageViolation[]): PackageViolation[] {
       return gs > ms ? g : max;
     }, group[0]);
 
-    const safeRanges = group.map((g) => g.safeRange).filter((r): r is string => Boolean(r));
+    const safeRanges = group.map(g => g.safeRange).filter((r): r is string => Boolean(r));
     out.push({
       ...primary,
       severity: maxSev.severity,
       kinds,
       safeRange: strictestSafeRange(safeRanges) ?? primary.safeRange,
-      cve: group.find((g) => g.cve)?.cve ?? primary.cve,
-      message: kinds.length > 1
-        ? `${primary.package}@${primary.version} — [${kinds.join("+")}] ${primary.message}`
-        : primary.message,
+      cve: group.find(g => g.cve)?.cve ?? primary.cve,
+      message:
+        kinds.length > 1
+          ? `${primary.package}@${primary.version} — [${kinds.join('+')}] ${primary.message}`
+          : primary.message,
     });
   }
   return out;
@@ -99,23 +100,23 @@ export class Registry {
   }
 
   async loadTargets(): Promise<RepoTarget[]> {
-    const mapPath = join(this.skillRoot, "repo-map.json");
-    const map = JSON.parse(await readFile(mapPath, "utf8")) as { targets: RepoTarget[] };
+    const mapPath = join(this.skillRoot, 'repo-map.json');
+    const map = JSON.parse(await readFile(mapPath, 'utf8')) as { targets: RepoTarget[] };
     return map.targets ?? [];
   }
 
   getTarget(targets: RepoTarget[], domainId: string): RepoTarget | null {
     const q = domainId.toLowerCase();
     return (
-      targets.find((t) => (t.id ?? "").toLowerCase() === q)
-      ?? targets.find((t) => (t.name ?? "").toLowerCase() === q)
-      ?? null
+      targets.find(t => (t.id ?? '').toLowerCase() === q) ??
+      targets.find(t => (t.name ?? '').toLowerCase() === q) ??
+      null
     );
   }
 
   async checkPackageVersions(
     packages: Record<string, string>,
-    rules?: SemverRule[],
+    rules?: SemverRule[]
   ): Promise<SemverViolation[]> {
     const policy = await this.loadPolicy();
     const active = rules ?? policy.semver_rules;
@@ -130,7 +131,7 @@ export class Registry {
 
   checkAllowedPackages(
     packages: Record<string, string>,
-    allowed: Record<string, string>,
+    allowed: Record<string, string>
   ): PackageViolation[] {
     const out: PackageViolation[] = [];
     for (const [pkg, version] of Object.entries(packages)) {
@@ -138,11 +139,11 @@ export class Registry {
       if (!range) continue;
       if (SemverMatcher.satisfies(version, range)) continue;
       out.push({
-        kind: "allowed",
+        kind: 'allowed',
         package: pkg,
         version,
         ruleId: `allowed-${pkg}`,
-        severity: "high",
+        severity: 'high',
         message: `${pkg}@${version} below allowed range ${range}`,
         vulnRange: range,
         safeRange: range,
@@ -153,7 +154,7 @@ export class Registry {
 
   checkBlockedPackages(
     packages: Record<string, string>,
-    blocked: Record<string, string>,
+    blocked: Record<string, string>
   ): PackageViolation[] {
     const out: PackageViolation[] = [];
     for (const [pkg, version] of Object.entries(packages)) {
@@ -161,11 +162,11 @@ export class Registry {
       if (!range) continue;
       if (!SemverMatcher.satisfies(version, range)) continue;
       out.push({
-        kind: "blocked",
+        kind: 'blocked',
         package: pkg,
         version,
         ruleId: `blocked-${pkg}`,
-        severity: "critical",
+        severity: 'critical',
         message: `${pkg}@${version} matches blocked range ${range}`,
         vulnRange: range,
       });
@@ -174,8 +175,8 @@ export class Registry {
   }
 
   threatMatchesToViolations(matches: ThreatMatch[]): PackageViolation[] {
-    return matches.map((m) => ({
-      kind: "threat" as const,
+    return matches.map(m => ({
+      kind: 'threat' as const,
       package: m.package,
       version: m.matchedVersion,
       ruleId: m.id,
@@ -188,8 +189,8 @@ export class Registry {
   }
 
   semverViolationsToPackage(rows: SemverViolation[]): PackageViolation[] {
-    return rows.map((v) => ({
-      kind: "semver_rule" as const,
+    return rows.map(v => ({
+      kind: 'semver_rule' as const,
       package: v.package,
       version: v.version,
       ruleId: v.rule.id,
@@ -202,7 +203,7 @@ export class Registry {
 
   async checkAllViolations(
     packages: Record<string, string>,
-    options: { threatFeed?: boolean } = {},
+    options: { threatFeed?: boolean } = {}
   ): Promise<PackageViolation[]> {
     const policy = await this.loadPolicy();
     const rows: PackageViolation[] = [];
@@ -222,11 +223,11 @@ export class Registry {
   async evaluatePackage(
     pkg: string,
     version: string,
-    options: { threatFeed?: boolean } = {},
+    options: { threatFeed?: boolean } = {}
   ): Promise<ReturnType<typeof evaluateAgainstPolicy>> {
     const policy = await this.loadPolicy();
     const violations = await this.checkAllViolations({ [pkg]: version }, options);
-    const pkgViolations = violations.filter((v) => v.package === pkg);
+    const pkgViolations = violations.filter(v => v.package === pkg);
     return evaluateAgainstPolicy(pkg, version, policy, pkgViolations);
   }
 }

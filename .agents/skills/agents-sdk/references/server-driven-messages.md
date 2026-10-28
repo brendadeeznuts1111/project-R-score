@@ -1,15 +1,17 @@
 # Server-Driven Messages (Trigger Patterns)
 
-Fetch https://developers.cloudflare.com/agents/api-reference/trigger-patterns/ for complete documentation.
+Fetch https://developers.cloudflare.com/agents/api-reference/trigger-patterns/
+for complete documentation.
 
-Patterns for server-initiated LLM turns in `AIChatAgent` — from schedules, webhooks, email, or other agents.
+Patterns for server-initiated LLM turns in `AIChatAgent` — from schedules,
+webhooks, email, or other agents.
 
 ## `saveMessages` — Trigger an LLM Turn
 
 ```typescript
-await this.saveMessages((existingMessages) => [
+await this.saveMessages(existingMessages => [
   ...existingMessages,
-  { role: "user", content: "Check for new notifications" }
+  { role: 'user', content: 'Check for new notifications' },
 ]);
 ```
 
@@ -20,13 +22,14 @@ await this.saveMessages((existingMessages) => [
 ```typescript
 await this.persistMessages([
   ...this.messages,
-  { role: "assistant", content: "System note: checked at " + new Date() }
+  { role: 'assistant', content: 'System note: checked at ' + new Date() },
 ]);
 ```
 
 ## `waitUntilStable`
 
-**Always call before `saveMessages` from non-chat contexts** (schedules, webhooks, email):
+**Always call before `saveMessages` from non-chat contexts** (schedules,
+webhooks, email):
 
 ```typescript
 async checkNotifications(payload: unknown, schedule: Schedule) {

@@ -38,13 +38,7 @@
     "kindFilter": null
   },
   "scan": {
-    "roots": [
-      "lib",
-      "tools",
-      "scripts",
-      "tests",
-      "config"
-    ],
+    "roots": ["lib", "tools", "scripts", "tests", "config"],
     "counted": true
   },
   "summary": {

@@ -7,13 +7,7 @@
       "path": "api/http",
       "url": "https://bun.sh/docs/api/http",
       "description": "HTTP client and server utilities for making requests and handling responses",
-      "keywords": [
-        "http",
-        "fetch",
-        "request",
-        "response",
-        "server"
-      ],
+      "keywords": ["http", "fetch", "request", "response", "server"],
       "category": "api"
     },
     "runtime/serve": {
@@ -21,13 +15,7 @@
       "path": "runtime/serve",
       "url": "https://bun.sh/docs/runtime/serve",
       "description": "Built-in HTTP server with WebSocket support and performance optimizations",
-      "keywords": [
-        "serve",
-        "server",
-        "http",
-        "websocket",
-        "performance"
-      ],
+      "keywords": ["serve", "server", "http", "websocket", "performance"],
       "category": "runtime"
     },
     "api/sqlite": {
@@ -35,13 +23,7 @@
       "path": "api/sqlite",
       "url": "https://bun.sh/docs/api/sqlite",
       "description": "Built-in SQLite database with JavaScript API and async support",
-      "keywords": [
-        "sqlite",
-        "database",
-        "sql",
-        "query",
-        "storage"
-      ],
+      "keywords": ["sqlite", "database", "sql", "query", "storage"],
       "category": "api"
     },
     "bundler/linker": {
@@ -49,12 +31,7 @@
       "path": "bundler/linker",
       "url": "https://bun.sh/docs/bundler/linker",
       "description": "Advanced linker configuration for optimal bundle performance",
-      "keywords": [
-        "linker",
-        "bundler",
-        "optimization",
-        "performance"
-      ],
+      "keywords": ["linker", "bundler", "optimization", "performance"],
       "category": "bundler"
     },
     "runtime/fs": {
@@ -62,13 +39,7 @@
       "path": "runtime/fs",
       "url": "https://bun.sh/docs/runtime/fs",
       "description": "High-performance file operations including copyfile and clonefile",
-      "keywords": [
-        "fs",
-        "file",
-        "copyfile",
-        "clonefile",
-        "hardlink"
-      ],
+      "keywords": ["fs", "file", "copyfile", "clonefile", "hardlink"],
       "category": "runtime"
     }
   }

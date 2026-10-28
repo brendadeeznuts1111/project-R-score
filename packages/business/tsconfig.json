@@ -6,9 +6,6 @@
     "incremental": true,
     "tsBuildInfoFile": "../../.cache/tsbuildinfo/packages-business.tsbuildinfo"
   },
-  "include": [
-    "src/**/*",
-    "../../lib/docs/urls.ts"
-  ],
+  "include": ["src/**/*", "../../lib/docs/urls.ts"],
   "exclude": ["node_modules", "dist", "build"]
 }

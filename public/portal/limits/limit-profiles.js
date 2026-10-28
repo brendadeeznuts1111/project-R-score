@@ -291,9 +291,11 @@ function profileCard(profile) {
       <span class="account-profile__metric"><strong>${profile.observations.violations30d}</strong>blocked</span>
     </div>
     <div class="account-profile__footer">
-      <small>${profile.observations.lastObservedAt
-        ? `Observed <time datetime="${esc(profile.observations.lastObservedAt)}" title="${esc(formatDate(profile.observations.lastObservedAt))}">${esc(formatDateRelative(profile.observations.lastObservedAt))}</time>`
-        : 'Not observed'}</small>
+      <small>${
+        profile.observations.lastObservedAt
+          ? `Observed <time datetime="${esc(profile.observations.lastObservedAt)}" title="${esc(formatDate(profile.observations.lastObservedAt))}">${esc(formatDateRelative(profile.observations.lastObservedAt))}</time>`
+          : 'Not observed'
+      }</small>
       <a href="${accountHash(profile.treeNodeId)}" data-account-link="${esc(profile.treeNodeId)}">Inspect ${profile.traces.length} ${pluralWord(profile.traces.length, 'event')} →</a>
     </div>
   </article>`;

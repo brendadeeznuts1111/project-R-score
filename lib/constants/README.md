@@ -2,9 +2,9 @@
 
 Shared constants barrel.
 
-Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API surface.
+Inventory: [`../README.md`](../README.md). Do not treat nested dumps as new API
+surface.
 
-| Entry |
-|-------|
+| Entry                    |
+| ------------------------ |
 | [`index.ts`](./index.ts) |
-

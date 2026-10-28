@@ -4,7 +4,7 @@ severity: hint
 message: Hardcoded https fetch URL — prefer env config or shared endpoint constant
 rule:
   kind: call_expression
-  regex: 'https://'
+  regex: "https://"
   has:
     field: function
-    regex: 'fetch$'
+    regex: "fetch$"

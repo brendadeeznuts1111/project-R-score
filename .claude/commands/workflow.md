@@ -1,9 +1,11 @@
 ---
-description: Run ast-grep workflow loop with semver/network scanners and effect plugins
+description:
+  Run ast-grep workflow loop with semver/network scanners and effect plugins
 user_invocable: true
 ---
 
-Start or plan the continuous security workflow loop (semver + network scanners, drift detection, effect handlers).
+Start or plan the continuous security workflow loop (semver + network scanners,
+drift detection, effect handlers).
 
 ## Plan (dry-run)
 

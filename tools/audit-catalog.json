@@ -23,14 +23,8 @@
         "mediaType": "application/x-ndjson"
       },
       "discoveredIn": "2026-07-22T05-50-48-875Z",
-      "related": [
-        "kalshi-shortlist-diversity",
-        "sha3-integrity",
-        "nagata-map"
-      ],
-      "relatedDocs": [
-        "SHA3-256"
-      ],
+      "related": ["kalshi-shortlist-diversity", "sha3-integrity", "nagata-map"],
+      "relatedDocs": ["SHA3-256"],
       "meta": {
         "buildPin": "0.2.0",
         "emitter": "kalshi-bot-research"
@@ -51,14 +45,8 @@
         "mediaType": "application/x-ndjson"
       },
       "discoveredIn": "2026-07-22T05-50-48-875Z",
-      "related": [
-        "kalshi-shortlist-diversity",
-        "sha3-integrity",
-        "nagata-map"
-      ],
-      "relatedDocs": [
-        "SHA3-256"
-      ],
+      "related": ["kalshi-shortlist-diversity", "sha3-integrity", "nagata-map"],
+      "relatedDocs": ["SHA3-256"],
       "meta": {
         "buildPin": "0.2.0",
         "emitter": "kalshi-bot-research"
@@ -79,14 +67,8 @@
         "mediaType": "application/x-ndjson"
       },
       "discoveredIn": "2026-07-22T06-19-51-053Z",
-      "related": [
-        "kalshi-shortlist-diversity",
-        "sha3-integrity",
-        "nagata-map"
-      ],
-      "relatedDocs": [
-        "SHA3-256"
-      ],
+      "related": ["kalshi-shortlist-diversity", "sha3-integrity", "nagata-map"],
+      "relatedDocs": ["SHA3-256"],
       "meta": {
         "buildPin": "0.2.0",
         "emitter": "kalshi-bot-research"
@@ -108,14 +90,8 @@
       },
       "since": "2026-07-21",
       "discoveredIn": "1.4.0",
-      "related": [
-        "nagata-map",
-        "jacobian-nullspace",
-        "sha3-integrity"
-      ],
-      "relatedDocs": [
-        "SHA3-256"
-      ],
+      "related": ["nagata-map", "jacobian-nullspace", "sha3-integrity"],
+      "relatedDocs": ["SHA3-256"],
       "meta": {
         "buildPin": "1.4.0",
         "emitter": "audit-emit-stub"
@@ -175,12 +151,8 @@
       "title": "Kalshi bot shortlist diversity constraints",
       "description": "Portfolio selection over scored repos: size 12, max 4 per strategy tag, min 1 per major tag (market_making, arb, sports, news_event, momentum, mean_reversion, llm_ensemble), TS/JS tiebreak within 5 points. Operates above single-repo RepoReport — see docs/FACTOR_STACK.md shortlist scope.",
       "publishedAt": "2026-07-22",
-      "related": [
-        "sha3-integrity"
-      ],
-      "relatedDocs": [
-        "SHA3-256"
-      ],
+      "related": ["sha3-integrity"],
+      "relatedDocs": ["SHA3-256"],
       "meta": {
         "buildPin": "0.2.0",
         "emitter": "kalshi-bot-research"
@@ -225,9 +197,7 @@
         "jacobian-nullspace",
         "nagata-map"
       ],
-      "relatedDocs": [
-        "SHA3-256"
-      ],
+      "relatedDocs": ["SHA3-256"],
       "meta": {
         "buildPin": "1.4.0",
         "emitter": "audit-curated"

@@ -43,12 +43,17 @@ export function applyDomainFusion<T extends FusionInputHit>(
 ): FusionAppliedHit<T>[] {
   if (hits.length === 0) return [];
 
-  const fusionWeight = clamp01(Number.isFinite(options.fusionWeight) ? Number(options.fusionWeight) : 0.35);
-  const maxSearchScore = Math.max(1, ...hits.map((hit) => Number.isFinite(hit.score) ? hit.score : 0));
+  const fusionWeight = clamp01(
+    Number.isFinite(options.fusionWeight) ? Number(options.fusionWeight) : 0.35
+  );
+  const maxSearchScore = Math.max(
+    1,
+    ...hits.map(hit => (Number.isFinite(hit.score) ? hit.score : 0))
+  );
   const domainScoreNorm = normalizeDomainScore(summary.overall.score);
 
   return hits
-    .map((hit) => {
+    .map(hit => {
       const searchScoreNorm = clamp01((Number(hit.score) || 0) / maxSearchScore);
       const reasons: string[] = [];
       let penalties = 0;
@@ -71,16 +76,19 @@ export function applyDomainFusion<T extends FusionInputHit>(
 
       const strictP95Ms = Number(summary.latency?.strictP95Ms);
       const strictThreshold = Number(options.strictP95Threshold);
-      if (Number.isFinite(strictP95Ms) && Number.isFinite(strictThreshold) && strictP95Ms > strictThreshold) {
+      if (
+        Number.isFinite(strictP95Ms) &&
+        Number.isFinite(strictThreshold) &&
+        strictP95Ms > strictThreshold
+      ) {
         penalties += 0.15;
         reasons.push(`strict p95 penalty -0.15 (${strictP95Ms}ms > ${strictThreshold}ms)`);
       }
 
       const blended = searchScoreNorm * (1 - fusionWeight) + domainScoreNorm * fusionWeight;
       const preCapScore = clamp01(blended - penalties);
-      const fusionScore = summary.overall.status === 'critical'
-        ? Math.min(preCapScore, 0.45)
-        : preCapScore;
+      const fusionScore =
+        summary.overall.status === 'critical' ? Math.min(preCapScore, 0.45) : preCapScore;
 
       if (reasons.length === 0) {
         reasons.push('no penalties applied');

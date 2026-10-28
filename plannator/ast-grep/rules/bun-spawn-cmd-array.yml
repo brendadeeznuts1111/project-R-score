@@ -2,7 +2,7 @@ id: bun-spawn-cmd-array
 language: TypeScript
 severity: error
 message: "Bun.spawn expects an options object with cmd as a string[]"
-note: "Signature is Bun.spawn({ cmd: [\"echo\", \"hello\"], ... }) — see docs/references/bun-api-reference.md"
+note: 'Signature is Bun.spawn({ cmd: ["echo", "hello"], ... }) — see docs/references/bun-api-reference.md'
 ignores:
   - ".agents/**"
 rule:

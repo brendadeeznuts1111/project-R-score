@@ -63,8 +63,7 @@ function render(board, source) {
   const total = enh.total ?? 0;
   const mm = shadow.summary?.mismatches ?? 0;
   const integrityOk =
-    !Array.isArray(board.integrity?.checks) ||
-    board.integrity.checks.every(c => c?.ok !== false);
+    !Array.isArray(board.integrity?.checks) || board.integrity.checks.every(c => c?.ok !== false);
   const ok = total > 0 ? passed === total && mm === 0 && integrityOk : mm === 0 && integrityOk;
 
   banner.className = ok ? 'cmp-banner' : 'cmp-banner warn';
@@ -97,7 +96,8 @@ function render(board, source) {
       if (el) el.hidden = !el.hidden;
     });
   });
-  document.getElementById('enh-sig').textContent = `sha256 ${enh.signature ?? '—'} · depth ${enh.consoleDepth ?? '—'}`;
+  document.getElementById('enh-sig').textContent =
+    `sha256 ${enh.signature ?? '—'} · depth ${enh.consoleDepth ?? '—'}`;
 
   const shBody = document.querySelector('#shadow-table tbody');
   shBody.innerHTML = (shadow.rows ?? [])

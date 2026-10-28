@@ -3,11 +3,7 @@
   "lastUpdated": "2026-08-05T15:28:04.252Z",
   "packages": {
     "event-store": {
-      "versions": [
-        "1.0.0",
-        "1.1.0",
-        "2.0.0-beta"
-      ],
+      "versions": ["1.0.0", "1.1.0", "2.0.0-beta"],
       "dist-tags": {
         "latest": "1.1.0",
         "beta": "2.0.0-beta"
@@ -19,11 +15,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Event sourcing and CQRS primitives for sports trading pipelines",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "trading"
-          ],
+          "tags": ["event-sourcing", "cqrs", "trading"],
           "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
           "publishedAt": "2026-07-15T10:30:00Z",
           "publisher": "factory-cli",
@@ -40,12 +32,7 @@
           "version": "1.1.0",
           "type": "library",
           "description": "Event sourcing with snapshot support and R2 persistence",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "r2",
-            "snapshots"
-          ],
+          "tags": ["event-sourcing", "cqrs", "r2", "snapshots"],
           "publishedAt": "2026-07-20T14:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -61,12 +48,7 @@
           "version": "2.0.0-beta",
           "type": "library",
           "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
-          "tags": [
-            "event-sourcing",
-            "multi-tenant",
-            "streaming",
-            "beta"
-          ],
+          "tags": ["event-sourcing", "multi-tenant", "streaming", "beta"],
           "publishedAt": "2026-07-22T09:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -79,10 +61,7 @@
       }
     },
     "bet-ticker": {
-      "versions": [
-        "1.0.0",
-        "1.2.0"
-      ],
+      "versions": ["1.0.0", "1.2.0"],
       "dist-tags": {
         "latest": "1.2.0"
       },
@@ -93,11 +72,7 @@
           "version": "1.0.0",
           "type": "worker",
           "description": "Cloudflare Worker for live wager broadcast via WebSocket",
-          "tags": [
-            "worker",
-            "websocket",
-            "betting"
-          ],
+          "tags": ["worker", "websocket", "betting"],
           "publishedAt": "2026-06-01T08:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -113,12 +88,7 @@
           "version": "1.2.0",
           "type": "worker",
           "description": "Bet Ticker Worker v1.2 with Durable Object coordination and Zod validation",
-          "tags": [
-            "worker",
-            "websocket",
-            "durable-object",
-            "zod"
-          ],
+          "tags": ["worker", "websocket", "durable-object", "zod"],
           "publishedAt": "2026-07-18T16:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -131,9 +101,7 @@
       }
     },
     "odds-engine": {
-      "versions": [
-        "0.7.0"
-      ],
+      "versions": ["0.7.0"],
       "dist-tags": {
         "latest": "0.7.0"
       },
@@ -144,11 +112,7 @@
           "version": "0.7.0",
           "type": "library",
           "description": "Real-time odds computation with Bayesian adjustment and market normalization",
-          "tags": [
-            "odds",
-            "bayesian",
-            "trading"
-          ],
+          "tags": ["odds", "bayesian", "trading"],
           "publishedAt": "2026-05-10T12:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -161,10 +125,7 @@
       }
     },
     "cascade-mover": {
-      "versions": [
-        "3.0.0",
-        "3.1.1"
-      ],
+      "versions": ["3.0.0", "3.1.1"],
       "dist-tags": {
         "latest": "3.1.1",
         "stable": "3.0.0"
@@ -176,11 +137,7 @@
           "version": "3.1.1",
           "type": "project",
           "description": "Global Liquidity & Predictive Risk Command Center — 6-indicator confidence engine",
-          "tags": [
-            "risk",
-            "liquidity",
-            "confidence-engine"
-          ],
+          "tags": ["risk", "liquidity", "confidence-engine"],
           "publishedAt": "2026-07-21T22:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -196,10 +153,7 @@
           "version": "3.0.0",
           "type": "project",
           "description": "Cascade Mover v3 stable — recursive multi-market cascade detection",
-          "tags": [
-            "risk",
-            "stable"
-          ],
+          "tags": ["risk", "stable"],
           "publishedAt": "2026-04-01T00:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -212,9 +166,7 @@
       }
     },
     "sports-terminal-os": {
-      "versions": [
-        "5.2.0"
-      ],
+      "versions": ["5.2.0"],
       "dist-tags": {
         "latest": "5.2.0"
       },
@@ -225,11 +177,7 @@
           "version": "5.2.0",
           "type": "project",
           "description": "Partner Profile OS for Sports Terminal v5.2 — TOML templates, PartnerGateway kernel",
-          "tags": [
-            "partner",
-            "toml",
-            "gateway"
-          ],
+          "tags": ["partner", "toml", "gateway"],
           "publishedAt": "2026-07-22T18:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -242,9 +190,7 @@
       }
     },
     "factory-cli": {
-      "versions": [
-        "0.1.0"
-      ],
+      "versions": ["0.1.0"],
       "dist-tags": {
         "latest": "0.1.0"
       },
@@ -271,9 +217,7 @@
       }
     },
     "kimi-toolchain": {
-      "versions": [
-        "2.1.0"
-      ],
+      "versions": ["2.1.0"],
       "dist-tags": {
         "latest": "2.1.0"
       },
@@ -284,11 +228,7 @@
           "version": "2.1.0",
           "type": "cli-tool",
           "description": "Kimi governance and doctor toolchain for harness health checks",
-          "tags": [
-            "governance",
-            "doctor",
-            "harness"
-          ],
+          "tags": ["governance", "doctor", "harness"],
           "publishedAt": "2026-07-19T08:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -301,9 +241,7 @@
       }
     },
     "quantum-domain-ops": {
-      "versions": [
-        "0.1.0"
-      ],
+      "versions": ["0.1.0"],
       "dist-tags": {
         "latest": "0.1.0"
       },
@@ -314,11 +252,7 @@
           "version": "0.1.0",
           "type": "library",
           "description": "Protocols for operating QuantumDomain instances — state collapse, entanglement, coherence monitoring",
-          "tags": [
-            "quantum",
-            "state-management",
-            "experimental"
-          ],
+          "tags": ["quantum", "state-management", "experimental"],
           "readme": "# Quantum Domain Ops\n\nExperimental quantum state management.\n\n> ⚠️ Requires Bun ≥1.3.0 with `--experimental-quantum` flag.\n\n```ts\nimport { QuantumDomain } from '@factorywager/quantum-domain-ops';\nconst domain = new QuantumDomain({ qubits: 8 });\nawait domain.collapse('entangled');\n```",
           "publishedAt": "2026-07-20T03:00:00Z",
           "publisher": "factory-cli",
@@ -332,9 +266,7 @@
       }
     },
     "test-plugin": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0",
         "stable": "1.0.0"
@@ -346,10 +278,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Test plugin",
-          "tags": [
-            "latest",
-            "stable"
-          ],
+          "tags": ["latest", "stable"],
           "publishedAt": "2026-07-23T17:14:57.086Z",
           "publisher": "api",
           "storage": {
@@ -362,9 +291,7 @@
       }
     },
     "test-npm-pkg": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -387,10 +314,7 @@
       }
     },
     "@factorywager/bun-test": {
-      "versions": [
-        "0.1.0",
-        "0.2.0"
-      ],
+      "versions": ["0.1.0", "0.2.0"],
       "dist-tags": {
         "latest": "0.2.0",
         "beta": "0.2.0"
@@ -417,10 +341,7 @@
           "version": "0.2.0",
           "type": "library",
           "description": "Updated test",
-          "tags": [
-            "latest",
-            "beta"
-          ],
+          "tags": ["latest", "beta"],
           "publishedAt": "2026-07-23T17:23:18.841Z",
           "publisher": "api",
           "storage": {
@@ -433,9 +354,7 @@
       }
     },
     "@factorywager/final-test": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -458,10 +377,7 @@
       }
     },
     "@factory/health-check": {
-      "versions": [
-        "1.0.0",
-        "1.1.0"
-      ],
+      "versions": ["1.0.0", "1.1.0"],
       "dist-tags": {
         "latest": "1.1.0",
         "stable": "1.1.0"
@@ -473,9 +389,7 @@
           "version": "1.0.0",
           "type": "cli-tool",
           "description": "Registry health check CLI",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T17:24:45.991Z",
           "publisher": "api",
           "storage": {
@@ -494,10 +408,7 @@
           "version": "1.1.0",
           "type": "cli-tool",
           "description": "Updated health check",
-          "tags": [
-            "latest",
-            "stable"
-          ],
+          "tags": ["latest", "stable"],
           "publishedAt": "2026-07-23T17:26:35.935Z",
           "publisher": "api",
           "storage": {
@@ -510,9 +421,7 @@
       }
     },
     "@factorywager/registry-client": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -536,9 +445,7 @@
       }
     },
     "formdata-test": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -549,9 +456,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "FormData per Bun docs",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T19:29:06.047Z",
           "publisher": "api",
           "storage": {
@@ -564,9 +469,7 @@
       }
     },
     "__formdata-test": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0",
         "formdata-test": "1.0.0"
@@ -578,10 +481,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "FormData: Markdown doc",
-          "tags": [
-            "latest",
-            "formdata-test"
-          ],
+          "tags": ["latest", "formdata-test"],
           "publishedAt": "2026-07-23T19:30:36.020Z",
           "publisher": "api",
           "storage": {
@@ -594,9 +494,7 @@
       }
     },
     "sdk-test-pkg": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -607,9 +505,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "SDK publish test",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T22:45:20.173Z",
           "publisher": "api",
           "storage": {
@@ -622,9 +518,7 @@
       }
     },
     "@factorywager/tennis-hq-ssot": {
-      "versions": [
-        "1.4.0"
-      ],
+      "versions": ["1.4.0"],
       "dist-tags": {
         "latest": "1.4.0"
       },
@@ -654,10 +548,7 @@
       }
     },
     "@tennis-hq/ssot": {
-      "versions": [
-        "1.5.0",
-        "1.4.0"
-      ],
+      "versions": ["1.5.0", "1.4.0"],
       "dist-tags": {
         "latest": "1.5.0"
       },
@@ -705,13 +596,7 @@
       }
     },
     "@factorywager/bookmakers": {
-      "versions": [
-        "0.4.1",
-        "0.4.0",
-        "0.3.0",
-        "0.2.0",
-        "0.1.0"
-      ],
+      "versions": ["0.4.1", "0.4.0", "0.3.0", "0.2.0", "0.1.0"],
       "dist-tags": {
         "latest": "0.4.1"
       },
@@ -824,9 +709,7 @@
       }
     },
     "factorywager-enterprise": {
-      "versions": [
-        "5.2.0+build.20260723"
-      ],
+      "versions": ["5.2.0+build.20260723"],
       "dist-tags": {
         "latest": "5.2.0+build.20260723"
       },

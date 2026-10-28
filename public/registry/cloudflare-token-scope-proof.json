@@ -19,9 +19,7 @@
     "arch": "arm64",
     "channelResolveSource": "runtime",
     "githubAuthSource": "none",
-    "subsystems": [
-      "other"
-    ]
+    "subsystems": ["other"]
   },
   "pins": {
     "accountId": "7a470541a704caaf91e71efccc78fd36",

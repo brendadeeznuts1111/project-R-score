@@ -15,9 +15,7 @@
     "failedFatal": 0,
     "failedWarn": 1,
     "autoFixableFailed": 1,
-    "suggested": [
-      "bun run vault:health:bake"
-    ]
+    "suggested": ["bun run vault:health:bake"]
   },
   "byGroup": {
     "linker": {

@@ -69,7 +69,9 @@ function json(data: object, status = 200): Response {
   });
 }
 
-function parseHours(raw: string | null): { ok: true; hours: number } | { ok: false; error: string } {
+function parseHours(
+  raw: string | null
+): { ok: true; hours: number } | { ok: false; error: string } {
   if (raw == null || raw.trim() === '') return { ok: true, hours: 24 };
   const n = Number(raw);
   if (!Number.isFinite(n) || n <= 0) {

@@ -1,22 +1,22 @@
 # Concept lifecycle & data flow
 
 Canonical map of how a concept moves from **definition → wire parse →
-inventory/graph → boards → audit**. Use this when you add, deprecate, or
-consume semantic vocabulary.
+inventory/graph → boards → audit**. Use this when you add, deprecate, or consume
+semantic vocabulary.
 
 Related:
 
-| Role | Path |
-| --- | --- |
-| Wire boundary thesis | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md) |
-| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md) |
-| Portal UI foundation | [`docs/portal-foundation.md`](portal-foundation.md) |
-| Partner limits + E3 contract | [`docs/harness/tenants/partner-limits.md`](harness/tenants/partner-limits.md#e3-wire-contract-pending) |
-| Agent / limit-row integration | [`docs/harness/tenants/agents.md`](harness/tenants/agents.md) |
-| Vocabulary SSOT | [`lib/portal/semantic-vocabulary.ts`](../lib/portal/semantic-vocabulary.ts) |
-| Limit-row boundary parser | [`lib/operations/limits/limit-row-wire.ts`](../lib/operations/limits/limit-row-wire.ts) |
-| Board slug SSOT | [`lib/http/portal-board-slugs.ts`](../lib/http/portal-board-slugs.ts) |
-| Page identity catalog | [`lib/portal/page-concepts.ts`](../lib/portal/page-concepts.ts) |
+| Role                               | Path                                                                                                   |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Wire boundary thesis               | [`docs/WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md)                                                            |
+| Domain → concept → shape → surface | [`docs/DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md)                                              |
+| Portal UI foundation               | [`docs/portal-foundation.md`](portal-foundation.md)                                                    |
+| Partner limits + E3 contract       | [`docs/harness/tenants/partner-limits.md`](harness/tenants/partner-limits.md#e3-wire-contract-pending) |
+| Agent / limit-row integration      | [`docs/harness/tenants/agents.md`](harness/tenants/agents.md)                                          |
+| Vocabulary SSOT                    | [`lib/portal/semantic-vocabulary.ts`](../lib/portal/semantic-vocabulary.ts)                            |
+| Limit-row boundary parser          | [`lib/operations/limits/limit-row-wire.ts`](../lib/operations/limits/limit-row-wire.ts)                |
+| Board slug SSOT                    | [`lib/http/portal-board-slugs.ts`](../lib/http/portal-board-slugs.ts)                                  |
+| Page identity catalog              | [`lib/portal/page-concepts.ts`](../lib/portal/page-concepts.ts)                                        |
 
 ---
 
@@ -31,20 +31,20 @@ the same concept list.
 
 ### Key fields
 
-| Field | Role |
-| --- | --- |
-| `id` | Stable key (e.g. `ops.limits.lifecycle_state`, `ui.filter.partnerId`) |
-| `namespace` | Top segment family (`ops`, `ui`, `api`, `page`, …) |
-| `domain` | Business domain (`operations`, `portal`, `compliance`, …) |
-| `group` | Optional subgroup for clustering / graph hubs |
-| `status` | `active` (default) or `deprecated` |
-| `replacedBy` | Required honesty target when `status: 'deprecated'` (metadata hubs may omit) |
-| `deprecatedAt` | ISO date when deprecation landed |
-| `seeAlso` | Semantic links (graph edges; classified by domain/group/page) |
-| `derivesFrom` | Upstream concept ids for derived metrics (E3-ready; validate when present) |
-| `values` | Enum literals when the concept is a closed set |
-| `correlationId` | PR / change that introduced the concept (`PR#…` or `legacy`) |
-| `addedAt` | Introduction date |
+| Field           | Role                                                                         |
+| --------------- | ---------------------------------------------------------------------------- |
+| `id`            | Stable key (e.g. `ops.limits.lifecycle_state`, `ui.filter.partnerId`)        |
+| `namespace`     | Top segment family (`ops`, `ui`, `api`, `page`, …)                           |
+| `domain`        | Business domain (`operations`, `portal`, `compliance`, …)                    |
+| `group`         | Optional subgroup for clustering / graph hubs                                |
+| `status`        | `active` (default) or `deprecated`                                           |
+| `replacedBy`    | Required honesty target when `status: 'deprecated'` (metadata hubs may omit) |
+| `deprecatedAt`  | ISO date when deprecation landed                                             |
+| `seeAlso`       | Semantic links (graph edges; classified by domain/group/page)                |
+| `derivesFrom`   | Upstream concept ids for derived metrics (E3-ready; validate when present)   |
+| `values`        | Enum literals when the concept is a closed set                               |
+| `correlationId` | PR / change that introduced the concept (`PR#…` or `legacy`)                 |
+| `addedAt`       | Introduction date                                                            |
 
 Surface binding maps (chrome inventories) live beside the vocabulary — e.g.
 `PARTNER_HISTORY_SURFACE_CONCEPTS`, `LIMIT_FIELD_CONCEPTS` — and are what
@@ -55,8 +55,8 @@ dependencies.
 
 - Every `seeAlso`, `derivesFrom`, and `replacedBy` target must resolve to an
   existing concept id (checked by relation validators / `concept:audit`).
-- Deprecations keep the old id for referential history; **new chrome** binds
-  the replacement (`ui.*` / successor), not the deprecated stub.
+- Deprecations keep the old id for referential history; **new chrome** binds the
+  replacement (`ui.*` / successor), not the deprecated stub.
 - Do **not** invent `derivesFrom` edges in the registry until real wire samples
   exist (see E3 below).
 
@@ -76,11 +76,11 @@ parseLimitRowWire(input: unknown): ParsedLimitRowWire
 // derivesFrom?: readonly string[]  // glossary concept keys
 ```
 
-| Input | Behavior |
-| --- | --- |
-| Field absent | Omitted (`undefined`) — safe incremental deploy |
-| Valid enum / string[] | Parsed into `ParsedLimitRowWire` |
-| Invalid present value | **Throw** at the boundary |
+| Input                 | Behavior                                        |
+| --------------------- | ----------------------------------------------- |
+| Field absent          | Omitted (`undefined`) — safe incremental deploy |
+| Valid enum / string[] | Parsed into `ParsedLimitRowWire`                |
+| Invalid present value | **Throw** at the boundary                       |
 
 Rules of engagement:
 
@@ -100,13 +100,13 @@ and [`agents.md`](harness/tenants/agents.md).
 
 Multiple bakes consume the vocabulary. They are **not** interchangeable:
 
-| Command | Primary output | Role |
-| --- | --- | --- |
-| `bun run concepts:bake` | `public/registry/concepts-state.json` | Inventory / usage board (`/portal/concepts/`) |
-| `bun run glossary:portal` | `public/registry/domain-glossary.json` | Human glossary projection |
-| `bun run glossary:portal:check` | (check only) | Fail if glossary bake is stale |
-| `bun run concept:graph` / `concept:graph:bake` | graph JSON / board assets | `seeAlso` (+ future `derivesFrom`) edges, domain hubs |
-| Surface maps in vocabulary | in-module const objects | Chrome inventories for boards |
+| Command                                        | Primary output                         | Role                                                  |
+| ---------------------------------------------- | -------------------------------------- | ----------------------------------------------------- |
+| `bun run concepts:bake`                        | `public/registry/concepts-state.json`  | Inventory / usage board (`/portal/concepts/`)         |
+| `bun run glossary:portal`                      | `public/registry/domain-glossary.json` | Human glossary projection                             |
+| `bun run glossary:portal:check`                | (check only)                           | Fail if glossary bake is stale                        |
+| `bun run concept:graph` / `concept:graph:bake` | graph JSON / board assets              | `seeAlso` (+ future `derivesFrom`) edges, domain hubs |
+| Surface maps in vocabulary                     | in-module const objects                | Chrome inventories for boards                         |
 
 Graph schema is currently **v5** (`lib/portal/concept-graph.ts`); the portal
 board shell at `/portal/concepts/graph/` must stay aligned.
@@ -125,14 +125,14 @@ Informational sections still list **unused** (including deprecated stubs) and
 
 ## 4. Surfaces and boards
 
-| Layer | SSOT |
-| --- | --- |
-| Board directory slugs | [`PORTAL_BOARD_SLUGS`](../lib/http/portal-board-slugs.ts) |
-| Page concepts | [`PORTAL_PAGE_CONCEPT_DEFINITIONS`](../lib/portal/page-concepts.ts) |
-| Dashboard / public route catalog | [`PORTAL_DASHBOARD_ROUTES`](../lib/http/public-routes.ts) |
-| Trailing-slash redirects | `public/_redirects` |
-| Serve wiring | `portalBoardRoutes` + slugs in `scripts/serve-public.ts` |
-| Chrome / nav | `lib/portal/chrome-catalog.ts` |
+| Layer                            | SSOT                                                                |
+| -------------------------------- | ------------------------------------------------------------------- |
+| Board directory slugs            | [`PORTAL_BOARD_SLUGS`](../lib/http/portal-board-slugs.ts)           |
+| Page concepts                    | [`PORTAL_PAGE_CONCEPT_DEFINITIONS`](../lib/portal/page-concepts.ts) |
+| Dashboard / public route catalog | [`PORTAL_DASHBOARD_ROUTES`](../lib/http/public-routes.ts)           |
+| Trailing-slash redirects         | `public/_redirects`                                                 |
+| Serve wiring                     | `portalBoardRoutes` + slugs in `scripts/serve-public.ts`            |
+| Chrome / nav                     | `lib/portal/chrome-catalog.ts`                                      |
 
 **Registration rule:** a directory `public/portal/<slug>/index.html` must have:
 
@@ -182,7 +182,8 @@ board HTML/JS (scraped) or explicitly allowlisted for planned chrome.
 ## 6. Deprecating a concept — checklist
 
 1. Set `status: 'deprecated'`, `replacedBy: '<successor>'`, `deprecatedAt`.
-2. Prefix the description with `Deprecated: use <successor>. …` (repo convention).
+2. Prefix the description with `Deprecated: use <successor>. …` (repo
+   convention).
 3. Retarget surface maps and HTML to the successor (E1/Option 3 pattern for
    `ops.filter.*` → `ui.filter.*`).
 4. Keep the deprecated id in the vocabulary so old links/history still resolve.
@@ -195,10 +196,10 @@ board HTML/JS (scraped) or explicitly allowlisted for planned chrome.
 
 Backend is expected to return on limit-change / raise rows:
 
-| Field | Concept | Notes |
-| --- | --- | --- |
+| Field            | Concept                      | Notes                                                                               |
+| ---------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
 | `lifecycleState` | `ops.limits.lifecycle_state` | Enum: `pending` · `active` · `expired` · `superseded` — **not** `monitoring_status` |
-| `derivesFrom` | edges to upstream ids | e.g. `ops.limits.effective_limit`, `api.limit_cache` |
+| `derivesFrom`    | edges to upstream ids        | e.g. `ops.limits.effective_limit`, `api.limit_cache`                                |
 
 Until those fields appear on real responses:
 
@@ -208,8 +209,8 @@ Until those fields appear on real responses:
   `api.limit_cache`, `api.bookmaker_feed`) with `seeAlso` to downstream
   concepts.
 
-When wire samples land: parse → bind columns/filters → bake graph edges →
-strict audit. Full agent-facing contract:
+When wire samples land: parse → bind columns/filters → bake graph edges → strict
+audit. Full agent-facing contract:
 [`docs/harness/tenants/agents.md`](harness/tenants/agents.md).
 
 ---

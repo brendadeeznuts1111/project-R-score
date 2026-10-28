@@ -2,29 +2,34 @@
 
 > FactoryWager **AuditFinding** — sibling SSOT (not BunToken / bun.com).
 
-| Field | Value |
-|-------|-------|
-| id | `kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot` |
-| kind | `AuditFinding` |
-| status | `confirmed` |
-| publishedAt | 2026-07-22 |
-| since | _unknown_ |
-| discoveredIn | 2026-07-22T06-19-51-053Z |
-| mitigatedIn | _n/a_ |
-| docs | [`docs/audit/findings/kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot.md`](./kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot.md) |
+| Field        | Value                                                                                                                                                                      |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| id           | `kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot`                                                                                                     |
+| kind         | `AuditFinding`                                                                                                                                                             |
+| status       | `confirmed`                                                                                                                                                                |
+| publishedAt  | 2026-07-22                                                                                                                                                                 |
+| since        | _unknown_                                                                                                                                                                  |
+| discoveredIn | 2026-07-22T06-19-51-053Z                                                                                                                                                   |
+| mitigatedIn  | _n/a_                                                                                                                                                                      |
+| docs         | [`docs/audit/findings/kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot.md`](./kalshi-repo-richardfeynmanenthusiast-kalshi-polymarket-arbitrage-bot.md) |
 
 ## Description
 
-Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order paths present — candidate for lifting signing and execution modules separately. Dry-run default detected — safe to sandbox. Watchlist tier — below high-value export threshold; verify before lift. Triaged 2026-08-05 audit-gap batch: confirmed as watchlist arb/market_making diversity row; re-score before any module lift.
+Quality score 69.5/100. Strategy: market_making, arb, news_event. Auth + order
+paths present — candidate for lifting signing and execution modules separately.
+Dry-run default detected — safe to sandbox. Watchlist tier — below high-value
+export threshold; verify before lift. Triaged 2026-08-05 audit-gap batch:
+confirmed as watchlist arb/market_making diversity row; re-score before any
+module lift.
 
 ## Evidence
 
-| Field | Value |
-|-------|-------|
-| path | [`tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson`](../../../tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson) |
-| algorithm | `sha3-256` |
-| digest | `e3ba946f0e10f7927086bd0a996aedce7dbb7d80ebd614fc9bc9f29eb443eb57` |
-| mediaType | `application/x-ndjson` |
+| Field     | Value                                                                                                                                                                                                   |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| path      | [`tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson`](../../../tools/audit-evidence/kalshi/richardfeynmanenthusiast__kalshi-polymarket-arbitrage-bot.ndjson) |
+| algorithm | `sha3-256`                                                                                                                                                                                              |
+| digest    | `e3ba946f0e10f7927086bd0a996aedce7dbb7d80ebd614fc9bc9f29eb443eb57`                                                                                                                                      |
+| mediaType | `application/x-ndjson`                                                                                                                                                                                  |
 
 Verify:
 

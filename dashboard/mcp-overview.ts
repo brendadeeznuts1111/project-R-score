@@ -2,7 +2,7 @@
 
 /**
  * 🏭 FactoryWager MCP System Dashboard
- * 
+ *
  * Comprehensive monitoring and management interface for the entire MCP ecosystem
  * including authentication, R2 storage, usage analytics, and system health.
  */
@@ -71,8 +71,9 @@ class MCPSystemDashboard {
     try {
       const tokens = masterTokenManager.listTokens();
       const auditLogs = masterTokenManager.getAuditLogs(10);
-      const recentFailures = auditLogs.filter(log => !log.success && 
-        new Date(log.timestamp) > new Date(Date.now() - 5 * 60 * 1000)).length;
+      const recentFailures = auditLogs.filter(
+        log => !log.success && new Date(log.timestamp) > new Date(Date.now() - 5 * 60 * 1000)
+      ).length;
 
       statuses.push({
         component: '🔐 Master Token System',
@@ -82,15 +83,15 @@ class MCPSystemDashboard {
         metrics: {
           activeTokens: tokens.length,
           recentFailures,
-          totalAudits: auditLogs.length
-        }
+          totalAudits: auditLogs.length,
+        },
       });
     } catch (error) {
       statuses.push({
         component: '🔐 Master Token System',
         status: 'error',
         message: `Error: ${error.message}`,
-        lastChecked: now
+        lastChecked: now,
       });
     }
 
@@ -98,33 +99,31 @@ class MCPSystemDashboard {
     try {
       const configStatus = r2MCPIntegration.getConfigStatus();
       const stats = await r2MCPIntegration.getBucketStats();
-      
+
       statuses.push({
         component: '☁️ R2 Storage Integration',
         status: configStatus.configured ? 'healthy' : 'warning',
-        message: configStatus.configured 
+        message: configStatus.configured
           ? `Connected: ${stats.objectCount} objects (${stats.totalSize})`
           : 'Not configured - using mock data',
         lastChecked: now,
         metrics: {
           configured: configStatus.configured,
           bucketName: configStatus.bucketName,
-          ...stats
-        }
+          ...stats,
+        },
       });
     } catch (error) {
       statuses.push({
         component: '☁️ R2 Storage Integration',
         status: 'warning',
         message: `Connection issue: ${error.message}`,
-        lastChecked: now
+        lastChecked: now,
       });
     }
 
     // Check MCP Servers
-    const mcpServers = [
-      { name: '📚 Bun MCP Server', script: 'lib/mcp/bun-mcp-server.ts' }
-    ];
+    const mcpServers = [{ name: '📚 Bun MCP Server', script: 'lib/mcp/bun-mcp-server.ts' }];
 
     for (const server of mcpServers) {
       try {
@@ -135,14 +134,14 @@ class MCPSystemDashboard {
           status: serverExists ? 'healthy' : 'error',
           message: serverExists ? 'Server script accessible' : 'Server script not found',
           lastChecked: now,
-          metrics: { script: server.script, accessible: serverExists }
+          metrics: { script: server.script, accessible: serverExists },
         });
       } catch (error) {
         statuses.push({
           component: server.name,
           status: 'error',
           message: `Error: ${error.message}`,
-          lastChecked: now
+          lastChecked: now,
         });
       }
     }
@@ -151,7 +150,7 @@ class MCPSystemDashboard {
     const cliTools = [
       { name: '📚 docs-cli', script: 'tools/cli/docs-cli.ts' },
       { name: '🩺 interactive-docs', script: 'scripts/interactive-docs.ts' },
-      { name: '🎬 demo-r2-mcp', script: 'scripts/demo-r2-mcp.ts' }
+      { name: '🎬 demo-r2-mcp', script: 'scripts/demo-r2-mcp.ts' },
     ];
 
     for (const tool of cliTools) {
@@ -162,14 +161,14 @@ class MCPSystemDashboard {
           status: toolExists ? 'healthy' : 'error',
           message: toolExists ? 'CLI tool accessible' : 'CLI tool not found',
           lastChecked: now,
-          metrics: { script: tool.script, accessible: toolExists }
+          metrics: { script: tool.script, accessible: toolExists },
         });
       } catch (error) {
         statuses.push({
           component: tool.name,
           status: 'error',
           message: `Error: ${error.message}`,
-          lastChecked: now
+          lastChecked: now,
         });
       }
     }
@@ -179,21 +178,23 @@ class MCPSystemDashboard {
 
   async collectMetrics(): Promise<DashboardMetrics> {
     const now = new Date();
-    
+
     // Authentication Metrics
     const tokens = masterTokenManager.listTokens();
     const auditLogs = masterTokenManager.getAuditLogs(100);
-    const recentAuths = auditLogs.filter(log => 
-      new Date(log.timestamp) > new Date(Date.now() - 60 * 60 * 1000)).length;
-    const failedAuths = auditLogs.filter(log => !log.success &&
-      new Date(log.timestamp) > new Date(Date.now() - 60 * 60 * 1000)).length;
+    const recentAuths = auditLogs.filter(
+      log => new Date(log.timestamp) > new Date(Date.now() - 60 * 60 * 1000)
+    ).length;
+    const failedAuths = auditLogs.filter(
+      log => !log.success && new Date(log.timestamp) > new Date(Date.now() - 60 * 60 * 1000)
+    ).length;
 
     // Storage Metrics
     let storageMetrics = {
       totalObjects: 0,
       totalSize: '0 B',
       diagnosesCount: 0,
-      auditsCount: 0
+      auditsCount: 0,
     };
 
     try {
@@ -202,7 +203,7 @@ class MCPSystemDashboard {
         totalObjects: stats.objectCount,
         totalSize: stats.totalSize,
         diagnosesCount: stats.mcpDataCount,
-        auditsCount: Math.floor(stats.mcpDataCount * 0.3) // Estimate
+        auditsCount: Math.floor(stats.mcpDataCount * 0.3), // Estimate
       };
     } catch {
       // Use mock data if R2 not available
@@ -210,7 +211,7 @@ class MCPSystemDashboard {
         totalObjects: 243,
         totalSize: '15.7MB',
         diagnosesCount: 85,
-        auditsCount: 125
+        auditsCount: 125,
       };
     }
 
@@ -219,7 +220,7 @@ class MCPSystemDashboard {
       totalSearches: 1250,
       totalDiagnoses: 85,
       totalExamples: 320,
-      avgResponseTime: 45
+      avgResponseTime: 45,
     };
 
     // System Metrics
@@ -231,7 +232,7 @@ class MCPSystemDashboard {
         activeTokens: tokens.length,
         expiredTokens: 0, // Would need to track expired tokens
         recentAuths,
-        failedAuths
+        failedAuths,
       },
       storage: storageMetrics,
       usage: usageMetrics,
@@ -239,8 +240,8 @@ class MCPSystemDashboard {
         uptime: this.formatUptime(uptime),
         memoryUsage,
         errorRate: failedAuths / Math.max(recentAuths, 1),
-        lastRestart: this.startTime.toLocaleString()
-      }
+        lastRestart: this.startTime.toLocaleString(),
+      },
     };
   }
 
@@ -261,17 +262,19 @@ class MCPSystemDashboard {
     console.info(colorBar('primary', 50));
 
     const statuses = await this.generateSystemStatus();
-    
+
     statuses.forEach(status => {
-      const statusColor = status.status === 'healthy' ? 'success' :
-                         status.status === 'warning' ? 'warning' : 'error';
-      const statusIcon = status.status === 'healthy' ? '✅' :
-                        status.status === 'warning' ? '⚠️' : '❌';
-      
+      const statusColor =
+        status.status === 'healthy' ? 'success' : status.status === 'warning' ? 'warning' : 'error';
+      const statusIcon =
+        status.status === 'healthy' ? '✅' : status.status === 'warning' ? '⚠️' : '❌';
+
       console.info(styled(`${statusIcon} ${status.component}`, statusColor));
       console.info(styled(`   ${status.message}`, 'muted'));
-      console.info(styled(`   Last checked: ${new Date(status.lastChecked).toLocaleString()}`, 'muted'));
-      
+      console.info(
+        styled(`   Last checked: ${new Date(status.lastChecked).toLocaleString()}`, 'muted')
+      );
+
       if (status.metrics) {
         Object.entries(status.metrics).forEach(([key, value]) => {
           if (typeof value !== 'object') {
@@ -293,8 +296,12 @@ class MCPSystemDashboard {
     console.info(styled('\n🔐 Authentication Metrics:', 'accent'));
     console.info(styled(`   Active Tokens: ${metrics.authentication.activeTokens}`, 'primary'));
     console.info(styled(`   Recent Auths (1h): ${metrics.authentication.recentAuths}`, 'success'));
-    console.info(styled(`   Failed Auths (1h): ${metrics.authentication.failedAuths}`, 
-      metrics.authentication.failedAuths > 0 ? 'warning' : 'success'));
+    console.info(
+      styled(
+        `   Failed Auths (1h): ${metrics.authentication.failedAuths}`,
+        metrics.authentication.failedAuths > 0 ? 'warning' : 'success'
+      )
+    );
 
     // Storage Metrics
     console.info(styled('\n☁️ Storage Metrics:', 'accent'));
@@ -314,8 +321,12 @@ class MCPSystemDashboard {
     console.info(styled('\n🖥️ System Metrics:', 'accent'));
     console.info(styled(`   Uptime: ${metrics.system.uptime}`, 'primary'));
     console.info(styled(`   Memory Usage: ${metrics.system.memoryUsage}`, 'info'));
-    console.info(styled(`   Error Rate: ${(metrics.system.errorRate * 100).toFixed(1)}%`, 
-      metrics.system.errorRate > 0.05 ? 'warning' : 'success'));
+    console.info(
+      styled(
+        `   Error Rate: ${(metrics.system.errorRate * 100).toFixed(1)}%`,
+        metrics.system.errorRate > 0.05 ? 'warning' : 'success'
+      )
+    );
     console.info(styled(`   Last Restart: ${metrics.system.lastRestart}`, 'muted'));
     console.info('');
   }
@@ -331,8 +342,12 @@ class MCPSystemDashboard {
       authLogs.slice(0, 5).forEach(log => {
         const status = log.success ? '✅' : '❌';
         const time = new Date(log.timestamp).toLocaleTimeString();
-        console.info(styled(`   ${status} ${time} - ${log.action} - ${log.tokenId.slice(0, 12)}...`, 
-          log.success ? 'success' : 'error'));
+        console.info(
+          styled(
+            `   ${status} ${time} - ${log.action} - ${log.tokenId.slice(0, 12)}...`,
+            log.success ? 'success' : 'error'
+          )
+        );
         if (log.reason) {
           console.info(styled(`      Reason: ${log.reason}`, 'muted'));
         }
@@ -345,13 +360,17 @@ class MCPSystemDashboard {
       { time: '09:24:58', event: 'Diagnosis stored', status: 'success' },
       { time: '09:23:21', event: 'R2 connection test', status: 'success' },
       { time: '09:22:15', event: 'MCP bridge started', status: 'success' },
-      { time: '09:20:00', event: 'Dashboard initialized', status: 'success' }
+      { time: '09:20:00', event: 'Dashboard initialized', status: 'success' },
     ];
 
     events.forEach(event => {
       const icon = event.status === 'success' ? '✅' : '⚠️';
-      console.info(styled(`   ${icon} ${event.time} - ${event.event}`, 
-        event.status === 'success' ? 'success' : 'warning'));
+      console.info(
+        styled(
+          `   ${icon} ${event.time} - ${event.event}`,
+          event.status === 'success' ? 'success' : 'warning'
+        )
+      );
     });
     console.info('');
   }
@@ -361,12 +380,18 @@ class MCPSystemDashboard {
     console.info(colorBar('primary', 50));
 
     const actions = [
-      { command: 'bun run lib/security/master-token.ts create cli:user', description: 'Create new CLI token' },
+      {
+        command: 'bun run lib/security/master-token.ts create cli:user',
+        description: 'Create new CLI token',
+      },
       { command: 'bun test tests/r2-integration.test.ts', description: 'Test R2 connection' },
       { command: 'bun run demo:r2', description: 'Run R2 integration demo' },
       { command: 'dx mcp-doctor', description: 'Validate MCP configuration' },
       { command: 'bun run docs:search "Bun.API"', description: 'Test documentation search' },
-      { command: 'bun run interactive-docs diagnose "error" context', description: 'Test error diagnosis' }
+      {
+        command: 'bun run interactive-docs diagnose "error" context',
+        description: 'Test error diagnosis',
+      },
     ];
 
     actions.forEach((action, index) => {
@@ -381,10 +406,12 @@ class MCPSystemDashboard {
     console.info(colorBar('warning', 50));
 
     const tokens = masterTokenManager.listTokens();
-    
+
     if (tokens.length === 0) {
       console.info(styled('No active tokens found.', 'muted'));
-      console.info(styled('Create a token: bun run lib/security/master-token.ts create cli:user', 'info'));
+      console.info(
+        styled('Create a token: bun run lib/security/master-token.ts create cli:user', 'info')
+      );
       return;
     }
 
@@ -392,11 +419,11 @@ class MCPSystemDashboard {
     tokens.forEach((token, index) => {
       const expiresSoon = new Date(token.expiresAt) < new Date(Date.now() + 6 * 60 * 60 * 1000);
       const statusColor = expiresSoon ? 'warning' : 'success';
-      
+
       console.info(styled(`\n${index + 1}. ${token.tokenId}`, statusColor));
       console.info(styled(`   Permissions: ${token.permissions.join(', ')}`, 'muted'));
       console.info(styled(`   Expires: ${token.expiresAt.toLocaleString()}`, statusColor));
-      
+
       if (token.metadata) {
         Object.entries(token.metadata).forEach(([key, value]) => {
           console.info(styled(`   ${key}: ${value}`, 'info'));
@@ -406,8 +433,12 @@ class MCPSystemDashboard {
 
     console.info(styled('\nToken Management Commands:', 'info'));
     console.info(styled('  • List tokens: bun run lib/security/master-token.ts list', 'muted'));
-    console.info(styled('  • Revoke token: bun run lib/security/master-token.ts revoke <tokenId>', 'muted'));
-    console.info(styled('  • Rotate token: bun run lib/security/master-token.ts rotate <token>', 'muted'));
+    console.info(
+      styled('  • Revoke token: bun run lib/security/master-token.ts revoke <tokenId>', 'muted')
+    );
+    console.info(
+      styled('  • Rotate token: bun run lib/security/master-token.ts rotate <token>', 'muted')
+    );
     console.info('');
   }
 
@@ -426,14 +457,13 @@ class MCPSystemDashboard {
         await this.displayQuickActions();
 
         console.info(styled('\n🔄 Auto-refresh in 30 seconds... (Press Ctrl+C to exit)', 'muted'));
-        
+
         // Wait for refresh interval or interrupt
         await new Promise(resolve => setTimeout(resolve, this.refreshInterval));
-        
+
         // Clear screen for next refresh
         console.clear();
         this.showWelcome();
-        
       } catch (error) {
         console.error(styled(`❌ Dashboard error: ${error.message}`, 'error'));
         await new Promise(resolve => setTimeout(resolve, 5000));
@@ -443,20 +473,22 @@ class MCPSystemDashboard {
 
   async generateReport(): Promise<void> {
     console.info(styled('\n📄 Generating System Report...', 'info'));
-    
+
     const report = {
       timestamp: new Date().toISOString(),
       systemStatus: await this.generateSystemStatus(),
       metrics: await this.collectMetrics(),
       tokens: masterTokenManager.listTokens(),
-      recentActivity: masterTokenManager.getAuditLogs(20)
+      recentActivity: masterTokenManager.getAuditLogs(20),
     };
 
     const reportPath = `mcp-dashboard-report-${Date.now()}.json`;
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
-    
+
     console.info(styled(`✅ Report saved to: ${reportPath}`, 'success'));
-    console.info(styled(`📊 Report includes: System status, metrics, tokens, and activity`, 'info'));
+    console.info(
+      styled(`📊 Report includes: System status, metrics, tokens, and activity`, 'info')
+    );
   }
 }
 

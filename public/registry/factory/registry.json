@@ -9,11 +9,7 @@
   },
   "packages": {
     "event-store": {
-      "versions": [
-        "1.0.0",
-        "1.1.0",
-        "2.0.0-beta"
-      ],
+      "versions": ["1.0.0", "1.1.0", "2.0.0-beta"],
       "dist-tags": {
         "latest": "1.1.0",
         "beta": "2.0.0-beta"
@@ -25,11 +21,7 @@
           "version": "1.0.0",
           "type": "library",
           "description": "Event sourcing and CQRS primitives for sports trading pipelines",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "trading"
-          ],
+          "tags": ["event-sourcing", "cqrs", "trading"],
           "readme": "# Event Store\n\nEvent sourcing primitives.\n\n## Usage\n\n```ts\nimport { EventStore } from '@factorywager/event-store';\n```\n\n## Configuration\n\nSet `EVENT_STORE_BACKEND` to `memory` or `r2`.",
           "publishedAt": "2026-07-15T10:30:00Z",
           "publisher": "factory-cli",
@@ -46,12 +38,7 @@
           "version": "1.1.0",
           "type": "library",
           "description": "Event sourcing with snapshot support and R2 persistence",
-          "tags": [
-            "event-sourcing",
-            "cqrs",
-            "r2",
-            "snapshots"
-          ],
+          "tags": ["event-sourcing", "cqrs", "r2", "snapshots"],
           "publishedAt": "2026-07-20T14:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -67,12 +54,7 @@
           "version": "2.0.0-beta",
           "type": "library",
           "description": "v2 beta: multi-tenant event stores, streaming projections, WebSocket tailing",
-          "tags": [
-            "event-sourcing",
-            "multi-tenant",
-            "streaming",
-            "beta"
-          ],
+          "tags": ["event-sourcing", "multi-tenant", "streaming", "beta"],
           "publishedAt": "2026-07-22T09:00:00Z",
           "publisher": "factory-cli",
           "storage": {
@@ -85,9 +67,7 @@
       }
     },
     "factory-cli": {
-      "versions": [
-        "0.1.0"
-      ],
+      "versions": ["0.1.0"],
       "dist-tags": {
         "latest": "0.1.0"
       },
@@ -114,9 +94,7 @@
       }
     },
     "@factorywager/registry-client": {
-      "versions": [
-        "1.0.0"
-      ],
+      "versions": ["1.0.0"],
       "dist-tags": {
         "latest": "1.0.0"
       },
@@ -140,10 +118,7 @@
       }
     },
     "@factory/health-check": {
-      "versions": [
-        "1.0.0",
-        "1.1.0"
-      ],
+      "versions": ["1.0.0", "1.1.0"],
       "dist-tags": {
         "latest": "1.1.0",
         "stable": "1.1.0"
@@ -155,9 +130,7 @@
           "version": "1.0.0",
           "type": "cli-tool",
           "description": "Registry health check CLI",
-          "tags": [
-            "latest"
-          ],
+          "tags": ["latest"],
           "publishedAt": "2026-07-23T17:24:45.991Z",
           "publisher": "api",
           "storage": {
@@ -176,10 +149,7 @@
           "version": "1.1.0",
           "type": "cli-tool",
           "description": "Updated health check",
-          "tags": [
-            "latest",
-            "stable"
-          ],
+          "tags": ["latest", "stable"],
           "publishedAt": "2026-07-23T17:26:35.935Z",
           "publisher": "api",
           "storage": {
@@ -192,9 +162,7 @@
       }
     },
     "kimi-toolchain": {
-      "versions": [
-        "2.1.0"
-      ],
+      "versions": ["2.1.0"],
       "dist-tags": {
         "latest": "2.1.0"
       },
@@ -205,11 +173,7 @@
           "version": "2.1.0",
           "type": "cli-tool",
           "description": "Kimi governance and doctor toolchain for harness health checks",
-          "tags": [
-            "governance",
-            "doctor",
-            "harness"
-          ],
+          "tags": ["governance", "doctor", "harness"],
           "publishedAt": "2026-07-19T08:00:00Z",
           "publisher": "ci-bot",
           "storage": {
@@ -222,10 +186,7 @@
       }
     },
     "@factorywager/bun-test": {
-      "versions": [
-        "0.1.0",
-        "0.2.0"
-      ],
+      "versions": ["0.1.0", "0.2.0"],
       "dist-tags": {
         "latest": "0.2.0",
         "beta": "0.2.0"
@@ -252,10 +213,7 @@
           "version": "0.2.0",
           "type": "library",
           "description": "Updated test",
-          "tags": [
-            "latest",
-            "beta"
-          ],
+          "tags": ["latest", "beta"],
           "publishedAt": "2026-07-23T17:23:18.841Z",
           "publisher": "api",
           "storage": {

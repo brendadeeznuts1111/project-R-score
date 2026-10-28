@@ -1,6 +1,7 @@
 # Workspace lane cross-map
 
 <!-- REF:ID 0.1.workspace-lane-cross-map -->
+
 <a id="0.1.workspace-lane-cross-map"></a>
 
 **Claim** `workspace-lane-cross-map`
@@ -17,13 +18,13 @@ Domain lanes or ConceptDomains.
 
 ## Machines (do not nest)
 
-| Machine | Frozen? | SSOT |
-| ------- | ------- | ---- |
-| Session archive lane | Yes (9) | [`lib/docs/workspace-taxonomy.ts`](../../../lib/docs/workspace-taxonomy.ts) `SESSION_LANES` · [`naming-grammar.md`](../../organization/naming-grammar.md) |
-| Chrome Domain lane | Yes (6) | [`chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts) `PORTAL_DOMAIN_LANE_META` · [`ISSUE-ROUTING.md`](../ISSUE-ROUTING.md) |
-| ConceptDomain | Yes (15+) | [`concept-domains.ts`](../../../lib/portal/concept-domains.ts) · [`DOMAIN_CONCEPT_SHAPE.md`](../../DOMAIN_CONCEPT_SHAPE.md) |
-| Git commit scope | Open set | conventional `type(scope):` — hints only in correlations |
-| Parallel git lane | Process | AGENTS worktree hygiene (disjoint dirty files) |
+| Machine              | Frozen?   | SSOT                                                                                                                                                      |
+| -------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Session archive lane | Yes (9)   | [`lib/docs/workspace-taxonomy.ts`](../../../lib/docs/workspace-taxonomy.ts) `SESSION_LANES` · [`naming-grammar.md`](../../organization/naming-grammar.md) |
+| Chrome Domain lane   | Yes (6)   | [`chrome-catalog.ts`](../../../lib/portal/chrome-catalog.ts) `PORTAL_DOMAIN_LANE_META` · [`ISSUE-ROUTING.md`](../ISSUE-ROUTING.md)                        |
+| ConceptDomain        | Yes (15+) | [`concept-domains.ts`](../../../lib/portal/concept-domains.ts) · [`DOMAIN_CONCEPT_SHAPE.md`](../../DOMAIN_CONCEPT_SHAPE.md)                               |
+| Git commit scope     | Open set  | conventional `type(scope):` — hints only in correlations                                                                                                  |
+| Parallel git lane    | Process   | AGENTS worktree hygiene (disjoint dirty files)                                                                                                            |
 
 Session ∩ chrome token overlap is essentially `{partner}` (string homonym only).
 Chrome `partner` ≠ ConceptDomain `partners` ≠ commit scope `ops`/`partners`.
@@ -62,9 +63,9 @@ SSOTs, not as a fourth filename token.
 
 ## Proof
 
-| Kind | Evidence |
-| ---- | -------- |
-| unit | `bun test tests/workspace-taxonomy.test.ts` |
+| Kind    | Evidence                                                                         |
+| ------- | -------------------------------------------------------------------------------- |
+| unit    | `bun test tests/workspace-taxonomy.test.ts`                                      |
 | journey | `bun run workspace-taxonomy:check` (bake deep-equal) · board at `/portal/lanes/` |
 
 _Ratchet_ → unit test on changed lib; bake check when taxonomy or board staged.

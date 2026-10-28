@@ -77,26 +77,19 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
   const host = $('kpi-host');
   if (!host) return;
   const source = metrics?.source ?? '—';
-  const tone =
-    source === 'event-store' ? 'ok' : source === 'sample' ? 'warn' : 'warn';
-  const authStatus = agentAuth?.status === 'configured'
-    ? 'configured'
-    : agentAuth
-      ? (agentAuth.status || 'unset')
-      : '—';
-  const authSub = agentAuth?.envKey
-    ? `${agentAuth.envKey} · cloud agent`
-    : 'FACTORY_WAGER_TOKEN';
+  const tone = source === 'event-store' ? 'ok' : source === 'sample' ? 'warn' : 'warn';
+  const authStatus =
+    agentAuth?.status === 'configured'
+      ? 'configured'
+      : agentAuth
+        ? agentAuth.status || 'unset'
+        : '—';
+  const authSub = agentAuth?.envKey ? `${agentAuth.envKey} · cloud agent` : 'FACTORY_WAGER_TOKEN';
   const desk = metrics?.desk;
-  const coverage =
-    desk && typeof desk.coveragePct === 'number'
-      ? `${desk.coveragePct}%`
-      : '—';
+  const coverage = desk && typeof desk.coveragePct === 'number' ? `${desk.coveragePct}%` : '—';
   const coverageSub = desk
     ? `${desk.withBothMids ?? 0}/${desk.scannedEvents ?? 0} full books` +
-      (desk.listedMissingMids
-        ? ` · ${desk.listedMissingMids} listed incomplete`
-        : '')
+      (desk.listedMissingMids ? ` · ${desk.listedMissingMids} listed incomplete` : '')
     : 'from live-matches bake';
   // Books as of — independent of bake age (can lag days behind board-metrics bake).
   let booksLabel = '—';
@@ -109,7 +102,9 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
       const ageH = Math.floor(ageMs / 3_600_000);
       const ageD = Math.floor(ageH / 24);
       booksLabel = ageD >= 2 ? `${ageD}d ago` : ageH >= 1 ? `${ageH}h ago` : 'fresh';
-      booksSub = String(desk.latestBookAt).replace('T', ' ').replace(/\.\d+Z$/, 'Z');
+      booksSub = String(desk.latestBookAt)
+        .replace('T', ' ')
+        .replace(/\.\d+Z$/, 'Z');
       booksTone = ageH < 24 ? 'ok' : ageH < 72 ? 'warn' : 'bad';
     } else {
       booksLabel = String(desk.latestBookAt).slice(0, 16);
@@ -118,8 +113,24 @@ function renderKpis(metrics, regPkgCount, agentAuth) {
   host.innerHTML = [
     statHtml('Source', source, metrics?.note?.slice(0, 48) ?? '', tone === 'ok' ? 'ok' : 'warn'),
     statHtml('Markets', metrics?.markets ?? '—', 'event-store rows', 'muted'),
-    statHtml('Book mids', metrics?.midsUsable ?? '—', `${metrics?.bookTicksLatest ?? 0} latest ticks`, 'muted'),
-    statHtml('Desk coverage', coverage, coverageSub, desk && Number(desk.coveragePct) >= 70 ? 'ok' : desk && Number(desk.coveragePct) >= 30 ? 'warn' : desk ? 'bad' : 'muted'),
+    statHtml(
+      'Book mids',
+      metrics?.midsUsable ?? '—',
+      `${metrics?.bookTicksLatest ?? 0} latest ticks`,
+      'muted'
+    ),
+    statHtml(
+      'Desk coverage',
+      coverage,
+      coverageSub,
+      desk && Number(desk.coveragePct) >= 70
+        ? 'ok'
+        : desk && Number(desk.coveragePct) >= 30
+          ? 'warn'
+          : desk
+            ? 'bad'
+            : 'muted'
+    ),
     statHtml('Books as of', booksLabel, booksSub, booksTone),
     statHtml('Packages', regPkgCount, 'tennis registry', 'muted'),
     statHtml('Registry token', authStatus, authSub, authStatus === 'configured' ? 'ok' : 'warn'),
@@ -179,7 +190,6 @@ function renderVenuesFromMetrics(metrics) {
     .join('');
 }
 
-
 /** @type {{ players: any[], nameToSlug: Record<string,string> }} */
 let avatarIndex = { players: [], nameToSlug: {} };
 /** @type {any[]} */
@@ -189,8 +199,13 @@ function resolveSlug(name) {
   const raw = String(name || '').trim();
   if (!raw) return 'demo-player';
   if (avatarIndex.nameToSlug[raw]) return avatarIndex.nameToSlug[raw];
-  const n = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'player';
+  const n =
+    raw
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'player';
   return avatarIndex.nameToSlug[n] || n;
 }
 
@@ -204,33 +219,35 @@ function avatarImg(slug, size = 28) {
 function renderSampleTable(filterVenue = '') {
   const tbody = document.querySelector('#sample-rows tbody');
   if (!tbody) return;
-  const rows = filterVenue
-    ? liveMatchRows.filter((r) => r.venue === filterVenue)
-    : liveMatchRows;
+  const rows = filterVenue ? liveMatchRows.filter(r => r.venue === filterVenue) : liveMatchRows;
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="9">No matches — run <code>bun run tennis:board:bake</code></td></tr>';
+    tbody.innerHTML =
+      '<tr><td colspan="9">No matches — run <code>bun run tennis:board:bake</code></td></tr>';
     return;
   }
-  tbody.innerHTML = rows.map((r) => {
-    const slugA = r.sideA?.slug || resolveSlug(r.sideA?.label);
-    const slugB = r.sideB?.slug || resolveSlug(r.sideB?.label);
-    const edge = r.edgeCents;
-    const edgeCls = edge == null ? '' : edge >= 0 ? 'st-ok' : 'st-bad';
-    const edgeStr = edge == null ? '—' : (edge >= 0 ? '+' : '') + edge + '¢';
-    const midA = r.sideA?.midCents != null ? r.sideA.midCents + '¢' : '—';
-    const midB = r.sideB?.midCents != null ? r.sideB.midCents + '¢' : '—';
-    const midStatus = r.midStatus || (r.sideA?.midCents != null && r.sideB?.midCents != null
-      ? 'ok'
-      : r.sideA?.midCents != null || r.sideB?.midCents != null
-        ? 'partial'
-        : 'missing');
-    const midDot =
-      midStatus === 'ok'
-        ? '<span class="tone-chip tone-ok" title="Both side mids" style="font-size:10px">ok</span>'
-        : midStatus === 'partial'
-          ? '<span class="tone-chip tone-warn" title="One side mid only" style="font-size:10px">partial</span>'
-          : '<span class="tone-chip tone-bad" title="No book mids" style="font-size:10px">missing</span>';
-    return `<tr>
+  tbody.innerHTML = rows
+    .map(r => {
+      const slugA = r.sideA?.slug || resolveSlug(r.sideA?.label);
+      const slugB = r.sideB?.slug || resolveSlug(r.sideB?.label);
+      const edge = r.edgeCents;
+      const edgeCls = edge == null ? '' : edge >= 0 ? 'st-ok' : 'st-bad';
+      const edgeStr = edge == null ? '—' : (edge >= 0 ? '+' : '') + edge + '¢';
+      const midA = r.sideA?.midCents != null ? r.sideA.midCents + '¢' : '—';
+      const midB = r.sideB?.midCents != null ? r.sideB.midCents + '¢' : '—';
+      const midStatus =
+        r.midStatus ||
+        (r.sideA?.midCents != null && r.sideB?.midCents != null
+          ? 'ok'
+          : r.sideA?.midCents != null || r.sideB?.midCents != null
+            ? 'partial'
+            : 'missing');
+      const midDot =
+        midStatus === 'ok'
+          ? '<span class="tone-chip tone-ok" title="Both side mids" style="font-size:10px">ok</span>'
+          : midStatus === 'partial'
+            ? '<span class="tone-chip tone-warn" title="One side mid only" style="font-size:10px">partial</span>'
+            : '<span class="tone-chip tone-bad" title="No book mids" style="font-size:10px">missing</span>';
+      return `<tr>
       <td>${avatarImg(slugA)}</td>
       <td>${esc(r.sideA?.label || '—')}</td>
       <td>${avatarImg(slugB)}</td>
@@ -241,14 +258,17 @@ function renderSampleTable(filterVenue = '') {
       <td class="mono ${edgeCls}">${esc(edgeStr)}</td>
       <td class="mono">${esc(r.seriesLabel || r.series || '—')} ${midDot}</td>
     </tr>`;
-  }).join('');
+    })
+    .join('');
 }
 
 function renderAvatarStrip() {
   const host = document.getElementById('avatar-strip');
   const img = document.getElementById('hero-avatar');
-  const players = (avatarIndex.players || []).filter((p) => p.hasSource || p.hasWebp || p.slug === 'demo-player');
-  const ids = players.length ? players.slice(0, 12).map((p) => p.slug) : ['demo-player'];
+  const players = (avatarIndex.players || []).filter(
+    p => p.hasSource || p.hasWebp || p.slug === 'demo-player'
+  );
+  const ids = players.length ? players.slice(0, 12).map(p => p.slug) : ['demo-player'];
   if (img) {
     const id = ids[0] || 'demo-player';
     img.src = `/avatars/${id}.webp`;
@@ -257,24 +277,28 @@ function renderAvatarStrip() {
     if (label) label.textContent = id;
   }
   if (host) {
-    host.innerHTML = ids.map((id) => {
-      const p = (avatarIndex.players || []).find((x) => x.slug === id);
-      const name = p?.displayName || id;
-      return `<a href="/avatars/${esc(id)}.webp" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
+    host.innerHTML = ids
+      .map(id => {
+        const p = (avatarIndex.players || []).find(x => x.slug === id);
+        const name = p?.displayName || id;
+        return `<a href="/avatars/${esc(id)}.webp" class="portal-card" style="display:flex;align-items:center;gap:10px;padding:10px 12px;text-decoration:none;color:inherit">
         ${avatarImg(id, 48)}
         <div>
           <div style="font-weight:600;font-size:13px">${esc(name)}</div>
           <div class="sub" style="margin:0"><code>${esc(id)}</code> · ${p?.hasWebp ? 'webp' : 'pending'}</div>
         </div>
       </a>`;
-    }).join('');
+      })
+      .join('');
   }
 }
 
 async function loadAvatarIndex() {
   try {
     const res = await fetch('/registry/tennis/avatar-index.json', {
-      credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+      cache: 'no-cache',
     });
     if (!res.ok) return;
     const doc = await res.json();
@@ -289,13 +313,17 @@ async function loadAvatarIndex() {
       }
       avatarIndex.nameToSlug = m;
     }
-  } catch { /* keep empty */ }
+  } catch {
+    /* keep empty */
+  }
 }
 
 async function loadLiveMatches() {
   try {
     const res = await fetch('/registry/tennis/live-matches.json', {
-      credentials: 'same-origin', headers: { Accept: 'application/json' }, cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json' },
+      cache: 'no-cache',
     });
     if (!res.ok) return;
     const doc = await res.json();
@@ -479,8 +507,7 @@ function renderRuntimeProbe(probe, agentAuth) {
 function renderPartnerCodeChips(codes) {
   const host = $('partner-code-chips');
   if (!host) return;
-  const list =
-    Array.isArray(codes) && codes.length > 0 ? codes : ['ASH', 'BIL', 'NOV', 'SPEN'];
+  const list = Array.isArray(codes) && codes.length > 0 ? codes : ['ASH', 'BIL', 'NOV', 'SPEN'];
   host.innerHTML = list
     .map(code => {
       return (
@@ -530,8 +557,7 @@ function renderPartnerContracts(doc) {
 
   if (!tbody) return;
   if (!rows.length) {
-    tbody.innerHTML =
-      '<tr><td colspan="9">No partner rows — bake live or offline join</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9">No partner rows — bake live or offline join</td></tr>';
     return;
   }
   const src = String(doc?.source || '');
@@ -554,10 +580,8 @@ function renderPartnerContracts(doc) {
         maxBet = '—';
         maxTitle = 'title="offline-join: run live bake for per-bet max ¢"';
       }
-      const hs =
-        r.handshakeOk === true ? 'ok' : r.handshakeOk === false ? 'gap' : '—';
-      const hsCls =
-        r.handshakeOk === true ? 'st-ok' : r.handshakeOk === false ? 'st-warn' : '';
+      const hs = r.handshakeOk === true ? 'ok' : r.handshakeOk === false ? 'gap' : '—';
+      const hsCls = r.handshakeOk === true ? 'st-ok' : r.handshakeOk === false ? 'st-warn' : '';
       const links =
         `<a href="${esc(r.partnersHref || `/portal/partners/#partner/${code}`)}">desk</a> · ` +
         `<a href="${esc(r.accountingHref || `/portal/partners/#partner/${code}/accounting`)}">acct</a> · ` +

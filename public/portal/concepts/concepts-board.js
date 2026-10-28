@@ -171,7 +171,13 @@ function renderHero() {
   $('cx-gate').innerHTML = `<span class="dot" aria-hidden="true"></span>${esc(gate)}`;
   const baked = state?.bakedAt ? new Date(state.bakedAt) : null;
   $('cx-baked').textContent = baked
-    ? `baked ${baked.toISOString().replace('T', ' ').replace(/\.\d+Z$/, ' UTC')} · ${state.summary?.totalPortal ?? 0} concepts · schema v${state.schemaVersion ?? 1}`
+    ? `baked ${baked
+        .toISOString()
+        .replace('T', ' ')
+        .replace(
+          /\.\d+Z$/,
+          ' UTC'
+        )} · ${state.summary?.totalPortal ?? 0} concepts · schema v${state.schemaVersion ?? 1}`
     : 'bake missing';
 }
 
@@ -235,8 +241,7 @@ function renderStats() {
       const active = kindTarget !== undefined && kindFilter === kindTarget;
       const disabled = item.filter == null ? ' disabled' : '';
       const activeCls = active ? ' active' : '';
-      const filterAttr =
-        kindTarget !== undefined ? ` data-kind-filter="${esc(kindTarget)}"` : '';
+      const filterAttr = kindTarget !== undefined ? ` data-kind-filter="${esc(kindTarget)}"` : '';
       return (
         `<button type="button" class="cx-stat ${item.cls}${activeCls}"${disabled}${filterAttr}>` +
         `<span class="k">${esc(item.label)}</span>` +
@@ -357,9 +362,7 @@ function renderBoards() {
     .slice(0, 8)
     .map(b => {
       const href = BOARD_HREF[b.board];
-      const name = href
-        ? `<a href="${esc(href)}">${esc(b.board)}</a>`
-        : esc(b.board);
+      const name = href ? `<a href="${esc(href)}">${esc(b.board)}</a>` : esc(b.board);
       return (
         `<div class="cx-board-tile">` +
         `<div class="name">${name}</div>` +

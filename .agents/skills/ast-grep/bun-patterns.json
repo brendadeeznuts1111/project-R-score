@@ -14,13 +14,7 @@
     },
     "cli": {
       "description": "CLI scripts and subprocess wiring",
-      "patterns": [
-        "bun-argv",
-        "bun-spawn",
-        "bun-stdin",
-        "bun-file",
-        "bun-env"
-      ]
+      "patterns": ["bun-argv", "bun-spawn", "bun-stdin", "bun-file", "bun-env"]
     },
     "persistence": {
       "description": "SQLite and file-backed storage",
@@ -67,11 +61,7 @@
     },
     "bundler": {
       "description": "Build, transpile, and plugin loaders",
-      "patterns": [
-        "bun-build",
-        "bun-transpiler",
-        "bun-plugin"
-      ]
+      "patterns": ["bun-build", "bun-transpiler", "bun-plugin"]
     },
     "data-stores": {
       "description": "SQLite, PostgreSQL, Redis",
@@ -1471,36 +1461,22 @@
     {
       "id": "http-server",
       "topic": "HTTP Server",
-      "apis": [
-        "Bun.serve"
-      ],
-      "patterns": [
-        "bun-serve"
-      ],
+      "apis": ["Bun.serve"],
+      "patterns": ["bun-serve"],
       "docs_path": "/runtime/http/server"
     },
     {
       "id": "shell",
       "topic": "Shell",
-      "apis": [
-        "$",
-        "Bun.$"
-      ],
-      "patterns": [
-        "shell-dollar",
-        "bun-shell"
-      ],
+      "apis": ["$", "Bun.$"],
+      "patterns": ["shell-dollar", "bun-shell"],
       "docs_path": "/runtime/shell"
     },
     {
       "id": "bundler",
       "topic": "Bundler",
-      "apis": [
-        "Bun.build"
-      ],
-      "patterns": [
-        "bun-build"
-      ],
+      "apis": ["Bun.build"],
+      "patterns": ["bun-build"],
       "docs_path": "/bundler"
     },
     {
@@ -1525,342 +1501,196 @@
     {
       "id": "child-processes",
       "topic": "Child Processes",
-      "apis": [
-        "Bun.spawn",
-        "Bun.spawnSync"
-      ],
-      "patterns": [
-        "bun-spawn",
-        "bun-spawn-sync"
-      ],
+      "apis": ["Bun.spawn", "Bun.spawnSync"],
+      "patterns": ["bun-spawn", "bun-spawn-sync"],
       "docs_path": "/runtime/child-process"
     },
     {
       "id": "tcp",
       "topic": "TCP Sockets",
-      "apis": [
-        "Bun.listen",
-        "Bun.connect"
-      ],
-      "patterns": [
-        "bun-listen",
-        "bun-connect"
-      ],
+      "apis": ["Bun.listen", "Bun.connect"],
+      "patterns": ["bun-listen", "bun-connect"],
       "docs_path": "/runtime/networking/tcp"
     },
     {
       "id": "udp",
       "topic": "UDP Sockets",
-      "apis": [
-        "Bun.udpSocket"
-      ],
-      "patterns": [
-        "bun-udp"
-      ],
+      "apis": ["Bun.udpSocket"],
+      "patterns": ["bun-udp"],
       "docs_path": "/runtime/networking/udp"
     },
     {
       "id": "websockets",
       "topic": "WebSockets",
-      "apis": [
-        "WebSocket",
-        "Bun.serve"
-      ],
-      "patterns": [
-        "websocket",
-        "bun-serve"
-      ],
+      "apis": ["WebSocket", "Bun.serve"],
+      "patterns": ["websocket", "bun-serve"],
       "docs_path": "/runtime/http/websockets"
     },
     {
       "id": "transpiler",
       "topic": "Transpiler",
-      "apis": [
-        "Bun.Transpiler"
-      ],
-      "patterns": [
-        "bun-transpiler"
-      ],
+      "apis": ["Bun.Transpiler"],
+      "patterns": ["bun-transpiler"],
       "docs_path": "/runtime/transpiler"
     },
     {
       "id": "routing",
       "topic": "Routing",
-      "apis": [
-        "Bun.FileSystemRouter"
-      ],
-      "patterns": [
-        "bun-fs-router"
-      ],
+      "apis": ["Bun.FileSystemRouter"],
+      "patterns": ["bun-fs-router"],
       "docs_path": "/runtime/file-system-router"
     },
     {
       "id": "html-rewriter",
       "topic": "Streaming HTML",
-      "apis": [
-        "HTMLRewriter"
-      ],
-      "patterns": [
-        "html-rewriter"
-      ],
+      "apis": ["HTMLRewriter"],
+      "patterns": ["html-rewriter"],
       "docs_path": "/runtime/html-rewriter"
     },
     {
       "id": "webview",
       "topic": "Headless Browser",
-      "apis": [
-        "Bun.WebView"
-      ],
-      "patterns": [
-        "bun-webview"
-      ],
+      "apis": ["Bun.WebView"],
+      "patterns": ["bun-webview"],
       "docs_path": "/runtime/webview"
     },
     {
       "id": "hashing",
       "topic": "Hashing",
-      "apis": [
-        "Bun.password",
-        "Bun.hash",
-        "Bun.CryptoHasher",
-        "Bun.sha"
-      ],
-      "patterns": [
-        "bun-password",
-        "bun-hash",
-        "bun-crypto-hasher",
-        "bun-sha"
-      ],
+      "apis": ["Bun.password", "Bun.hash", "Bun.CryptoHasher", "Bun.sha"],
+      "patterns": ["bun-password", "bun-hash", "bun-crypto-hasher", "bun-sha"],
       "docs_path": "/runtime/hashing"
     },
     {
       "id": "csrf",
       "topic": "CSRF Protection",
-      "apis": [
-        "Bun.CSRF.generate",
-        "Bun.CSRF.verify"
-      ],
-      "patterns": [
-        "bun-csrf"
-      ],
+      "apis": ["Bun.CSRF.generate", "Bun.CSRF.verify"],
+      "patterns": ["bun-csrf"],
       "docs_path": "/runtime/csrf"
     },
     {
       "id": "sqlite",
       "topic": "SQLite",
-      "apis": [
-        "bun:sqlite"
-      ],
-      "patterns": [
-        "bun-sqlite"
-      ],
+      "apis": ["bun:sqlite"],
+      "patterns": ["bun-sqlite"],
       "docs_path": "/runtime/sqlite"
     },
     {
       "id": "postgres",
       "topic": "PostgreSQL Client",
-      "apis": [
-        "Bun.SQL",
-        "Bun.sql"
-      ],
-      "patterns": [
-        "bun-sql",
-        "bun-sql-tag"
-      ],
+      "apis": ["Bun.SQL", "Bun.sql"],
+      "patterns": ["bun-sql", "bun-sql-tag"],
       "docs_path": "/runtime/sql"
     },
     {
       "id": "redis",
       "topic": "Redis (Valkey) Client",
-      "apis": [
-        "Bun.RedisClient",
-        "Bun.redis"
-      ],
-      "patterns": [
-        "bun-redis",
-        "bun-redis-short"
-      ],
+      "apis": ["Bun.RedisClient", "Bun.redis"],
+      "patterns": ["bun-redis", "bun-redis-short"],
       "docs_path": "/runtime/redis"
     },
     {
       "id": "ffi",
       "topic": "FFI",
-      "apis": [
-        "bun:ffi"
-      ],
-      "patterns": [
-        "bun-ffi"
-      ],
+      "apis": ["bun:ffi"],
+      "patterns": ["bun-ffi"],
       "docs_path": "/runtime/ffi"
     },
     {
       "id": "dns",
       "topic": "DNS",
-      "apis": [
-        "Bun.dns.lookup",
-        "Bun.dns.prefetch",
-        "Bun.dns.getCacheStats"
-      ],
-      "patterns": [
-        "bun-dns"
-      ],
+      "apis": ["Bun.dns.lookup", "Bun.dns.prefetch", "Bun.dns.getCacheStats"],
+      "patterns": ["bun-dns"],
       "docs_path": "/runtime/networking/dns"
     },
     {
       "id": "testing",
       "topic": "Testing",
-      "apis": [
-        "bun:test"
-      ],
-      "patterns": [
-        "bun-test",
-        "bun-test-describe"
-      ],
+      "apis": ["bun:test"],
+      "patterns": ["bun-test", "bun-test-describe"],
       "docs_path": "/test"
     },
     {
       "id": "workers",
       "topic": "Workers",
-      "apis": [
-        "Worker"
-      ],
-      "patterns": [
-        "worker"
-      ],
+      "apis": ["Worker"],
+      "patterns": ["worker"],
       "docs_path": "/runtime/workers"
     },
     {
       "id": "plugins",
       "topic": "Module Loaders",
-      "apis": [
-        "Bun.plugin"
-      ],
-      "patterns": [
-        "bun-plugin"
-      ],
+      "apis": ["Bun.plugin"],
+      "patterns": ["bun-plugin"],
       "docs_path": "/bundler/plugins"
     },
     {
       "id": "glob",
       "topic": "Glob",
-      "apis": [
-        "Bun.Glob"
-      ],
-      "patterns": [
-        "bun-glob"
-      ],
+      "apis": ["Bun.Glob"],
+      "patterns": ["bun-glob"],
       "docs_path": "/runtime/glob"
     },
     {
       "id": "archive",
       "topic": "Archive",
-      "apis": [
-        "Bun.Archive"
-      ],
-      "patterns": [
-        "bun-archive",
-        "bun-archive-extract"
-      ],
+      "apis": ["Bun.Archive"],
+      "patterns": ["bun-archive", "bun-archive-extract"],
       "docs_path": "/runtime/archive"
     },
     {
       "id": "workspace-filter",
       "topic": "Workspace filter",
-      "apis": [
-        "bun run --filter"
-      ],
-      "patterns": [
-        "bun-run-filter"
-      ],
+      "apis": ["bun run --filter"],
+      "patterns": ["bun-run-filter"],
       "docs_path": "/runtime#filtering"
     },
     {
       "id": "cookies",
       "topic": "Cookies",
-      "apis": [
-        "Bun.Cookie",
-        "Bun.CookieMap"
-      ],
-      "patterns": [
-        "bun-cookie",
-        "bun-cookie-map"
-      ],
+      "apis": ["Bun.Cookie", "Bun.CookieMap"],
+      "patterns": ["bun-cookie", "bun-cookie-map"],
       "docs_path": "/runtime/cookies"
     },
     {
       "id": "import-meta",
       "topic": "import.meta",
-      "apis": [
-        "import.meta"
-      ],
-      "patterns": [
-        "import-meta"
-      ],
+      "apis": ["import.meta"],
+      "patterns": ["import-meta"],
       "docs_path": "/runtime/module-resolution#import-meta"
     },
     {
       "id": "utilities",
       "topic": "Utilities",
-      "apis": [
-        "Bun.version",
-        "Bun.revision",
-        "Bun.env",
-        "Bun.main"
-      ],
-      "patterns": [
-        "bun-version",
-        "bun-revision",
-        "bun-env",
-        "bun-main"
-      ],
+      "apis": ["Bun.version", "Bun.revision", "Bun.env", "Bun.main"],
+      "patterns": ["bun-version", "bun-revision", "bun-env", "bun-main"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "sleep-timing",
       "topic": "Sleep & Timing",
-      "apis": [
-        "Bun.sleep",
-        "Bun.sleepSync",
-        "Bun.nanoseconds"
-      ],
-      "patterns": [
-        "bun-sleep",
-        "bun-sleep-sync",
-        "bun-nanoseconds"
-      ],
+      "apis": ["Bun.sleep", "Bun.sleepSync", "Bun.nanoseconds"],
+      "patterns": ["bun-sleep", "bun-sleep-sync", "bun-nanoseconds"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "random-uuid",
       "topic": "Random & UUID",
-      "apis": [
-        "Bun.randomUUIDv7"
-      ],
-      "patterns": [
-        "bun-random-uuidv7"
-      ],
+      "apis": ["Bun.randomUUIDv7"],
+      "patterns": ["bun-random-uuidv7"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "system-env",
       "topic": "System & Environment",
-      "apis": [
-        "Bun.which"
-      ],
-      "patterns": [
-        "bun-which"
-      ],
+      "apis": ["Bun.which"],
+      "patterns": ["bun-which"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "comparison",
       "topic": "Comparison & Inspection",
-      "apis": [
-        "Bun.peek",
-        "Bun.deepEquals",
-        "Bun.deepMatch",
-        "Bun.inspect"
-      ],
+      "apis": ["Bun.peek", "Bun.deepEquals", "Bun.deepMatch", "Bun.inspect"],
       "patterns": [
         "bun-peek",
         "bun-deep-equals",
@@ -1873,29 +1703,15 @@
     {
       "id": "string-text",
       "topic": "String & Text Processing",
-      "apis": [
-        "Bun.escapeHTML",
-        "Bun.stringWidth",
-        "Bun.indexOfLine"
-      ],
-      "patterns": [
-        "bun-escape-html",
-        "bun-string-width",
-        "bun-index-of-line"
-      ],
+      "apis": ["Bun.escapeHTML", "Bun.stringWidth", "Bun.indexOfLine"],
+      "patterns": ["bun-escape-html", "bun-string-width", "bun-index-of-line"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "url-path",
       "topic": "URL & Path Utilities",
-      "apis": [
-        "Bun.fileURLToPath",
-        "Bun.pathToFileURL"
-      ],
-      "patterns": [
-        "bun-file-url-to-path",
-        "bun-path-to-file-url"
-      ],
+      "apis": ["Bun.fileURLToPath", "Bun.pathToFileURL"],
+      "patterns": ["bun-file-url-to-path", "bun-path-to-file-url"],
       "docs_path": "/runtime/utils"
     },
     {
@@ -1920,12 +1736,8 @@
     {
       "id": "stream-processing",
       "topic": "Stream Processing",
-      "apis": [
-        "Bun.readableStreamTo*"
-      ],
-      "patterns": [
-        "bun-readable-stream-to"
-      ],
+      "apis": ["Bun.readableStreamTo*"],
+      "patterns": ["bun-readable-stream-to"],
       "docs_path": "/runtime/utils"
     },
     {
@@ -1946,15 +1758,8 @@
     {
       "id": "module-resolution",
       "topic": "Module Resolution",
-      "apis": [
-        "import.meta",
-        "Bun.resolveSync"
-      ],
-      "patterns": [
-        "import-meta",
-        "bun-resolve-sync",
-        "bun-main"
-      ],
+      "apis": ["import.meta", "Bun.resolveSync"],
+      "patterns": ["import-meta", "bun-resolve-sync", "bun-main"],
       "docs_path": "/runtime/module-resolution"
     },
     {
@@ -1982,12 +1787,8 @@
     {
       "id": "color",
       "topic": "Color",
-      "apis": [
-        "Bun.color"
-      ],
-      "patterns": [
-        "bun-color"
-      ],
+      "apis": ["Bun.color"],
+      "patterns": ["bun-color"],
       "docs_path": "/runtime/color"
     },
     {
@@ -2010,69 +1811,36 @@
     {
       "id": "low-level",
       "topic": "Low-level / Internals",
-      "apis": [
-        "Bun.mmap",
-        "Bun.gc",
-        "Bun.generateHeapSnapshot",
-        "bun:jsc"
-      ],
-      "patterns": [
-        "bun-mmap",
-        "bun-gc",
-        "bun-heap-snapshot",
-        "bun-jsc"
-      ],
+      "apis": ["Bun.mmap", "Bun.gc", "Bun.generateHeapSnapshot", "bun:jsc"],
+      "patterns": ["bun-mmap", "bun-gc", "bun-heap-snapshot", "bun-jsc"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "secrets",
       "topic": "Secrets (extension)",
-      "apis": [
-        "Bun.secrets"
-      ],
-      "patterns": [
-        "bun-secrets"
-      ],
+      "apis": ["Bun.secrets"],
+      "patterns": ["bun-secrets"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "fetch",
       "topic": "Fetch (Web standard)",
-      "apis": [
-        "fetch"
-      ],
-      "patterns": [
-        "fetch-native"
-      ],
+      "apis": ["fetch"],
+      "patterns": ["fetch-native"],
       "docs_path": "/runtime/networking/fetch"
     },
     {
       "id": "terminal-ansi",
       "topic": "Terminal ANSI",
-      "apis": [
-        "Bun.stripANSI",
-        "Bun.wrapAnsi",
-        "Bun.stringWidth"
-      ],
-      "patterns": [
-        "bun-strip-ansi",
-        "bun-wrap-ansi",
-        "bun-string-width"
-      ],
+      "apis": ["Bun.stripANSI", "Bun.wrapAnsi", "Bun.stringWidth"],
+      "patterns": ["bun-strip-ansi", "bun-wrap-ansi", "bun-string-width"],
       "docs_path": "/runtime/utils"
     },
     {
       "id": "bun-v1.3.13-crypto",
       "topic": "SHA3 + X25519 (v1.3.13)",
-      "apis": [
-        "SHA3-256",
-        "X25519 deriveBits"
-      ],
-      "patterns": [
-        "crypto-sha3",
-        "subtle-sha3",
-        "subtle-x25519"
-      ],
+      "apis": ["SHA3-256", "X25519 deriveBits"],
+      "patterns": ["crypto-sha3", "subtle-sha3", "subtle-x25519"],
       "docs_path": "/runtime/hashing"
     }
   ],

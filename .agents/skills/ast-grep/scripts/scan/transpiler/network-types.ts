@@ -10,10 +10,10 @@ export const enum ColorHex {
   Delta = 0xf97316,
 }
 
-export type NetworkLoopReason = "initial" | "watch" | "probe";
+export type NetworkLoopReason = 'initial' | 'watch' | 'probe';
 
 export const NETWORK_LOOP_REASONS = {
-  initial: "initial",
-  watch: "watch",
-  probe: "probe",
+  initial: 'initial',
+  watch: 'watch',
+  probe: 'probe',
 } as const satisfies Record<NetworkLoopReason, NetworkLoopReason>;

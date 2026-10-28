@@ -1,31 +1,31 @@
-import { stat } from "node:fs/promises";
-import { join, resolve } from "node:path";
-import { formatNetworkHerdrTab } from "./herdr-tab.ts";
+import { stat } from 'node:fs/promises';
+import { join, resolve } from 'node:path';
+import { formatNetworkHerdrTab } from './herdr-tab.ts';
 import {
   defaultBaselinePath,
   loadNetworkBaseline,
   writeNetworkBaseline,
   type NetworkBaseline,
   type NetworkBaselineDelta,
-} from "./network-baseline.ts";
-import { runNetworkAuditOnce } from "./network-loop.ts";
-import { Service } from "./service.ts";
-import { meetsSeverity, normalizeSeverity } from "./rule-engine.ts";
-import type { ScanRemediation, ScanResult, Severity } from "./types.ts";
+} from './network-baseline.ts';
+import { runNetworkAuditOnce } from './network-loop.ts';
+import { Service } from './service.ts';
+import { meetsSeverity, normalizeSeverity } from './rule-engine.ts';
+import type { ScanRemediation, ScanResult, Severity } from './types.ts';
 import {
   applyWorkflowFixes,
   findSafePackageVersion,
   formatWorkflowHerdr,
   generateWorkflowReport,
   sendWorkflowAlert,
-} from "./workflow-effects/actions.ts";
+} from './workflow-effects/actions.ts';
 import {
   legacyEffectsToConfigs,
   mergeEffectConfigs,
   defaultWorkflowReportPath,
-} from "./workflow-effects/config.ts";
-import type { EffectConfig } from "./workflow-effects/plugin.ts";
-import { EffectRegistry } from "./workflow-effects/registry.ts";
+} from './workflow-effects/config.ts';
+import type { EffectConfig } from './workflow-effects/plugin.ts';
+import { EffectRegistry } from './workflow-effects/registry.ts';
 import {
   captureBunRuntime,
   defaultWorkflowRuntimeSeedPath,
@@ -38,7 +38,7 @@ import {
   type WorkflowRuntimeSeed,
   type WorkflowTlsOptions,
   type WorkflowTlsPaths,
-} from "./workflow-effects/runtime.ts";
+} from './workflow-effects/runtime.ts';
 
 export type WorkflowIssue = {
   severity: Severity;
@@ -50,7 +50,7 @@ export type WorkflowIssue = {
 
 export type WorkflowScannerResult = {
   scannerId: string;
-  status: "ok" | "warn" | "fail";
+  status: 'ok' | 'warn' | 'fail';
   issues: WorkflowIssue[];
   elapsedMs: number;
 };
@@ -90,7 +90,7 @@ export type WorkflowOptions = {
   intervalMs?: number;
   watch?: boolean;
   dryRun?: boolean;
-  output?: "table" | "json" | "herdr";
+  output?: 'table' | 'json' | 'herdr';
   failOnSeverity?: Severity;
   failOnIssue?: boolean;
   failOnDrift?: boolean;
@@ -138,15 +138,15 @@ function findingToIssue(f: ScanResult): WorkflowIssue {
   };
 }
 
-function worstStatus(issues: WorkflowIssue[]): WorkflowScannerResult["status"] {
-  if (!issues.length) return "ok";
+function worstStatus(issues: WorkflowIssue[]): WorkflowScannerResult['status'] {
+  if (!issues.length) return 'ok';
   const worst = issues.reduce((max, i) => {
     const rank = SEVERITY_RANK[normalizeSeverity(i.severity)] ?? 0;
     return rank > max ? rank : max;
   }, 0);
-  if (worst >= SEVERITY_RANK.error) return "fail";
-  if (worst >= SEVERITY_RANK.warn) return "warn";
-  return "ok";
+  if (worst >= SEVERITY_RANK.error) return 'fail';
+  if (worst >= SEVERITY_RANK.warn) return 'warn';
+  return 'ok';
 }
 
 export function computeWorkflowDrift(
@@ -154,11 +154,11 @@ export function computeWorkflowDrift(
   seed: NetworkBaseline | null,
   networkBaseline?: NetworkBaseline,
   networkDelta?: NetworkBaselineDelta,
-  bunDrift?: BunDriftInfo | null,
+  bunDrift?: BunDriftInfo | null
 ): WorkflowDrift | null {
   const network = networkDelta ?? undefined;
   const bun = bunDrift ?? undefined;
-  const scannerDrift = results.some((r) => r.status === "fail");
+  const scannerDrift = results.some(r => r.status === 'fail');
   const hasDrift = Boolean(network?.drift) || Boolean(bun?.drift) || scannerDrift;
   if (!seed && !networkDelta && !bun) return hasDrift ? { hasDrift } : null;
   return { network, bun, hasDrift };
@@ -181,16 +181,14 @@ export class WorkflowLoop {
   private readonly effectRegistry: EffectRegistry;
   private customEffectsLoaded = false;
 
-  constructor(
-    private readonly options: WorkflowOptions,
-  ) {
-    this.scanners = options.scanners ?? ["semver", "network"];
+  constructor(private readonly options: WorkflowOptions) {
+    this.scanners = options.scanners ?? ['semver', 'network'];
     this.bunRuntime = captureBunRuntime();
     this.effectRegistry = options.effectRegistry ?? new EffectRegistry();
     this.tlsOptions = options.tls;
     const configs = mergeEffectConfigs(
       legacyEffectsToConfigs(options.effects, options.skillRoot, options.domain.id),
-      options.effectsConfig,
+      options.effectsConfig
     );
     this.effectRegistry.configureAll(configs);
   }
@@ -209,11 +207,13 @@ export class WorkflowLoop {
   async loadCustomEffects(dir?: string): Promise<number> {
     const target = dir ?? this.options.effectsDir;
     if (!target || this.customEffectsLoaded) return 0;
-    const candidates = [...new Set([
-      resolve(target),
-      resolve(this.options.repo, target),
-      resolve(this.options.skillRoot, target),
-    ])];
+    const candidates = [
+      ...new Set([
+        resolve(target),
+        resolve(this.options.repo, target),
+        resolve(this.options.skillRoot, target),
+      ]),
+    ];
     let abs = resolve(this.options.repo, target);
     for (const c of candidates) {
       try {
@@ -231,16 +231,17 @@ export class WorkflowLoop {
   }
 
   async loadSeed(): Promise<void> {
-    const seedPath = this.options.seedPath
-      ?? defaultBaselinePath(this.options.skillRoot, this.options.domain.id);
+    const seedPath =
+      this.options.seedPath ?? defaultBaselinePath(this.options.skillRoot, this.options.domain.id);
     try {
       this.seedState = await loadNetworkBaseline(seedPath);
     } catch {
       this.seedState = null;
     }
 
-    const bunSeedPath = this.options.bunSeedPath
-      ?? defaultWorkflowRuntimeSeedPath(this.options.skillRoot, this.options.domain.id);
+    const bunSeedPath =
+      this.options.bunSeedPath ??
+      defaultWorkflowRuntimeSeedPath(this.options.skillRoot, this.options.domain.id);
     this.bunRuntimeSeed = await loadWorkflowRuntimeSeed(bunSeedPath);
   }
 
@@ -254,40 +255,40 @@ export class WorkflowLoop {
     networkDelta?: NetworkBaselineDelta;
     networkHerdr?: string[];
   }> {
-    const minSeverity = this.options.failOnSeverity ?? "warn";
+    const minSeverity = this.options.failOnSeverity ?? 'warn';
     const results: WorkflowScannerResult[] = [];
     let networkBaseline: NetworkBaseline | undefined;
     let networkDelta: NetworkBaselineDelta | undefined;
     let networkHerdr: string[] | undefined;
 
-    if (this.scanners.includes("semver") || this.scanners.includes("packages")) {
+    if (this.scanners.includes('semver') || this.scanners.includes('packages')) {
       const started = performance.now();
       const service = new Service({
         skillRoot: this.options.skillRoot,
         repo: this.options.repo,
-        targetPath: this.options.domain.scanPath ?? ".",
+        targetPath: this.options.domain.scanPath ?? '.',
         fix: false,
         threatFeed: true,
       });
       const { findings } = await service.scanPackages();
       const issues = findings
-        .filter((f) => meetsSeverity(f.severity, minSeverity))
+        .filter(f => meetsSeverity(f.severity, minSeverity))
         .map(findingToIssue);
       results.push({
-        scannerId: "semver",
+        scannerId: 'semver',
         status: worstStatus(issues),
         issues,
         elapsedMs: Math.round(performance.now() - started),
       });
     }
 
-    if (this.scanners.includes("network") && this.options.domain.scanPath) {
+    if (this.scanners.includes('network') && this.options.domain.scanPath) {
       const started = performance.now();
       const audit = await runNetworkAuditOnce({
         skillRoot: this.options.skillRoot,
         repo: this.options.repo,
         scanPath: this.options.domain.scanPath,
-        profileName: this.options.profileName ?? "supply-chain-network-dist",
+        profileName: this.options.profileName ?? 'supply-chain-network-dist',
         domain: this.options.domain.id,
         baseline: this.seedState ?? undefined,
         verbose: false,
@@ -298,18 +299,21 @@ export class WorkflowLoop {
       const issues: WorkflowIssue[] = [];
       if (networkDelta?.drift) {
         issues.push({
-          severity: "warn",
+          severity: 'warn',
           message: `network drift: routes +${networkDelta.routes_added}/-${networkDelta.routes_removed}`,
         });
       }
-      if (audit.tick.health?.overall === "degraded" || audit.tick.health?.overall === "unreachable") {
+      if (
+        audit.tick.health?.overall === 'degraded' ||
+        audit.tick.health?.overall === 'unreachable'
+      ) {
         issues.push({
-          severity: "error",
+          severity: 'error',
           message: `health ${audit.tick.health.overall}`,
         });
       }
       results.push({
-        scannerId: "network",
+        scannerId: 'network',
         status: worstStatus(issues),
         issues,
         elapsedMs: Math.round(performance.now() - started),
@@ -322,14 +326,14 @@ export class WorkflowLoop {
   outputResults(
     results: WorkflowScannerResult[],
     drift: WorkflowDrift | null,
-    extras?: { networkHerdr?: string[] },
+    extras?: { networkHerdr?: string[] }
   ): void {
-    const output = this.options.output ?? "table";
-    if (output === "json") {
+    const output = this.options.output ?? 'table';
+    if (output === 'json') {
       console.log(JSON.stringify({ results, drift }, null, 2));
       return;
     }
-    if (output === "herdr" && extras?.networkHerdr) {
+    if (output === 'herdr' && extras?.networkHerdr) {
       for (const line of extras.networkHerdr) {
         process.stderr.write(`${line}\n`);
       }
@@ -337,8 +341,8 @@ export class WorkflowLoop {
     }
     for (const r of results) {
       process.stderr.write(
-        `[${this.options.domain.id}] ${r.scannerId} status=${r.status}`
-        + ` issues=${r.issues.length} elapsed=${r.elapsedMs}ms\n`,
+        `[${this.options.domain.id}] ${r.scannerId} status=${r.status}` +
+          ` issues=${r.issues.length} elapsed=${r.elapsedMs}ms\n`
       );
     }
     if (drift?.hasDrift) {
@@ -349,15 +353,14 @@ export class WorkflowLoop {
   shouldFail(results: WorkflowScannerResult[], drift: WorkflowDrift | null): boolean {
     if (this.options.failOnDrift && drift?.hasDrift) return true;
     if (!this.options.failOnIssue) return false;
-    const min = this.options.failOnSeverity ?? "error";
-    return results.some((r) =>
-      r.issues.some((i) => meetsSeverity(i.severity, min)),
-    );
+    const min = this.options.failOnSeverity ?? 'error';
+    return results.some(r => r.issues.some(i => meetsSeverity(i.severity, min)));
   }
 
   async writeSeed(baseline: NetworkBaseline): Promise<string> {
-    const path = this.options.seedWritePath
-      ?? defaultBaselinePath(this.options.skillRoot, this.options.domain.id);
+    const path =
+      this.options.seedWritePath ??
+      defaultBaselinePath(this.options.skillRoot, this.options.domain.id);
     await writeNetworkBaseline(path, baseline);
     this.seedState = baseline;
     return path;
@@ -366,7 +369,7 @@ export class WorkflowLoop {
   private async dispatchEffects(
     results: WorkflowScannerResult[],
     drift: WorkflowDrift | null,
-    blocking: boolean,
+    blocking: boolean
   ): Promise<void> {
     await this.initTls();
     const run = this.effectRegistry.runAll({
@@ -389,15 +392,25 @@ export class WorkflowLoop {
       await run;
       return;
     }
-    void run.catch((err) => {
+    void run.catch(err => {
       console.error(`[${this.options.domain.id}] effects failed:`, err);
     });
   }
 
-  async runOnce(): Promise<{ results: WorkflowScannerResult[]; drift: WorkflowDrift | null; failed: boolean }> {
+  async runOnce(): Promise<{
+    results: WorkflowScannerResult[];
+    drift: WorkflowDrift | null;
+    failed: boolean;
+  }> {
     const { results, networkBaseline, networkDelta, networkHerdr } = await this.runScanners();
     const bunDrift = this.getBunDrift();
-    const drift = computeWorkflowDrift(results, this.seedState, networkBaseline, networkDelta, bunDrift);
+    const drift = computeWorkflowDrift(
+      results,
+      this.seedState,
+      networkBaseline,
+      networkDelta,
+      bunDrift
+    );
     this.outputResults(results, drift, { networkHerdr });
     await this.options.onCycle?.(results, drift);
 
@@ -405,10 +418,7 @@ export class WorkflowLoop {
       await this.writeSeed(networkBaseline);
     }
     if (this.options.bunSeedWritePath) {
-      const path = await writeWorkflowRuntimeSeed(
-        this.options.bunSeedWritePath,
-        this.bunRuntime,
-      );
+      const path = await writeWorkflowRuntimeSeed(this.options.bunSeedWritePath, this.bunRuntime);
       this.bunRuntimeSeed = await loadWorkflowRuntimeSeed(path);
     }
 
@@ -430,10 +440,10 @@ export class WorkflowLoop {
     const interval = this.options.intervalMs ?? 60_000;
     const ac = new AbortController();
     const signal = this.options.signal ?? ac.signal;
-    process.on("SIGINT", () => ac.abort());
+    process.on('SIGINT', () => ac.abort());
 
     process.stderr.write(
-      `[${this.options.domain.id}] workflow watch interval=${interval}ms scanners=${this.scanners.join(",")}\n`,
+      `[${this.options.domain.id}] workflow watch interval=${interval}ms scanners=${this.scanners.join(',')}\n`
     );
 
     const tick = async () => {
@@ -444,18 +454,22 @@ export class WorkflowLoop {
 
     await tick();
     const timer = setInterval(() => void tick(), interval);
-    signal.addEventListener("abort", () => clearInterval(timer), { once: true });
+    signal.addEventListener('abort', () => clearInterval(timer), { once: true });
 
-    await new Promise<void>((resolvePromise) => {
+    await new Promise<void>(resolvePromise => {
       if (signal.aborted) {
         clearInterval(timer);
         resolvePromise();
         return;
       }
-      signal.addEventListener("abort", () => {
-        clearInterval(timer);
-        resolvePromise();
-      }, { once: true });
+      signal.addEventListener(
+        'abort',
+        () => {
+          clearInterval(timer);
+          resolvePromise();
+        },
+        { once: true }
+      );
     });
   }
 }

@@ -136,13 +136,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/bun-audit-fix-poster.jpg",
       "contentAddress": "61eb660efeed9d7104e56439a0b6378111c56f0ce359b6d54fa12f0662346abe",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "bun-install"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["bun-install"]
     },
     {
       "id": "bun-1.4-bun-dedupe-poster",
@@ -151,13 +146,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/bun-dedupe-poster.jpg",
       "contentAddress": "9785831492fd6ef2a74a141d7a495169478b9c020a3acf621de88cc9e45d4232",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "bun-install"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["bun-install"]
     },
     {
       "id": "bun-1.4-bun-prune-poster",
@@ -166,13 +156,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/bun-prune-poster.jpg",
       "contentAddress": "6174aded6f97294c97de9c35bf8b1e70ad90a6d536ec051d6aa818f64b99bf4d",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "bun-install"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["bun-install"]
     },
     {
       "id": "bun-1.4-cpu-prof-devtools",
@@ -181,13 +166,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/cpu-prof-devtools.png",
       "contentAddress": "44572fbf91c774b66e0000de31ae43e0e1b76298e93545505aee1e253c799288",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "what-s-new"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["what-s-new"]
     },
     {
       "id": "bun-1.4-cpu-usage-cc",
@@ -196,10 +176,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/cpu-usage-cc.jpeg",
       "contentAddress": "7a0674afb5fb0dee71899d1579fae0d0f8714272620062de9021877c5717cb5e",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -209,13 +186,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/ffi-3x.jpg",
       "contentAddress": "517fe9e02369beabee663f940786c000ceda973ba96632446485cef7ed2263c4",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "what-s-new"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["what-s-new"]
     },
     {
       "id": "bun-1.4-idle-cpu",
@@ -224,10 +196,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/idle-cpu.png",
       "contentAddress": "7654a1643c8f39f752a2b1f557e8c5ae802275bc4f5a606d5e525e5f2a72b138",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -237,13 +206,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/image-pipeline-src.svg",
       "contentAddress": "3942aefa55828fbb42fcd171f9a082d1e66780640cafe85faa27717229667cf4",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "what-s-new"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["what-s-new"]
     },
     {
       "id": "bun-1.4-memory-pressure",
@@ -252,10 +216,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/memory-pressure.jpg",
       "contentAddress": "578923232d09b9e67d72b6d777a42caf1a68d3a7f35768a45b6bfaf0632d6e60",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -265,10 +226,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/nextjs-ssr-fetch-leak.jpg",
       "contentAddress": "e97643c7ae18474bd340d036e507693717505475a5759c5572ca621b2e3b9091",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -278,10 +236,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/no-orphans.jpg",
       "contentAddress": "4e195a486d03af8649d1d34b92d2eb03c2caaf538fd256b24a388925743320b8",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -291,10 +246,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/node-sqlite.jpg",
       "contentAddress": "f72fe5212d6c388c1977a63f941eb46dc18bf725291b02cf51ddc0b092020f2c",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -304,10 +256,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/node-test-suite-progress.png",
       "contentAddress": "1af80ebc3279a0ddad22d0da8e8b49e848c1d8da03f39e0768b8e061ec01a8b0",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -317,10 +266,7 @@
       "sourceUrl": "https://bun.com/og/blog/bun-v1.4.png",
       "contentAddress": "ff20703acc390d2216ab8687d0a3fc15a3ce5ae929717e03edb9f90a2ee4c194",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -330,13 +276,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/react-compiler.jpg",
       "contentAddress": "ee2cbb377c5d8eed6dfc049c0739bf0850516366d331ccb6d4553fd0876f014c",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "bun-build"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["bun-build"]
     },
     {
       "id": "bun-1.4-sourcemap-decoding",
@@ -345,13 +286,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/sourcemap-decoding.jpg",
       "contentAddress": "1870a74a7f0b2c1a04e1d5f532ec0094531f4de0d45f9752d44242e1eae7ea04",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "faster"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["faster"]
     },
     {
       "id": "bun-1.4-spawn-cgroup-poster",
@@ -360,10 +296,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/spawn-cgroup-poster.jpg",
       "contentAddress": "fb3b484aa5c232df28f27f5a7a241ece33ef7f1a6402d5a3fb78d4230b2267e1",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -373,13 +306,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/stringwidth-cjk.jpg",
       "contentAddress": "18edef15eb75711984edf7f1fb820a7011c549b2934f4e84ef095ce562d082e9",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "what-s-new"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["what-s-new"]
     },
     {
       "id": "bun-1.4-test-timings",
@@ -388,13 +316,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/test-timings.jpg",
       "contentAddress": "f5e02f9a028e8ae83e4f4f107ade77e6161f0a3d10c997ac00e4b2c67a5a4653",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
-      "chapters": [
-        "bun-test"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
+      "chapters": ["bun-test"]
     },
     {
       "id": "bun-1.4-windows-timers",
@@ -403,10 +326,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/windows-timers.jpg",
       "contentAddress": "6175565ea58a6fd239068f02a47a0a56404908a597a299f4b2b63dd6ec530874",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -416,10 +336,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/yaml-cyclic-anchors.jpg",
       "contentAddress": "12ad3d9d219d126d073d45e0e42bd59c85d9286ca56d7a4c747e896df9a60778",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:image"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:image"],
       "chapters": []
     },
     {
@@ -429,13 +346,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/bun-audit-fix.mp4",
       "contentAddress": "3cd917098134766b3f792bf69cfaa9d1df9db80b97d49511bd5f539721b56406",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:video"
-      ],
-      "chapters": [
-        "bun-install"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:video"],
+      "chapters": ["bun-install"]
     },
     {
       "id": "bun-1.4-bun-dedupe",
@@ -444,13 +356,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/bun-dedupe.mp4",
       "contentAddress": "cb99595ba1d14a922d20d88bd12d11e0039f5a869d5645272c6fdd19d369b09a",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:video"
-      ],
-      "chapters": [
-        "bun-install"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:video"],
+      "chapters": ["bun-install"]
     },
     {
       "id": "bun-1.4-bun-prune",
@@ -459,13 +366,8 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/bun-prune.mp4",
       "contentAddress": "1f6785891fda646ed54a2b1e5532d1f6c49a7b2c98195ea471cfef8d6372285c",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:video"
-      ],
-      "chapters": [
-        "bun-install"
-      ]
+      "channels": ["bun-1.4:all", "bun-1.4:video"],
+      "chapters": ["bun-install"]
     },
     {
       "id": "bun-1.4-spawn-cgroup",
@@ -474,10 +376,7 @@
       "sourceUrl": "https://bun.com/images/blog/bun-1.4/tweets/spawn-cgroup.mp4",
       "contentAddress": "5062c687ea01563ebd0993616d3b9d5c2e290f7d3b2d62f613387691f3cecb95",
       "addressKind": "sha256-bytes",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:video"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:video"],
       "chapters": []
     },
     {
@@ -487,10 +386,7 @@
       "sourceUrl": "https://www.youtube.com/embed/i38DgEuaJwM",
       "contentAddress": "682e1d07bb450d449d5a2877c570deaaa9a102a1c304b20ed1adf8699277c114",
       "addressKind": "sha256-source-url",
-      "channels": [
-        "bun-1.4:all",
-        "bun-1.4:embed"
-      ],
+      "channels": ["bun-1.4:all", "bun-1.4:embed"],
       "chapters": []
     }
   ]

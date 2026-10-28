@@ -2,10 +2,10 @@
 
 Bun.Image helpers for Tennis HQ / portal (no sharp/jimp).
 
-| Module | Role |
-|--------|------|
-| `avatar-response.ts` | On-demand WebP avatar `Response` for serve-public |
-| CLI | `bun run images:generate` → `scripts/images-generate.ts` |
+| Module               | Role                                                     |
+| -------------------- | -------------------------------------------------------- |
+| `avatar-response.ts` | On-demand WebP avatar `Response` for serve-public        |
+| CLI                  | `bun run images:generate` → `scripts/images-generate.ts` |
 
 ```bash
 # Local on-demand (serve-public)

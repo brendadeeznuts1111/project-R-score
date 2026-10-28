@@ -11,10 +11,7 @@
   "configured": true,
   "registryUrl": "https://registry.factory-wager.com/",
   "envKey": "FACTORY_WAGER_TOKEN",
-  "envAliases": [
-    "FW_REGISTRY_TOKEN",
-    "REGISTRY_SECRET"
-  ],
+  "envAliases": ["FW_REGISTRY_TOKEN", "REGISTRY_SECRET"],
   "vaultRef": "pass://factorywager/FactoryWager Registry Token/password",
   "vaultItem": "FactoryWager Registry Token",
   "vault": "factorywager",
@@ -24,11 +21,7 @@
     "operatorEnvFile": "~/.reasonix/tennis-hq-registry-token.env",
     "inject": "export FACTORY_WAGER_TOKEN from vault or operator handoff; never commit",
     "npmrcLine": "//registry.factory-wager.com/:_authToken=${FACTORY_WAGER_TOKEN}",
-    "bunfigScopes": [
-      "@factorywager",
-      "@factory-wager",
-      "@factory"
-    ]
+    "bunfigScopes": ["@factorywager", "@factory-wager", "@factory"]
   },
   "planes": {
     "read": "Public Pages/R2 mirror — GET/HEAD without token",
@@ -45,10 +38,7 @@
       "mode": "bearer-fail-closed",
       "producerEnvKey": "PARTNER_API_TOKEN",
       "registryTokenAccepted": false,
-      "unauthenticatedStatuses": [
-        401,
-        503
-      ]
+      "unauthenticatedStatuses": [401, 503]
     },
     "releaseVerification": "bun run cloudflare:deploy:verify"
   },

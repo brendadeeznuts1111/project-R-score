@@ -1,6 +1,7 @@
 # Sandbox SDK API Reference
 
-Detailed API for `@cloudflare/sandbox`. For full docs: https://developers.cloudflare.com/sandbox/api/
+Detailed API for `@cloudflare/sandbox`. For full docs:
+https://developers.cloudflare.com/sandbox/api/
 
 ## Lifecycle
 
@@ -108,6 +109,6 @@ For `runCode()`, check `result.error` instead of catching:
 ```typescript
 const result = await sandbox.runCode('1/0', { language: 'python' });
 if (result.error) {
-  console.error(result.error.name);  // "ZeroDivisionError"
+  console.error(result.error.name); // "ZeroDivisionError"
 }
 ```

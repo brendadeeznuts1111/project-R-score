@@ -31,33 +31,33 @@ owns the machine-artifact companion.
 
 ## Platform entry
 
-| Role               | Link                                                                                                                             |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| Human hub          | [Home](/)                                                                                                                        |
-| Docs index         | [`docs/`](docs/)                                                                                                                 |
+| Role               | Link                                                                                                                                               |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Human hub          | [Home](/)                                                                                                                                          |
+| Docs index         | [`docs/`](docs/)                                                                                                                                   |
 | Agent entry        | [`AGENTS.md`](AGENTS.md) (entry) · [`docs/harness/capability-map.md`](docs/harness/capability-map.md) · routing [`docs/AGENTS.md`](docs/AGENTS.md) |
-| Workspace map      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                   |
-| Harness JIT        | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                      |
-| Coding standards   | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)              |
-| Brand / domain map | [`docs/brand-alignment.md`](docs/brand-alignment.md) · tunnels [`tunnel-inventory.md`](docs/harness/tenants/tunnel-inventory.md) |
+| Workspace map      | [`STRUCTURE.md`](STRUCTURE.md)                                                                                                                     |
+| Harness JIT        | [`docs/harness/`](docs/harness/) · `bun run harness:status`                                                                                        |
+| Coding standards   | [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)                               |
+| Brand / domain map | [`docs/brand-alignment.md`](docs/brand-alignment.md) · tunnels [`tunnel-inventory.md`](docs/harness/tenants/tunnel-inventory.md)                   |
 
 ## Common journeys
 
 Start with the outcome you need; each row connects the live surface, its human
 authority, and the shortest proof command.
 
-| Goal                                       | Start here                                                                                                                             | Authority                                                                                                                                                                                            | Prove / refresh                               |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| Trace one partner account                  | [Account dossier](https://score.factory-wager.com/portal/account/)                                                                     | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                                        | `bun run ops:dossier:seed`                    |
-| Operate partner packages and accounting    | [Partners](https://score.factory-wager.com/portal/partners/)                                                                           | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                          | `bun run telegram:handshake:readiness --deep` |
-| Review limit evidence and forecasts        | [Limits](https://score.factory-wager.com/portal/limits/) · [Forecast lab](https://score.factory-wager.com/portal/limits-lab/)          | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)                                                                                                                                | `bun run ops:limits:predict`                  |
-| Inspect compliance controls                | [Compliance](https://score.factory-wager.com/portal/compliance/)                                                                       | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                                                                                                  | `bun run compliance:verify`                   |
-| Diagnose portal or install health          | [Doctor](https://score.factory-wager.com/portal/doctor/) · [Install hygiene](https://score.factory-wager.com/portal/install-hygiene/)  | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md) · [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                   | `bun run portal:doctor:ci`                    |
-| Audit deploy, Access, and routing          | [Health](https://score.factory-wager.com/portal/health/) · [Surfaces](https://score.factory-wager.com/portal/surfaces/)                | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · [`cloudflare-access.md`](docs/harness/tenants/cloudflare-access.md)                                                              | `bun run cloudflare:preflight`                |
-| Find a domain term or branded value        | [Glossary](https://score.factory-wager.com/portal/glossary/) · [Brands](https://score.factory-wager.com/portal/brands/)                | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) | `bun run glossary:verify`                     |
-| Govern semantic concepts and relationships | [Concepts](https://score.factory-wager.com/portal/concepts/) · [Concept graph](https://score.factory-wager.com/portal/concepts/graph/) | [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · [`docs/SURFACE_COVERAGE.md`](docs/SURFACE_COVERAGE.md)                                                                                    | `bun run quality:concept`                     |
-| Investigate harness or documentation drift | [`docs/harness/`](docs/harness/) · [Failures](https://score.factory-wager.com/portal/failures/)                                        | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md) · [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)                                                              | `bun run discover:compose:check`              |
-| Maintain workspace lanes and daily/weekly pulses | [`maintain-workspace.md`](docs/harness/tenants/maintain-workspace.md) · `bun run lane:status`                                    | [`AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`day-loop.md`](docs/harness/day-loop.md) · [`workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)                         | `bun run harness:status`                      |
+| Goal                                             | Start here                                                                                                                             | Authority                                                                                                                                                                                            | Prove / refresh                               |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Trace one partner account                        | [Account dossier](https://score.factory-wager.com/portal/account/)                                                                     | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                                        | `bun run ops:dossier:seed`                    |
+| Operate partner packages and accounting          | [Partners](https://score.factory-wager.com/portal/partners/)                                                                           | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                          | `bun run telegram:handshake:readiness --deep` |
+| Review limit evidence and forecasts              | [Limits](https://score.factory-wager.com/portal/limits/) · [Forecast lab](https://score.factory-wager.com/portal/limits-lab/)          | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)                                                                                                                                | `bun run ops:limits:predict`                  |
+| Inspect compliance controls                      | [Compliance](https://score.factory-wager.com/portal/compliance/)                                                                       | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                                                                                                  | `bun run compliance:verify`                   |
+| Diagnose portal or install health                | [Doctor](https://score.factory-wager.com/portal/doctor/) · [Install hygiene](https://score.factory-wager.com/portal/install-hygiene/)  | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md) · [`docs/UNIFIED.md`](docs/UNIFIED.md)                                                                                                   | `bun run portal:doctor:ci`                    |
+| Audit deploy, Access, and routing                | [Health](https://score.factory-wager.com/portal/health/) · [Surfaces](https://score.factory-wager.com/portal/surfaces/)                | [`cloudflare-pages.md`](docs/harness/tenants/cloudflare-pages.md) · [`cloudflare-access.md`](docs/harness/tenants/cloudflare-access.md)                                                              | `bun run cloudflare:preflight`                |
+| Find a domain term or branded value              | [Glossary](https://score.factory-wager.com/portal/glossary/) · [Brands](https://score.factory-wager.com/portal/brands/)                | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · [`lib/types/branded/README.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/lib/types/branded/README.md) | `bun run glossary:verify`                     |
+| Govern semantic concepts and relationships       | [Concepts](https://score.factory-wager.com/portal/concepts/) · [Concept graph](https://score.factory-wager.com/portal/concepts/graph/) | [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · [`docs/SURFACE_COVERAGE.md`](docs/SURFACE_COVERAGE.md)                                                                                    | `bun run quality:concept`                     |
+| Investigate harness or documentation drift       | [`docs/harness/`](docs/harness/) · [Failures](https://score.factory-wager.com/portal/failures/)                                        | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md) · [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)                                                              | `bun run discover:compose:check`              |
+| Maintain workspace lanes and daily/weekly pulses | [`maintain-workspace.md`](docs/harness/tenants/maintain-workspace.md) · `bun run lane:status`                                          | [`AUTHORITY.md`](docs/harness/AUTHORITY.md) · [`day-loop.md`](docs/harness/day-loop.md) · [`workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)                          | `bun run harness:status`                      |
 
 ## Live surfaces
 
@@ -140,7 +140,7 @@ control-plane, then niche.
 | Brands              | [/portal/brands/](https://score.factory-wager.com/portal/brands/)                   | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
 | Catalog             | [/portal/catalog/](https://score.factory-wager.com/portal/catalog/)                 | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
 | Glossary            | [/portal/glossary/](https://score.factory-wager.com/portal/glossary/)               | [`docs/portal-foundation.md`](docs/portal-foundation.md) · `bun run glossary:portal`                                                                                                                                                                             |
-| Issues              | [/portal/issues/](https://score.factory-wager.com/portal/issues/)                   | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md) · `bun run github-issue-taxonomy:check`                                                                                                                                               |
+| Issues              | [/portal/issues/](https://score.factory-wager.com/portal/issues/)                   | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md) · `bun run github-issue-taxonomy:check`                                                                                                                                              |
 | Concepts            | [/portal/concepts/](https://score.factory-wager.com/portal/concepts/)               | [graph](https://score.factory-wager.com/portal/concepts/graph/) · [`docs/CONCEPT_LIFECYCLE.md`](docs/CONCEPT_LIFECYCLE.md) · `bun run quality:concept`                                                                                                           |
 | Surfaces            | [/portal/surfaces/](https://score.factory-wager.com/portal/surfaces/)               | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
 | Tools               | [/portal/tools/](https://score.factory-wager.com/portal/tools/)                     | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                                                                                        |
@@ -194,31 +194,31 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 
 ### Operator · portal · Telegram
 
-| Tenant                  | Doc                                                                                                                  |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Compliance portal       | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                  |
-| Partner limit raises    | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                        |
-| TOC Ops                 | [`toc-ops.md`](docs/harness/tenants/toc-ops.md)                                                                      |
-| Ops loop / outbox       | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md)                                              |
-| Ops snapshot            | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md)                                                            |
-| Public plane            | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                            |
-| serve-public bind       | [`serve-public-bind.md`](docs/harness/tenants/serve-public-bind.md) · `brand:status:bind` · `brand:status:lifecycle` |
-| Factory Telegram        | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · portal [`partners.md`](public/portal/partners.md) |
-| Package-group handshake | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · Flags REF:ID §1.1 (`docs:refid:check`) |
-| Partner surface inventory | [`partner-surface-inventory.md`](docs/design/partner-surface-inventory.md) · bake `/registry/partner-surface-inventory.json` |
-| Partner domain map      | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · package [`@factorywager/partners`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/partners/README.md) |
-| Seat capital desk       | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                  |
-| Partner onboard         | [`partner-onboarding-package.md`](docs/harness/tenants/partner-onboarding-package.md) · profile Flags REF:ID ([unified-partner-profile](docs/design/unified-partner-profile.md)) |
-| Ops partner bridge      | [`ops-partner-bridge.md`](docs/harness/tenants/ops-partner-bridge.md)                                                |
-| REF:ID flags / TOC      | [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation) · `bun run docs:refid:check` · `docs:refid:audit` |
-| Workspace lane cross-map | [`workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)                                  |
-| Command centre          | [`command-centre.md`](docs/harness/tenants/command-centre.md)                                                        |
-| Portal doctor           | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md)                                                          |
-| Portal snapshot cron    | [`portal-snapshot-cron.md`](docs/harness/tenants/portal-snapshot-cron.md)                                            |
-| Bake resilience         | [`bake-resilience.md`](docs/harness/tenants/bake-resilience.md)                                                      |
-| Full UI performance     | [`full-ui-performance-audit.md`](docs/harness/tenants/full-ui-performance-audit.md)                                  |
-| Remaining work          | [`remaining-work.md`](docs/harness/tenants/remaining-work.md)                                                        |
-| Maintain workspace      | [`maintain-workspace.md`](docs/harness/tenants/maintain-workspace.md) · lane/day/week pulses · Cursor automation prompts |
+| Tenant                    | Doc                                                                                                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Compliance portal         | [`compliance-portal.md`](docs/harness/tenants/compliance-portal.md)                                                                                                                                     |
+| Partner limit raises      | [`partner-limits.md`](docs/harness/tenants/partner-limits.md)                                                                                                                                           |
+| TOC Ops                   | [`toc-ops.md`](docs/harness/tenants/toc-ops.md)                                                                                                                                                         |
+| Ops loop / outbox         | [`ops-loop-throughput.md`](docs/harness/tenants/ops-loop-throughput.md)                                                                                                                                 |
+| Ops snapshot              | [`ops-snapshot.md`](docs/harness/tenants/ops-snapshot.md)                                                                                                                                               |
+| Public plane              | [`public-plane.md`](docs/harness/tenants/public-plane.md)                                                                                                                                               |
+| serve-public bind         | [`serve-public-bind.md`](docs/harness/tenants/serve-public-bind.md) · `brand:status:bind` · `brand:status:lifecycle`                                                                                    |
+| Factory Telegram          | [`telegram-factory.md`](docs/harness/tenants/telegram-factory.md) · portal [`partners.md`](public/portal/partners.md)                                                                                   |
+| Package-group handshake   | [`partner-package-group-handshake.md`](docs/harness/tenants/partner-package-group-handshake.md) · Flags REF:ID §1.1 (`docs:refid:check`)                                                                |
+| Partner surface inventory | [`partner-surface-inventory.md`](docs/design/partner-surface-inventory.md) · bake `/registry/partner-surface-inventory.json`                                                                            |
+| Partner domain map        | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md) · package [`@factorywager/partners`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/packages/partners/README.md) |
+| Seat capital desk         | [`seat-capital-desk.md`](docs/harness/tenants/seat-capital-desk.md)                                                                                                                                     |
+| Partner onboard           | [`partner-onboarding-package.md`](docs/harness/tenants/partner-onboarding-package.md) · profile Flags REF:ID ([unified-partner-profile](docs/design/unified-partner-profile.md))                        |
+| Ops partner bridge        | [`ops-partner-bridge.md`](docs/harness/tenants/ops-partner-bridge.md)                                                                                                                                   |
+| REF:ID flags / TOC        | [CONTRIBUTING § REF:ID](docs/contributing/CONTRIBUTING.md#refid-validation) · `bun run docs:refid:check` · `docs:refid:audit`                                                                           |
+| Workspace lane cross-map  | [`workspace-lane-cross-map.md`](docs/harness/tenants/workspace-lane-cross-map.md)                                                                                                                       |
+| Command centre            | [`command-centre.md`](docs/harness/tenants/command-centre.md)                                                                                                                                           |
+| Portal doctor             | [`portal-doctor.md`](docs/harness/tenants/portal-doctor.md)                                                                                                                                             |
+| Portal snapshot cron      | [`portal-snapshot-cron.md`](docs/harness/tenants/portal-snapshot-cron.md)                                                                                                                               |
+| Bake resilience           | [`bake-resilience.md`](docs/harness/tenants/bake-resilience.md)                                                                                                                                         |
+| Full UI performance       | [`full-ui-performance-audit.md`](docs/harness/tenants/full-ui-performance-audit.md)                                                                                                                     |
+| Remaining work            | [`remaining-work.md`](docs/harness/tenants/remaining-work.md)                                                                                                                                           |
+| Maintain workspace        | [`maintain-workspace.md`](docs/harness/tenants/maintain-workspace.md) · lane/day/week pulses · Cursor automation prompts                                                                                |
 
 ### Cloudflare · deploy · vault
 
@@ -233,46 +233,46 @@ Bake: `bun run ops:snapshot` · compliance: `bun run compliance:bake` · doc:
 
 ### Harness quality · CI
 
-| Tenant                        | Doc                                                                                 |
-| ----------------------------- | ----------------------------------------------------------------------------------- |
-| Install verify                | [`install-verify.md`](docs/harness/tenants/install-verify.md)                       |
-| CI core                       | [`ci-core.md`](docs/harness/tenants/ci-core.md)                                     |
-| TypeScript CI                 | [`typescript-ci.md`](docs/harness/tenants/typescript-ci.md)                         |
-| Coverage floor                | [`coverage-floor.md`](docs/harness/tenants/coverage-floor.md)                       |
-| Complexity floor              | [`complexity-floor.md`](docs/harness/tenants/complexity-floor.md)                   |
-| Docs integrity                | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md)                       |
-| Reference discovery           | [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)             |
-| Registry integrity            | [`registry-integrity.md`](docs/harness/tenants/registry-integrity.md)               |
-| Monorepo health               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                     |
-| File removal grading          | [`file-removal-grading.md`](docs/harness/tenants/file-removal-grading.md)           |
-| Monorepo workspaces           | [`monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md)             |
-| Bun migration                 | [`bun-migrate.md`](docs/harness/tenants/bun-migrate.md)                             |
-| Bun upstream contributing     | [`bun-upstream-contributing.md`](docs/harness/tenants/bun-upstream-contributing.md) |
+| Tenant                        | Doc                                                                                                |
+| ----------------------------- | -------------------------------------------------------------------------------------------------- |
+| Install verify                | [`install-verify.md`](docs/harness/tenants/install-verify.md)                                      |
+| CI core                       | [`ci-core.md`](docs/harness/tenants/ci-core.md)                                                    |
+| TypeScript CI                 | [`typescript-ci.md`](docs/harness/tenants/typescript-ci.md)                                        |
+| Coverage floor                | [`coverage-floor.md`](docs/harness/tenants/coverage-floor.md)                                      |
+| Complexity floor              | [`complexity-floor.md`](docs/harness/tenants/complexity-floor.md)                                  |
+| Docs integrity                | [`docs-integrity.md`](docs/harness/tenants/docs-integrity.md)                                      |
+| Reference discovery           | [`reference-discovery.md`](docs/harness/tenants/reference-discovery.md)                            |
+| Registry integrity            | [`registry-integrity.md`](docs/harness/tenants/registry-integrity.md)                              |
+| Monorepo health               | [`monorepo-health.md`](docs/harness/tenants/monorepo-health.md)                                    |
+| File removal grading          | [`file-removal-grading.md`](docs/harness/tenants/file-removal-grading.md)                          |
+| Monorepo workspaces           | [`monorepo-workspaces.md`](docs/harness/tenants/monorepo-workspaces.md)                            |
+| Bun migration                 | [`bun-migrate.md`](docs/harness/tenants/bun-migrate.md)                                            |
+| Bun upstream contributing     | [`bun-upstream-contributing.md`](docs/harness/tenants/bun-upstream-contributing.md)                |
 | Bun test flags × scripts      | [`bun-test-flags.md`](docs/harness/tenants/bun-test-flags.md) · CLI vs bunfig · JUnit vs Inspector |
-| Bun test Inspector            | [`bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md) · `bun run test:inspect` |
-| Bun channel doctor            | [`bun-channel-doctor.md`](docs/harness/tenants/bun-channel-doctor.md)               |
-| Channel metadata verification | [`channel-meta-verification.md`](docs/harness/tenants/channel-meta-verification.md) |
-| Codex task portfolio          | [`codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md)       |
-| Orphan modules                | [`orphan-modules.md`](docs/harness/tenants/orphan-modules.md)                       |
-| Types covered                 | [`types-covered.md`](docs/harness/tenants/types-covered.md)                         |
+| Bun test Inspector            | [`bun-test-inspect.md`](docs/harness/tenants/bun-test-inspect.md) · `bun run test:inspect`         |
+| Bun channel doctor            | [`bun-channel-doctor.md`](docs/harness/tenants/bun-channel-doctor.md)                              |
+| Channel metadata verification | [`channel-meta-verification.md`](docs/harness/tenants/channel-meta-verification.md)                |
+| Codex task portfolio          | [`codex-thread-portfolio.md`](docs/harness/tenants/codex-thread-portfolio.md)                      |
+| Orphan modules                | [`orphan-modules.md`](docs/harness/tenants/orphan-modules.md)                                      |
+| Types covered                 | [`types-covered.md`](docs/harness/tenants/types-covered.md)                                        |
 
 ### Domain · registry · analysis
 
-| Tenant                     | Doc                                                                           |
-| -------------------------- | ----------------------------------------------------------------------------- |
-| Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)       |
-| Bookmaker open issues      | [`bookmakers-open-issues.md`](docs/harness/tenants/bookmakers-open-issues.md) |
-| Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md)       |
+| Tenant                     | Doc                                                                                                                                                  |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Bookmaker registry         | [`bookmakers-registry.md`](docs/harness/tenants/bookmakers-registry.md)                                                                              |
+| Bookmaker open issues      | [`bookmakers-open-issues.md`](docs/harness/tenants/bookmakers-open-issues.md)                                                                        |
+| Bun capability × brand map | [`bun-brand-cross-map.md`](docs/harness/tenants/bun-brand-cross-map.md)                                                                              |
 | Bun bench + profiling      | [`bun-bench-profiling.md`](docs/harness/tenants/bun-bench-profiling.md) · `bun run bench:status` · [`docs/performance/`](docs/performance/README.md) |
-| Grounded capability map    | [`capability-map.md`](docs/harness/capability-map.md) · `bun run bake:capabilities` · `/registry/capability-map-subset.json` |
-| GitHub issue taxonomy      | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md)   |
-| Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)         |
-| Model circuit contracts    | [`model-circuit-contracts.md`](docs/harness/tenants/model-circuit-contracts.md) |
-| Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)         |
-| Prediction report          | [`prediction-report.md`](docs/harness/tenants/prediction-report.md)           |
-| Tennis HQ registry         | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md)         |
-| Tennis HQ UI audit         | [`tennis-hq-ui-audit.md`](docs/harness/tenants/tennis-hq-ui-audit.md)         |
-| Agent endpoints × wire     | [`agents.md`](docs/harness/tenants/agents.md)                                 |
+| Grounded capability map    | [`capability-map.md`](docs/harness/capability-map.md) · `bun run bake:capabilities` · `/registry/capability-map-subset.json`                         |
+| GitHub issue taxonomy      | [`github-issue-taxonomy.md`](docs/harness/tenants/github-issue-taxonomy.md)                                                                          |
+| Limits forecast lab        | [`limit-forecast-lab.md`](docs/harness/tenants/limit-forecast-lab.md)                                                                                |
+| Model circuit contracts    | [`model-circuit-contracts.md`](docs/harness/tenants/model-circuit-contracts.md)                                                                      |
+| Partner domain map         | [`partner-domain-map.md`](docs/harness/tenants/partner-domain-map.md)                                                                                |
+| Prediction report          | [`prediction-report.md`](docs/harness/tenants/prediction-report.md)                                                                                  |
+| Tennis HQ registry         | [`tennis-hq-registry.md`](docs/harness/tenants/tennis-hq-registry.md)                                                                                |
+| Tennis HQ UI audit         | [`tennis-hq-ui-audit.md`](docs/harness/tenants/tennis-hq-ui-audit.md)                                                                                |
+| Agent endpoints × wire     | [`agents.md`](docs/harness/tenants/agents.md)                                                                                                        |
 
 ### Code · lib
 

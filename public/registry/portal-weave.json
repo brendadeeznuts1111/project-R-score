@@ -83,10 +83,7 @@
       "note": "graph map · publish soft-pass (ssot-flow-soft · pm-proof) · color kernel publish.* · weave.publishPlane",
       "group": "registry",
       "cli": "bun run ssot:flow:soft && bun run verify:pm:save",
-      "relatedArtifactIds": [
-        "ssot-flow-soft",
-        "pm-proof"
-      ]
+      "relatedArtifactIds": ["ssot-flow-soft", "pm-proof"]
     },
     {
       "id": "bun-1-4-gallery",
@@ -132,9 +129,7 @@
       "note": "repository issue spine · semantic labels · ownership · registry drift health",
       "group": "registry",
       "cli": "bun run github-issue-taxonomy:check",
-      "relatedArtifactIds": [
-        "github-issue-taxonomy"
-      ]
+      "relatedArtifactIds": ["github-issue-taxonomy"]
     },
     {
       "id": "lanes",
@@ -144,9 +139,7 @@
       "note": "session · chrome · concept crosswalk · correlations not containment",
       "group": "registry",
       "cli": "bun run workspace-taxonomy:bake",
-      "relatedArtifactIds": [
-        "workspace-lane-map"
-      ]
+      "relatedArtifactIds": ["workspace-lane-map"]
     },
     {
       "id": "surfaces",

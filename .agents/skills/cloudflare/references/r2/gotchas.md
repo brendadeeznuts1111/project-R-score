@@ -13,7 +13,8 @@ while (listed.truncated) {
 }
 ```
 
-**Reason:** `include` with metadata may return fewer objects per page to fit metadata.
+**Reason:** `include` with metadata may return fewer objects per page to fit
+metadata.
 
 ## ETag Format
 
@@ -49,7 +50,7 @@ await env.MY_BUCKET.put(key, data, { sha256: hash });
 ```typescript
 // Precondition failure returns object WITHOUT body
 const object = await env.MY_BUCKET.get(key, {
-  onlyIf: { etagMatches: '"wrong"' }
+  onlyIf: { etagMatches: '"wrong"' },
 });
 
 // Check for body, not just null
@@ -90,12 +91,13 @@ await env.MY_BUCKET.put(key, data);
 // OR: Pass Content-Length if known
 const object = await env.MY_BUCKET.put(key, request.body, {
   httpMetadata: {
-    contentLength: parseInt(request.headers.get('content-length') || '0')
-  }
+    contentLength: parseInt(request.headers.get('content-length') || '0'),
+  },
 });
 ```
 
-**Reason:** R2 requires known length for streams. Unknown length may cause silent truncation.
+**Reason:** R2 requires known length for streams. Unknown length may cause
+silent truncation.
 
 ## S3 SDK Region Configuration
 
@@ -145,22 +147,22 @@ const url = await getSignedUrl(s3, command, { expiresIn: 60 });
 // ✅ CORRECT: Return expiry to client
 return Response.json({
   uploadUrl: url,
-  expiresAt: new Date(Date.now() + 60000).toISOString()
+  expiresAt: new Date(Date.now() + 60000).toISOString(),
 });
 ```
 
 ## Limits
 
-| Limit | Value |
-|-------|-------|
-| Object size | 5 TB |
-| Multipart part count | 10,000 |
-| Multipart part min size | 5 MB (except last) |
-| Batch delete | 1,000 keys |
-| List limit | 1,000 per request |
-| Key size | 1024 bytes |
-| Custom metadata | 2 KB per object |
-| Presigned URL max expiry | 7 days |
+| Limit                    | Value              |
+| ------------------------ | ------------------ |
+| Object size              | 5 TB               |
+| Multipart part count     | 10,000             |
+| Multipart part min size  | 5 MB (except last) |
+| Batch delete             | 1,000 keys         |
+| List limit               | 1,000 per request  |
+| Key size                 | 1024 bytes         |
+| Custom metadata          | 2 KB per object    |
+| Presigned URL max expiry | 7 days             |
 
 ## Common Errors
 
@@ -177,14 +179,17 @@ return Response.json({
 ### "Object not found"
 
 **Cause:** Object key doesn't exist or was deleted  
-**Solution:** Verify object key correct, check if object was deleted, ensure bucket correct
+**Solution:** Verify object key correct, check if object was deleted, ensure
+bucket correct
 
 ### "List compatibility error"
 
 **Cause:** Missing or old compatibility_date, or flag not enabled  
-**Solution:** Set `compatibility_date >= 2022-08-04` or enable `r2_list_honor_include` flag
+**Solution:** Set `compatibility_date >= 2022-08-04` or enable
+`r2_list_honor_include` flag
 
 ### "Multipart upload failed"
 
 **Cause:** Part sizes not uniform or incorrect part number  
-**Solution:** Ensure uniform size except final part, verify part numbers start at 1
+**Solution:** Ensure uniform size except final part, verify part numbers start
+at 1

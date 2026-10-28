@@ -12,14 +12,8 @@
     "digest": "b15d67acaf6c837f32bb7df08f4324582cdc5e462ec105df44569ec10fc0d96d",
     "mediaType": "application/x-ndjson"
   },
-  "related": [
-    "kalshi-shortlist-diversity",
-    "sha3-integrity",
-    "nagata-map"
-  ],
-  "relatedDocs": [
-    "SHA3-256"
-  ],
+  "related": ["kalshi-shortlist-diversity", "sha3-integrity", "nagata-map"],
+  "relatedDocs": ["SHA3-256"],
   "meta": {
     "emitter": "kalshi-bot-research",
     "buildPin": "0.2.0",

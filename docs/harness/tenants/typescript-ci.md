@@ -4,7 +4,8 @@
 **Runs** `bun run type-check:ci`  
 **Proof** `typescript-ci-gate`  
 **Workflow** [`.github/workflows/typescript-checks.yml`](../../../.github/workflows/typescript-checks.yml)  
-**Catalog** `lib/harness/ci-deploy.ts`
+**Catalog**
+`lib/harness/ci-deploy.ts`
 
 ## Signal (failure)
 
@@ -19,7 +20,8 @@
 
 ## Retirement
 
-Remove when type-check:ci is solely owned by typescript-checks.yml without a CI runbook.
+Remove when type-check:ci is solely owned by typescript-checks.yml without a CI
+runbook.
 
 **Retirement verified** `false`  
 **Retirement check** proofId `typescript-ci-gate`

@@ -48,3 +48,9 @@ docs/archives/
 .git/
 projects/
 .DS_Store
+
+# Unformattable (embedded JS in YAML, malformed test fixtures)
+.github/workflows/issue-automation.yml
+.github/workflows/metrics-dashboard.yml
+.agents/skills/cloudflare/references/waf/api.md
+tests/fixtures/tournament-snap/malformed-glossary.json

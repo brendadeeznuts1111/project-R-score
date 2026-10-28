@@ -35,7 +35,10 @@ const ALIASES = {
  */
 export function parseMarketVenue(raw) {
   if (typeof raw !== 'string' || !raw.trim()) return 'unknown';
-  const key = raw.trim().toLowerCase().replace(/[\s_-]+/g, '');
+  const key = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]+/g, '');
   return ALIASES[key] ?? ALIASES[raw.trim().toLowerCase()] ?? 'unknown';
 }
 
