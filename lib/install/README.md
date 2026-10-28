@@ -18,6 +18,8 @@ Live `~/.bunfig.toml` may be a symlink to `~/dotfiles/bun/bunfig.toml`.
 ensure restores that symlink when the target exists and the home path is
 missing.
 
+Live `~/.bunfig.toml` may be a symlink to `~/dotfiles/bun/bunfig.toml`. `ensure --check` reads through it; `--overwrite` will not flatten it.
+
 ```bash
 bun test tests/machine-bunfig-policy.test.ts tests/ensure-machine-bunfig.test.ts
 bun run machine:bunfig:ensure

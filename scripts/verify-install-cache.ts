@@ -25,6 +25,7 @@ import {
   isEphemeralCiInstallEnv,
   MACHINE_EXPECTED_GLOBAL_STORE,
   MACHINE_EXPECTED_LINKER,
+  xdgShadowBunfigPath,
 } from '../lib/install/machine-bunfig-policy.ts';
 import {
   applyBunInstallEnv,
@@ -35,7 +36,7 @@ import {
 import {
   formatPolicySource,
   isAbsoluteCachePath,
-  readGlobalBunfigLayers,
+  readMachineBunfig,
   readProjectBunfig,
   resolveEffectiveInstallPolicy,
 } from './lib/machine-bunfig.ts';
@@ -54,7 +55,6 @@ const strict = argv.includes('--strict');
 const quiet = argv.includes('--quiet');
 const dryRun = argv.includes('--dry-run');
 const json = argv.includes('--json');
-const skipCacheSize = argv.includes('--skip-cache-size');
 
 /** Human label for the forbidden install-env pair (SSOT order). */
 const FORBIDDEN_INSTALL_ENV_LABEL = FORBIDDEN_INSTALL_ENV_VARS.join(' / ');
@@ -69,29 +69,25 @@ function envInstallPolicyOk(env: ReturnType<typeof applyBunInstallEnv>): boolean
 
 async function checkBunfig(): Promise<Check> {
   const processEnv = Bun.env as Record<string, string | undefined>;
-  const [project, layers] = await Promise.all([
-    readProjectBunfig(ROOT),
-    readGlobalBunfigLayers(processEnv),
-  ]);
-  if (layers.xdgLoaded && layers.xdgPath) {
+  const xdgShadow = xdgShadowBunfigPath(processEnv);
+  if (xdgShadow && (await Bun.file(xdgShadow).exists())) {
     return {
       ok: false,
       label: 'install policy',
-      detail: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${layers.xdgPath})`,
+      detail: `$XDG_CONFIG_HOME/.bunfig.toml shadows ~/.bunfig.toml (${xdgShadow})`,
     };
   }
 
-  const machine = layers.machine;
-  const policy = resolveEffectiveInstallPolicy(project, layers.effective);
+  const [project, machine] = await Promise.all([readProjectBunfig(ROOT), readMachineBunfig()]);
+  const policy = resolveEffectiveInstallPolicy(project, machine);
   const env = applyBunInstallEnv();
 
   const linkerOk = policy.linker === MACHINE_EXPECTED_LINKER;
   const storeOk = policy.globalStore === MACHINE_EXPECTED_GLOBAL_STORE;
   const policyOk = linkerOk && storeOk;
   const envPolicyOk = envInstallPolicyOk(env);
-  const danglingHome = machine.inode === 'dangling-symlink';
-  const envFallback = !machine.bunfigPath && !danglingHome && envPolicyOk;
-  const ok = !danglingHome && (policyOk || envFallback);
+  const envFallback = !machine.bunfigPath && envPolicyOk;
+  const ok = policyOk || envFallback;
 
   const parts: string[] = [];
   parts.push(`linker=${policy.linker ?? 'unset'} (${formatPolicySource('linker', policy)})`);
@@ -110,14 +106,6 @@ async function checkBunfig(): Promise<Check> {
         ? `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} (ephemeral CI)`
         : `policy via ${FORBIDDEN_INSTALL_ENV_LABEL} env`
     );
-  }
-
-  if (danglingHome) {
-    return {
-      ok: false,
-      label: 'install policy',
-      detail: 'dangling symlink ~/.bunfig.toml',
-    };
   }
 
   if (!machine.bunfigPath && !envPolicyOk) {
@@ -184,7 +172,7 @@ function checkShellInstallEnv(
   };
 }
 
-function checkCacheDir(includeSize = true): Check {
+function checkCacheDir(): Check {
   const cacheDir = resolveBunInstallCacheDir(applyBunInstallEnv());
   if (!cacheDir) {
     return {
@@ -201,13 +189,6 @@ function checkCacheDir(includeSize = true): Check {
       ok: !strict,
       label: 'cache dir',
       detail: `missing (run bun run install:all): ${cacheDir}`,
-    };
-  }
-  if (!includeSize) {
-    return {
-      ok: true,
-      label: 'cache dir',
-      detail: `${cacheDir} (size delegated to install:cache:lifecycle)`,
     };
   }
   const size = Bun.spawnSync(['du', '-sh', cacheDir], { stdout: 'pipe' });
@@ -353,7 +334,7 @@ async function main() {
     await checkBunfig(),
     checkEnvDefaults(),
     checkShellInstallEnv(),
-    checkCacheDir(!skipCacheSize),
+    checkCacheDir(),
     checkGlobalStore(),
     checkTildeDrift(),
     await checkTrustedDependencies(),

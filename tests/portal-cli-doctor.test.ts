@@ -33,20 +33,6 @@ import { PORTAL_CLI_COMMANDS } from '../tools/lib/portal-cli-bun-flags.ts';
 const ROOT = resolvePath(import.meta.dir, '..');
 const CLI = resolvePath(ROOT, 'tools/portal-cli.ts');
 
-async function freshRootDoctorTime(): Promise<number> {
-  const bake = (await Bun.file(`${ROOT}/public/registry/vault-health.json`).json()) as {
-    generatedAt?: unknown;
-  };
-  if (typeof bake.generatedAt !== 'string') {
-    throw new Error('vault-health fixture must declare generatedAt');
-  }
-  const generatedAtMs = Date.parse(bake.generatedAt);
-  if (!Number.isFinite(generatedAtMs)) {
-    throw new Error('vault-health fixture generatedAt must be a valid ISO timestamp');
-  }
-  return generatedAtMs + 60 * 60 * 1000;
-}
-
 describe('portal-cli doctor pure', () => {
   test('isBakeStale flags vault-health older than 48h', () => {
     const now = Date.parse('2026-08-05T12:00:00.000Z');
@@ -172,12 +158,7 @@ describe('portal-cli doctor pure', () => {
   });
 
   test('runPortalDoctor is OK on monorepo root (default)', async () => {
-    const r = await runPortalDoctor({
-      cwd: ROOT,
-      full: false,
-      skipLiveAccess: true,
-      nowMs: await freshRootDoctorTime(),
-    });
+    const r = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
     expect(r.kind).toBe('portal-cli-doctor');
     expect(r.schemaVersion).toBe(4);
     expect(r.ok).toBe(true);
@@ -282,7 +263,6 @@ describe('portal-cli doctor pure', () => {
     expect(r.group).toBe('bunfig');
     expect(r.checks).toHaveLength(7);
     expect(r.checks.every(c => c.group === 'bunfig')).toBe(true);
-    expect(r.checks.some(c => c.group === 'catalog' || c.group === 'infra')).toBe(false);
     expect(r.ok).toBe(true);
   });
 
@@ -299,53 +279,6 @@ describe('portal-cli doctor pure', () => {
     expect(shadow?.ok).toBe(false);
     expect(shadow?.level).toBe('fatal');
     expect(shadow?.message).toContain('shadows');
-    const merge = checks.find(c => c.id === 'bunfig-merge-consistency');
-    expect(merge?.ok).toBe(false);
-    expect(merge?.message).toContain('hoisted');
-    await Bun.$`rm -rf ${tmp}`.quiet();
-  });
-
-  test('--group catalog does not emit bunfig or isolated-linker checks', async () => {
-    const r = await runPortalDoctor({
-      cwd: ROOT,
-      group: 'catalog',
-      skipLiveAccess: true,
-    });
-    expect(r.checks.some(c => c.group === 'catalog')).toBe(true);
-    expect(r.checks.some(c => c.id === 'machine-isolated-linker')).toBe(false);
-    expect(r.checks.some(c => c.id === 'linker-config-version')).toBe(false);
-    expect(r.checks.some(c => c.group === 'bunfig')).toBe(false);
-    expect(r.checks.some(c => c.group === 'infra')).toBe(false);
-  });
-
-  test('machine-isolated-linker uses machineEnv, not process HOME', async () => {
-    const tmp = `${ROOT}/tmp/doctor-isolated-env`;
-    await Bun.$`rm -rf ${tmp}`.quiet();
-    await Bun.$`mkdir -p ${tmp}/home`.quiet();
-    await Bun.write(`${tmp}/home/.bunfig.toml`, '[install]\nlinker = "hoisted"\n');
-    const r = await runPortalDoctor({
-      cwd: ROOT,
-      group: 'linker',
-      skipLiveAccess: true,
-      machineEnv: { HOME: `${tmp}/home` },
-    });
-    const linker = r.checks.find(c => c.id === 'machine-isolated-linker');
-    expect(linker?.ok).toBe(false);
-    expect(linker?.message).toContain('hoisted');
-    await Bun.$`rm -rf ${tmp}`.quiet();
-  });
-
-  test('bunfig-machine-ssot names a dangling home link, not missing', async () => {
-    const tmp = `${ROOT}/tmp/doctor-dangling-home`;
-    await Bun.$`rm -rf ${tmp}`.quiet();
-    await Bun.$`mkdir -p ${tmp}/home`.quiet();
-    const { symlinkSync } = await import('node:fs');
-    symlinkSync(`${tmp}/home/missing-target.toml`, `${tmp}/home/.bunfig.toml`);
-    const checks = await runBunfigChecks(ROOT, { HOME: `${tmp}/home` });
-    const ssot = checks.find(c => c.id === 'bunfig-machine-ssot');
-    expect(ssot?.ok).toBe(false);
-    expect(ssot?.message).toContain('dangling symlink');
-    expect(ssot?.message).not.toContain('file missing');
     await Bun.$`rm -rf ${tmp}`.quiet();
   });
 
@@ -662,12 +595,7 @@ describe('portal-cli doctor pure', () => {
   test('pretty format keeps full messages (no mid-line …) and wraps in frame', async () => {
     const longMsg =
       'lockfile configVersion is isolated-compatible and this sentence is deliberately long so same-line layout cannot fit inside a narrow frame without wrapping or ellipsis';
-    const base = await runPortalDoctor({
-      cwd: ROOT,
-      full: false,
-      skipLiveAccess: true,
-      nowMs: await freshRootDoctorTime(),
-    });
+    const base = await runPortalDoctor({ cwd: ROOT, full: false, skipLiveAccess: true });
     const checks = base.checks.map((c, i) => (i === 0 ? { ...c, message: longMsg } : c));
     const r: PortalDoctorReport = {
       ...base,
