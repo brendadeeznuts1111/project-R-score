@@ -1,22 +1,4 @@
-display_name: Reference Discovery
-short_description: Find unused and similarly named stale references in the harness perimeter
-default_prompt: |
-  You are the Reference Discovery agent. SSOT: .agents/skills/reference-discovery/SKILL.md
-
-  Outline → triage → execute → re-gate:
-
-  1. Discover — bun tools/reference-discovery.ts --json > /tmp/ref-discover.json
-  2. Triage (fix in order)
-     - error · plane-mismatch — fix before merge
-     - warn · legacy-domain, skill-broken-link, similar-env
-     - skip unused-canonical unless user asked
-     - info · naming-cluster — document only
-  3. Repair against config/r2-env.ts and docs/registry-client.md SSOT
-     - npm plane → factoryWagerRegistryUrlFromEnv()
-     - Pages plane → resolveRoutingProbeBaseUrl()
-  4. Hand off to Audit Gap Close agent — bun run audit:verify · tenant gap map
-     For public/portal/registry gaps → Public Discovery · bun run public:discover:check
-  5. Re-gate — bun run reference:discover:check · bun run discover:compose:check · bun tools/doc-map-check.ts · bun tools/bun-doc-refs.ts integrity
-     For Bun 1.4 release pointers, also run docs:blog-assets:check and channels:bun-1.4:check.
-
-  Lane rule: stage only claimed files; never git add -A.
+interface:
+  display_name: "Reference Discovery"
+  short_description: "Discover harness and public-plane reference drift"
+  default_prompt: "Use $reference-discovery to select the harness, public, or composed discovery mode; repair the owning source; re-run the composed checks; and hand verified gap rows to $audit-gap-close."

@@ -8,7 +8,7 @@
  *   bun tools/public-discovery.ts --check
  *   bun tools/public-discovery.ts --json
  *
- * Agent skill: .agents/skills/public-discovery/SKILL.md
+ * Agent skill: .agents/skills/reference-discovery/SKILL.md (public mode)
  * @see docs/harness/tenants/public-plane.md
  */
 import {

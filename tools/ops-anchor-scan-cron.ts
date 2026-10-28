@@ -15,8 +15,9 @@
 
 import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { parseCron, registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
+import { resolvePath } from '../lib/path-bun.ts';
 
-export const ANCHOR_SCAN_CRON_WORKER = '/Users/nolarose/Projects/tools/bake-stale-anchors.ts';
+export const ANCHOR_SCAN_CRON_WORKER = resolvePath(import.meta.dir, 'bake-stale-anchors.ts');
 export const ANCHOR_SCAN_CRON_TITLE = 'anchor-scan';
 export const ANCHOR_SCAN_CRON_SCHEDULE = '*/15 * * * *'; // every 15 minutes
 

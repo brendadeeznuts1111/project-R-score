@@ -42,7 +42,19 @@ export type AgentSkillValidation = {
   ok: boolean;
   skillCount: number;
   registryCount: number;
+  retiredCount: number;
   issues: AgentSkillIssue[];
+};
+
+type SkillGovernanceEntry = {
+  lifecycle: 'active' | 'deprecated';
+  provenance: 'first-party' | 'vendored' | 'forked';
+  source?: string;
+  sourceRevision?: string;
+  sourcePaths?: string[];
+  verifiedAt?: string;
+  upstreamState?: 'exact' | 'adapted';
+  replacement?: string;
 };
 
 type ParsedSkill = {
@@ -156,6 +168,29 @@ async function validateLocalLinks(
         `relative link does not resolve: ${match[1]}`
       );
     }
+  }
+}
+
+function validateRetiredPointers(
+  text: string,
+  retiredNames: Iterable<string>,
+  displayPath: string,
+  issues: AgentSkillIssue[]
+): void {
+  for (const retiredName of retiredNames) {
+    const escapedName = retiredName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const invocation = new RegExp(`\\$${escapedName}(?![a-z0-9-])`);
+    const packagePath = new RegExp(
+      `(?:^|[^a-z0-9-])\\.agents/skills/${escapedName}(?:/|\\b)`
+    );
+    if (!invocation.test(text) && !packagePath.test(text)) continue;
+    issue(
+      issues,
+      'error',
+      'skill-retired-pointer',
+      displayPath,
+      `active skill resource points to retired skill: ${retiredName}`
+    );
   }
 }
 
@@ -437,6 +472,8 @@ export async function validateAgentSkills(
   const skillsRoot = resolveAgentSkillsRoot(repoRoot);
   const registryPath = resolveAgentSkillsPath(repoRoot, AGENT_SKILLS_PATHS.loopRegistry);
   const registryDisplayPath = agentSkillsDisplayPath(AGENT_SKILLS_PATHS.loopRegistry);
+  const governancePath = resolveAgentSkillsPath(repoRoot, AGENT_SKILLS_PATHS.governanceManifest);
+  const governanceDisplayPath = agentSkillsDisplayPath(AGENT_SKILLS_PATHS.governanceManifest);
   const issues: AgentSkillIssue[] = [];
   const discovered = new Map<string, string>();
 
@@ -448,7 +485,49 @@ export async function validateAgentSkills(
       AGENT_SKILLS_PATHS.root,
       'skills root is missing'
     );
-    return { ok: false, skillCount: 0, registryCount: 0, issues };
+    return { ok: false, skillCount: 0, registryCount: 0, retiredCount: 0, issues };
+  }
+
+  let governancePackages: Record<string, unknown> = {};
+  let retiredSkills: Record<string, unknown> = {};
+  try {
+    const governance: unknown = await Bun.file(governancePath).json();
+    if (!isRecord(governance) || governance.version !== 1) {
+      issue(
+        issues,
+        'error',
+        'governance-shape',
+        governanceDisplayPath,
+        'manifest version must be 1'
+      );
+    } else {
+      if (isRecord(governance.packages)) governancePackages = governance.packages;
+      else
+        issue(
+          issues,
+          'error',
+          'governance-packages',
+          governanceDisplayPath,
+          'packages must be an object'
+        );
+      if (isRecord(governance.retired)) retiredSkills = governance.retired;
+      else
+        issue(
+          issues,
+          'error',
+          'governance-retired',
+          governanceDisplayPath,
+          'retired must be an object'
+        );
+    }
+  } catch (error) {
+    issue(
+      issues,
+      'error',
+      'governance-json',
+      governanceDisplayPath,
+      error instanceof Error ? error.message : String(error)
+    );
   }
 
   let registrySkills: Record<string, unknown> = {};
@@ -553,6 +632,7 @@ export async function validateAgentSkills(
     }
     await validateLocalLinks(text, skillPath, displayPath, repoRoot, issues);
     validateCanonicalSkillPaths(text, folderName, discoveredSkillNames, displayPath, issues);
+    validateRetiredPointers(text, Object.keys(retiredSkills), displayPath, issues);
     if (folderName in registrySkills) {
       await validateRunnableExamples(text, dirnamePath(skillPath), displayPath, repoRoot, issues);
       await validateBundledReferences(
@@ -563,12 +643,204 @@ export async function validateAgentSkills(
         issues
       );
     }
+
+    for await (const relativePath of new Bun.Glob('**/*.md').scan({
+      cwd: dirnamePath(skillPath),
+      onlyFiles: true,
+    })) {
+      if (relativePath === AGENT_SKILLS_PATHS.skillFile) continue;
+      const resourcePath = resolveAgentSkillsPath(repoRoot, folderName, relativePath);
+      const resourceDisplayPath = agentSkillsDisplayPath(folderName, relativePath);
+      const resourceText = await Bun.file(resourcePath).text();
+      await validateLocalLinks(
+        resourceText,
+        resourcePath,
+        resourceDisplayPath,
+        repoRoot,
+        issues
+      );
+      validateRetiredPointers(
+        resourceText,
+        Object.keys(retiredSkills),
+        resourceDisplayPath,
+        issues
+      );
+    }
     await validateMetadata(
       resolveAgentSkillsPath(repoRoot, folderName, AGENT_SKILLS_PATHS.metadataFile),
       agentSkillsDisplayPath(folderName, AGENT_SKILLS_PATHS.metadataFile),
       folderName in registrySkills,
       issues
     );
+  }
+
+  for (const folderName of discoveredSkillNames) {
+    const raw = governancePackages[folderName];
+    const displayPath = agentSkillsDisplayPath(folderName);
+    if (!isRecord(raw)) {
+      issue(
+        issues,
+        'error',
+        'governance-package-missing',
+        displayPath,
+        'skill is missing from governance manifest'
+      );
+      continue;
+    }
+    const entry = raw as Partial<SkillGovernanceEntry>;
+    if (entry.lifecycle !== 'active' && entry.lifecycle !== 'deprecated') {
+      issue(
+        issues,
+        'error',
+        'governance-lifecycle',
+        displayPath,
+        'lifecycle must be active or deprecated'
+      );
+    }
+    if (!['first-party', 'vendored', 'forked'].includes(entry.provenance ?? '')) {
+      issue(
+        issues,
+        'error',
+        'governance-provenance',
+        displayPath,
+        'provenance must be first-party, vendored, or forked'
+      );
+    }
+    if ((entry.provenance === 'vendored' || entry.provenance === 'forked') && !entry.source) {
+      issue(
+        issues,
+        'error',
+        'governance-source',
+        displayPath,
+        'vendored and forked skills require source'
+      );
+    }
+    if (entry.provenance === 'vendored' || entry.provenance === 'forked') {
+      if (!/^https:\/\/[^\s]+$/.test(entry.source ?? '')) {
+        issue(
+          issues,
+          'error',
+          'governance-source-url',
+          displayPath,
+          'vendored and forked skill sources must be HTTPS URLs'
+        );
+      }
+      if (!/^[0-9a-f]{40}$/.test(entry.sourceRevision ?? '')) {
+        issue(
+          issues,
+          'error',
+          'governance-source-revision',
+          displayPath,
+          'vendored and forked skills require a 40-character sourceRevision'
+        );
+      }
+      if (
+        !Array.isArray(entry.sourcePaths) ||
+        entry.sourcePaths.length === 0 ||
+        entry.sourcePaths.some(
+          sourcePath =>
+            typeof sourcePath !== 'string' ||
+            sourcePath.trim() === '' ||
+            sourcePath.startsWith('/') ||
+            sourcePath.split('/').includes('..')
+        )
+      ) {
+        issue(
+          issues,
+          'error',
+          'governance-source-paths',
+          displayPath,
+          'vendored and forked skills require safe relative sourcePaths'
+        );
+      }
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(entry.verifiedAt ?? '')) {
+        issue(
+          issues,
+          'error',
+          'governance-verified-at',
+          displayPath,
+          'vendored and forked skills require verifiedAt as YYYY-MM-DD'
+        );
+      }
+      const expectedState = entry.provenance === 'vendored' ? 'exact' : 'adapted';
+      if (entry.upstreamState !== expectedState) {
+        issue(
+          issues,
+          'error',
+          'governance-upstream-state',
+          displayPath,
+          `${entry.provenance} skills require upstreamState ${expectedState}`
+        );
+      }
+    }
+    if (entry.lifecycle === 'deprecated' && !entry.replacement) {
+      issue(
+        issues,
+        'error',
+        'governance-replacement',
+        displayPath,
+        'deprecated skills require replacement'
+      );
+    }
+    if (entry.lifecycle === 'deprecated' && folderName in registrySkills) {
+      issue(
+        issues,
+        'error',
+        'governance-deprecated-registered',
+        displayPath,
+        'deprecated skills cannot remain loop-registered'
+      );
+    }
+  }
+  for (const packageName of Object.keys(governancePackages)) {
+    if (!discoveredSkillNames.has(packageName)) {
+      issue(
+        issues,
+        'error',
+        'governance-package-stale',
+        agentSkillsDisplayPath(packageName),
+        'manifest package has no SKILL.md'
+      );
+    }
+  }
+  for (const [retiredName, raw] of Object.entries(retiredSkills)) {
+    if (!SKILL_NAME_RE.test(retiredName) || !isRecord(raw)) {
+      issue(
+        issues,
+        'error',
+        'governance-retired-entry',
+        governanceDisplayPath,
+        `invalid retired entry: ${retiredName}`
+      );
+      continue;
+    }
+    if (discoveredSkillNames.has(retiredName) || retiredName in registrySkills) {
+      issue(
+        issues,
+        'error',
+        'governance-retired-active',
+        agentSkillsDisplayPath(retiredName),
+        'retired skill still has an active package or registry entry'
+      );
+    }
+    if (typeof raw.replacement !== 'string' || raw.replacement.trim() === '') {
+      issue(
+        issues,
+        'error',
+        'governance-retired-replacement',
+        governanceDisplayPath,
+        `${retiredName} requires replacement`
+      );
+    }
+    if (typeof raw.reason !== 'string' || raw.reason.trim() === '') {
+      issue(
+        issues,
+        'error',
+        'governance-retired-reason',
+        governanceDisplayPath,
+        `${retiredName} requires reason`
+      );
+    }
   }
 
   for (const [skillName, rawEntry] of Object.entries(registrySkills)) {
@@ -634,13 +906,14 @@ export async function validateAgentSkills(
     ok: !issues.some(item => item.level === 'error'),
     skillCount: discovered.size,
     registryCount: Object.keys(registrySkills).length,
+    retiredCount: Object.keys(retiredSkills).length,
     issues,
   };
 }
 
 function formatValidation(result: AgentSkillValidation): string {
   const lines = [
-    `agent skills: ${result.skillCount} definitions · ${result.registryCount} registered`,
+    `agent skills: ${result.skillCount} definitions · ${result.registryCount} registered · ${result.retiredCount} retired aliases`,
   ];
   for (const item of result.issues) {
     lines.push(`  ${item.level === 'error' ? 'ERROR' : 'WARN'} ${item.path}: ${item.message}`);

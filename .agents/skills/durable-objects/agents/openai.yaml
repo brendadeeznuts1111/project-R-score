@@ -1,0 +1,4 @@
+interface:
+  display_name: "Durable Objects"
+  short_description: "Build and review stateful Cloudflare coordination"
+  default_prompt: "Use $durable-objects to retrieve current Durable Objects APIs, define the ownership and consistency boundary, and implement storage, alarms, WebSockets, or RPC with focused tests and safe migrations."

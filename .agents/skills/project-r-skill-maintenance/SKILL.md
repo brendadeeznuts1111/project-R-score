@@ -2,8 +2,8 @@
 name: project-r-skill-maintenance
 description: >
   Create, tighten, and validate Project R Codex skills. Use for SKILL.md
-  wording, agents/openai.yaml alignment, duplicated guidance, broken references,
-  or stale Bun guidance.
+  wording, agents/openai.yaml alignment, duplicate installed copies, broken
+  references, or stale Bun guidance.
 ---
 
 # Project R Skill Maintenance
@@ -12,37 +12,53 @@ description: >
 
 1. Update an existing repository skill when it owns the request; create a new
    skill only when no current owner fits.
-2. Treat `.agents/skills` in the owning Project R checkout as the only Project R
-   skill authority. Do not create installed copies under `~/.codex/skills`;
-   workspace discovery loads the repository packages directly.
+2. Treat `.agents/skills` in the owning Project R checkout as authority. Compare
+   any `~/.codex/skills` copy, but synchronize it only after the repository
+   version validates. Treat `~/.codex/AGENTS.md` as optional machine routing,
+   not the Project R SSOT: it must not copy generated release data or override
+   repository policy.
 3. Keep frontmatter to supported keys and make `description` state capability
    plus trigger. Put runnable detail in the body or a focused reference.
 4. Keep the body operational: start condition, ownership boundary, ordered
    workflow, proof, and guardrails. Remove repeated background prose and stale
-   examples.
+   examples. A skill is a focused trigger and decision boundary, not a generic
+   controller. Name at most three primary executable entrypoints and link to
+   shared authority instead of copying command catalogs or orchestration loops.
 5. Align `agents/openai.yaml` with a short display name, one-line description,
    and action-oriented default prompt.
-6. Register a new skill in `.agents/skills/ast-grep/skill-loop-registry.json`
-   with enabled `doctor` and `rate` phases. Add `precommit` only when the skill
-   owns that command.
-
-## Authority regressions
-
-- Reject installed-parity contracts, synchronization commands, or copied Project
-  R skill packages under `~/.codex/skills`. They create a second policy plane
-  with ambiguous precedence and broken repository-relative links.
-- A machine doctor may report a duplicate installed package, but repository CI
-  must not require, compare, update, or delete user-scoped skill directories.
-- Global guidance may point to the current checkout. It must not copy Project R
-  commands, release state, gate policy, or skill bodies.
-- Treat a task report, worktree listing, or old commit timestamp as observation,
-  not ownership. Durable ownership needs an explicit claim record; absence or
-  expiry of a claim never grants deletion authority.
-
-7. Replace repeated multi-command audit recipes with one owner command when the
-   repository already has the machinery. A versioned audit must fail for new
-   findings and stale expected findings; keep every expected finding explicit,
-   reviewed, and tested. Never add an automatic allowlist-update mode.
+6. Record every active, deprecated, vendored, forked, and retired package in
+   `.agents/skills/references/skill-governance.json`. Register a skill in
+   `.agents/skills/ast-grep/skill-loop-registry.json` only when it owns a real
+   executable phase; directory existence plus a computed rating is not proof.
+   For every external package, pin the checked upstream revision and paths,
+   verification date, and whether the local package is exact or adapted. Run the
+   bounded remote provenance check when an external skill changes; do not put
+   that network check in ordinary CI.
+7. Run installed parity only on the operator machine. The repository contract
+   remains portable; `--installed` compares every package file and rejects
+   missing, changed, or stale files under `~/.codex/skills`.
+8. Run `bun run skills:rate` for Bun-first static compliance findings and
+   `bun run skills:rate:dynamic` for bounded live evidence. Never call a static
+   compliance value a quality score or credit portfolio proof to an individual
+   skill. The evidence registry is `config/skill-rating-evidence.json`; every
+   runtime or contract proof must name its owning active skills. The scoring
+   model, rules, and contextual exceptions live in
+   `.agents/skills/references/bun-skill-rating.md`; do not turn a Node
+   compatibility import into a penalty when no equivalent Bun API exists.
+9. When the rating scheduler or its manifest changes, run
+   `bun run skills:schedule:check` and the managed-process/skill-health tests.
+   The spine daemon owns production in-process scheduling; do not register an
+   additional OS job or run the standalone scheduler beside the spine.
+10. When a skill changes XML, JSON5, JSONL, or other structured-data guidance,
+    run `bun run data-formats:check`. Describe only operations proved by the
+    active runtime and manifest; a namespace name or current docs page is not
+    sufficient evidence. Update the ops skill's focused structured-data runbook
+    and behavioral tests together when failure or promotion semantics change.
+11. When skill use repeatedly requires manual searching, a hidden prerequisite,
+    or the same workaround, record the stable failure with
+    `bun run ai -- friction record`. Promote repeated observations by fixing the
+    owning tool, route, or error contract; add skill prose only when judgment is
+    the missing capability.
 
 ## Thread-portfolio boundary
 
@@ -66,44 +82,34 @@ clarity but must not be added to that catalog.
   canonical publication timestamp, and URL for every recorded event. Never use a
   nearby minor release, the active runtime, `verifiedOn`, or `lastUpdated` as an
   introduction date; retain `release-unknown` when official evidence is absent.
-- When a skill mentions Bun 1.4, link to
-  [`BUN_1_4_MIGRATION.md`](../../../docs/BUN_1_4_MIGRATION.md),
-  [`BUN_1_4_CHANNEL_LIFECYCLE.md`](../../../docs/BUN_1_4_CHANNEL_LIFECYCLE.md),
-  and the
-  [versioned capability registry](../../../public/registry/bun-1.4-capabilities.json)
-  instead of copying capability lists. The release blog owns announced facts;
-  the breaking-change tracker's merged section owns reconciled behavior; its
-  **Under consideration** section did not ship; the capability registry owns
-  local adoption state; executable contracts own proof. Preserve the registry's
-  adoption semantics: release coverage is not local use,
-  `candidate`/`upstream-claim` carry no contracts, and `integrated`/`contract`
-  require executable evidence.
 - Preserve fail-closed validation for committed feeds, catalogs, overlays, and
   scrape state. Recovery is an explicit artifact repair or documented forced
   rebuild, not a silent default or synthesized metadata.
-- Route Bun 1.4 syntax migration checks through the ast-grep package's
-  `bun:1.4:migration:check` command. Do not copy its rule list or expected
-  finding into another skill.
+- Keep structured-data guidance operation-specific. JSON5 owns `parse` and
+  `stringify`; JSONL owns complete-input `parse` plus streaming `parseChunk` and
+  has no stringify contract. JSONL negative proof must accept both thrown
+  complete-input errors and the structured `parseChunk().error` result.
+- Gate `Bun.XML` on Bun 1.4 or later and actual `parse`/`stringify`
+  availability. Below that gate, a justified third-party parser is valid; never
+  present a future native API as executable on the pinned runtime. Where a skill
+  records performance, preserve raw `durationNs` from `Bun.nanoseconds()` and
+  derive `durationMs = durationNs / 1_000_000` only for display.
 - Repository scripts and the owning command map outrank copied command snippets.
+- Let `bun run ai -- discover` find candidate skills and tools. It does not
+  replace their source, grant authorization, or prove capability.
 - Keep shell examples executable. `bun run <name>` must resolve in the package
   selected by the example's explicit `cd`; cross-skill paths must start at
   `.agents/skills/`.
 - Remove obsolete translations. Bun has no `bun test --runInBand`; `--parallel`
   implies `--isolate`; Node test worker IDs are not `bun:test` allocation APIs.
-- Preserve Bun 1.4 CLI value shapes when documenting observability:
-  `--cpu-prof-md` and `--heap-prof-md` are boolean flags, while output paths use
-  their `--*-prof-dir` and `--*-prof-name` companions. Reject copied
-  `--cpu-prof-md=<path>` examples.
-- Route changed-test loops through the repository wrapper so Bun 1.4 `--timings`
-  scheduling has one cache and one opt-out. Do not duplicate the raw
-  `--changed --watch --parallel` command in another skill or package script.
-- Preserve bounded merge scheduling: the harness may add `--parallel=4` to the
-  wrapper, while `test:changed:serial` remains a diagnostic. Skill examples must
-  not recommend serial execution as a substitute for fixture isolation.
 - Root Project R uses pinned ESLint and Prettier. Keep Oxlint only inside a
   standalone nested product with its own explicit pin.
 - Link shared staged-gate or loop behavior through
   [`agent-tooling.md`](../references/agent-tooling.md) instead of copying it.
+- Deprecate before deleting: name the replacement and reason in the governance
+  manifest, migrate direct consumers, remove the loop entry, then retire the
+  package. Preserve a fork until its repository-specific behavior has an owned
+  destination.
 
 ## Proof
 
@@ -111,16 +117,30 @@ Run:
 
 ```bash
 bun run skills:validate
+bun run skills:provenance:check
+bun run skills:rate
+bun run skills:rate:dynamic
+bun run skills:schedule:check
+bun run data-formats:check
+bun run agents:contract:check
+bun run agents:contract:check -- --installed
 ```
 
 When validation or hook behavior changes, also run:
 
 ```bash
 bun test tests/agent-skills-validation.test.ts tests/pre-commit-runner.test.ts
+bun test tests/managed-process.test.ts tests/skill-health-scheduler.test.ts
 ```
 
-Report the authoritative files changed, wording or behavior removed, and focused
-proof. Do not synchronize repository skills into a global skill directory.
+Report the authoritative files changed, wording or behavior removed, focused
+proof, and whether an installed copy was synchronized.
+
+After repository proof passes, synchronize the complete changed skill package
+(body, metadata, references, and scripts), run the installed contract check, and
+report its exact package/file count. This is the machine-side alignment evidence
+because it compares complete packages byte-for-byte. Update global routing only
+when it conflicts with repository authority.
 
 ## Guardrails
 
@@ -130,6 +150,3 @@ proof. Do not synchronize repository skills into a global skill directory.
   conflicts with a verified contract.
 - Never encode model branding, co-author trailers, publishing, or upload as a
   mandatory skill action.
-- Do not reintroduce `config/project-r-agent-contract.json`,
-  `agents:contract:check`, or installed-skill parity as a substitute for
-  `bun run skills:validate`.

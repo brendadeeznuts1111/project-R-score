@@ -64,7 +64,7 @@ Catalog SSOT:
 ```bash
 bun run check:snapshots              # orphan / missing / bad Bun Snapshot v1 header
 bun run test:snapshots               # run all catalogued snapshot suites
-bun run test:snapshots:update        # file-scoped -u (all suites)
+bun run test:snapshots:update -- --id <suite> # one reviewed file-scoped update
 bun run test:snapshots:update -- --id capability-map
 bun run test:partner-cli:snapshots        # typed Bun.spawn contract
 bun run test:partner-cli:snapshots:update # file-scoped bun test … -u
@@ -86,8 +86,9 @@ bun run portal-cli capabilities health --update
 - Orphan snap files (no catalog entry):
   `bun tools/bun-test-snapshots.ts --prune-orphans`.
 
-**Not the same store:** gitignored `snapshots/` is portal **data-plane** capture
-(`portal-cli snapshot run`). Local retention only (not R2):
+**Not the same store:** gitignored `artifacts/snapshots/` is portal
+**data-plane** capture (`portal-cli snapshot run`). Local retention only (not
+R2):
 
 ```bash
 bun run portal-cli snapshot prune --keep=5

@@ -18,9 +18,13 @@ import { isModuleEntrypoint } from '../lib/bun-executable.ts';
 import { parseCron, registerOsCron, removeOsCron } from '../lib/harness/cron.ts';
 import { SETTLEMENT_CRON_SCHEDULE } from '../lib/partner-profile/settlement-runner';
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
+import { resolvePath } from '../lib/path-bun.ts';
 
-export const SETTLEMENT_CRON_WORKER =
-  '/Users/nolarose/Projects/lib/partner-profile/settlement-cron-worker.ts';
+export const SETTLEMENT_CRON_WORKER = resolvePath(
+  import.meta.dir,
+  '..',
+  'lib/partner-profile/settlement-cron-worker.ts'
+);
 export const SETTLEMENT_CRON_TITLE = 'partner-settlement';
 
 function previewFireTimes(expression: string, count: number, from?: Date | number): Date[] {

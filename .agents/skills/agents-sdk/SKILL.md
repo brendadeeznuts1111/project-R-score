@@ -14,6 +14,8 @@ description:
 Your knowledge of the Agents SDK may be outdated. **Prefer retrieval over
 pre-training** for any Agents SDK task.
 
+Upstream npm/npx examples are compatibility references. In a Bun-owned repository, use the owning repository's scripts and package manager; translate ordinary execution to `bun x` and dependency changes to `bun add` unless the target tool explicitly requires npm compatibility.
+
 ## Retrieval Sources
 
 Cloudflare docs: https://developers.cloudflare.com/agents/

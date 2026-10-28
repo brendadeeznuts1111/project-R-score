@@ -1,57 +1,63 @@
 # AGENTS — routing tables
 
-Just-in-time task router. Root [`AGENTS.md`](../AGENTS.md) owns always-loaded
-guardrails; the
+Searchable fallback routing corpus for `bun run ai -- discover`. Root
+[`AGENTS.md`](../AGENTS.md) owns always-loaded invariants; executable tools own
+behavior; the
 [`capability map`](harness/capability-map.md#grounded-capability-map) owns the
-grounded API matrix. Load only the matching route and its owner.
+grounded API matrix. This file helps discovery rank a focused route. It is not a
+controller and should not be read sequentially.
+
+Agent-path architecture and the recurring-friction lifecycle:
+[`design/ai-native-agent-path.md`](design/ai-native-agent-path.md) ·
+`bun run ai -- doctor`.
 
 ## Platform
 
-- Coding standards:
-  [`.custom-instructions.md`](https://github.com/brendadeeznuts1111/project-R-score/blob/main/.custom-instructions.md)
+- Coding standards: `.custom-instructions.md` ·
+  [`DEVELOPMENT-STANDARDS.md`](DEVELOPMENT-STANDARDS.md)
 - Install and bunfig: [`UNIFIED.md`](UNIFIED.md)
 - Wire boundary: [`WIRE_BOUNDARY.md`](WIRE_BOUNDARY.md)
 - Domain → concept → shape → surface:
   [`DOMAIN_CONCEPT_SHAPE.md`](DOMAIN_CONCEPT_SHAPE.md)
 - Bun APIs: [`BUN_NATIVE_CAPABILITIES.md`](BUN_NATIVE_CAPABILITIES.md) ·
   [`BUN_DOCS_OPERATE.md`](BUN_DOCS_OPERATE.md) · `bun run docs:refresh`
-- Bun 1.4 release facts: [`BUN_1_4_MIGRATION.md`](BUN_1_4_MIGRATION.md) (what
-  shipped) · [`BUN_1_4_CHANNEL_LIFECYCLE.md`](BUN_1_4_CHANNEL_LIFECYCLE.md)
-  (channels, ownership, removal) ·
-  [`BUN_1_4_MEDIA_RIGHTS.md`](BUN_1_4_MEDIA_RIGHTS.md) (external versus vendored
-  delivery) · `public/registry/bun-1.4-*.json` ·
-  `bun run docs:blog-assets:check` · `bun run channels:bun-1.4:check`
+- Test/invariant/snapshot architecture:
+  [`design/bun-test-invariant-snapshot-architecture.md`](design/bun-test-invariant-snapshot-architecture.md)
 - Native fetch protocols: `lib/docs/fetch-protocol-docs.ts` ·
   `bun test tests/bun-release-tracker.test.ts`
-- Console output: `lib/console/` · `lib/bun-runtime.md` ·
-  `bun run check:console-format`
+- Console output:
+  [root console policy](../AGENTS.md#console-depth-output-verbosity) ·
+  `lib/console/` · `lib/bun-runtime.md`
 - `bun create`:
+  [root scaffold policy](../AGENTS.md#bun-create-templating--scaffold) ·
   [`design/bun-create-alignment.md`](design/bun-create-alignment.md) ·
-  `lib/factory/` · `bun run factory:templates`
+  `lib/factory/`
 - Package release:
   [`design/bun-publish-alignment.md`](design/bun-publish-alignment.md) ·
-  `bun publish --dry-run` · `bun pm pack` — select the owning package first; the
-  private monorepo root is not a default publish target
-- CLI flags: [`harness/cli-constants-flags.md`](harness/cli-constants-flags.md)
-  · `lib/docs/ref-id-tool-flags.ts` · `bun run cli:flags:check`
+  `bun publish --dry-run` · `bun pm pack`
+- CLI flags:
+  [root unknown-option policy](../AGENTS.md#unknown-long-options-bun_strip_unknown)
+  · [`harness/cli-constants-flags.md`](harness/cli-constants-flags.md) ·
+  `bun run cli:flags:check`
 - Bun upstream PR proof:
   [`harness/tenants/bun-upstream-contributing.md`](harness/tenants/bun-upstream-contributing.md)
   · `bun run bun:pr:verify -- <pr> [--proof=all] [--json]`
 - Bun channel/type governance:
   [`design/bun-channel-governance.md`](design/bun-channel-governance.md) ·
   `bun run bun:channel:check`
+- Data-format capability lab:
+  [`design/data-format-lab.md`](design/data-format-lab.md) ·
+  `bun run data-formats:check`
+- Bun enhancement discovery:
+  [`design/bun-enhancement-pipeline.md`](design/bun-enhancement-pipeline.md) ·
+  `bun run enhancements -- check` · `/.well-known/experiments`
 - Audit findings: [`audit/README.md`](audit/README.md) ·
   `bun tools/bun-doc-refs.ts suggest --audit "<q>"`
 - Import graph: [`IMPORT_BOUNDARIES.md`](IMPORT_BOUNDARIES.md) ·
   `bun run check:import-graph`
-- Workspace layout and path ownership: [`STRUCTURE.md`](../STRUCTURE.md) ·
+- Workspace and path ownership: [`STRUCTURE.md`](../STRUCTURE.md) ·
   `lib/docs/repo-docs.ts`
-- Worktree lane ownership and lifecycle:
-  [`harness/tenants/maintain-workspace.md`](harness/tenants/maintain-workspace.md)
-  · `bun run lane:status` (inspection only; not a claim or retirement grant)
 - Harness: [`harness/README.md`](harness/) · `bun run harness:status`
-- Guard coverage gap map:
-  [`harness/tenants/guard-coverage.md`](harness/tenants/guard-coverage.md)
 - Platform routing: [`platform-routing.md`](platform-routing.md) ·
   `bun run verify:pages-edge`
 - Portal foundation: [`portal-foundation.md`](portal-foundation.md) ·

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare Email Service"
+  short_description: "Build current Cloudflare email sending and routing"
+  default_prompt: "Use $cloudflare-email-service to retrieve current Email Service behavior, identify the exact sending or routing boundary, and implement it with least-privilege bindings, deliverability controls, and focused proof."

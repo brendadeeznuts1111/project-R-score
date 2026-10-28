@@ -1,7 +1,7 @@
 // @see https://bun.com/docs/test/index#run-tests
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file
 import { describe, expect, test } from 'bun:test';
-import { onRequest } from '../functions/_middleware.ts';
+import { dataFormatCanonicalRedirect, onRequest } from '../functions/_middleware.ts';
 import {
   CLOUDFLARE_SECURITY_HEADERS,
   inspectCloudflareSecurityHeaders,
@@ -54,6 +54,50 @@ describe('Cloudflare security headers', () => {
     for (const [name, value] of Object.entries(CLOUDFLARE_SECURITY_HEADERS)) {
       expect(response.headers.get(name)).toBe(value);
     }
+  });
+
+  test('root response advertises enhancement discovery without changing nested routes', async () => {
+    const root = await onRequest({
+      request: new Request('https://factory-wager.com/'),
+      next: async () => new Response('<html></html>', { headers: { 'Content-Type': 'text/html' } }),
+    });
+    expect(root.headers.get('Link')).toContain('</.well-known/experiments>; rel="help"');
+
+    const nested = await onRequest({
+      request: new Request('https://factory-wager.com/portal/'),
+      next: async () => new Response('portal'),
+    });
+    expect(nested.headers.get('Link')).toBeNull();
+  });
+
+  test('data-format lab redirects unprotected Pages aliases to the Access host', async () => {
+    const response = await onRequest({
+      request: new Request('https://factory-wager.com/portal/labs/data-formats/?view=proof'),
+      next: async () => {
+        throw new Error('redirect must happen before the Pages asset is served');
+      },
+    });
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toBe(
+      'https://score.factory-wager.com/portal/labs/data-formats/?view=proof'
+    );
+    expect(response.headers.get('X-Frame-Options')).toBe('DENY');
+  });
+
+  test('data-format lab remains local and accepts both protected production hosts', () => {
+    expect(
+      dataFormatCanonicalRedirect(
+        new Request('https://score.factory-wager.com/portal/registry/data-format-lab.json')
+      )
+    ).toBeNull();
+    expect(
+      dataFormatCanonicalRedirect(
+        new Request('https://project-r-score.pages.dev/portal/labs/data-formats/')
+      )
+    ).toBeNull();
+    expect(
+      dataFormatCanonicalRedirect(new Request('http://localhost:8788/portal/labs/data-formats/'))
+    ).toBeNull();
   });
 
   test('helper replaces weaker inherited values instead of appending duplicates', () => {

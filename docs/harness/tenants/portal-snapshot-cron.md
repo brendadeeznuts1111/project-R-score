@@ -10,8 +10,8 @@ spine — CLI · OS cron · in-process register only
 Scope-aware **data-plane** captures (not registry bake — see
 [`ops-snapshot.md`](ops-snapshot.md)):
 
-- Flat manifests `snapshots/<id>.txt` (`scope=prediction mae=…`)
-- JSON manifests + `snapshots/index.jsonl`
+- Flat manifests `artifacts/snapshots/<id>.txt` (`scope=prediction mae=…`)
+- JSON manifests + `artifacts/snapshots/index.jsonl`
 - Optional report HTML/JSON + scoped assets per
   [`snapshot-scopes.ts`](../../../tools/snapshot-scopes.ts)
 
@@ -49,7 +49,7 @@ PORTAL_SNAPSHOT_CRON=1 bun lib/operations/portal-snapshot-cron.ts
 | `PORTAL_SNAPSHOT_OS_SCHEDULE`        | `0 8 * * *`             | OS cron (local time)                        |
 | `PORTAL_SNAPSHOT_INPROCESS_SCHEDULE` | `0 */6 * * *`           | In-process (UTC)                            |
 | `SNAPSHOT_BASE_URL`                  | `http://localhost:3000` | Fetch origin                                |
-| `PORTAL_SNAPSHOT_DIR`                | `snapshots`             | Output root                                 |
+| `PORTAL_SNAPSHOT_DIR`                | `artifacts/snapshots`   | Output root                                 |
 
 Package scripts: `portal:snapshot` · `portal:snapshot:once` ·
 `portal:snapshot:cron:*` · `portal-cli snapshot cron …`
@@ -58,8 +58,9 @@ Package scripts: `portal:snapshot` · `portal:snapshot:once` ·
 
 `bun run portal:snapshot:once -- --dry-run` or
 `bun test tests/portal-snapshot-cron.test.ts` exits non-zero. Also: empty
-`snapshots/index.jsonl` after expected captures, or `portal-cli snapshot grep`
-finds no recent `scope=prediction` rows when report was rebaked.
+`artifacts/snapshots/index.jsonl` after expected captures, or
+`portal-cli snapshot grep` finds no recent `scope=prediction` rows when report
+was rebaked.
 
 ## Intervention (repair)
 

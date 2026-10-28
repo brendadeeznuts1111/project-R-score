@@ -56,7 +56,13 @@ async function main(): Promise<void> {
   }
 
   await ensureSnapshotDir();
-  await runSnapshot({ scope, baseUrl, dryRun, debug });
+  const result = await runSnapshot({ scope, baseUrl, dryRun, debug });
+  if (!result.ok) process.exitCode = 1;
 }
 
-if (import.meta.main) main();
+if (import.meta.main) {
+  main().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

@@ -1,3 +1,4 @@
-display_name: Ops Dual-Mode Experiments
-short_description: Provision dual-mode, factorial experiments, prediction backtests
-default_prompt: "Use ops dual-mode lanes — classify provision vs experiment vs prediction vs summary, respect sandbox/system-factor guardrails, then prove with the lane tests and ops:* CLI."
+interface:
+  display_name: "Ops Dual-Mode Experiments"
+  short_description: "Route provisioning, experiments, prediction, and partner profiles"
+  default_prompt: "Use $ops-dual-mode-experiments to classify the owning ops lane, preserve the partner-profile boundary, respect sandbox and system-factor guardrails, and prove the change with the lane's repository command."

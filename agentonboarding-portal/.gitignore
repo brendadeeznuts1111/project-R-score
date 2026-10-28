@@ -1,0 +1,12 @@
+# Runtime artifacts
+agent-portal.db
+agent-portal.db-journal
+agent-portal.db-wal
+agent-portal.db-shm
+screenshots/
+
+# Tooling
+node_modules/
+.DS_Store
+*.log
+.tmp/

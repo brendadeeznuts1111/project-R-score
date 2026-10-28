@@ -1,22 +1,22 @@
 {
   "version": 2,
-  "description": "Per-skill loop capabilities \u2014 test, bench, network, snapshot, rate phases",
+  "description": "Executable per-skill loop capabilities",
   "defaultPhases": ["test", "bench", "rate"],
   "presets": {
     "quick": {
-      "description": "Matrix doctor+rate across all registry skills",
+      "description": "ast-grep doctor and rating",
       "matrix": true,
       "phases": ["doctor", "rate"],
       "parallel": true
     },
     "standard": {
-      "description": "ast-grep test+bench+rate (skip snapshot preflight)",
+      "description": "ast-grep test, bench, and rating",
       "skill": "ast-grep",
       "phases": ["test", "bench", "rate"],
       "skipPreflight": true
     },
     "full": {
-      "description": "Matrix quick scan + ast-grep deep loop + baseline capture",
+      "description": "ast-grep doctor, deep loop, and baseline capture",
       "matrix": true,
       "matrixPhases": ["doctor", "rate"],
       "skill": "ast-grep",
@@ -33,13 +33,13 @@
       "skipPreflight": false
     },
     "precommit": {
-      "description": "Husky-aligned gates: doctor + precommit + rate across registry",
+      "description": "ast-grep doctor, precommit, and rating",
       "matrix": true,
       "matrixPhases": ["doctor", "precommit", "rate"],
       "parallel": true
     },
     "close-loop": {
-      "description": "Closed loop: ground-truth \u2192 bench-snapshot \u00d73 \u2192 baseline diff/write",
+      "description": "Ground truth to bench snapshot and baseline write",
       "skill": "ast-grep",
       "closeLoop": {
         "domain": "sports-terminal-os",
@@ -53,7 +53,7 @@
       "failOnRating": 70
     },
     "snapshot-bench": {
-      "description": "bench-snapshot \u00d73: validateSnapshotFull + live network + ground-truth gate",
+      "description": "Validate snapshot, live network, and ground truth three times",
       "skill": "ast-grep",
       "benchSnapshot": {
         "domain": "sports-terminal-os",
@@ -70,10 +70,7 @@
       "path": ".agents/skills/ast-grep",
       "zone": "agents",
       "phases": {
-        "test": {
-          "enabled": true,
-          "profile": "ci"
-        },
+        "test": { "enabled": true, "profile": "ci" },
         "bench": {
           "enabled": true,
           "profile": "unit",
@@ -86,345 +83,10 @@
           "scanPath": "projects/active/sports-terminal-os/dist/frontend",
           "domain": "sports-terminal-os"
         },
-        "snapshot": {
-          "enabled": true,
-          "domain": "sports-terminal-os"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 70
-        },
-        "doctor": {
-          "enabled": true
-        },
-        "precommit": {
-          "enabled": true,
-          "script": "precommit",
-          "note": "includes the fail-closed Bun 1.4 migration audit"
-        }
-      }
-    },
-    "sports-terminal-os": {
-      "path": ".agents/skills/sports-terminal-os",
-      "zone": "agents",
-      "workspace": "projects/active/sports-terminal-os",
-      "phases": {
-        "test": {
-          "enabled": false
-        },
-        "network": {
-          "enabled": true,
-          "profile": "supply-chain-network-dist",
-          "scanPath": "projects/active/sports-terminal-os/dist/frontend",
-          "domain": "sports-terminal-os"
-        },
-        "snapshot": {
-          "enabled": true,
-          "domain": "sports-terminal-os"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 60
-        },
-        "doctor": {
-          "enabled": true
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
-    "partner-profile-os": {
-      "path": ".agents/skills/partner-profile-os",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
-    "cascade-mover-v3": {
-      "path": ".agents/skills/cascade-mover-v3",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
-    "project-r-skill-maintenance": {
-      "path": ".agents/skills/project-r-skill-maintenance",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
-    "project-r-agent-team": {
-      "path": ".agents/skills/project-r-agent-team",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to repository access diagnostics"
-        }
-      }
-    },
-    "project-r-ops-management": {
-      "path": ".agents/skills/project-r-ops-management",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run bun:channel:check"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to repository staged and merge gates"
-        }
-      }
-    },
-    "branded-ids": {
-      "path": ".agents/skills/branded-ids",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run check:brands:types"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "bun tools/branded-id-check.ts --staged --strict on harness paths"
-        }
-      }
-    },
-    "reference-discovery": {
-      "path": ".agents/skills/reference-discovery",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun tools/reference-discovery.ts --check --skip-unused"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 60
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "optional staged harness scan — not wired yet"
-        }
-      }
-    },
-    "audit-gap-close": {
-      "path": ".agents/skills/audit-gap-close",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run discover:compose:check && bun run audit:verify"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 60
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "compose with reference-discovery doctor"
-        }
-      }
-    },
-    "public-discovery": {
-      "path": ".agents/skills/public-discovery",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run public:discover:check"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 60
-        },
-        "test": {
-          "enabled": true,
-          "note": "bun test tests/public-discovery.test.ts tests/portal-static-checks.test.ts"
-        }
-      }
-    },
-    "public-audit-gap-close": {
-      "path": ".agents/skills/public-audit-gap-close",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run public:audit:verify"
-        },
-        "test": {
-          "enabled": true,
-          "note": "bun test tests/discovery-compose.test.ts"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 60
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "compose with public-discovery doctor"
-        }
-      }
-    },
-    "harness-improve": {
-      "path": ".agents/skills/harness-improve",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run harness:status"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to harness-improve fresh-rerun on failed handoff"
-        }
-      }
-    },
-    "portal-design": {
-      "path": ".agents/skills/portal-design",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run portal:theme:check && bun run validate:colors && bun run verify:portal:static"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "test": {
-          "enabled": true,
-          "note": "bun run test:colors"
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "portal theme/colors/static gates via doctor; Prettier on lib/**/*.ts"
-        }
-      }
-    },
-    "ops-dual-mode-experiments": {
-      "path": ".agents/skills/ops-dual-mode-experiments",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun run ops:diagnose"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to ast-grep staged gate"
-        }
-      }
-    },
-    "trace-behavior-research": {
-      "path": ".agents/skills/trace-behavior-research",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun .agents/skills/trace-behavior-research/scripts/mine-traces.ts --help"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 70
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "human review required before skill promotion"
-        }
-      }
-    },
-    "bun": {
-      "path": ".agents/skills/bun",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "bun --version && bun --revision"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "no precommit owner"
-        }
-      }
-    },
-    "cloudflare": {
-      "path": ".agents/skills/cloudflare",
-      "zone": "agents",
-      "phases": {
-        "doctor": {
-          "enabled": true,
-          "note": "wrangler --version (v4+) and check reference dirs resolve"
-        },
-        "rate": {
-          "enabled": true,
-          "minRating": 50
-        },
-        "precommit": {
-          "enabled": false,
-          "note": "delegates to reference-discovery doctor"
-        }
+        "snapshot": { "enabled": true, "domain": "sports-terminal-os" },
+        "rate": { "enabled": true, "minRating": 70 },
+        "doctor": { "enabled": true, "smoke": true },
+        "precommit": { "enabled": true, "script": "precommit" }
       }
     }
   }

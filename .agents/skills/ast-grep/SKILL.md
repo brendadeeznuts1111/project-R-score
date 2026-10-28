@@ -57,6 +57,7 @@ a global npm copy.
 ## Core commands
 
 ```bash
+<<<<<<< HEAD
 # Structure
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py outline src/file.ts --view digest
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py outline src --view names --types function
@@ -71,6 +72,13 @@ python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py scan --path src
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py scan --path src --rule .agents/skills/ast-grep/rules/no-as-any.yml
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py replace 'oldCall($A)' 'newCall($A)' --path src --lang ts
 python3 .agents/skills/ast-grep/scripts/ast_grep_helper.py replace 'oldCall($A)' 'newCall($A)' --path src --lang ts --apply
+||||||| 1d43d1476
+npm install -g @ast-grep/cli@0.44.0
+ast-grep outline --help   # must work
+=======
+bun add --global @ast-grep/cli@0.44.0
+ast-grep outline --help   # must work
+>>>>>>> codex/agent-guidance-consolidation
 ```
 
 Use `names` for a compact symbol inventory, `signatures` for declarations,

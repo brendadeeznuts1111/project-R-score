@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factorywager.com/schemas/skill-health-scheduler.schema.json",
+  "title": "Project R skill-health scheduler",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "$schema",
+    "schemaVersion",
+    "minimumBunVersion",
+    "timezone",
+    "statePath",
+    "lockPath",
+    "lockStaleMs",
+    "jobs"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "minimumBunVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "timezone": { "const": "UTC" },
+    "statePath": { "type": "string", "pattern": "^\\.cache/" },
+    "lockPath": { "type": "string", "pattern": "^\\.cache/" },
+    "lockStaleMs": { "type": "integer", "minimum": 1000 },
+    "jobs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "enabled",
+          "trigger",
+          "command",
+          "timeoutMs",
+          "terminateGraceMs",
+          "retries",
+          "retryOn",
+          "retryBackoffMs",
+          "outputLimitBytes"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "enabled": { "type": "boolean" },
+          "trigger": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "paths", "debounceMs"],
+                "properties": {
+                  "kind": { "const": "watch" },
+                  "paths": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+                  "debounceMs": { "type": "integer", "minimum": 10 }
+                }
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["kind", "schedule"],
+                "properties": {
+                  "kind": { "const": "cron" },
+                  "schedule": { "type": "string", "minLength": 1 }
+                }
+              }
+            ]
+          },
+          "command": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+          "timeoutMs": { "type": "integer", "minimum": 1 },
+          "terminateGraceMs": { "type": "integer", "minimum": 0 },
+          "retries": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "retryOn": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "enum": ["exit", "spawn-error", "timeout"] }
+          },
+          "retryBackoffMs": { "type": "integer", "minimum": 0 },
+          "outputLimitBytes": { "type": "integer", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

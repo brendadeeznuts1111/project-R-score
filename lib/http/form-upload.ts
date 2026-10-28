@@ -67,12 +67,22 @@ export async function writeFormBlob(path: string, blob: Blob): Promise<number> {
   return typeof written === 'number' ? written : blob.size;
 }
 
-/** SHA-256 hex of a Blob/File (for registry checksums). */
-export async function sha256Blob(blob: Blob): Promise<string> {
+/** Hex digest of a Blob/File for registry integrity metadata. */
+export async function hashBlob(blob: Blob, algorithm: 'sha256' | 'sha3-256'): Promise<string> {
   const bytes = new Uint8Array(await blob.arrayBuffer());
-  const hash = new Bun.CryptoHasher('sha256');
+  const hash = new Bun.CryptoHasher(algorithm);
   hash.update(bytes);
   return hash.digest('hex');
+}
+
+/** SHA-256 remains the npm-compatible SRI digest. */
+export function sha256Blob(blob: Blob): Promise<string> {
+  return hashBlob(blob, 'sha256');
+}
+
+/** SHA3-256 is the Project R verification digest stored beside npm SRI. */
+export function sha3Blob(blob: Blob): Promise<string> {
+  return hashBlob(blob, 'sha3-256');
 }
 
 /**

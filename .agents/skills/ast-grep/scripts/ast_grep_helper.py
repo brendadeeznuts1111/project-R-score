@@ -4,7 +4,7 @@
 Single-file Python 3 stdlib. No deps. Works on macOS, Linux, Windows, WSL.
 
 WHAT IT ADDS over plain `sg`:
-  1. Binary resolution: repository pin -> explicit runtime -> compatible fallback -> install hint
+  1. Binary auto-resolution: cached -> @ast-grep/cli -> PATH -> Homebrew -> error with install hint
   2. Pattern hint validation: detects regex misuse (\\w, .*, |, [a-z]) and language-specific
      mistakes (Python trailing colon, JS/Go/Rust missing function body) BEFORE calling sg
   3. Two-pass replace: ast-grep silently ignores --update-all when --json is set, so we run
@@ -91,7 +91,6 @@ EXIT CODES
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import platform
@@ -105,7 +104,7 @@ from pathlib import Path
 from typing import Optional
 
 VERSION = "0.44.0"
-CACHE_VERSION = 3
+CACHE_VERSION = 2
 MAX_OUTPUT_LINES = 2_000
 MAX_OUTPUT_BYTES = 50 * 1024
 
@@ -221,6 +220,13 @@ def outline_supported(binary: Path) -> bool:
         return False
 
 
+def npm_binary() -> Optional[Path]:
+    """If @ast-grep/cli is installed globally via npm, find its binary."""
+    # `sg` shipped by @ast-grep/cli is on PATH when npm prefix bin is on PATH.
+    # We rely on shutil.which for that case.
+    return None  # handled by which_binary
+
+
 def which_binary() -> Optional[Path]:
     """Use shutil.which to find sg or ast-grep on PATH.
 
@@ -307,9 +313,9 @@ def omo_runtime_binary() -> Optional[Path]:
 
 
 def resolve_binary(*, require_outline: bool = False) -> Optional[Path]:
-    """Resolve ast-grep binary, preferring the repository-owned skill pin."""
+    """Resolve ast-grep binary. Prefer outline-capable 0.44+ when require_outline."""
     candidates: list[Path] = []
-    for fn in (skill_node_binary, omo_env_binary, omo_runtime_binary, cached_binary, which_binary, homebrew_binary):
+    for fn in (omo_env_binary, omo_runtime_binary, skill_node_binary, cached_binary, which_binary, homebrew_binary):
         result = fn()
         if result and result not in candidates:
             candidates.append(result)
@@ -330,8 +336,13 @@ def require_binary(*, require_outline: bool = False) -> Path:
         return p
     err("ast-grep binary not found." if not require_outline else "ast-grep 0.44+ with outline not found.")
     err("")
-    err("Hydrate the repository-owned skill pin:")
-    err(f"  bash {skill_root()}/scripts/install.sh")
+    err("Install via one of:")
+    err(f"  bash {skill_root()}/scripts/install.sh    # skill pin (0.44)")
+    err("  bun add --global @ast-grep/cli@0.44.0       # global")
+    err("")
+    err("Or manually:")
+    err("  brew install ast-grep                      # may be <0.44 (no outline)")
+    err("  cargo install ast-grep --locked            # any OS with Rust")
     sys.exit(3)
 
 
@@ -862,47 +873,34 @@ def _outline_index_cache_path() -> Path:
     return skill_root() / ".outline-index.json"
 
 
-def _path_fingerprint(path: Path) -> str:
-    """Hash source-path metadata while excluding generated navigation artifacts."""
+def _path_mtime(path: Path) -> float:
     if not path.exists():
-        return "missing"
-    files = [path] if path.is_file() else sorted(
-        child
-        for child in path.rglob("*")
+        return 0.0
+    if path.is_file():
+        return path.stat().st_mtime
+    latest = path.stat().st_mtime
+    for child in path.rglob("*"):
         if (
             child.is_file()
-            and child.name not in {".outline-index.json", ".bun-inventory-cache.json"}
+            and child.name != ".outline-index.json"
             and "node_modules" not in child.parts
             and "__snapshots__" not in child.parts
-        )
-    )
-    digest = hashlib.sha256()
-    base = path.parent if path.is_file() else path
-    for child in files:
-        try:
-            stat = child.stat()
-            relative = child.relative_to(base).as_posix()
-        except (OSError, ValueError):
-            continue
-        digest.update(relative.encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(str(stat.st_size).encode("ascii"))
-        digest.update(b"\0")
-        digest.update(str(stat.st_mtime_ns).encode("ascii"))
-        digest.update(b"\n")
-    return digest.hexdigest()
+        ):
+            latest = max(latest, child.stat().st_mtime)
+    return latest
 
 
 def _index_stale_targets(cached: dict, root: Path, targets: list[dict]) -> list[str]:
-    fingerprints = cached.get("target_fingerprints", {})
+    mtimes = cached.get("target_mtimes", {})
     stale: list[str] = []
     for target in targets:
         tid = target.get("id")
         if not tid:
             continue
         rel = target.get("path", ".")
-        current = _path_fingerprint((root / rel).resolve())
-        if fingerprints.get(tid) != current:
+        current = _path_mtime((root / rel).resolve())
+        cached_mtime = mtimes.get(tid)
+        if cached_mtime is None or current > cached_mtime + 0.5:
             stale.append(tid)
     return stale
 
@@ -1071,7 +1069,7 @@ def _collect_symbol_index(
         "repo": str(root),
         "repo_map": str(skill_root() / "repo-map.json"),
         "built_at": datetime.now(timezone.utc).isoformat(),
-        "target_fingerprints": {},
+        "target_mtimes": {},
         "targets": [],
         "symbols_by_name": {},
         "total_symbols": 0,
@@ -1082,7 +1080,7 @@ def _collect_symbol_index(
         tid = target.get("id", rel)
         if not full.exists():
             continue
-        report["target_fingerprints"][tid] = _path_fingerprint(full)
+        report["target_mtimes"][tid] = _path_mtime(full)
         code, out = _run_outline(binary, map_args, [str(full)], target)
         if code != 0:
             continue
@@ -2120,17 +2118,17 @@ def _load_bun_inventory_cache(args: argparse.Namespace, data: dict, *, refresh: 
     target_rows, totals, group_totals = _collect_bun_counts(
         args, data, native_patterns, include_anti=True,
     )
-    fingerprints: dict[str, str] = {}
+    mtimes: dict[str, float] = {}
     for target in targets:
         tid = target.get("id")
         if tid:
-            fingerprints[tid] = _path_fingerprint((root / target.get("path", ".")).resolve())
+            mtimes[tid] = _path_mtime((root / target.get("path", ".")).resolve())
 
     cached = {
         "version": data.get("version"),
         "repo": str(root),
         "built_at": datetime.now(timezone.utc).isoformat(),
-        "target_fingerprints": fingerprints,
+        "target_mtimes": mtimes,
         "targets": target_rows,
         "totals": totals,
         "group_totals": group_totals,
@@ -3766,7 +3764,7 @@ def cmd_bun_docs(args: argparse.Namespace) -> int:
     topics = data.get("docs_topics", [])
     patterns = data.get("patterns", [])
     pattern_ids = {p.get("id") for p in patterns}
-    base = (data.get("docs_base") or "https://bun.com/docs").rstrip("/")
+    base = (data.get("docs_base") or "https://bun.sh/docs").rstrip("/")
     index_path = data.get("docs_index", "/runtime/bun-apis")
     topic_q = (getattr(args, "topic", None) or "").lower()
 
@@ -4150,30 +4148,6 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 
     if outline_bin:
         print(f"outline: supported ({outline_bin})")
-        outline_rules = skill_root() / "outline-rules" / "bun-monorepo.yml"
-        outline_sample = skill_root() / "scripts" / "bun-cli.ts"
-        if outline_rules.is_file() and outline_sample.is_file():
-            proc = run_sg(
-                outline_bin,
-                [
-                    "outline",
-                    "--view",
-                    "names",
-                    "--outline-rules",
-                    str(outline_rules),
-                    str(outline_sample),
-                ],
-                timeout=10,
-            )
-            if proc.returncode == 0:
-                print("outline-rules: valid")
-            else:
-                detail = (proc.stderr or proc.stdout).strip().splitlines()
-                print(f"outline-rules: INVALID ({detail[-1] if detail else 'parse failed'})")
-                issues.append("outline-rules")
-        else:
-            print("outline-rules: missing")
-            issues.append("outline-rules")
     else:
         print("outline: MISSING (need @ast-grep/cli@0.44.0+)")
         issues.append("outline")
@@ -4257,6 +4231,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
     else:
         print("bun runtime: not on PATH")
     print(f"bun-cli.ts: {'ok' if artifacts['bun_cli'] else 'missing'}")
+    print(f"outline-rules: {'ok' if artifacts['outline_rules'] else 'missing'}")
     print(f"mcp server: {'ok' if artifacts['mcp'] else 'missing'}")
     print(f"scan rules: {len(artifacts['rules'])} ({', '.join(artifacts['rules']) or 'none'})")
     fix_rules = artifacts["fix_rules"]
@@ -4319,6 +4294,8 @@ def cmd_doctor(args: argparse.Namespace) -> int:
                     return 1
                 print("  installed skill pin via scripts/install.sh")
                 issues = [i for i in issues if i not in ("skill-pin", "outline", "binary", "binary-version")]
+            if getattr(args, "global_fix", False) and "outline" in issues:
+                err("global install not attempted; use: bun add --global @ast-grep/cli@0.44.0 --force")
         else:
             print()
             print("No environment fixes needed.")
@@ -4329,6 +4306,7 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         if "outline" in issues or "binary" in issues or "skill-pin" in issues:
             print(f"  python3 {Path(__file__).name} doctor --fix")
             print(f"  bash {skill_root()}/scripts/install.sh")
+            print("  bun add --global @ast-grep/cli@0.44.0 --force")
         return 1
     return 0
 
@@ -5000,6 +4978,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("langs", help="List supported languages.").set_defaults(func=cmd_langs)
     d = sub.add_parser("doctor", help="Health check for binary, outline, skill bundle.")
     d.add_argument("--fix", action="store_true", help="Install skill pin if binary/outline missing.")
+    d.add_argument("--global-fix", action="store_true", help="Hint npm global install when --fix is set.")
     d.add_argument(
         "--validate-snapshot",
         metavar="FILE",
@@ -5081,7 +5060,7 @@ def build_parser() -> argparse.ArgumentParser:
     bun_s.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_s.set_defaults(func=cmd_bun_search)
 
-    bun_d = bun_sub.add_parser("docs", help="Official Bun API topic coverage (bun.com/docs/runtime/bun-apis).")
+    bun_d = bun_sub.add_parser("docs", help="Official Bun API topic coverage (bun.sh/docs/runtime/bun-apis).")
     bun_d.add_argument("--topic", help="Filter by topic id or name (http-server, PostgreSQL, ...).")
     bun_d.add_argument("--json-out", action="store_true", help="Emit JSON.")
     bun_d.set_defaults(func=cmd_bun_docs)

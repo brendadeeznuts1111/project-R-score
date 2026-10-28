@@ -21,14 +21,12 @@ export const PUBLIC_PERIMETER = [
   'public/index.html',
   'public/llms.txt',
   'public/llms-full.txt',
-  'public/openapi.yaml',
-  'public/robots.txt',
   'public/.well-known/mcp.json',
+  'public/.well-known/experiments',
   'public/_headers',
   'public/_redirects',
   'public/sitemap.xml',
   'public/sitemap-pages.xml',
-  'public/sitemap-portal.xml',
   'public/site.webmanifest',
   'public/manifest.json',
 ] as const;
@@ -78,7 +76,7 @@ const SEVERITY_RANK: Record<PublicSeverity, number> = {
 
 const LEGACY_DOMAIN_RE = /registry\.factory-wager\.co(?!m)/g;
 
-const REGISTRY_REF_RE = /\/registry\/([A-Za-z0-9@._/-]+\.json)/g;
+const REGISTRY_REF_RE = /\/((?:portal\/)?registry\/[A-Za-z0-9@._/-]+\.json)/g;
 
 /** Browser `.js` outside portal/ (lander modules). */
 const TS_LEAK_RE = /:\s*(?:Array<|[A-Z][A-Za-z0-9_<>,\s|&]*\s*(?:=>|\)))/;
@@ -161,7 +159,7 @@ async function scanBrokenRegistryRefs(files: string[]): Promise<PublicFinding[]>
   for (const rel of scanFiles) {
     const text = await Bun.file(joinPath(REPO, rel)).text();
     for (const m of text.matchAll(REGISTRY_REF_RE)) {
-      const registryPath = `public/registry/${m[1]!}`;
+      const registryPath = `public/${m[1]!}`;
       const key = `${rel}:${registryPath}`;
       if (seen.has(key)) continue;
       seen.add(key);
@@ -170,7 +168,7 @@ async function scanBrokenRegistryRefs(files: string[]): Promise<PublicFinding[]>
         kind: 'broken-registry-ref',
         severity: 'error',
         id: `broken-registry:${registryPath}`,
-        title: `Broken /registry/ reference: ${m[1]}`,
+        title: `Broken /${m[1]} reference`,
         samples: [
           {
             file: rel,
@@ -236,8 +234,6 @@ export const DOCUMENTED_ORPHAN_REGISTRY_ARTIFACTS = new Set([
   /** Redacted partner_ledger feed for partners-dashboard bake (no portal board). */
   'partner-ledger.json',
   'stale-anchors.json',
-  /** Consumed by edge + local health; no standalone portal board. */
-  'portal-theme.json',
 ]);
 
 async function scanOrphanRegistryArtifacts(files: string[]): Promise<PublicFinding[]> {

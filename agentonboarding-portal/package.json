@@ -1,0 +1,16 @@
+{
+  "name": "agentonboarding-portal",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Enhanced Agent Dashboard (SPA) + Bun backend with Bun.spawn worker task execution. Bun-only runtime.",
+  "scripts": {
+    "start": "NODE_ENV=production bun server.ts",
+    "dev": "NODE_ENV=development bun exec 'bun --hot server.ts'",
+    "worker": "bun worker.ts",
+    "typecheck": "bunx tsc --noEmit"
+  },
+  "devDependencies": {
+    "bun-types": "1.3.14"
+  }
+}

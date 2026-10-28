@@ -1,4 +1,4 @@
 interface:
-  display_name: "Cloudflare platform"
-  short_description: "Workers, Pages, storage, AI, networking, security, IaC decision trees"
-  default_prompt: "Use $cloudflare for any Cloudflare development task: Workers, Pages, KV/D1/R2 storage, Workers AI, networking, security, and infrastructure-as-code. Prefer retrieval from Cloudflare docs over pre-trained knowledge; references/ under the skill are starting points, not source of truth."
+  display_name: "Cloudflare Platform"
+  short_description: "Route Cloudflare work to current product guidance"
+  default_prompt: "Use $cloudflare to identify the exact Cloudflare product and runtime, retrieve current official behavior, load only the focused references needed, and apply the owning repository's package, shell, secret, and deployment boundaries."

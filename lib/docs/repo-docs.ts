@@ -162,7 +162,7 @@ export const CANONICAL_TOOLS = {
   brandCatalog: 'tools/brand-catalog.ts',
   brandManifestCli: 'tools/brand-manifest.ts',
   brandedIdsSkill: '.agents/skills/branded-ids/',
-  harnessImproveSkill: '.agents/skills/harness-improve/',
+  auditGapCloseSkill: '.agents/skills/audit-gap-close/',
   brandedTypeProof: 'tests/branded-types.test-d.ts',
   consoleDepthTest: 'tests/console-depth.test.ts',
   consoleDepthBench: 'tools/benchmarks/console-depth-perf.ts',

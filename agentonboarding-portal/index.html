@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Agent Dashboard – Bun Automation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* --- Theme variables (light default) --- */
+        :root {
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #d1d5db;
+            --shadow: 0 4px 12px rgba(0,0,0,0.04);
+            --radius: 16px;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #d97706;
+            --input-bg: #fafbfc;
+            --code-bg: #f1f5f9;
+            --badge-bg: #e2e8f0;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+            --input-bg: #0f172a;
+            --code-bg: #0f172a;
+            --badge-bg: #334155;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); transition: background 0.25s, color 0.25s; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+        /* --- Login --- */
+        #loginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--border) 100%);
+        }
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 40px 48px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+        }
+        .login-card h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .login-card p { color: var(--text-muted); margin-bottom: 24px; }
+        .login-card .form-group { margin-bottom: 16px; }
+        .login-card label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .login-card input { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--input-bg); color: var(--text); }
+        .login-card input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        .login-card .btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+        .login-card .btn:hover { background: var(--primary-hover); }
+        .login-error { color: var(--danger); font-size: 13px; margin-top: 8px; display: none; }
+
+        /* --- Dashboard --- */
+        #dashboard { display: none; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 12px 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header h1 { font-size: 22px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .header h1 i { color: var(--primary); }
+        .header .agent-badge { background: rgba(59,130,246,0.12); padding: 6px 18px; border-radius: 40px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .header .btn-logout { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 14px; }
+        .header .btn-logout:hover { color: var(--danger); }
+        .icon-btn { background: none; border: 1px solid var(--border); color: var(--text); width: 36px; height: 36px; border-radius: 10px; cursor: pointer; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; }
+        .icon-btn:hover { background: var(--badge-bg); }
+
+        /* Navigation tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: var(--card-bg);
+            padding: 6px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 8px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .tab-btn:hover { background: var(--badge-bg); }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(59,130,246,0.2); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Cards */
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        .card-title { font-size: 18px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+        .card-title i { color: var(--primary); }
+
+        /* Forms */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 12px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 4px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: var(--input-bg); color: var(--text); }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary); background: var(--card-bg); }
+
+        .btn { padding: 8px 18px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; font-size: 14px; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { filter: brightness(0.92); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { filter: brightness(0.92); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-outline:hover { background: var(--badge-bg); }
+        .btn-sm { padding: 4px 12px; font-size: 12px; }
+        .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+        .fa-spin { animation: fa-spin 1s linear infinite; }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { text-align: left; padding: 10px 8px; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+        td { padding: 10px 8px; border-bottom: 1px solid var(--badge-bg); vertical-align: middle; }
+
+        .status-badge { display: inline-block; padding: 2px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; }
+        .status-pending { background: #fef9c3; color: #854d0e; }
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .status-done { background: #dcfce7; color: #166534; }
+        .status-failed { background: #fee2e2; color: #991b1b; }
+        .status-closed { background: var(--badge-bg); color: var(--text-muted); }
+
+        /* Progress bar */
+        .progress-wrap { min-width: 120px; display: flex; align-items: center; gap: 8px; }
+        .progress-track { flex: 1; height: 6px; border-radius: 3px; background: var(--badge-bg); overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.4s ease; }
+        .progress-label { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+        .progress-msg { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        .text-muted { color: var(--text-muted); font-size: 13px; }
+
+        /* Verification panel */
+        .verification-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .verification-item { background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+        .verification-item .value { font-weight: 500; font-family: monospace; word-break: break-all; max-width: 60%; text-align: right; }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--card-bg);
+            border-radius: 20px;
+            max-width: 700px;
+            width: 90%;
+            padding: 30px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-header h3 { font-size: 20px; font-weight: 600; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
+        .modal-close:hover { color: var(--text); }
+
+        .screenshot-placeholder {
+            background: var(--code-bg);
+            border-radius: 12px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            background-image: linear-gradient(45deg, var(--border) 25%, transparent 25%, transparent 75%, var(--border) 75%),
+                              linear-gradient(45deg, var(--border) 25%, transparent 25%, transparent 75%, var(--border) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        .screenshot-img { width: 100%; border-radius: 12px; margin-bottom: 16px; }
+
+        .log-list { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-family: monospace; font-size: 13px; max-height: 200px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+
+        /* Live control */
+        #liveCanvas { width: 100%; max-width: 800px; border: 2px solid var(--border); border-radius: 12px; background: #0f172a; cursor: crosshair; display: block; margin: 0 auto; }
+
+        /* Toast notifications */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 8px; }
+        .toast { background: #1e293b; color: white; padding: 12px 20px; border-radius: 12px; font-size: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease-out; }
+        .toast-success { background: #16a34a; }
+        .toast-error { background: #dc2626; }
+        .toast-warning { background: #d97706; }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: translateX(0); } }
+
+        .flex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .mt-2 { margin-top: 12px; }
+        .text-sm { font-size: 13px; }
+
+        @media (max-width: 640px) {
+            .form-row { grid-template-columns: 1fr; }
+            .verification-grid { grid-template-columns: 1fr; }
+            .tabs { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== LOGIN SCREEN ==================== -->
+<div id="loginScreen">
+    <div class="login-card">
+        <h2><i class="fas fa-robot" style="color:var(--primary);"></i> Agent Login</h2>
+        <p>Enter your credentials to access the automation dashboard.</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="loginUsername" placeholder="agent_007" required />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+            <div class="login-error" id="loginError">Invalid credentials. Please try again.</div>
+        </form>
+        <div style="margin-top:16px; font-size:13px; color:var(--text-muted); text-align:center;">
+            Demo: use any username/password (mock auth)
+        </div>
+    </div>
+</div>
+
+<!-- ==================== DASHBOARD ==================== -->
+<div id="dashboard">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-robot"></i> Automation Portal</h1>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <span class="agent-badge"><i class="fas fa-user-circle"></i> <span id="dashAgentName">Agent_007</span></span>
+                <button class="icon-btn" id="themeToggleBtn" title="Toggle dark/light mode"><i class="fas fa-moon"></i></button>
+                <button class="btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs" id="tabBar">
+            <button class="tab-btn active" data-tab="tasks"><i class="fas fa-tasks"></i> Tasks</button>
+            <button class="tab-btn" data-tab="sessions"><i class="fas fa-window-restore"></i> Sessions</button>
+            <button class="tab-btn" data-tab="credentials"><i class="fas fa-key"></i> Credentials</button>
+            <button class="tab-btn" data-tab="live"><i class="fas fa-desktop"></i> Live Control</button>
+            <button class="tab-btn" data-tab="verify"><i class="fas fa-shield-alt"></i> Verify</button>
+        </div>
+
+        <!-- ====== Tab: Tasks ====== -->
+        <div class="tab-content active" id="tab-tasks">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-paper-plane"></i> Submit New Task</div>
+                <form id="taskForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Target URL</label>
+                            <input type="url" id="taskUrl" value="https://fantasy402.com/manager.html" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="taskUsername" value="demo_agent" />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="taskPassword" value="secret123" />
+                        </div>
+                        <div class="form-group">
+                            <label>Location Hint</label>
+                            <select id="taskLocation">
+                                <option value="auto">Auto</option>
+                                <option value="us-east">US East</option>
+                                <option value="eu">Europe</option>
+                                <option value="asia">Asia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Proxy (optional)</label>
+                            <select id="taskProxy">
+                                <option value="none">None (server IP)</option>
+                                <option value="residential-us">Residential US</option>
+                                <option value="residential-eu">Residential EU</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:flex-end;">
+                            <button type="submit" class="btn btn-primary" id="submitTaskBtn"><i class="fas fa-play"></i> Submit Task</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fas fa-list-ul"></i> My Tasks <span class="text-muted" style="font-size:14px; font-weight:400;" id="taskCount">(0)</span></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Site</th><th>Status</th><th>Progress</th><th>Session</th><th style="text-align:right;">Actions</th></tr></thead>
+                        <tbody id="taskTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn btn-outline btn-sm" id="refreshTasksBtn"><i class="fas fa-sync"></i> Refresh</button>
+                    <span class="text-muted" id="taskPollHint"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== Tab: Sessions ====== -->
+        <div class="tab-content" id="tab-sessions">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-window-restore"></i> Active Sessions</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>ID</th><th>Site</th><th>Status</th><th>Last Healthy</th><th>Expires</th><th style="text-align:right;">Actions</th></tr></thead>
+                        <tbody id="sessionTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn btn-outline btn-sm" id="refreshSessionsBtn"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== Tab: Credentials ====== -->
+        <div class="tab-content" id="tab-credentials">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-key"></i> Saved Credentials (Single‑Click Login)</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Site</th><th>Username</th><th style="text-align:right;">Actions</th></tr></thead>
+                        <tbody id="credTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="flex mt-2">
+                    <button class="btn btn-primary btn-sm" id="addCredentialBtn"><i class="fas fa-plus"></i> Add New</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== Tab: Live Control ====== -->
+        <div class="tab-content" id="tab-live">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-desktop"></i> Remote Browser Control</div>
+                <div style="text-align:center;">
+                    <canvas id="liveCanvas" width="800" height="450"></canvas>
+                    <div class="flex mt-2" style="justify-content:center;">
+                        <button class="btn btn-success btn-sm" id="connectLiveBtn"><i class="fas fa-plug"></i> Connect</button>
+                        <button class="btn btn-danger btn-sm" id="disconnectLiveBtn"><i class="fas fa-power-off"></i> Disconnect</button>
+                        <span class="text-muted" id="liveStatus">Disconnected</span>
+                    </div>
+                    <div class="text-sm text-muted mt-2">Click on the canvas to interact (mouse/keyboard forwarded).</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== Tab: Verify ====== -->
+        <div class="tab-content" id="tab-verify">
+            <div class="card">
+                <div class="card-title"><i class="fas fa-shield-alt"></i> Verification & Identity</div>
+                <div class="verification-grid" id="verificationGrid">
+                    <div class="verification-item"><span class="label"><i class="fas fa-network-wired"></i> IP</span><span class="value" id="vIp">—</span></div>
+                    <div class="verification-item"><span class="label"><i class="fas fa-globe"></i> Location</span><span class="value" id="vLoc">—</span></div>
+                    <div class="verification-item"><span class="label"><i class="fas fa-laptop"></i> User‑Agent</span><span class="value" id="vUa" style="font-size:11px;">—</span></div>
+                    <div class="verification-item"><span class="label"><i class="fas fa-fingerprint"></i> Fingerprint</span><span class="value" id="vFp">—</span></div>
+                </div>
+                <button class="btn btn-outline btn-sm mt-2" id="refreshVerifyBtn"><i class="fas fa-sync"></i> Refresh</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SESSION DETAIL MODAL ==================== -->
+<div class="modal-overlay" id="sessionModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3><i class="fas fa-window-restore"></i> Session Details</h3>
+            <button class="modal-close" id="modalCloseBtn">&times;</button>
+        </div>
+        <div><span class="text-muted">ID:</span> <strong id="modalSessionId">—</strong></div>
+        <div class="screenshot-placeholder" id="modalScreenshot"><i class="fas fa-image" style="font-size:32px; opacity:0.3;"></i> Screenshot Preview</div>
+        <div style="display:flex; gap:20px; flex-wrap:wrap; margin:10px 0;">
+            <div><strong>Status:</strong> <span id="modalStatus">—</span></div>
+            <div><strong>Last Healthy:</strong> <span id="modalLastHealthy">—</span></div>
+            <div><strong>Expires:</strong> <span id="modalExpiry" style="font-family:monospace; font-size:13px;">—</span></div>
+            <div><strong>Cookies:</strong> <span id="modalCookies" style="font-family:monospace; font-size:13px;">—</span></div>
+        </div>
+        <div><strong>Action Log</strong></div>
+        <div class="log-list" id="modalLogs"><div class="text-muted">No logs available.</div></div>
+        <div class="flex mt-2">
+            <button class="btn btn-success btn-sm" id="modalRefreshBtn"><i class="fas fa-sync"></i> Refresh Session</button>
+            <button class="btn btn-danger btn-sm" id="modalCloseSessionBtn"><i class="fas fa-power-off"></i> Close Session</button>
+            <button class="btn btn-outline btn-sm" id="modalLiveBtn"><i class="fas fa-desktop"></i> Live Control</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== TOAST CONTAINER ==================== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+    // ============================================================
+    //  CONFIG
+    // ============================================================
+    // Toggle this to true to use real backend calls, or false for mock.
+    const USE_REAL_API = true;  // <-- Set to true when your Bun server is running
+
+    // Base URL of your Bun.serve (served same-origin at /, or CORS-enabled here).
+    const API_BASE = 'http://localhost:3000';
+
+    // CSRF token holder (fetched from server)
+    let csrfToken = null;
+
+    function liveWsUrl(sessionId) {
+        if (!USE_REAL_API) return 'wss://echo.websocket.org';
+        const base = API_BASE.replace(/^http/, 'ws');
+        return `${base}/live?sessionId=${encodeURIComponent(sessionId)}`;
+    }
+
+    // Helper to fetch CSRF token (mock or real)
+    async function fetchCsrfToken() {
+        if (USE_REAL_API) {
+            const res = await fetch(`${API_BASE}/csrf-token`, { credentials: 'include' });
+            const data = await res.json();
+            csrfToken = data.token;
+        } else {
+            // Mock token
+            csrfToken = 'mock-csrf-' + Math.random().toString(36).substring(2);
+        }
+        return csrfToken;
+    }
+
+    // Generic API caller with CSRF header
+    async function apiCall(endpoint, options = {}) {
+        if (!csrfToken) await fetchCsrfToken();
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken,
+            ...options.headers
+        };
+        const url = USE_REAL_API ? `${API_BASE}${endpoint}` : endpoint;
+        const fetchOptions = {
+            ...options,
+            headers,
+            credentials: 'include',
+        };
+        // For mock, we intercept and return mock data
+        if (!USE_REAL_API) {
+            return mockApiHandler(endpoint, fetchOptions);
+        }
+        const res = await fetch(url, fetchOptions);
+        if (!res.ok) {
+            const err = await res.text();
+            throw new Error(err || 'API call failed');
+        }
+        return res.json();
+    }
+
+    // ============================================================
+    //  MOCK API HANDLER (simulates Bun backend)
+    // ============================================================
+    let mockTasks = [
+        { id: 'task_001', site: 'fantasy402.com', status: 'done', sessionId: 'sess_abc123', progress: 100, progressMessage: 'Done', createdAt: Date.now() - 120000 },
+        { id: 'task_002', site: 'example.com', status: 'processing', sessionId: null, progress: 55, progressMessage: 'Waiting for login to complete…', createdAt: Date.now() - 60000 },
+        { id: 'task_003', site: 'another-site.io', status: 'pending', sessionId: null, progress: 0, progressMessage: 'Queued', createdAt: Date.now() - 10000 },
+    ];
+    let mockSessions = [
+        { id: 'sess_abc123', site: 'fantasy402.com', status: 'active', lastHealthy: Date.now() - 30000, expiresAt: Date.now() + 3600000, cookies: 'session=abc; token=xyz', logs: ['[12:01:23] navigate → /manager.html','[12:01:25] type → #username','[12:01:28] click → #loginBtn','[12:01:31] waitForSelector → #dashboard','[12:02:10] fetch → /cloud/api/Customer/getAccountInfo'] },
+    ];
+    let mockCredentials = [
+        { id: 'cred_1', site: 'fantasy402.com', username: 'demo_agent' },
+        { id: 'cred_2', site: 'example.com', username: 'agent123' },
+    ];
+
+    function mockApiHandler(endpoint, fetchOptions) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (endpoint === '/csrf-token') {
+                    resolve({ token: 'mock-csrf-' + Math.random().toString(36).substring(2) });
+                    return;
+                }
+                if (endpoint === '/login') {
+                    const body = JSON.parse(fetchOptions.body || '{}');
+                    if (body.username && body.password) {
+                        resolve({ success: true, agentName: body.username });
+                    } else {
+                        reject(new Error('Invalid credentials'));
+                    }
+                    return;
+                }
+                if (endpoint === '/task' && fetchOptions.method === 'POST') {
+                    const body = JSON.parse(fetchOptions.body || '{}');
+                    const newTask = {
+                        id: 'task_' + String(mockTasks.length + 1).padStart(3, '0'),
+                        site: new URL(body.url).hostname,
+                        status: 'pending',
+                        sessionId: null,
+                        progress: 0,
+                        progressMessage: 'Queued',
+                        createdAt: Date.now()
+                    };
+                    mockTasks.unshift(newTask);
+                    // simulate progress
+                    setTimeout(() => {
+                        newTask.status = 'processing';
+                        newTask.progress = 45;
+                        newTask.progressMessage = 'Filling credentials…';
+                        renderTasks();
+                        setTimeout(() => {
+                            newTask.status = 'done';
+                            newTask.progress = 100;
+                            newTask.progressMessage = 'Done';
+                            newTask.sessionId = 'sess_' + Math.random().toString(36).substring(2, 10);
+                            renderTasks();
+                        }, 2500);
+                    }, 1500);
+                    resolve(newTask);
+                    return;
+                }
+                if (endpoint === '/tasks') {
+                    resolve(mockTasks);
+                    return;
+                }
+                if (endpoint === '/sessions') {
+                    resolve(mockSessions);
+                    return;
+                }
+                if (endpoint.startsWith('/session/') && fetchOptions.method === 'POST' && endpoint.endsWith('/refresh')) {
+                    resolve({ success: true });
+                    return;
+                }
+                if (endpoint.startsWith('/session/') && fetchOptions.method === 'POST' && endpoint.endsWith('/close')) {
+                    const id = endpoint.split('/')[2];
+                    const s = mockSessions.find(x => x.id === id);
+                    if (s) s.status = 'closed';
+                    resolve({ success: true });
+                    return;
+                }
+                if (endpoint.startsWith('/session/')) {
+                    const id = endpoint.split('/')[2];
+                    const session = mockSessions.find(s => s.id === id);
+                    if (session) resolve(session);
+                    else reject(new Error('Session not found'));
+                    return;
+                }
+                if (endpoint === '/credentials') {
+                    resolve(mockCredentials);
+                    return;
+                }
+                if (endpoint === '/credentials' && fetchOptions.method === 'POST') {
+                    const body = JSON.parse(fetchOptions.body || '{}');
+                    mockCredentials.push({ id: 'cred_' + (mockCredentials.length + 1), site: body.site, username: body.username });
+                    resolve({ success: true });
+                    return;
+                }
+                if (endpoint.startsWith('/credentials/') && fetchOptions.method === 'PUT') {
+                    resolve({ success: true });
+                    return;
+                }
+                if (endpoint.startsWith('/credentials/') && fetchOptions.method === 'POST' && endpoint.endsWith('/login')) {
+                    const site = endpoint.split('/')[2];
+                    const cred = mockCredentials.find(c => c.site === site);
+                    if (!cred) { reject(new Error('Credential not found')); return; }
+                    mockTasks.unshift({ id: 'task_' + String(mockTasks.length + 1).padStart(3, '0'), site, status: 'pending', sessionId: null, progress: 0, progressMessage: 'Queued', createdAt: Date.now() });
+                    resolve({ id: 'task_' + String(mockTasks.length).padStart(3, '0') });
+                    return;
+                }
+                if (endpoint.startsWith('/credentials/') && fetchOptions.method === 'DELETE') {
+                    const site = endpoint.split('/')[2];
+                    mockCredentials = mockCredentials.filter(c => c.site !== site);
+                    resolve({ success: true });
+                    return;
+                }
+                if (endpoint === '/verify') {
+                    resolve({
+                        ip: '192.168.1.' + Math.floor(Math.random()*254),
+                        location: ['New York, US','London, UK','Tokyo, JP'][Math.floor(Math.random()*3)],
+                        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                        fingerprint: Math.random().toString(36).substring(2,10)
+                    });
+                    return;
+                }
+                reject(new Error('Unknown endpoint: ' + endpoint));
+            }, 200);
+        });
+    }
+
+    // ============================================================
+    //  APP STATE
+    // ============================================================
+    let currentAgent = null;
+    let tasks = [];
+    let sessions = [];
+    let credentials = [];
+    let liveWs = null;
+    let expiryTimer = null;
+
+    // DOM refs
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const dashAgentName = document.getElementById('dashAgentName');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    const taskForm = document.getElementById('taskForm');
+    const taskTableBody = document.getElementById('taskTableBody');
+    const sessionTableBody = document.getElementById('sessionTableBody');
+    const credTableBody = document.getElementById('credTableBody');
+    const taskCount = document.getElementById('taskCount');
+    const taskPollHint = document.getElementById('taskPollHint');
+
+    const modal = document.getElementById('sessionModal');
+    const modalClose = document.getElementById('modalCloseBtn');
+
+    const liveCanvas = document.getElementById('liveCanvas');
+    const connectLiveBtn = document.getElementById('connectLiveBtn');
+    const disconnectLiveBtn = document.getElementById('disconnectLiveBtn');
+    const liveStatus = document.getElementById('liveStatus');
+
+    // ============================================================
+    //  THEME TOGGLE (persisted in localStorage)
+    // ============================================================
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        themeToggleBtn.innerHTML = theme === 'dark'
+            ? '<i class="fas fa-sun"></i>'
+            : '<i class="fas fa-moon"></i>';
+    }
+    function initTheme() {
+        const saved = localStorage.getItem('agent-portal-theme');
+        const theme = saved === 'dark' || (!saved && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        applyTheme(theme);
+    }
+    themeToggleBtn.addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('agent-portal-theme', next);
+        applyTheme(next);
+        showToast(next === 'dark' ? 'Dark mode on' : 'Light mode on', 'info');
+    });
+
+    // ============================================================
+    //  AUTH
+    // ============================================================
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+        loginError.style.display = 'none';
+        try {
+            const data = await apiCall('/login', {
+                method: 'POST',
+                body: JSON.stringify({ username, password })
+            });
+            currentAgent = data.agentName || username;
+            dashAgentName.textContent = currentAgent;
+            loginScreen.style.display = 'none';
+            dashboard.style.display = 'block';
+            await fetchCsrfToken();
+            await loadAllData();
+            startTaskPolling();
+            showToast('Welcome, ' + currentAgent, 'success');
+        } catch (err) {
+            loginError.style.display = 'block';
+            loginError.textContent = err.message || 'Login failed';
+        }
+    });
+
+    logoutBtn.addEventListener('click', () => {
+        if (liveWs) liveWs.close();
+        stopTaskPolling();
+        if (expiryTimer) clearInterval(expiryTimer);
+        currentAgent = null;
+        dashboard.style.display = 'none';
+        loginScreen.style.display = 'flex';
+        document.getElementById('loginPassword').value = '';
+        showToast('Logged out', 'warning');
+    });
+
+    // ============================================================
+    //  TABS
+    // ============================================================
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            const tabId = btn.dataset.tab;
+            document.getElementById('tab-' + tabId).classList.add('active');
+            if (tabId === 'sessions') loadSessions();
+            if (tabId === 'credentials') loadCredentials();
+            if (tabId === 'verify') loadVerify();
+        });
+    });
+
+    // ============================================================
+    //  SPINNER HELPERS (refresh indicators)
+    // ============================================================
+    function withSpinner(btn, fn) {
+        const icon = btn.querySelector('i');
+        const orig = icon ? icon.className : null;
+        if (icon) icon.className = 'fas fa-spinner fa-spin';
+        btn.disabled = true;
+        return Promise.resolve(fn()).finally(() => {
+            if (icon && orig) icon.className = orig;
+            btn.disabled = false;
+        });
+    }
+
+    // ============================================================
+    //  TASKS (progress bar + polling)
+    // ============================================================
+    let taskPollTimer = null;
+
+    function startTaskPolling() {
+        stopTaskPolling();
+        taskPollTimer = setInterval(async () => {
+            const inFlight = tasks.some(t => t.status === 'pending' || t.status === 'processing');
+            if (!inFlight) { taskPollHint.textContent = ''; return; }
+            try { await loadTasks(); } catch (e) { /* keep polling */ }
+        }, 2500);
+    }
+    function stopTaskPolling() {
+        if (taskPollTimer) { clearInterval(taskPollTimer); taskPollTimer = null; }
+    }
+
+    async function loadTasks() {
+        const data = await apiCall('/tasks');
+        tasks = data;
+        renderTasks();
+    }
+
+    function renderTasks() {
+        taskTableBody.innerHTML = '';
+        tasks.forEach(task => {
+            const tr = document.createElement('tr');
+            const statusClass = task.status === 'pending' ? 'status-pending' :
+                               task.status === 'processing' ? 'status-processing' :
+                               task.status === 'done' ? 'status-done' :
+                               task.status === 'failed' ? 'status-failed' : 'status-closed';
+            const statusLabel = task.status.charAt(0).toUpperCase() + task.status.slice(1);
+            const pct = Math.min(100, Math.max(0, task.progress || 0));
+            const inFlight = task.status === 'pending' || task.status === 'processing';
+            const progressCell = inFlight
+                ? `<div class="progress-wrap">
+                     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+                     <span class="progress-label">${pct}%</span>
+                   </div>
+                   <div class="progress-msg">${escapeHtml(task.progressMessage || '')}</div>`
+                : `<span class="text-muted">${escapeHtml(task.progressMessage || '—')}</span>`;
+            const sessionDisplay = task.sessionId ?
+                `<span class="badge" style="cursor:pointer;background:var(--badge-bg);padding:2px 8px;border-radius:12px;font-size:12px;" data-session="${task.sessionId}">${task.sessionId.slice(0,8)}</span>` :
+                '<span class="text-muted">—</span>';
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(task.site)}</strong></td>
+                <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                <td>${progressCell}</td>
+                <td>${sessionDisplay}</td>
+                <td style="text-align:right;">
+                    ${task.status === 'done' ? `<button class="btn btn-outline btn-sm view-session" data-session="${task.sessionId}"><i class="fas fa-eye"></i></button>` : ''}
+                    ${task.status === 'failed' ? `<button class="btn btn-primary btn-sm retry-task" data-task="${task.id}"><i class="fas fa-redo"></i></button>` : ''}
+                </td>
+            `;
+            taskTableBody.appendChild(tr);
+        });
+        taskCount.textContent = `(${tasks.length})`;
+        const inFlight = tasks.some(t => t.status === 'pending' || t.status === 'processing');
+        taskPollHint.textContent = inFlight ? 'Polling for updates…' : '';
+        // Attach events
+        document.querySelectorAll('.view-session').forEach(btn => {
+            btn.addEventListener('click', () => openSessionModal(btn.dataset.session));
+        });
+        document.querySelectorAll('[data-session]').forEach(el => {
+            el.addEventListener('click', () => openSessionModal(el.dataset.session));
+        });
+        document.querySelectorAll('.retry-task').forEach(btn => {
+            btn.addEventListener('click', () => retryTask(btn.dataset.task));
+        });
+    }
+
+    async function retryTask(tid) {
+        showToast('Retrying task ' + tid, 'warning');
+        if (!USE_REAL_API) {
+            const task = tasks.find(t => t.id === tid);
+            if (!task) return;
+            task.status = 'pending';
+            task.progress = 0;
+            task.progressMessage = 'Queued';
+            renderTasks();
+            setTimeout(() => { task.status = 'processing'; task.progress = 45; task.progressMessage = 'Filling credentials…'; renderTasks(); }, 1500);
+            setTimeout(() => { task.status = 'done'; task.progress = 100; task.progressMessage = 'Done'; task.sessionId = 'sess_' + Math.random().toString(36).substring(2,10); renderTasks(); showToast('Task ' + tid + ' completed', 'success'); }, 4000);
+            return;
+        }
+        try {
+            await apiCall(`/task`, { method: 'POST', body: JSON.stringify({ url: 'https://' + tasks.find(t => t.id === tid)?.site, username: 'retry', password: 'retry' }) });
+            showToast('Task ' + tid + ' re-queued', 'success');
+            await loadTasks();
+        } catch (err) {
+            showToast('Retry failed: ' + err.message, 'error');
+        }
+    }
+
+    function escapeHtml(s) {
+        return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    taskForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const url = document.getElementById('taskUrl').value.trim();
+        const username = document.getElementById('taskUsername').value.trim();
+        const password = document.getElementById('taskPassword').value.trim();
+        const location = document.getElementById('taskLocation').value;
+        const proxy = document.getElementById('taskProxy').value;
+
+        if (!url || !username || !password) {
+            showToast('Please fill all required fields', 'error');
+            return;
+        }
+        try {
+            const data = await apiCall('/task', {
+                method: 'POST',
+                body: JSON.stringify({ url, username, password, location, proxy })
+            });
+            showToast('Task submitted: ' + data.id, 'success');
+            await loadTasks();
+            startTaskPolling();
+            document.getElementById('taskPassword').value = '';
+        } catch (err) {
+            showToast('Task submission failed: ' + err.message, 'error');
+        }
+    });
+
+    document.getElementById('refreshTasksBtn').addEventListener('click', (e) => withSpinner(e.currentTarget, loadTasks));
+
+    // ============================================================
+    //  SESSIONS (with expiry column)
+    // ============================================================
+    async function loadSessions() {
+        const data = await apiCall('/sessions');
+        sessions = data;
+        renderSessions();
+    }
+
+    function fmtExpiry(ts) {
+        if (!ts) return '—';
+        const diff = ts - Date.now();
+        if (diff <= 0) return 'expired';
+        const m = Math.floor(diff / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        return `${m}m ${s}s`;
+    }
+
+    function renderSessions() {
+        sessionTableBody.innerHTML = '';
+        sessions.forEach(sess => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><span style="font-family:monospace;font-size:13px;">${escapeHtml(sess.id)}</span></td>
+                <td>${escapeHtml(sess.site)}</td>
+                <td><span class="status-badge ${sess.status === 'active' ? 'status-done' : 'status-closed'}">${escapeHtml(sess.status)}</span></td>
+                <td>${sess.lastHealthy ? new Date(sess.lastHealthy).toLocaleTimeString() : '—'}</td>
+                <td><span class="text-muted session-expiry" data-expiry="${sess.expiresAt || ''}">${fmtExpiry(sess.expiresAt)}</span></td>
+                <td style="text-align:right;">
+                    <button class="btn btn-outline btn-sm view-session" data-session="${sess.id}"><i class="fas fa-eye"></i></button>
+                    ${sess.status === 'active' ? `<button class="btn btn-danger btn-sm close-session" data-session="${sess.id}"><i class="fas fa-times"></i></button>` : ''}
+                </td>
+            `;
+            sessionTableBody.appendChild(tr);
+        });
+        document.querySelectorAll('#sessionTableBody .view-session').forEach(btn => {
+            btn.addEventListener('click', () => openSessionModal(btn.dataset.session));
+        });
+        document.querySelectorAll('#sessionTableBody .close-session').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const sid = btn.dataset.session;
+                if (!confirm('Close this session?')) return;
+                try {
+                    await apiCall(`/session/${sid}/close`, { method: 'POST' });
+                    showToast('Session closed', 'success');
+                    await loadSessions();
+                } catch (err) {
+                    showToast('Failed to close session: ' + err.message, 'error');
+                }
+            });
+        });
+        // live expiry countdown for the sessions tab
+        if (expiryTimer) clearInterval(expiryTimer);
+        expiryTimer = setInterval(() => {
+            document.querySelectorAll('.session-expiry').forEach(el => {
+                el.textContent = fmtExpiry(Number(el.dataset.expiry));
+            });
+        }, 1000);
+    }
+
+    document.getElementById('refreshSessionsBtn').addEventListener('click', (e) => withSpinner(e.currentTarget, loadSessions));
+
+    // ============================================================
+    //  SESSION DETAIL MODAL (expiry countdown)
+    // ============================================================
+    async function openSessionModal(sessionId) {
+        try {
+            const data = await apiCall(`/session/${sessionId}`);
+            document.getElementById('modalSessionId').textContent = data.id;
+            document.getElementById('modalStatus').textContent = data.status;
+            document.getElementById('modalLastHealthy').textContent = data.lastHealthy ? new Date(data.lastHealthy).toLocaleString() : '—';
+            const expiryEl = document.getElementById('modalExpiry');
+            expiryEl.textContent = fmtExpiry(data.expiresAt);
+            expiryEl.dataset.expiry = data.expiresAt || '';
+            if (data.screenshotPath && data.screenshotPath.indexOf('http') === 0) {
+                document.getElementById('modalScreenshot').innerHTML = `<img class="screenshot-img" src="${data.screenshotPath}" alt="screenshot" />`;
+            } else if (data.screenshotPath && USE_REAL_API) {
+                document.getElementById('modalScreenshot').innerHTML = `<img class="screenshot-img" src="${API_BASE}/${data.screenshotPath}" alt="screenshot" />`;
+            } else {
+                document.getElementById('modalScreenshot').innerHTML = '<i class="fas fa-image" style="font-size:32px; opacity:0.3;"></i> Screenshot Preview';
+            }
+            document.getElementById('modalCookies').textContent = data.cookies || '—';
+            document.getElementById('modalLogs').innerHTML = data.logs && data.logs.length ?
+                data.logs.map(l => `<div class="log-entry">${escapeHtml(l)}</div>`).join('') :
+                '<div class="text-muted">No logs available.</div>';
+            modal.classList.add('active');
+            if (expiryTimer) clearInterval(expiryTimer);
+            expiryTimer = setInterval(() => {
+                const el = document.getElementById('modalExpiry');
+                if (el.dataset.expiry) el.textContent = fmtExpiry(Number(el.dataset.expiry));
+            }, 1000);
+        } catch (err) {
+            showToast('Failed to load session details: ' + err.message, 'error');
+        }
+    }
+
+    modalClose.addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+    document.getElementById('modalRefreshBtn').addEventListener('click', async () => {
+        const sid = document.getElementById('modalSessionId').textContent;
+        if (!sid) return;
+        try {
+            await apiCall(`/session/${sid}/refresh`, { method: 'POST' });
+            showToast('Session refresh triggered', 'success');
+            modal.classList.remove('active');
+            await loadSessions();
+            await loadTasks();
+        } catch (err) {
+            showToast('Refresh failed: ' + err.message, 'error');
+        }
+    });
+
+    document.getElementById('modalCloseSessionBtn').addEventListener('click', async () => {
+        const sid = document.getElementById('modalSessionId').textContent;
+        if (!sid) return;
+        if (!confirm('Close this session?')) return;
+        try {
+            await apiCall(`/session/${sid}/close`, { method: 'POST' });
+            showToast('Session closed', 'success');
+            modal.classList.remove('active');
+            await loadSessions();
+            await loadTasks();
+        } catch (err) {
+            showToast('Close failed: ' + err.message, 'error');
+        }
+    });
+
+    document.getElementById('modalLiveBtn').addEventListener('click', () => {
+        const sid = document.getElementById('modalSessionId').textContent;
+        document.querySelector('.tab-btn[data-tab="live"]').click();
+        connectLive(sid);
+    });
+
+    // ============================================================
+    //  CREDENTIALS (edit + single-click login)
+    // ============================================================
+    async function loadCredentials() {
+        const data = await apiCall('/credentials');
+        credentials = data;
+        renderCredentials();
+    }
+
+    function renderCredentials() {
+        credTableBody.innerHTML = '';
+        credentials.forEach(cred => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td><strong>${escapeHtml(cred.site)}</strong></td>
+                <td>${escapeHtml(cred.username)}</td>
+                <td style="text-align:right;">
+                    <button class="btn btn-success btn-sm cred-login" data-site="${cred.site}"><i class="fas fa-rocket"></i> Login</button>
+                    <button class="btn btn-outline btn-sm cred-edit" data-site="${cred.site}" title="Edit username/password"><i class="fas fa-pen"></i></button>
+                    <button class="btn btn-danger btn-sm delete-cred" data-site="${cred.site}"><i class="fas fa-trash"></i></button>
+                </td>
+            `;
+            credTableBody.appendChild(tr);
+        });
+        document.querySelectorAll('.cred-login').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const site = btn.dataset.site;
+                btn.disabled = true;
+                try {
+                    const data = await apiCall(`/credentials/${site}/login`, { method: 'POST' });
+                    showToast('Login task submitted: ' + data.id, 'success');
+                    await loadTasks();
+                    startTaskPolling();
+                } catch (err) {
+                    showToast('Login failed: ' + err.message, 'error');
+                } finally {
+                    btn.disabled = false;
+                }
+            });
+        });
+        document.querySelectorAll('.cred-edit').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const site = btn.dataset.site;
+                const cred = credentials.find(c => c.site === site);
+                const username = prompt('Username for ' + site + ':', cred ? cred.username : '');
+                if (username === null) return;
+                const password = prompt('New password for ' + site + ' (blank = keep):', '');
+                const payload = {};
+                if (username !== '') payload.username = username;
+                if (password) payload.password = password;
+                if (Object.keys(payload).length === 0) return;
+                try {
+                    await apiCall(`/credentials/${site}`, { method: 'PUT', body: JSON.stringify(payload) });
+                    showToast('Credentials updated for ' + site, 'success');
+                    await loadCredentials();
+                } catch (err) {
+                    showToast('Update failed: ' + err.message, 'error');
+                }
+            });
+        });
+        document.querySelectorAll('.delete-cred').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const site = btn.dataset.site;
+                if (!confirm(`Delete saved credentials for ${site}?`)) return;
+                try {
+                    await apiCall(`/credentials/${site}`, { method: 'DELETE' });
+                    showToast('Credentials deleted', 'success');
+                    await loadCredentials();
+                } catch (err) {
+                    showToast('Delete failed: ' + err.message, 'error');
+                }
+            });
+        });
+    }
+
+    document.getElementById('addCredentialBtn').addEventListener('click', () => {
+        const site = prompt('Enter site (e.g., fantasy402.com):');
+        if (!site) return;
+        const username = prompt('Enter username:');
+        if (!username) return;
+        const password = prompt('Enter password:');
+        if (!password) return;
+        apiCall('/credentials', {
+            method: 'POST',
+            body: JSON.stringify({ site, username, password })
+        }).then(() => {
+            showToast('Credentials saved for ' + site, 'success');
+            loadCredentials();
+        }).catch(err => {
+            showToast('Save failed: ' + err.message, 'error');
+        });
+    });
+
+    // ============================================================
+    //  LIVE CONTROL (WebSocket)
+    // ============================================================
+    let liveConnected = false;
+
+    function connectLive(sessionId) {
+        if (liveWs && liveWs.readyState === WebSocket.OPEN) {
+            showToast('Already connected', 'warning');
+            return;
+        }
+        const wsUrl = liveWsUrl(sessionId);
+        liveWs = new WebSocket(wsUrl);
+        liveWs.onopen = () => {
+            liveConnected = true;
+            liveStatus.textContent = 'Connected';
+            liveStatus.style.color = '#22c55e';
+            showToast('Live control connected', 'success');
+        };
+        liveWs.onmessage = (event) => {
+            try {
+                const msg = JSON.parse(event.data);
+                if (msg.type === 'frame') {
+                    const img = new Image();
+                    img.onload = () => {
+                        const ctx = liveCanvas.getContext('2d');
+                        liveCanvas.width = img.width;
+                        liveCanvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = `data:image/${msg.format || 'png'};base64,${msg.data}`;
+                } else if (msg.type === 'connected') {
+                    liveStatus.textContent = 'Connected — ' + msg.sessionId.slice(0, 8);
+                } else if (msg.type === 'result') {
+                    showToast('Evaluation result: ' + JSON.stringify(msg.data), 'info');
+                }
+            } catch (e) {
+                // ignore
+            }
+        };
+        liveWs.onclose = () => {
+            liveConnected = false;
+            liveStatus.textContent = 'Disconnected';
+            liveStatus.style.color = '#ef4444';
+            showToast('Live control disconnected', 'warning');
+        };
+        liveWs.onerror = () => {
+            showToast('WebSocket error', 'error');
+            liveWs.close();
+        };
+        liveCanvas.onclick = (e) => {
+            if (!liveConnected) return;
+            const rect = liveCanvas.getBoundingClientRect();
+            const scaleX = liveCanvas.width / rect.width;
+            const scaleY = liveCanvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+            liveWs.send(JSON.stringify({ type: 'click', x, y }));
+        };
+        document.addEventListener('keydown', (e) => {
+            if (!liveConnected) return;
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            liveWs.send(JSON.stringify({ type: 'press', key: e.key }));
+        });
+        liveWs._sessionId = sessionId;
+    }
+
+    connectLiveBtn.addEventListener('click', () => {
+        const sid = prompt('Enter Session ID to control:');
+        if (sid) connectLive(sid);
+    });
+
+    disconnectLiveBtn.addEventListener('click', () => {
+        if (liveWs) liveWs.close();
+    });
+
+    // ============================================================
+    //  VERIFICATION
+    // ============================================================
+    async function loadVerify() {
+        const data = await apiCall('/verify');
+        document.getElementById('vIp').textContent = data.ip || '—';
+        document.getElementById('vLoc').textContent = data.location || '—';
+        document.getElementById('vUa').textContent = data.userAgent || '—';
+        document.getElementById('vFp').textContent = data.fingerprint || '—';
+    }
+
+    document.getElementById('refreshVerifyBtn').addEventListener('click', (e) => withSpinner(e.currentTarget, loadVerify));
+
+    // ============================================================
+    //  TOAST SYSTEM
+    // ============================================================
+    function showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle';
+        toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => toast.remove(), 300);
+        }, 4000);
+    }
+
+    // ============================================================
+    //  INIT
+    // ============================================================
+    async function loadAllData() {
+        await loadTasks();
+        await loadSessions();
+        await loadCredentials();
+        await loadVerify();
+    }
+
+    initTheme();
+
+    console.log('Agent Dashboard ready. USE_REAL_API =', USE_REAL_API);
+    console.log('To connect to your Bun backend, set USE_REAL_API = true and update API_BASE.');
+</script>
+
+</body>
+</html>

@@ -2,8 +2,8 @@
 
 **Tenant** `public-plane` (agent-operated) **Discovery**
 `bun run public:discover:check` **Audit bundle** `bun run public:audit:verify`
-**Skills** `.agents/skills/public-discovery/SKILL.md` ·
-`.agents/skills/public-audit-gap-close/SKILL.md`
+**Skills** `.agents/skills/reference-discovery/SKILL.md` (public mode) ·
+`.agents/skills/audit-gap-close/SKILL.md`
 
 Pages static artifact plane — portal UI, registry bake, monitoring shells.
 Distinct from harness `reference-discovery` (code/env in `lib/`) and from live
@@ -93,8 +93,8 @@ Portal static anti-patterns live in `lib/portal-static-checks.ts` — consumed b
 
 | Agent                  | Entry                                                      |
 | ---------------------- | ---------------------------------------------------------- |
-| Public Discovery       | `.agents/skills/public-discovery/agents/openai.yaml`       |
-| Public Audit Gap Close | `.agents/skills/public-audit-gap-close/agents/openai.yaml` |
+| Reference Discovery    | `.agents/skills/reference-discovery/agents/openai.yaml`    |
+| Audit Gap Close        | `.agents/skills/audit-gap-close/agents/openai.yaml`        |
 
 **Owner** `// owner: platform / portal`
 
@@ -134,8 +134,8 @@ bun run ops:snapshot --no-routing # portal-weave rebake
 | `test:toc-ops`             | 2026-07-26 | 71 pass · 18 files                                                                                 |
 | `cloudflare:preflight`     | 2026-07-26 | pass · 13 contracts · 20 consistency                                                               |
 | `ci:harness:fast`          | 2026-07-26 | pass                                                                                               |
-| `skills:validate`          | 2026-08-04 | pass · 34 definitions · 23 loop-registry entries · optional `bet-ticker-worker` warning            |
-| `harness-skills-catalog`   | 2026-08-04 | 34 definitions baked · portal-weave artifact                                                       |
+| `skills:validate`          | current | run `bun run skills:validate`; counts are emitted by the validator                                  |
+| `harness-skills-catalog`   | current | generated from active repository skill packages                                                     |
 | Registry rebake            | 2026-07-26 | `portal-weave.json` · `harness-skills-catalog.json` + weave artifacts                              |
 | Full UI performance audit  | 2026-08-05 | pass · 42% bundle · 97% route sweep · see `full-ui-performance-audit.md`                           |
 

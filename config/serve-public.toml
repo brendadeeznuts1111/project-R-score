@@ -1,0 +1,8 @@
+# Portable defaults for the public portal server.
+# Environment and Bun CLI port settings take precedence.
+
+[metadata]
+version = 1
+description = "Project R serve-public bind defaults"
+
+# Add [server] or [dev] values only when the repository should own them.

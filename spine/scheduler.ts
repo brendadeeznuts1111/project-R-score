@@ -19,7 +19,12 @@
  *   bun spine/scheduler.ts                        # daemon: each tenant on its schedule
  */
 import { scheduleInProcess } from '../lib/harness/cron';
+import { loadSkillHealthManifest } from '../lib/harness/skill-health-loader.ts';
+import { startSkillHealthScheduler } from '../lib/harness/skill-health-runner.ts';
+import { joinPath } from '../lib/path-bun.ts';
 import { resolveTenants, type SpineTenant } from './tenants';
+
+const ROOT = joinPath(import.meta.dir, '..');
 
 export type DaemonHandler = () => unknown | Promise<unknown>;
 
@@ -56,6 +61,11 @@ async function runTenantsOnce(tenants: SpineTenant[]): Promise<number> {
 }
 
 async function runTenantsDaemon(tenants: SpineTenant[]): Promise<void> {
+  const skillHealthManifest = await loadSkillHealthManifest(
+    joinPath(ROOT, 'config/skill-health-scheduler.json'),
+    ROOT
+  );
+  const skillHealth = startSkillHealthScheduler(ROOT, skillHealthManifest);
   const jobs = tenants.map(t =>
     scheduleInProcess(t.schedule, async () => {
       await t.run();
@@ -66,6 +76,9 @@ async function runTenantsDaemon(tenants: SpineTenant[]): Promise<void> {
     console.info(`   · ${t.id} @ "${t.schedule}"`);
   }
   console.info('   dispose all on SIGINT/SIGTERM');
+  console.info(
+    `   skill-health · ${skillHealth.watchers.length} watcher(s) · ${skillHealth.cronJobs.length} cron job(s)`
+  );
 
   // Immediate pass so --once-equivalent smoke happens on daemon start
   await runTenantsOnce(tenants);
@@ -78,6 +91,7 @@ async function runTenantsDaemon(tenants: SpineTenant[]): Promise<void> {
   for (const job of jobs) {
     job[Symbol.dispose]();
   }
+  skillHealth.stop();
   console.info('\n👋 spine multi-tenant stopping (dispose crons)');
 }
 

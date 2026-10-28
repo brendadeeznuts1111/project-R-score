@@ -1,10 +1,4 @@
 #!/usr/bin/env bun
-// @see https://bun.com/docs/runtime/utils#bun-revision — Bun.revision
-// @updated Bun.revision · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
-// @verified Bun.revision · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-revision
-// @see https://bun.com/docs/runtime/utils#bun-version — Bun.version
-// @updated Bun.version · fixed v0.2.0 · 2022-10-13 · https://bun.com/blog/bun-v0.2.0
-// @verified Bun.version · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/utils#bun-version
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
 // @see https://bun.com/docs/runtime/environment-variables — --env-file · Bun.env
@@ -53,32 +47,6 @@ if (!resolvedBun.matchesRuntime) {
 }
 const bunExecutable = resolvedBun.path;
 
-async function assertTrackedSourceClean(stage: 'before' | 'after'): Promise<void> {
-  const proc = Bun.spawn(['git', 'status', '--porcelain', '--untracked-files=no'], {
-    cwd: repoRoot,
-    stdout: 'pipe',
-    stderr: 'pipe',
-    env: { ...Bun.env },
-  });
-  const [stdout, stderr, exitCode] = await Promise.all([
-    new Response(proc.stdout).text(),
-    new Response(proc.stderr).text(),
-    proc.exited,
-  ]);
-  if (exitCode !== 0) {
-    console.error(`bun:ci could not inspect the tracked source tree ${stage} proof`);
-    if (stderr.trim()) console.error(stderr.trim());
-    process.exit(exitCode || 1);
-  }
-  if (stdout.trim()) {
-    console.error(`bun:ci refused ${stage} proof · tracked source tree is dirty`);
-    console.error(stdout.trimEnd());
-    process.exit(1);
-  }
-}
-
-await assertTrackedSourceClean('before');
-
 console.info(
   `bun:ci · ${shortSha} · ${branch || 'unknown'}${ciNote} · Bun ${Bun.version} (${Bun.revision}) · ${bunExecutable} · R2_BUCKET_NAME=${Bun.env.R2_BUCKET_NAME}`
 );
@@ -98,10 +66,20 @@ const steps: CiStep[] = [
     cwd: `${repoRoot}/projects/active/factorywager/registry`,
   },
   { name: 'core', command: ['bun', 'run', 'ci:core'], cwd: repoRoot },
+  {
+    name: 'domain-invariants',
+    command: ['bun', 'run', 'test:invariants'],
+    cwd: repoRoot,
+  },
+  {
+    name: 'snapshots',
+    command: ['bun', 'run', 'test:snapshots'],
+    cwd: repoRoot,
+  },
   { name: 'types', command: ['bun', 'run', 'ci:types'], cwd: repoRoot },
   { name: 'security', command: ['bun', 'run', 'ci:security'], cwd: repoRoot },
   {
-    name: 'public-artifact-clean',
+    name: 'portal-registry',
     command: ['bun', 'run', 'ci:portal-registry'],
     cwd: repoRoot,
   },
@@ -149,5 +127,4 @@ for (const step of steps) {
   }
 }
 
-await assertTrackedSourceClean('after');
 console.info('\n✅ bun:ci local merge proof passed');

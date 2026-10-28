@@ -37,6 +37,7 @@ export type CliCategory = {
 /** Ordered category matchers (first match wins). Longer/more specific prefixes first when needed. */
 export const CLI_CATEGORIES: CliCategory[] = [
   { prefix: 'help', label: 'Help', desc: 'Available commands', priority: -1 },
+  { prefix: 'ai', label: 'AI Path', desc: 'Discover tools and record friction', priority: -1 },
   {
     prefix: 'packages:',
     label: 'Package Management',
@@ -117,6 +118,7 @@ export const CLI_SPECIAL: Record<string, string> = {
   'lint:all': 'ESLint on the complete harness scope (cached)',
   format: 'Prettier on lib/',
   help: 'Interactive categorized command list (use --verbose for all)',
+  ai: 'Discover task paths, check agent sources, and record recurring friction',
   sync: 'Sync integration data',
   updates: 'Check updates',
   docs: 'Generate cheatsheet docs',

@@ -1,39 +1,32 @@
 ---
 name: cloudflare
-description:
-  Comprehensive Cloudflare platform skill covering Workers, Pages, storage (KV,
-  D1, R2), AI (Workers AI, Vectorize, Agents SDK), feature flags (Flagship),
-  networking (Tunnel, Spectrum), security (WAF, DDoS), and
-  infrastructure-as-code (Terraform, Pulumi). Use for any Cloudflare development
-  task. Biases towards retrieval from Cloudflare docs over pre-trained
-  knowledge.
+description: Comprehensive Cloudflare platform skill covering Workers, Pages, storage (KV, D1, R2), AI (Workers AI, Vectorize, Agents SDK), feature flags (Flagship), networking (Tunnel, Spectrum), security (WAF, DDoS), and infrastructure-as-code (Terraform, Pulumi). Use for any Cloudflare development task. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.
 ---
 
 # Cloudflare Platform Skill
 
-Consolidated skill for building on the Cloudflare platform. Use decision trees
-below to find the right product, then load detailed references.
+Consolidated skill for building on the Cloudflare platform. Use decision trees below to find the right product, then load detailed references.
 
-Your knowledge of Cloudflare APIs, types, limits, and pricing may be outdated.
-**Prefer retrieval over pre-training** — the references in this skill are
-starting points, not source of truth.
+Your knowledge of Cloudflare APIs, types, limits, and pricing may be outdated. **Prefer retrieval over pre-training** — the references in this skill are starting points, not source of truth.
 
 ## Retrieval Sources
 
-Fetch the **latest** information before citing specific numbers, API signatures,
-or configuration options. Do not rely on baked-in knowledge or these reference
-files alone.
+Fetch the **latest** information before citing specific numbers, API signatures, or configuration options. Do not rely on baked-in knowledge or these reference files alone.
 
-| Source                 | How to retrieve                                                       | Use for                                                   |
-| ---------------------- | --------------------------------------------------------------------- | --------------------------------------------------------- |
-| Cloudflare docs        | `cloudflare-docs` search tool or `https://developers.cloudflare.com/` | Limits, pricing, API reference, compatibility dates/flags |
-| Workers types          | `npm pack @cloudflare/workers-types` or check `node_modules`          | Type signatures, binding shapes, handler types            |
-| Wrangler config schema | `node_modules/wrangler/config-schema.json`                            | Config fields, binding shapes, allowed values             |
-| Product changelogs     | `https://developers.cloudflare.com/changelog/`                        | Recent changes to limits, features, deprecations          |
+| Source | How to retrieve | Use for |
+|--------|----------------|---------|
+| Cloudflare docs | `cloudflare-docs` search tool or `https://developers.cloudflare.com/` | Limits, pricing, API reference, compatibility dates/flags |
+| Workers types | Installed package types or current official source | Type signatures, binding shapes, handler types |
+| Wrangler config schema | `node_modules/wrangler/config-schema.json` | Config fields, binding shapes, allowed values |
+| Product changelogs | `https://developers.cloudflare.com/changelog/` | Recent changes to limits, features, deprecations |
 
-When a reference file and the docs disagree, **trust the docs**. This is
-especially important for: numeric limits, pricing tiers, type signatures, and
-configuration options.
+When a reference file and the docs disagree, **trust the docs**. This is especially important for: numeric limits, pricing tiers, type signatures, and configuration options.
+
+## Execution boundaries
+
+This package mirrors a cross-runtime upstream catalog. Upstream npm/npx examples are compatibility references, not Project R package-manager authority. In a Bun-owned repository, prefer its scripts and translate ordinary package execution to `bun x` or dependency changes to `bun add`; preserve npm only where the target image, tool, or repository explicitly requires it.
+
+Shell fragments in the upstream references are platform-specific, generally POSIX-only. Do not run them on another platform without translating them through Bun Shell or the owning repository's portable command. For Bun server configuration, use `Bun.env` and Bun's env-file behavior; retain `process.env` only when the target framework or runtime owns Node compatibility. Worker bindings remain the authority inside Workers.
 
 ## Quick Decision Trees
 
@@ -148,119 +141,108 @@ Need IaC? → pulumi/ (Pulumi), terraform/ (Terraform), or api/ (REST API)
 ## Product Index
 
 ### Feature Flags
-
-| Product  | Reference              |
-| -------- | ---------------------- |
+| Product | Reference |
+|---------|-----------|
 | Flagship | `references/flagship/` |
 
 ### Compute & Runtime
-
-| Product               | Reference                           |
-| --------------------- | ----------------------------------- |
-| Workers               | `references/workers/`               |
-| Pages                 | `references/pages/`                 |
-| Pages Functions       | `references/pages-functions/`       |
-| Durable Objects       | `references/durable-objects/`       |
-| Workflows             | `references/workflows/`             |
-| Containers            | `references/containers/`            |
+| Product | Reference |
+|---------|-----------|
+| Workers | `references/workers/` |
+| Pages | `references/pages/` |
+| Pages Functions | `references/pages-functions/` |
+| Durable Objects | `references/durable-objects/` |
+| Workflows | `references/workflows/` |
+| Containers | `references/containers/` |
 | Workers for Platforms | `references/workers-for-platforms/` |
-| Cron Triggers         | `references/cron-triggers/`         |
-| Tail Workers          | `references/tail-workers/`          |
-| Snippets              | `references/snippets/`              |
-| Smart Placement       | `references/smart-placement/`       |
+| Cron Triggers | `references/cron-triggers/` |
+| Tail Workers | `references/tail-workers/` |
+| Snippets | `references/snippets/` |
+| Smart Placement | `references/smart-placement/` |
 
 ### Storage & Data
-
-| Product         | Reference                     |
-| --------------- | ----------------------------- |
-| KV              | `references/kv/`              |
-| D1              | `references/d1/`              |
-| R2              | `references/r2/`              |
-| Artifacts       | `references/artifacts/`       |
-| Queues          | `references/queues/`          |
-| Hyperdrive      | `references/hyperdrive/`      |
-| DO Storage      | `references/do-storage/`      |
-| Secrets Store   | `references/secrets-store/`   |
-| Pipelines       | `references/pipelines/`       |
+| Product | Reference |
+|---------|-----------|
+| KV | `references/kv/` |
+| D1 | `references/d1/` |
+| R2 | `references/r2/` |
+| Artifacts | `references/artifacts/` |
+| Queues | `references/queues/` |
+| Hyperdrive | `references/hyperdrive/` |
+| DO Storage | `references/do-storage/` |
+| Secrets Store | `references/secrets-store/` |
+| Pipelines | `references/pipelines/` |
 | R2 Data Catalog | `references/r2-data-catalog/` |
-| R2 SQL          | `references/r2-sql/`          |
+| R2 SQL | `references/r2-sql/` |
 
 ### AI & Machine Learning
-
-| Product    | Reference                |
-| ---------- | ------------------------ |
+| Product | Reference |
+|---------|-----------|
 | Workers AI | `references/workers-ai/` |
-| Vectorize  | `references/vectorize/`  |
+| Vectorize | `references/vectorize/` |
 | Agents SDK | `references/agents-sdk/` |
 | AI Gateway | `references/ai-gateway/` |
-| AI Search  | `references/ai-search/`  |
+| AI Search | `references/ai-search/` |
 
 ### Networking & Connectivity
-
-| Product              | Reference                          |
-| -------------------- | ---------------------------------- |
-| Tunnel               | `references/tunnel/`               |
-| Spectrum             | `references/spectrum/`             |
-| TURN                 | `references/turn/`                 |
+| Product | Reference |
+|---------|-----------|
+| Tunnel | `references/tunnel/` |
+| Spectrum | `references/spectrum/` |
+| TURN | `references/turn/` |
 | Network Interconnect | `references/network-interconnect/` |
-| Argo Smart Routing   | `references/argo-smart-routing/`   |
-| Workers VPC          | `references/workers-vpc/`          |
+| Argo Smart Routing | `references/argo-smart-routing/` |
+| Workers VPC | `references/workers-vpc/` |
 
 ### Security
-
-| Product         | Reference                    |
-| --------------- | ---------------------------- |
-| WAF             | `references/waf/`            |
-| DDoS Protection | `references/ddos/`           |
-| Bot Management  | `references/bot-management/` |
-| API Shield      | `references/api-shield/`     |
-| Turnstile       | `references/turnstile/`      |
+| Product | Reference |
+|---------|-----------|
+| WAF | `references/waf/` |
+| DDoS Protection | `references/ddos/` |
+| Bot Management | `references/bot-management/` |
+| API Shield | `references/api-shield/` |
+| Turnstile | `references/turnstile/` |
 
 ### Media & Content
-
-| Product           | Reference                       |
-| ----------------- | ------------------------------- |
-| Images            | `references/images/`            |
-| Stream            | `references/stream/`            |
+| Product | Reference |
+|---------|-----------|
+| Images | `references/images/` |
+| Stream | `references/stream/` |
 | Browser Rendering | `references/browser-rendering/` |
-| Zaraz             | `references/zaraz/`             |
+| Zaraz | `references/zaraz/` |
 
 ### Real-Time Communication
-
-| Product      | Reference                  |
-| ------------ | -------------------------- |
-| RealtimeKit  | `references/realtimekit/`  |
+| Product | Reference |
+|---------|-----------|
+| RealtimeKit | `references/realtimekit/` |
 | Realtime SFU | `references/realtime-sfu/` |
 
 ### Developer Tools
-
-| Product               | Reference                        |
-| --------------------- | -------------------------------- |
-| Wrangler              | `references/wrangler/`           |
-| Miniflare             | `references/miniflare/`          |
-| C3                    | `references/c3/`                 |
-| Observability         | `references/observability/`      |
-| GraphQL Analytics API | `references/graphql-api/`        |
-| Analytics Engine      | `references/analytics-engine/`   |
-| Web Analytics         | `references/web-analytics/`      |
-| Sandbox               | `references/sandbox/`            |
-| Workerd               | `references/workerd/`            |
-| Workers Playground    | `references/workers-playground/` |
+| Product | Reference |
+|---------|-----------|
+| Wrangler | `references/wrangler/` |
+| Miniflare | `references/miniflare/` |
+| C3 | `references/c3/` |
+| Observability | `references/observability/` |
+| GraphQL Analytics API | `references/graphql-api/` |
+| Analytics Engine | `references/analytics-engine/` |
+| Web Analytics | `references/web-analytics/` |
+| Sandbox | `references/sandbox/` |
+| Workerd | `references/workerd/` |
+| Workers Playground | `references/workers-playground/` |
 
 ### Infrastructure as Code
-
-| Product   | Reference               |
-| --------- | ----------------------- |
-| Pulumi    | `references/pulumi/`    |
+| Product | Reference |
+|---------|-----------|
+| Pulumi | `references/pulumi/` |
 | Terraform | `references/terraform/` |
-| API       | `references/api/`       |
+| API | `references/api/` |
 
 ### Other Services
-
-| Product       | Reference                   |
-| ------------- | --------------------------- |
+| Product | Reference |
+|---------|-----------|
 | Email Routing | `references/email-routing/` |
 | Email Workers | `references/email-workers/` |
 | Static Assets | `references/static-assets/` |
-| Bindings      | `references/bindings/`      |
+| Bindings | `references/bindings/` |
 | Cache Reserve | `references/cache-reserve/` |

@@ -11,8 +11,9 @@
  *
  *   bun run check:snapshots
  *   bun run test:snapshots
- *   bun run test:snapshots:update   # file-scoped only — never repo-wide -u
- *   bun tools/bun-test-snapshots.ts --list|--check|--test|--update [--id capability-map]
+ *   bun run test:snapshots:update -- --id capability-map
+ *   bun tools/bun-test-snapshots.ts --list|--check|--test
+ *   bun tools/bun-test-snapshots.ts --update --id capability-map
  *
  * Orphan snap files (no matching test) fail --check. Intentional cleanup:
  *   bun tools/bun-test-snapshots.ts --prune-orphans
@@ -21,22 +22,12 @@
 export const TEST_SNAPSHOTS_DIR_REL = 'tests/__snapshots__' as const;
 export const BUN_SNAPSHOT_HEADER = '// Bun Snapshot v1, https://bun.sh/docs/test/snapshots';
 
-export type TestSnapshotSuiteId =
-  | 'capability-map'
-  | 'partner-cli'
-  | 'vault-health'
-  | 'console-depth'
-  | 'failure-report'
-  | 'factory-template'
-  | 'focused-coverage'
-  | 'identity-board'
-  | 'limits-e2e'
-  | 'model-circuit'
-  | 'table-format';
+export type TestSnapshotInvariantClass = 'technical' | 'domain' | 'policy';
+export type TestSnapshotAcceptance = 'update-candidate' | 'manual-only';
 
-export type TestSnapshotSuite = {
-  /** Stable catalog id. */
-  id: TestSnapshotSuiteId;
+type TestSnapshotSuiteDefinition = {
+  /** Stable catalog id. The public union is derived from the catalog below. */
+  id: string;
   /** Human label. */
   label: string;
   /** Test file path relative to repo root. */
@@ -45,6 +36,10 @@ export type TestSnapshotSuite = {
   snapRel: string;
   /** Why this suite is snapshotted (SSOT purpose). */
   purpose: string;
+  /** Kind of meaning frozen by this snapshot; the owning test still proves correctness. */
+  invariantClass: TestSnapshotInvariantClass;
+  /** Whether green deterministic drift may be proposed mechanically or always needs an owner. */
+  acceptance: TestSnapshotAcceptance;
   /** Optional package script alias that runs/updates this suite. */
   updateScript?: string;
   /** Optional CLI entry that wraps bun test --update-snapshots. */
@@ -55,7 +50,7 @@ export type TestSnapshotSuite = {
  * Canonical catalog of committed bun:test snapshot suites.
  * Keep in sync with tests that call `toMatchSnapshot()` under tests/.
  */
-export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
+export const TEST_SNAPSHOT_SUITES = [
   {
     id: 'capability-map',
     label: 'Capability map subset',
@@ -63,6 +58,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     snapRel: 'tests/__snapshots__/capability-map-subset.test.ts.snap',
     purpose:
       'AGENTS grounded capability matrix drift gate (schema v3, summary, minBun/source). Bake first: bake:capabilities.',
+    invariantClass: 'policy',
+    acceptance: 'manual-only',
     updateScript: 'bake:capabilities:update',
     cli: 'portal-cli capabilities health --update',
   },
@@ -73,6 +70,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     snapRel: 'tests/__snapshots__/partner-cli-snapshots.test.ts.snap',
     purpose:
       'Pinned Bun runtime provenance and typed Bun.spawn stdout/stderr contracts for partner validators.',
+    invariantClass: 'technical',
+    acceptance: 'update-candidate',
     updateScript: 'test:partner-cli:snapshots:update',
   },
   {
@@ -82,6 +81,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     snapRel: 'tests/__snapshots__/vault-health.test.ts.snap',
     purpose:
       'env→vault inventory + report-shape SSOT (offline; no pass-cli). Live bake separate: vault:health:bake.',
+    invariantClass: 'domain',
+    acceptance: 'manual-only',
     updateScript: 'vault:health:update',
     cli: 'portal-cli vault health --update',
   },
@@ -91,6 +92,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/console-depth.test.ts',
     snapRel: 'tests/__snapshots__/console-depth.test.ts.snap',
     purpose: 'Bun.inspect / table formatting contract (scoped update only).',
+    invariantClass: 'technical',
+    acceptance: 'update-candidate',
   },
   {
     id: 'failure-report',
@@ -98,6 +101,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/failure-report.test.ts',
     snapRel: 'tests/__snapshots__/failure-report.test.ts.snap',
     purpose: 'test-failures parser report shape.',
+    invariantClass: 'technical',
+    acceptance: 'update-candidate',
   },
   {
     id: 'factory-template',
@@ -106,6 +111,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     snapRel: 'tests/__snapshots__/factory-template.test.ts.snap',
     purpose:
       'Grouped factory-library package properties, environments, flags, and file-accountability contract.',
+    invariantClass: 'policy',
+    acceptance: 'manual-only',
   },
   {
     id: 'focused-coverage',
@@ -114,6 +121,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     snapRel: 'tests/__snapshots__/focused-coverage.test.ts.snap',
     purpose:
       'Root package ownership, exact-file selection, name filtering, diagnostic flags, and deterministic coverage output.',
+    invariantClass: 'technical',
+    acceptance: 'update-candidate',
   },
   {
     id: 'identity-board',
@@ -121,6 +130,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/identity-board.test.ts',
     snapRel: 'tests/__snapshots__/identity-board.test.ts.snap',
     purpose: 'identity-board normalized report shape.',
+    invariantClass: 'domain',
+    acceptance: 'manual-only',
   },
   {
     id: 'limits-e2e',
@@ -128,6 +139,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/limits-e2e.test.ts',
     snapRel: 'tests/__snapshots__/limits-e2e.test.ts.snap',
     purpose: 'limits chart SVG generation contract.',
+    invariantClass: 'technical',
+    acceptance: 'update-candidate',
   },
   {
     id: 'model-circuit',
@@ -136,6 +149,8 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     snapRel: 'tests/__snapshots__/model-circuit-contracts.test.ts.snap',
     purpose:
       'Package/group property ownership, pattern types, locked flags, circuit-only weight inputs, and file accountability.',
+    invariantClass: 'policy',
+    acceptance: 'manual-only',
     updateScript: 'model:contracts:snapshots:update',
   },
   {
@@ -144,8 +159,14 @@ export const TEST_SNAPSHOT_SUITES: readonly TestSnapshotSuite[] = [
     testRel: 'tests/table-format.test.ts',
     snapRel: 'tests/__snapshots__/table-format.test.ts.snap',
     purpose: 'formatTable compact/border output stability.',
+    invariantClass: 'technical',
+    acceptance: 'update-candidate',
   },
-] as const;
+] as const satisfies readonly TestSnapshotSuiteDefinition[];
+
+/** Derived from the catalog so adding a suite cannot leave the public id type stale. */
+export type TestSnapshotSuiteId = (typeof TEST_SNAPSHOT_SUITES)[number]['id'];
+export type TestSnapshotSuite = TestSnapshotSuiteDefinition & { id: TestSnapshotSuiteId };
 
 export type SnapFileInventory = {
   rel: string;
@@ -354,7 +375,7 @@ export async function checkTestSnapshots(
   for (const rel of testsWithSnap) {
     if (!byTest.has(rel)) {
       findings.push({
-        severity: 'warn',
+        severity: 'error',
         code: 'uncatalogued-toMatchSnapshot',
         path: rel,
         detail:

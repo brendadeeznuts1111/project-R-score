@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare Sandbox SDK"
+  short_description: "Route stable, preview, and migration Sandbox work"
+  default_prompt: "Use $sandbox-sdk to identify the installed Cloudflare Sandbox package and image line, retrieve the matching current documentation and types, and make a bounded change without mixing stable and preview APIs."

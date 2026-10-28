@@ -1,14 +1,14 @@
 {
   "plane": "harness-agents",
   "skillLoopRegistry": ".agents/skills/ast-grep/skill-loop-registry.json",
-  "scannedAt": "2026-08-14T03:01:02.296Z",
+  "scannedAt": "2026-08-16T23:40:33.425Z",
   "skills": [
     {
       "name": "agents-sdk",
       "description": "Build AI agents on Cloudflare Workers using the Agents SDK. Load when creating stateful agents, durable workflows, real-time WebSocket apps, scheduled tasks, MCP servers, chat applications, voice agents, or browser automation. Covers Agent class, state management, callable RPC, Workflows, durable execution, queues, retries, observability, and React hooks. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:34.578Z",
+      "updatedAt": "2026-08-16T22:04:46.719Z",
       "hasPackage": false,
-      "lineCount": 222,
+      "lineCount": 224,
       "resources": {
         "scripts": 0,
         "references": 19,
@@ -19,7 +19,7 @@
     {
       "name": "ast-grep",
       "description": "AST-aware code outline, structural search, rewrite, and rule scans via ast-grep 0.44+. Use when exploring unfamiliar code, mapping symbols/imports/exports before broad file reads, finding syntax-shaped patterns (calls, classes, JSX), writing codemods, or when rg is too noisy. Primary entry point: scripts/ast_grep_helper.py (outline, search, replace, scan, validate).",
-      "updatedAt": "2026-08-06T16:45:16.025Z",
+      "updatedAt": "2026-08-16T22:03:29.287Z",
       "hasPackage": false,
       "lineCount": 348,
       "resources": {
@@ -31,10 +31,10 @@
     },
     {
       "name": "audit-gap-close",
-      "description": "Close harness and tenant gaps with audit evidence — compose reference-discovery, audit catalog verify, tenant gap maps, and fresh-rerun gates. Use when a gap map row needs proof (bake/test/proof), audit catalog is stale, or discovery findings need an execute owner after triage.",
-      "updatedAt": "2026-07-26T20:49:05.898Z",
+      "description": "Close harness, tenant, and public-plane gaps with discovery, catalog, bake, test, and fresh-rerun evidence. Use after triage identifies an owned gap row or when repeated harness failures need a smallest reversible correction.",
+      "updatedAt": "2026-08-16T22:22:11.212Z",
       "hasPackage": false,
-      "lineCount": 95,
+      "lineCount": 66,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -45,7 +45,7 @@
     {
       "name": "branded-ids",
       "description": "Discover, add, and apply FactoryWager branded domain values (IDs, keys, and validated codes). Use for any domain *Id, constructor-tier or guard choice, brand coverage, catalog or manifest maintenance, and branded-ID gate failures.",
-      "updatedAt": "2026-08-14T03:00:56.540Z",
+      "updatedAt": "2026-08-15T18:12:45.015Z",
       "hasPackage": false,
       "lineCount": 149,
       "resources": {
@@ -56,24 +56,11 @@
       "validation": []
     },
     {
-      "name": "cascade-mover-v3",
-      "description": "Cascade Mover v3 — sports intelligence, confidence engine, multi-market cascading. Use cascade-mover MCP tools. Bun-native, zero npm deps.",
-      "updatedAt": "2026-08-14T02:45:00.929Z",
-      "hasPackage": false,
-      "lineCount": 44,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
       "name": "cloudflare",
       "description": "Comprehensive Cloudflare platform skill covering Workers, Pages, storage (KV, D1, R2), AI (Workers AI, Vectorize, Agents SDK), feature flags (Flagship), networking (Tunnel, Spectrum), security (WAF, DDoS), and infrastructure-as-code (Terraform, Pulumi). Use for any Cloudflare development task. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-08-04T05:58:02.399Z",
+      "updatedAt": "2026-08-16T22:03:01.429Z",
       "hasPackage": false,
-      "lineCount": 243,
+      "lineCount": 249,
       "resources": {
         "scripts": 0,
         "references": 319,
@@ -84,9 +71,9 @@
     {
       "name": "cloudflare-email-service",
       "description": "Send and receive transactional emails with Cloudflare Email Service (Email Sending + Email Routing). Use when building email sending (Workers binding or REST API), email routing, Agents SDK email handling, or integrating email into any app — Workers, Node.js, Python, Go, etc. Also use for email deliverability, SPF/DKIM/DMARC, wrangler email setup, MCP email tools, or when a coding agent needs to send emails. Even for simple requests like \"add email to my Worker\" — this skill has critical config details.",
-      "updatedAt": "2026-07-28T17:01:38.494Z",
+      "updatedAt": "2026-08-16T22:04:46.720Z",
       "hasPackage": false,
-      "lineCount": 104,
+      "lineCount": 106,
       "resources": {
         "scripts": 0,
         "references": 5,
@@ -97,7 +84,7 @@
     {
       "name": "cloudflare-one",
       "description": "Guides Cloudflare One Zero Trust and SASE work across Access, Gateway, WARP, Tunnel, Cloudflare WAN, DLP, CASB, device posture, and identity. Use when designing, configuring, troubleshooting, or reviewing Cloudflare One deployments. Retrieval-first: use current Cloudflare docs/API schemas instead of embedded product docs.",
-      "updatedAt": "2026-07-28T17:01:38.733Z",
+      "updatedAt": "2026-08-15T18:12:45.016Z",
       "hasPackage": false,
       "lineCount": 177,
       "resources": {
@@ -110,7 +97,7 @@
     {
       "name": "cloudflare-one-migrations",
       "description": "Plans migrations from Zscaler ZIA/ZPA, Palo Alto, legacy VPN, SWG, or SASE stacks to Cloudflare One. Use for migration assessments, policy mapping, rollout plans, and parity/gap analysis.",
-      "updatedAt": "2026-07-28T17:01:38.902Z",
+      "updatedAt": "2026-08-15T18:12:45.016Z",
       "hasPackage": false,
       "lineCount": 111,
       "resources": {
@@ -123,9 +110,9 @@
     {
       "name": "durable-objects",
       "description": "Create and review Cloudflare Durable Objects. Use when building stateful coordination (chat rooms, multiplayer games, booking systems), implementing RPC methods, SQLite storage, alarms, WebSockets, or reviewing DO code for best practices. Covers Workers integration, wrangler config, and testing with Vitest. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:39.145Z",
+      "updatedAt": "2026-08-16T22:04:46.720Z",
       "hasPackage": false,
-      "lineCount": 187,
+      "lineCount": 189,
       "resources": {
         "scripts": 0,
         "references": 3,
@@ -134,37 +121,11 @@
       "validation": []
     },
     {
-      "name": "harness-improve",
-      "description": "Improve FactoryWager harness velocity: observe trajectory, earliest failed handoff, smallest reversible fix at owning boundary, fresh rerun. Use when commit loops thrash, day-loop proof is false, or NFRs are unresolved in prose.",
-      "updatedAt": "2026-07-21T16:45:54.554Z",
-      "hasPackage": false,
-      "lineCount": 59,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
       "name": "ops-dual-mode-experiments",
-      "description": "Dual-mode provisioning (manual vs automated_test), factorial partner-policy experiments (FactorialEngine, phases, switchback, cluster), coverage prediction backtests, and champion/challenger shadow eval on FactoryWager operations. Use when working on provisioning queues, sandbox-gated WebView signup, experiment variants/phases, prediction_accuracy, ops-summary C4/C5 panels, or ops:diagnose / ops:snapshot freshness.",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
+      "description": "Dual-mode provisioning (manual vs automated_test), factorial partner-policy experiments (FactorialEngine, phases, switchback, cluster), coverage prediction backtests, and champion/challenger shadow eval on FactoryWager operations. Use when working on provisioning queues, sandbox-gated WebView signup, experiment variants/phases, prediction_accuracy, ops-summary C4/C5 panels, ops:diagnose / ops:snapshot freshness, or the root partner-profile bridge and its Sports Terminal integration boundary.",
+      "updatedAt": "2026-08-15T18:19:21.050Z",
       "hasPackage": false,
-      "lineCount": 237,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "partner-profile-os",
-      "description": "Partner Profile OS for Sports Terminal v5.2+. TOML templates, PartnerGateway kernel, lifecycle state machine, multi-layered data source routing. Bun-native.",
-      "updatedAt": "2026-07-24T07:07:27.624Z",
-      "hasPackage": false,
-      "lineCount": 37,
+      "lineCount": 274,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -175,7 +136,7 @@
     {
       "name": "portal-design",
       "description": "Unify FactoryWager portal visual identity and grow shared UI building blocks (theme.jsonc, color kernels, ui-html ↔ portal-ui.js, .portal-* primitives). Use when editing portal boards, theme/tokens, private CSS prefixes, dual-plane tennis vs Pages chrome, or design-doc Flags for portal UI tools.",
-      "updatedAt": "2026-08-07T06:43:39.485Z",
+      "updatedAt": "2026-08-15T18:19:36.641Z",
       "hasPackage": false,
       "lineCount": 130,
       "resources": {
@@ -188,9 +149,9 @@
     {
       "name": "project-r-agent-team",
       "description": "Operate Project R agent-team access through the correct Proton Pass vault, environment loader, MCP surface, and SSH host. Use for agent credential setup, vault routing, remote access, or team-specific environment diagnostics.",
-      "updatedAt": "2026-08-14T02:45:00.929Z",
+      "updatedAt": "2026-08-15T18:12:45.042Z",
       "hasPackage": false,
-      "lineCount": 71,
+      "lineCount": 69,
       "resources": {
         "scripts": 0,
         "references": 0,
@@ -200,13 +161,13 @@
     },
     {
       "name": "project-r-ops-management",
-      "description": "Operate Project R runtime channels, CI gates, TypeScript health, security, release hygiene, and recovery. Use for readiness checks, CI failures, Bun drift, branch hygiene, dependency hardening, or emergency recovery.",
-      "updatedAt": "2026-08-07T06:43:39.486Z",
+      "description": "Operate Project R runtime channels, CI gates, TypeScript health, security, structured-data capability proof, release hygiene, and recovery. Use for readiness checks, CI failures, Bun drift, XML/JSON5/JSONL operations, branch hygiene, dependency hardening, or emergency recovery.",
+      "updatedAt": "2026-08-16T23:38:01.274Z",
       "hasPackage": false,
-      "lineCount": 67,
+      "lineCount": 126,
       "resources": {
         "scripts": 0,
-        "references": 2,
+        "references": 3,
         "assets": 0
       },
       "validation": []
@@ -214,72 +175,7 @@
     {
       "name": "project-r-skill-maintenance",
       "description": "Create, tighten, and validate Project R Codex skills. Use for SKILL.md wording, agents/openai.yaml alignment, duplicate installed copies, broken references, or stale Bun guidance.",
-      "updatedAt": "2026-08-14T02:45:00.929Z",
-      "hasPackage": false,
-      "lineCount": 102,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "public-audit-gap-close",
-      "description": "Close public-plane gap rows with discovery + portal verify + audit catalog evidence. Use when Pages portal/registry rows need bake/test/proof closure after public-discovery triage.",
-      "updatedAt": "2026-07-26T20:51:19.490Z",
-      "hasPackage": false,
-      "lineCount": 72,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "public-discovery",
-      "description": "Discover stale references, broken registry paths, and portal static anti-patterns under public/ (portal, registry bake, monitoring, lander). Use when cleaning Pages artifact drift, orphan registry JSON, or portal foundation violations.",
-      "updatedAt": "2026-07-26T20:51:20.015Z",
-      "hasPackage": false,
-      "lineCount": 77,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "reference-discovery",
-      "description": "Discover unused, stale, and similarly named references in the harness perimeter. Use when cleaning up naming drift (REGISTRY_URL vs ROUTING_PROBE_BASE_URL), orphan CANONICAL_TOOLS paths, legacy domains, broken skill links, or plane mismatches.",
-      "updatedAt": "2026-07-26T19:46:39.968Z",
-      "hasPackage": false,
-      "lineCount": 73,
-      "resources": {
-        "scripts": 0,
-        "references": 0,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "sandbox-sdk",
-      "description": "Build sandboxed applications for secure code execution. Load when building AI code execution, code interpreters, CI/CD systems, interactive dev environments, or executing untrusted code. Covers Sandbox SDK lifecycle, commands, files, code interpreter, and preview URLs. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:39.399Z",
-      "hasPackage": false,
-      "lineCount": 178,
-      "resources": {
-        "scripts": 0,
-        "references": 2,
-        "assets": 0
-      },
-      "validation": []
-    },
-    {
-      "name": "sports-terminal-os",
-      "description": "Sports Terminal OS v5.2 — sports betting trading terminal with 93 proxy endpoints, WebSocket/SSE, Partner Profile OS, Telegram hub. Bun-native monorepo workspace at projects/active/sports-terminal-os/.",
-      "updatedAt": "2026-07-24T07:07:27.625Z",
+      "updatedAt": "2026-08-16T22:22:11.199Z",
       "hasPackage": false,
       "lineCount": 153,
       "resources": {
@@ -290,13 +186,39 @@
       "validation": []
     },
     {
-      "name": "turnstile-spin",
-      "description": "Set up Cloudflare Turnstile end-to-end in a project. Scan the codebase, create the widget via the Cloudflare API, embed it where user requests need bot verification (form submissions, SPA actions, API endpoints, download links, comment or vote submissions, etc.), wire canonical server-side siteverify in the customer's existing backend, validate, and persist the skill. Load this when a user asks to add Turnstile, set up CAPTCHA, protect a form or endpoint from bots, or fix a Turnstile integration. Mirrors developers.cloudflare.com/turnstile/spin.",
-      "updatedAt": "2026-08-04T05:58:02.404Z",
+      "name": "reference-discovery",
+      "description": "Discover stale references, naming and environment drift, broken skill links, registry paths, and portal static anti-patterns. Use for harness-perimeter or public-plane cleanup before executing an audit gap closure.",
+      "updatedAt": "2026-08-16T22:22:11.226Z",
       "hasPackage": false,
-      "lineCount": 324,
+      "lineCount": 68,
       "resources": {
-        "scripts": 4,
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "sandbox-sdk",
+      "description": "Route and operate Cloudflare Sandbox SDK work across the stable package, the 1.0 preview package, and migrations between them. Use for isolated code execution, interpreters, terminals, files, ports, tunnels, lifecycle, container configuration, or Sandbox SDK upgrades. Inspect the installed package line and retrieve its current official documentation before changing code.",
+      "updatedAt": "2026-08-16T21:59:34.235Z",
+      "hasPackage": false,
+      "lineCount": 52,
+      "resources": {
+        "scripts": 0,
+        "references": 0,
+        "assets": 0
+      },
+      "validation": []
+    },
+    {
+      "name": "turnstile-spin",
+      "description": "Add or repair Cloudflare Turnstile end to end in an existing application. Use for CAPTCHA or bot-protection requests involving widgets, protected forms or endpoints, Siteverify, hostname and action validation, secret storage, or reCAPTCHA and hCaptcha migration. Preserve the existing handler and use the bundled helpers for bounded authentication, widget creation, and validation.",
+      "updatedAt": "2026-08-16T22:01:45.019Z",
+      "hasPackage": false,
+      "lineCount": 69,
+      "resources": {
+        "scripts": 3,
         "references": 6,
         "assets": 0
       },
@@ -305,9 +227,9 @@
     {
       "name": "workers-best-practices",
       "description": "Reviews and authors Cloudflare Workers code against production best practices. Load when writing new Workers, reviewing Worker code, configuring wrangler.jsonc, or checking for common Workers anti-patterns (streaming, floating promises, global state, secrets, bindings, observability). Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-08-04T06:34:35.924Z",
+      "updatedAt": "2026-08-16T22:02:19.613Z",
       "hasPackage": false,
-      "lineCount": 128,
+      "lineCount": 122,
       "resources": {
         "scripts": 0,
         "references": 2,
@@ -317,17 +239,17 @@
     },
     {
       "name": "wrangler",
-      "description": "Cloudflare Workers CLI for deploying, developing, and managing Workers, KV, R2, D1, Vectorize, Hyperdrive, Workers AI, Containers, Queues, Workflows, Pipelines, and Secrets Store. Load before running wrangler commands to ensure correct syntax and best practices. Biases towards retrieval from Cloudflare docs over pre-trained knowledge.",
-      "updatedAt": "2026-07-28T17:01:39.846Z",
+      "description": "Operate the current Cloudflare Wrangler CLI for Workers and related resources. Use when inspecting or changing wrangler configuration, running local development, generating types, validating or deploying Workers, managing bindings or secrets, or diagnosing Wrangler commands. Retrieve exact flags and schemas from the installed CLI and official Cloudflare documentation before acting.",
+      "updatedAt": "2026-08-16T21:58:15.352Z",
       "hasPackage": false,
-      "lineCount": 923,
+      "lineCount": 66,
       "resources": {
         "scripts": 0,
         "references": 0,
         "assets": 0
       },
-      "validation": ["body too long (919 lines, want ≤500)"]
+      "validation": []
     }
   ],
-  "count": 25
+  "count": 19
 }

@@ -1,11 +1,11 @@
 {
-  "generated": "2026-08-24T02:53:27.224Z",
+  "generated": "2026-08-16T23:32:00.368Z",
   "rss": {
-    "generated": "2026-08-24T02:53:27.223Z",
+    "generated": "2026-08-16T23:32:00.363Z",
     "source": "https://bun.com/rss.xml",
-    "etag": "W/\"c7d1afe68350d8254065ad132dd2a9d6\"",
-    "lastModified": "Sun, 23 Aug 2026 21:24:53 GMT",
-    "count": 161,
+    "etag": "W/\"537102dc2eb57f0098b68181b38b5597\"",
+    "lastModified": "Sun, 16 Aug 2026 09:29:39 GMT",
+    "count": 160,
     "entries": [
       {
         "version": "0.1.1",
@@ -1126,13 +1126,6 @@
         "url": "https://bun.com/blog/bun-v1.3.14",
         "guid": "https://bun.com/blog/bun-v1.3.14",
         "pubDate": "2026-05-13T03:19:35.000Z"
-      },
-      {
-        "version": "1.4.0",
-        "title": "Bun 1.4",
-        "url": "https://bun.com/blog/bun-v1.4",
-        "guid": "https://bun.com/blog/bun-v1.4",
-        "pubDate": "2026-08-20T00:53:44.000Z"
       }
     ]
   },

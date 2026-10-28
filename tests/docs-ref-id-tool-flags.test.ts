@@ -1,6 +1,8 @@
 // @see https://bun.com/docs/test — bun:test
 import { describe, expect, test } from 'bun:test';
 import {
+  CI_CORE_ALLOWED_LONG,
+  CI_HARNESS_ALLOWED_LONG,
   COMPLEXITY_FLOOR_DOC,
   IMAGES_GENERATE_DOC,
   LINT_WIRES_DOC,
@@ -24,6 +26,10 @@ import { refIdRegistry } from '../tools/docs-refid-check.ts';
 const REPO = resolvePath(import.meta.dir, '..');
 
 describe('ref-id-tool-flags SSOT', () => {
+  test('ci:core accepts every option it forwards to ci:harness', () => {
+    expect(CI_CORE_ALLOWED_LONG).toEqual(expect.arrayContaining([...CI_HARNESS_ALLOWED_LONG]));
+  });
+
   test('toolFlagsAt builds #href from section.leaf', () => {
     const rows = toolFlagsAt('4.1', ['scan', 'why'], 'scripts/validate-wire-traps.ts');
     expect(rows).toEqual([

@@ -19,8 +19,8 @@
 # Local symlinks inside nested enterprise repos
 projects/active/enterprise/fantasy42-fire22-registry/enterprise/packages/dashboard-worker
 
-# Dependencies (no trailing slash: worktree node_modules is often a symlink)
-node_modules
+# Dependencies
+node_modules/
 # Bun's text lockfile is source-controlled at every package boundary. Only the
 # retired binary format stays ignored so an old client cannot add it back.
 bun.lockb
@@ -153,8 +153,6 @@ yarn-error.log*
 .env
 .env.*
 !/.env.example
-# Sports ops relay session, cookies, and sqlite. Never commit.
-projects/active/sports-terminal-os/demos/.sports-ops/
 !/.env.registry.example
 !/.env.test.example
 .dev.vars
@@ -191,6 +189,8 @@ cache/
 logs/
 performance-results/
 reports/
+!public/reports/
+!public/reports/**
 .archive/
 *.archive/
 
@@ -275,8 +275,6 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
-!projects/active/dashboards/enterprise-dashboard/src/server/auth/
-!projects/active/dashboards/enterprise-dashboard/src/server/auth/**
 !functions/api/auth/
 !functions/api/auth/**
 !functions-bun-only/api/auth/
@@ -291,7 +289,6 @@ lib/auth/*
 config/*
 !config/bun-channels.toml
 !config/machine.bunfig.toml.template
-!config/release-targets.json
 !config/domain-branding.json
 !config/vault-map.json
 !config/vault-map.toml
@@ -299,12 +296,16 @@ config/*
 !config/subdomains.json
 !config/images.toml
 !config/runtime-flags.json
-!config/control-override-ownership.json
-!config/control-override-ownership.schema.json
 !config/project-r-agent-contract.json
-!config/agent-consumer-ownership.json
-!config/subprocess-consumer-ownership.json
-!config/outbound-consumers.json
+!config/skill-health-scheduler.json
+!config/data-format-lab.json
+!config/ai-friction.json
+!config/serve-public.toml
+!config/enhancements/
+!config/schemas/
+!config/schemas/skill-health-scheduler.schema.json
+!config/schemas/data-format-lab.schema.json
+!config/schemas/ai-friction.schema.json
 !config/scraper-targets.ts
 !config/scrape-agents.toml
 !config/onboarding-defaults.toml
@@ -419,11 +420,6 @@ projects/archive/lazycodex/
 /.worktrees/
 /.codex-worktrees/
 herdr-worktrees/
-# Grok Bot: App Support symlink + nested worktree checkouts (own remote)
-/grokbot
-/grokbot-bun-1.4-audit/
-/grokbot-bun-1.4-status/
-/grokbot-control-research/
 /~/
 /index.html
 /index.ts
@@ -461,10 +457,6 @@ artifacts/reports/
 /toc-ops-repo-wt-brand-ship/
 /toc-ops-worktrees/
 /stream-deck-neo/
-/PPH-Ops-Console/
-/domain-registry-parity-harness/
-# Local portal scaffold (no nested .git yet) — park until own remote/PR
-/agentonboarding-portal/
 examples/demos/alchemy-tutorial/
 examples/mega-liner-v7/
 examples/mega-liner-v8/

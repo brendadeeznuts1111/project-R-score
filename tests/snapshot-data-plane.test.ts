@@ -4,8 +4,13 @@ import {
   formatFlatManifest,
   getLockfileState,
   getRepoIdentity,
+  isSnapshotManifestId,
   limitChartDataFromMetadata,
+  manifestJsonPath,
   matchesGrep,
+  pruneSnapshots,
+  readSnapshotIndex,
+  runSnapshot,
   termColor,
   type SnapshotManifest,
 } from '../tools/snapshot-core.ts';
@@ -61,6 +66,79 @@ describe('snapshot-scopes', () => {
 });
 
 describe('snapshot-data-plane grep + flat manifest', () => {
+  test('snapshot ids are scoped and traversal-safe', () => {
+    expect(isSnapshotManifestId('prediction-m1abc-9z8y', 'prediction')).toBe(true);
+    expect(isSnapshotManifestId('prediction-m1abc-9z8y', 'portal')).toBe(false);
+    expect(isSnapshotManifestId('../prediction-m1abc-9z8y')).toBe(false);
+    expect(() => manifestJsonPath('../../outside')).toThrow('invalid snapshot id');
+  });
+
+  test('dry-run returns an explicit successful result without a manifest', async () => {
+    const result = await runSnapshot({ scope: 'prediction', dryRun: true });
+    expect(result).toEqual({ ok: true, dryRun: true, manifest: null });
+  });
+
+  test.serial('failed required capture returns an explicit failed result', async () => {
+    const previousDir = Bun.env.PORTAL_SNAPSHOT_DIR;
+    const tempDir = `/tmp/project-r-snapshot-test-${crypto.randomUUID()}`;
+    const server = Bun.serve({
+      port: 0,
+      fetch: () => new Response('unavailable', { status: 503 }),
+    });
+    Bun.env.PORTAL_SNAPSHOT_DIR = tempDir;
+    try {
+      const result = await runSnapshot({
+        scope: 'portal',
+        baseUrl: `http://127.0.0.1:${server.port}`,
+      });
+      expect(result.dryRun).toBe(false);
+      expect(result.ok).toBe(false);
+      expect(result.manifest?.metadata.status).toBe('error');
+    } finally {
+      server.stop(true);
+      if (previousDir === undefined) delete Bun.env.PORTAL_SNAPSHOT_DIR;
+      else Bun.env.PORTAL_SNAPSHOT_DIR = previousDir;
+      await Bun.$`rm -rf ${tempDir}`.quiet();
+    }
+  });
+
+  test.serial('concurrent captures retain both index rows and prune ignores hostile ids', async () => {
+    const previousDir = Bun.env.PORTAL_SNAPSHOT_DIR;
+    const tempRoot = `/tmp/project-r-snapshot-index-test-${crypto.randomUUID()}`;
+    const snapshotDir = `${tempRoot}/store`;
+    const sentinel = `${tempRoot}/sentinel`;
+    const server = Bun.serve({
+      port: 0,
+      fetch: () => Response.json({ generatedAt: '2026-08-16T00:00:00.000Z' }),
+    });
+    Bun.env.PORTAL_SNAPSHOT_DIR = snapshotDir;
+    try {
+      const baseUrl = `http://127.0.0.1:${server.port}`;
+      const results = await Promise.all([
+        runSnapshot({ scope: 'portal', baseUrl }),
+        runSnapshot({ scope: 'portal', baseUrl }),
+      ]);
+      expect(results.every(result => result.ok)).toBe(true);
+      expect(await readSnapshotIndex()).toHaveLength(2);
+
+      await Bun.write(sentinel, 'keep');
+      const indexPath = `${snapshotDir}/index.jsonl`;
+      const existing = await Bun.file(indexPath).text();
+      await Bun.write(
+        indexPath,
+        `${existing}${JSON.stringify({ ...sampleManifest(), id: '../sentinel' })}\n`
+      );
+      const pruned = await pruneSnapshots({ keep: 0 });
+      expect(pruned.removed).toBe(2);
+      expect(await Bun.file(sentinel).exists()).toBe(true);
+    } finally {
+      server.stop(true);
+      if (previousDir === undefined) delete Bun.env.PORTAL_SNAPSHOT_DIR;
+      else Bun.env.PORTAL_SNAPSHOT_DIR = previousDir;
+      await Bun.$`rm -rf ${tempRoot}`.quiet();
+    }
+  });
+
   test('flat manifest includes scope= for rg', () => {
     const flat = formatFlatManifest(sampleManifest());
     expect(flat).toContain('scope=prediction');

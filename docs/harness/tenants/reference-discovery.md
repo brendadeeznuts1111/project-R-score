@@ -45,7 +45,6 @@ in `lib/reference-discovery.ts`:
 | Concept graph controls | `CONCEPT_GRAPH_BUNPORT` · `..._PORT`; `..._FORMAT` · `..._PORT`                                                | native-default bind selector, explicit port override, and output format in `scripts/concept-graph.ts`    |
 | Alert webhook bind     | `ALERT_WEBHOOK_PORT` (listen) · `ALERT_WEBHOOK_URL` (POST sink)                                                | orthogonal port vs URL — skill/cron patterns · not aliases                                               |
 | Bun types CI vs tip    | `BUN_TYPES_CI` (merge-proof types step toggle) · `BUN_TYPES_TIP` (tip checkout path for tip-diff)              | `docs/design/bun-types-inventory.md` · `tools/bun-types-tip-*.ts`                                        |
-| Pre-push profiling     | `PREPUSH_PROFILE_CHILD` (recursion guard) · `PREPUSH_PROFILE_KIND` (requested profiler mode)                   | `scripts/lib/pre-push-receipt-profile.ts`                                                                |
 
 Per-pair disambiguation table:
 [`docs/registry-client.md`](../../registry-client.md) §Env naming: similar
@@ -81,22 +80,17 @@ bun tools/doc-map-check.ts
 bun tools/bun-doc-refs.ts integrity
 ```
 
-Do not preserve dated counts here; they become false context as skills and
-catalogs change. A fresh run is the evidence. Interpret it as follows:
-
-| Gate                                       | Merge-ready result                                                              |
-| ------------------------------------------ | ------------------------------------------------------------------------------- |
-| `discover:compose:check`                   | Zero error- and warning-tier harness/public findings.                           |
-| `reference:discover:check`                 | Zero errors and warnings; naming-cluster info remains advisory.                 |
-| `audit:verify`                             | Catalog and referenced concept rows validate.                                   |
-| `bun tools/doc-map-check.ts`               | All canonical paths and Markdown SSOT links resolve.                            |
-| `bun-doc-refs integrity`                   | Zero bad canonical-map anchors and zero dead repository links.                  |
-| ast-grep `anchors --zone agents --fail-on` | Every enforced source-backed agent anchor resolves.                             |
-| `skills:validate`                          | Current definitions, metadata, links, and loop registrations validate together. |
-
-For Bun 1.4 release pointers, append `bun run docs:blog-assets:check` and
-`bun run channels:bun-1.4:check`; reference discovery does not replace their
-official-source, adoption, channel-membership, or snapshot checks.
+| Gate                                       | Last run   | Result                                                                                  |
+| ------------------------------------------ | ---------- | --------------------------------------------------------------------------------------- |
+| `discover:compose:check`                   | 2026-08-04 | 0 errors · 0 warnings · harness + public                                                |
+| `reference:discover:check`                 | 2026-08-04 | 0 errors · 0 warn                                                                       |
+| `audit:verify`                             | 2026-08-04 | pass · 4 findings · 5 concepts                                                          |
+| `docs:map:check`                           | 2026-08-04 | pass                                                                                    |
+| `bun-doc-refs integrity`                   | 2026-08-04 | 12 stale links repaired · 1 claimed-lane color anchor remains                           |
+| ast-grep `anchors --zone agents --fail-on` | 2026-08-04 | pass · 4/4 source-backed anchors; Markdown-only and absent targets retired              |
+| `reference-discovery --json --skip-unused` | 2026-08-04 | 0 errors · 0 warnings                                                                   |
+| `skills:validate`                          | current | validator emits active, registered, and retired counts                                  |
+| `harness-skills-catalog`                   | current | generated from active repository skill packages                                          |
 
 ## Retirement
 

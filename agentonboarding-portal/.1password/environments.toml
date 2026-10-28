@@ -1,0 +1,5 @@
+# 1Password Cursor plugin — set id after creating Environment in 1Password.
+
+# [[environment]]
+# id = "env_xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+# mount_paths = [".env"]

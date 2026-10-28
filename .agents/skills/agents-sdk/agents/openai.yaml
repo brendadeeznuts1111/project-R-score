@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cloudflare Agents SDK"
+  short_description: "Build stateful agents on Cloudflare Workers"
+  default_prompt: "Use $agents-sdk to retrieve current Cloudflare Agents SDK behavior, select the right state and execution primitives, and implement the smallest production-ready agent change with repository-owned validation."

@@ -105,9 +105,11 @@ describe('buildHarnessSkillsCatalog', () => {
     const root = join(import.meta.dir, '..');
     const catalog = await buildHarnessSkillsCatalog(root);
     expect(catalog.plane).toBe('harness-agents');
-    expect(catalog.count).toBeGreaterThan(20);
+    expect(catalog.count).toBeGreaterThan(15);
     expect(catalog.skills.some((s) => s.name === 'reference-discovery')).toBe(true);
     expect(catalog.skills.some((s) => s.name === 'audit-gap-close')).toBe(true);
+    expect(catalog.skills.some((s) => s.name === 'public-discovery')).toBe(false);
+    expect(catalog.skills.some((s) => s.name === 'harness-improve')).toBe(false);
     expect(catalog.skillLoopRegistry).toContain('skill-loop-registry.json');
   });
 
@@ -118,9 +120,13 @@ describe('buildHarnessSkillsCatalog', () => {
       join(root, 'public/registry/harness-skills-catalog.json')
     ).json()) as Awaited<ReturnType<typeof buildHarnessSkillsCatalog>>;
     const stableCatalog = (catalog: Awaited<ReturnType<typeof buildHarnessSkillsCatalog>>) => ({
-      ...catalog,
+      plane: catalog.plane,
+      skillLoopRegistry: catalog.skillLoopRegistry,
       scannedAt: '<generated>',
       skills: catalog.skills.map(({ updatedAt: _updatedAt, ...skill }) => skill),
+      count: catalog.count,
+      ...(catalog.error ? { error: catalog.error } : {}),
+      ...(catalog.warning ? { warning: catalog.warning } : {}),
     });
 
     expect(stableCatalog(baked)).toEqual(stableCatalog(live));

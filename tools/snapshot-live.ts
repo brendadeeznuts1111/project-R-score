@@ -712,13 +712,14 @@ async function captureSnapshots(
   try {
     for (const scope of ['portal', 'limits'] as const) {
       try {
-        const m = await runSnapshot({ scope, baseUrl: base });
+        const result = await runSnapshot({ scope, baseUrl: base });
+        const m = result.manifest;
         if (m) {
           manifests.push(m);
           rows.push({
             Enhancement: `snapshot:${scope}`,
             Plane: 'CLI',
-            Status: m.metadata.status === 'ok' ? 'LIVE' : 'STALE',
+            Status: result.ok ? 'LIVE' : 'STALE',
             Evidence: `id=${m.id} · status=${m.metadata.status} · files=${m.fileCount}`,
           });
         } else {

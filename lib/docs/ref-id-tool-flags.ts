@@ -390,22 +390,6 @@ export const BUN_RELEASE_CONTRACTS_ALLOWED_LONG = [
   'help',
 ] as const;
 
-/** § — bun:release-knowledge (`tools/bun-release-knowledge.ts`) — no design Flags table; tool allowlist only */
-export const BUN_RELEASE_KNOWLEDGE_ALLOWED_LONG = [
-  'version',
-  'output',
-  'catalog',
-  'feeds',
-  'limit',
-  'check',
-  'json',
-  'source',
-  'report',
-  'strict',
-  'max-warnings',
-  'help',
-] as const;
-
 /** § — screenshot (`tools/screenshot-cli.ts`) — no design Flags table; tool allowlist only */
 export const SCREENSHOT_ALLOWED_LONG = [
   'subject',
@@ -910,13 +894,7 @@ export const SPORTS_TERMINAL_HEALTH_REFRESH_ALLOWED_LONG = [
 export const CONCEPT_REGISTRY_SERVE_ALLOWED_LONG = ['no-scan'] as const;
 
 /** § — install:verify (`scripts/verify-install-cache.ts`) — auto team plan */
-export const INSTALL_VERIFY_ALLOWED_LONG = [
-  'dry-run',
-  'json',
-  'quiet',
-  'skip-cache-size',
-  'strict',
-] as const;
+export const INSTALL_VERIFY_ALLOWED_LONG = ['dry-run', 'json', 'quiet', 'strict'] as const;
 
 /** § — search:domain:doctor (`scripts/domain-registry-status.ts`) — auto team plan */
 export const SEARCH_DOMAIN_DOCTOR_ALLOWED_LONG = [
@@ -938,7 +916,6 @@ export const BRAND_BENCH_PROFILE_ALLOWED_LONG = [
   'cpu-prof',
   'cpu-prof-dir',
   'cpu-prof-interval',
-  'cpu-prof-md',
   'cpu-prof-name',
   'profiles-dir',
   'run-id',
@@ -1173,15 +1150,11 @@ export const BUN_MIGRATE_ALLOWED_LONG = [
 export const TEST_CHANGED_ALLOWED_LONG = [
   'changed',
   'dry-run',
-  'exclude-ci-reserved',
   'isolate',
   'main-head',
-  'no-timings',
   'parallel',
   'serial',
   'shard',
-  'timings',
-  'update-timings',
   'watch',
 ] as const;
 
@@ -1427,7 +1400,13 @@ export const HYGIENE_ALLOWED_LONG = ['staged', 'tracked'] as const;
 export const SECRETS_MIGRATE_ALLOWED_LONG = ['dry-run'] as const;
 
 /** § — ci:core (`scripts/ci-core.ts`) — auto team plan */
-export const CI_CORE_ALLOWED_LONG = CI_HARNESS_ALLOWED_LONG;
+export const CI_CORE_ALLOWED_LONG = [
+  ...CI_HARNESS_ALLOWED_LONG,
+  'check',
+  'no-history',
+  'no-write',
+  'output',
+] as const;
 
 /** § — build:defines (`scripts/build-with-defines.ts`) — auto team plan */
 export const BUILD_DEFINES_ALLOWED_LONG = [
@@ -1567,7 +1546,7 @@ export const OPS_SEED_ALL_ALLOWED_LONG = ['force'] as const;
 export const POLICY_AUDIT_ALLOWED_LONG = ['json'] as const;
 
 /** § — portal:css:build (`tools/build-portal-css.ts`) — auto team plan */
-export const PORTAL_CSS_BUILD_ALLOWED_LONG = ['analyze', 'check', 'minify'] as const;
+export const PORTAL_CSS_BUILD_ALLOWED_LONG = ['check', 'minify'] as const;
 
 /** § — ops:anchor:scan (`tools/ops-anchor-scan.ts`) — auto team plan */
 export const OPS_ANCHOR_SCAN_ALLOWED_LONG = ['json'] as const;
@@ -1881,22 +1860,7 @@ export const BASELINE_APPLY_OVERRIDES_ALLOWED_LONG = ['dry-run', 'json', 'live']
 export const BASELINE_CAESARS_PROBE_ALLOWED_LONG = ['bake', 'json', 'live'] as const;
 
 /** § — lane:status (`tools/lane-status.ts`) — auto team plan */
-export const LANE_STATUS_ALLOWED_LONG = [
-  'count',
-  'every',
-  'help',
-  'json',
-  'jsonl',
-  'left-right',
-  'merged',
-  'short',
-  'strict',
-  'term',
-  'toml',
-  'tz',
-  'verbose',
-  'watch',
-] as const;
+export const LANE_STATUS_ALLOWED_LONG = ['count', 'json', 'left-right', 'merged', 'short'] as const;
 
 /** § — bench:status (`tools/bench-status.ts`) — harness Bun metric catalog */
 export const BENCH_STATUS_ALLOWED_LONG = ['json'] as const;
@@ -2253,9 +2217,6 @@ export const WIKI_LINKS_FIX_ALLOWED_LONG = ['fix', 'json'] as const;
 /** § — sync:well-known-mcp (`tools/sync-well-known-mcp.ts`) — auto team plan */
 export const SYNC_WELL_KNOWN_MCP_ALLOWED_LONG = ['check'] as const;
 
-/** § — sync:main (`tools/sync-main.ts`) — post-squash origin/main sync */
-export const SYNC_MAIN_ALLOWED_LONG = ['dry-run', 'force', 'help', 'json', 'yes'] as const;
-
 /** § — onboard:partner (`tools/onboard-partner-package.ts`) — auto team plan */
 export const ONBOARD_PARTNER_ALLOWED_LONG = [
   'create-package-group',
@@ -2438,6 +2399,15 @@ export const SOFT_ACCOUNTING_BAKE_ALLOWED_LONG = [
   'out',
 ] as const;
 
+/** § — showcase (`tools/bun-api-showcase/oneliners.ts`) — auto team plan */
+export const SHOWCASE_ALLOWED_LONG = ['live'] as const;
+
+/** § — showcase:ops (`tools/bun-api-showcase/ops-oneliners.ts`) — auto team plan */
+export const SHOWCASE_OPS_ALLOWED_LONG = ['live'] as const;
+
+/** § — showcase:verify (`tools/bun-api-showcase/verify.ts`) — auto team plan */
+export const SHOWCASE_VERIFY_ALLOWED_LONG = ['write'] as const;
+
 /** § — docs:sync:integrated (`tools/cli/integrated-cli.ts`) — auto team plan */
 export const DOCS_SYNC_INTEGRATED_ALLOWED_LONG = ['graph'] as const;
 
@@ -2481,32 +2451,8 @@ export const VERIFY_INSTALL_ENV_ALLOWED_LONG = ['json', 'save'] as const;
 /** § — verify:bun-runtime-nits (`tools/verify-bun-runtime-nits.ts`) — audit split */
 export const VERIFY_BUN_RUNTIME_NITS_ALLOWED_LONG = ['save'] as const;
 
-/** §2.7.1 — check:networking (`tools/verify-networking.ts`) */
-export const CHECK_NETWORKING_ALLOWED_LONG = [
-  'authority-family',
-  'authority-host',
-  'authority-only',
-  'authority-path',
-  'authority-port',
-  'authority-protocol',
-  'base',
-  'deep',
-  'dns-backend',
-  'dns-server',
-  'external',
-  'json',
-  'local-only',
-  'remote',
-  'routes',
-  'routes-only',
-  'save',
-  'skip-write',
-  'strict-routes',
-  'timeout-ms',
-] as const;
-
 /** § — machine:bunfig:ensure (`scripts/ensure-machine-bunfig.ts`) — audit split */
-export const MACHINE_BUNFIG_ENSURE_ALLOWED_LONG = ['check', 'overwrite', 'overwrite-link'] as const;
+export const MACHINE_BUNFIG_ENSURE_ALLOWED_LONG = ['check', 'overwrite'] as const;
 
 /** § — ops:seed:partners (`tools/ops-seed-partners.ts`) — audit split */
 export const OPS_SEED_PARTNERS_ALLOWED_LONG = ['force'] as const;
@@ -2532,7 +2478,6 @@ export type AllowedLongCliName =
   | 'partner:onboard'
   | 'bun:pr:verify'
   | 'bun:release-contracts'
-  | 'bun:release-knowledge'
   | 'screenshot'
   | 'bun:runtime-pin'
   | 'glossary:health'
@@ -2811,7 +2756,6 @@ export type AllowedLongCliName =
   | 'telegram:ops:consume'
   | 'wiki:links:fix'
   | 'sync:well-known-mcp'
-  | 'sync:main'
   | 'onboard:partner'
   | 'ops:coverage'
   | 'docs:map:check'
@@ -2833,6 +2777,9 @@ export type AllowedLongCliName =
   | 'agent'
   | 'telegram:seat:desk'
   | 'soft:accounting:bake'
+  | 'showcase'
+  | 'showcase:ops'
+  | 'showcase:verify'
   | 'docs:sync:integrated'
   | 'status:matrix'
   | 'cli:allowlist:coverage'
@@ -2851,8 +2798,7 @@ export type AllowedLongCliName =
   | 'ops:seed:partners'
   | 'ops:seed:tenants'
   | 'ops:seed:dod'
-  | 'ops:seed:prediction'
-  | 'check:networking';
+  | 'ops:seed:prediction';
 
 /**
  * Central allowlist registry — code SSOT (not env JSON, not bun-types).
@@ -2866,7 +2812,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'partner:onboard': PARTNER_ONBOARD_ALLOWED_LONG,
   'bun:pr:verify': BUN_PR_VERIFY_ALLOWED_LONG,
   'bun:release-contracts': BUN_RELEASE_CONTRACTS_ALLOWED_LONG,
-  'bun:release-knowledge': BUN_RELEASE_KNOWLEDGE_ALLOWED_LONG,
   screenshot: SCREENSHOT_ALLOWED_LONG,
   'bun:runtime-pin': BUN_RUNTIME_PIN_ALLOWED_LONG,
   'glossary:health': GLOSSARY_HEALTH_ALLOWED_LONG,
@@ -3145,7 +3090,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'telegram:ops:consume': TELEGRAM_OPS_CONSUME_ALLOWED_LONG,
   'wiki:links:fix': WIKI_LINKS_FIX_ALLOWED_LONG,
   'sync:well-known-mcp': SYNC_WELL_KNOWN_MCP_ALLOWED_LONG,
-  'sync:main': SYNC_MAIN_ALLOWED_LONG,
   'onboard:partner': ONBOARD_PARTNER_ALLOWED_LONG,
   'ops:coverage': OPS_COVERAGE_ALLOWED_LONG,
   'docs:map:check': DOCS_MAP_CHECK_ALLOWED_LONG,
@@ -3167,6 +3111,9 @@ export const ALLOWED_LONG_REGISTRY = {
   agent: AGENT_ALLOWED_LONG,
   'telegram:seat:desk': TELEGRAM_SEAT_DESK_ALLOWED_LONG,
   'soft:accounting:bake': SOFT_ACCOUNTING_BAKE_ALLOWED_LONG,
+  showcase: SHOWCASE_ALLOWED_LONG,
+  'showcase:ops': SHOWCASE_OPS_ALLOWED_LONG,
+  'showcase:verify': SHOWCASE_VERIFY_ALLOWED_LONG,
   'docs:sync:integrated': DOCS_SYNC_INTEGRATED_ALLOWED_LONG,
   'status:matrix': STATUS_MATRIX_ALLOWED_LONG,
   'cli:allowlist:coverage': CLI_ALLOWLIST_COVERAGE_ALLOWED_LONG,
@@ -3186,7 +3133,6 @@ export const ALLOWED_LONG_REGISTRY = {
   'ops:seed:tenants': OPS_SEED_TENANTS_ALLOWED_LONG,
   'ops:seed:dod': OPS_SEED_DOD_ALLOWED_LONG,
   'ops:seed:prediction': OPS_SEED_PREDICTION_ALLOWED_LONG,
-  'check:networking': CHECK_NETWORKING_ALLOWED_LONG,
 } as const satisfies Record<AllowedLongCliName, readonly string[]>;
 
 /** Apply guard using ALLOWED_LONG_REGISTRY[cliName]. */

@@ -11,11 +11,7 @@
  * OS-persistent primary: tools/portal-snapshot-cron.ts register
  */
 import { scheduleInProcess, type InProcessCronJob } from '../harness/cron.ts';
-import {
-  ensureSnapshotDir,
-  runSnapshot,
-  type SnapshotManifest,
-} from '../../tools/snapshot-core.ts';
+import { ensureSnapshotDir, runSnapshot } from '../../tools/snapshot-core.ts';
 import {
   PORTAL_SNAPSHOT_CRON_TITLE,
   resolvePortalSnapshotBaseUrl,
@@ -75,7 +71,7 @@ export async function runPortalSnapshotCycle(
 
   for (const scope of scopes) {
     try {
-      const manifest: SnapshotManifest | null = await runSnapshot({
+      const result = await runSnapshot({
         scope,
         baseUrl,
         dryRun,
@@ -83,8 +79,9 @@ export async function runPortalSnapshotCycle(
       });
       results.push({
         scope,
-        ok: dryRun || manifest != null,
-        id: manifest?.id,
+        ok: result.ok,
+        id: result.manifest?.id,
+        error: result.ok ? undefined : result.manifest.metadata.error,
       });
     } catch (e) {
       const error = e instanceof Error ? e.message : String(e);

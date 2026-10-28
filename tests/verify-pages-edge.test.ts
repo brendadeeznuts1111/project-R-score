@@ -9,6 +9,7 @@ describe('verify-pages-edge tiers', () => {
     const coreNames = [
       'portal/data.js',
       'well-known/mcp.json',
+      'well-known/experiments',
       'cloudflare-pages-preflight.json',
       'cloudflare-token-scope-proof.json',
       '/api/skills JSON',
@@ -19,7 +20,7 @@ describe('verify-pages-edge tiers', () => {
       'registry-client-proof.json taxonomy',
       'doc-index.json taxonomy',
     ];
-    expect(coreNames.length).toBe(5);
+    expect(coreNames.length).toBe(6);
     expect(taxonomyNames.length).toBe(4);
     expect(coreNames).not.toContain('proof-taxonomy-audit.json');
   });

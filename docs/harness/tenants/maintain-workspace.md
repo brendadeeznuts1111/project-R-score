@@ -1,29 +1,21 @@
 # Tenant: maintain-workspace
 
 **Tenant** `maintain-workspace` (operator runbook — not a spine cron)  
-**Purpose** Keep project-R-score + workspace maintainable: lanes, delivery,
-daily/weekly pulses, Cursor automations  
-**Related** [`AUTHORITY.md`](../AUTHORITY.md) · [`day-loop.md`](../day-loop.md)
-· [`workspace-lane-cross-map.md`](workspace-lane-cross-map.md) ·
-[`remaining-work.md`](remaining-work.md) ·
-[`portal-doctor.md`](portal-doctor.md) · [`public-plane.md`](public-plane.md) ·
-[`ops-loop-throughput.md`](ops-loop-throughput.md)  
-**Skills** `.agents/skills/project-r-ops-management/` ·
-`.agents/skills/harness-improve/`
+**Purpose** Keep project-R-score + workspace maintainable: lanes, delivery, daily/weekly pulses, Cursor automations  
+**Related** [`AUTHORITY.md`](../AUTHORITY.md) · [`day-loop.md`](../day-loop.md) · [`workspace-lane-cross-map.md`](workspace-lane-cross-map.md) · [`remaining-work.md`](remaining-work.md) · [`portal-doctor.md`](portal-doctor.md) · [`public-plane.md`](public-plane.md) · [`ops-loop-throughput.md`](ops-loop-throughput.md)  
+**Skills** `.agents/skills/project-r-ops-management/` · `.agents/skills/audit-gap-close/`
 
-Operator map for “how do I maintain this workspace?” — diagrams + exact
-commands + copy-paste Cursor automation prompts.
+Operator map for “how do I maintain this workspace?” — diagrams + exact commands + copy-paste Cursor automation prompts.
 
 ## Three planes
 
-Claim **one plane per session** (or one subdirectory lane). Mixing planes is the
-usual thrash source.
+Claim **one plane per session** (or one subdirectory lane). Mixing planes is the usual thrash source.
 
-| Plane   | Protects                        | Entry                                                                       |
-| ------- | ------------------------------- | --------------------------------------------------------------------------- |
-| Harness | gates · brands · docs · proofs  | [`../README.md`](../README.md) · `bun run harness:status`                   |
-| Public  | portal · registry bakes · Pages | [`public-plane.md`](public-plane.md) · `bun run public:audit:verify`        |
-| Ops     | settle · telegram · VPS pollers | [`ops-loop-throughput.md`](ops-loop-throughput.md) · `bun run ops:diagnose` |
+| Plane | Protects | Entry |
+| ----- | -------- | ----- |
+| Harness | gates · brands · docs · proofs | [`../README.md`](../README.md) · `bun run harness:status` |
+| Public | portal · registry bakes · Pages | [`public-plane.md`](public-plane.md) · `bun run public:audit:verify` |
+| Ops | settle · telegram · VPS pollers | [`ops-loop-throughput.md`](ops-loop-throughput.md) · `bun run ops:diagnose` |
 
 ```mermaid
 flowchart TB
@@ -39,8 +31,8 @@ flowchart TB
     O["Ops plane<br/>settle · telegram · VPS"]
   end
 
-  Start --> Inspect["Inspect lane state<br/>bun run lane:status"]
-  Inspect --> Work
+  Start --> Claim["Claim one lane<br/>bun run lane:status"]
+  Claim --> Work
   Work --> H
   Work --> P
   Work --> O
@@ -56,7 +48,7 @@ flowchart TB
 # Start
 bun run lane:status          # or --json for agents
 bun run harness:status
-git status                   # choose disjoint paths before edit
+git status                   # claim disjoint paths before edit
 
 # Stop
 # Commit on the lane branch, or:
@@ -79,8 +71,7 @@ flowchart LR
 
 ## Feature delivery (local merge authority)
 
-Hosted GitHub Actions is a side-signal. Clean local `bun run bun:ci` is merge
-authority ([`AUTHORITY.md`](../AUTHORITY.md)).
+Hosted GitHub Actions is a side-signal. Clean local `bun run bun:ci` is merge authority ([`AUTHORITY.md`](../AUTHORITY.md)).
 
 ```bash
 # Develop
@@ -92,13 +83,10 @@ git push -u origin HEAD:refs/heads/<lane>
 # Before merge (clean worktree)
 bun run bun:ci
 
-# After squash-merge (prefer Bun tool — backs up unpushed tip + clears soft-reset residue)
-bun run sync:main
-bun run sync:main -- --dry-run   # still fetches origin/main; prints plan only
-bun run sync:main -- --json      # machine-readable plan/result
-# Optional: rebind soft-reset-only alias so `git sync-main` is safe
-#   git config alias.sync-main '!bun run sync:main --'
-# New harness CLIs: copy examples/bun-1.4-cli (kernel: lib/harness/bun-cli.ts)
+# After squash-merge
+git sync-main
+# Clear staged identical files (hook-safe, per path):
+#   git show origin/main:<path> > <path> && git add <path>
 ```
 
 ```mermaid
@@ -109,8 +97,9 @@ flowchart TB
   Push --> PR["Open PR"]
   PR --> CI["bun run bun:ci<br/>clean worktree = merge authority"]
   CI --> Merge["Squash-merge"]
-  Merge --> Sync["bun run sync:main"]
-  Sync --> Main["Primary checkout on origin/main<br/>unpushed tip → backup/*"]
+  Merge --> Sync["git sync-main"]
+  Sync --> Clear["Clear staged identical files<br/>hook-safe per-file pattern"]
+  Clear --> Main["Primary checkout on main"]
 ```
 
 ## Daily pulse
@@ -118,9 +107,7 @@ flowchart TB
 Short honesty check. Fix the owning surface; do not weaken gates.
 
 ```bash
-bun run pulse:lane                 # parallel: lane:status:count + harness:status
-bun run lane:status                # full tables (or --json / --jsonl / --short)
-# If health=fail and local main is ahead: bun run sync:main
+bun run lane:status
 bun run portal:doctor:bunfig:check
 bun run bun:channel:check
 bun run monorepo:health
@@ -131,8 +118,7 @@ bun run vault:health:bake    # when Proton / env available
 
 ```bash
 bun run lane:status
-# Review clean worktrees whose tip commit is >7 days old; tip age is not proof
-# of inactivity or permission to remove a lane
+# Remove clean worktrees idle >7 days (quarantine non-empty diffs first)
 # Prune branches already merged into origin/main
 
 bun run public:audit:verify
@@ -188,9 +174,7 @@ bun run ops:outbox:requeue
 bun run telegram:verify
 ```
 
-VPS poller / cascade: see cascade-mover runbook
-(`.agents/skills/cascade-mover-v3/`). Token reseed only when the JWT refresh
-loop breaks.
+VPS poller / cascade: use the `cascade-mover` MCP and nested Cascade repository guidance. Token reseed only when the JWT refresh loop breaks.
 
 ## Failure routing
 
@@ -212,37 +196,7 @@ flowchart TD
   Rerun --> Keep{"Keep / revise / drop"}
 ```
 
-Repeated gate thrash →
-[`.agents/skills/harness-improve/`](../../../.agents/skills/harness-improve/SKILL.md)
-(earliest failed handoff → smallest reversible fix → fresh rerun).
-
-Hard pre-commit fails print a shared markdown shape (**gate · why · fix**) via
-`lib/harness/gate-fail.ts` (`Bun.markdown.ansi` + `statusLine`). Re-run the
-`fix` command from that block.
-
-Slow hook diagnosis (Bun 1.4 CPU profile → `reports/precommit-cpu.md`,
-gitignored):
-
-```bash
-bun run precommit:profile
-# or: PRECOMMIT_PROFILE=1 bun run precommit
-```
-
-`--cpu-prof-md` is a boolean runtime flag. Output routing uses separate
-`--cpu-prof-dir=reports` and `--cpu-prof-name=precommit-cpu.md` arguments; do
-not use the invalid `--cpu-prof-md=<path>` shape.
-
-Packages graph MD audit (existing `--md` path, not a second bundler):
-
-```bash
-bun run audit:packages:full   # includes --md
-```
-
-Console format ratchet (staged at commit; repo-wide on push / `ci:core`):
-
-```bash
-bun run check:console-format
-```
+Repeated gate thrash → [`.agents/skills/audit-gap-close/`](../../../.agents/skills/audit-gap-close/SKILL.md) harness-feedback mode (earliest failed handoff → smallest reversible fix → fresh rerun).
 
 ## Nesting (how the loops compose)
 
@@ -267,9 +221,7 @@ flowchart TB
 
 ## Cursor automation prompts
 
-Paste into a Cursor Automation. Do **not** commit, push, deploy, or touch
-foreign dirty lanes. Report only; open a draft note or issue when something
-fails.
+Paste into a Cursor Automation. Do **not** commit, push, deploy, or touch foreign dirty lanes. Report only; open a draft note or issue when something fails.
 
 ### Morning pulse
 
@@ -284,7 +236,7 @@ Run (read-only unless a command is explicitly a check):
 5. bun run monorepo:health
 
 Summarize in ≤12 bullets:
-- Inactive-candidate / dirty worktrees and whether primary is on main
+- STALE / dirty worktrees and whether primary is on main
 - First failing check (command + one-line cause)
 - Recommended plane to claim today (harness / public / ops)
 - Human-only leftovers worth glancing at (remaining-work.md Track A) if relevant
@@ -309,8 +261,7 @@ Then skim docs/harness/tenants/remaining-work.md Track A for open human items.
 
 Output:
 - Pass/fail table for each command
-- Clean worktrees with a tip commit older than 7 days (review candidates only;
-  do not infer inactivity or removal authority)
+- Worktrees idle >7 days that look safe to remove (list only; do not remove)
 - Branches already merged to origin/main that look pruneable (list only)
 - Top 3 actionable follow-ups with owning plane + exact next command
 
@@ -324,7 +275,7 @@ You are the FactoryWager harness thrash detector. Trigger when the same pre-comm
 
 Read:
 - docs/harness/tenants/maintain-workspace.md § Failure routing
-- .agents/skills/harness-improve/SKILL.md
+- .agents/skills/audit-gap-close/SKILL.md
 - docs/harness/FEEDBACK.md
 
 Job:
@@ -337,10 +288,10 @@ Job:
 
 ## Adoption order
 
-1. Lock session start/stop + delivery loop
-2. Add the daily pulse
-3. Automate weekly hygiene (Cursor prompt above)
-4. Deepen ops/runtime only when partners / VPS are live
+1. Lock session start/stop + delivery loop  
+2. Add the daily pulse  
+3. Automate weekly hygiene (Cursor prompt above)  
+4. Deepen ops/runtime only when partners / VPS are live  
 
 ## Prove / refresh
 

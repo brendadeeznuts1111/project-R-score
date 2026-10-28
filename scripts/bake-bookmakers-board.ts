@@ -12,7 +12,7 @@ import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts
  * portal read plane.
  *
  * Resolves the published artifact from the artifact registry (index → dist-tag →
- * download with size + SHA-256 verification), imports its canonical BOOKMAKERS
+ * download with size + SHA-256 and optional SHA3-256 verification), imports its canonical BOOKMAKERS
  * registry, and writes:
  *   public/registry/bookmakers.json        (artifact mirror + audit + summary)
  *   public/portal/bookmakers/index.html    (board, static — checked in once)
@@ -42,6 +42,7 @@ interface ArtifactRelease {
   r2Key: string;
   size: number;
   checksum: string;
+  sha3?: { algorithm: 'sha3-256'; digest: string };
 }
 
 type RegistryIndex = {
@@ -51,7 +52,15 @@ type RegistryIndex = {
       'dist-tags'?: Record<string, string>;
       releases?: Record<
         string,
-        { version?: string; storage?: { r2Key?: string; size?: number; checksum?: string } }
+        {
+          version?: string;
+          storage?: {
+            r2Key?: string;
+            size?: number;
+            checksum?: string;
+            sha3?: { algorithm?: string; digest?: string };
+          };
+        }
       >;
     }
   >;
@@ -95,6 +104,9 @@ export async function resolveArtifactRelease(
       r2Key: storage.r2Key,
       size: storage.size,
       checksum: storage.checksum,
+      ...(storage.sha3?.algorithm === 'sha3-256' && storage.sha3.digest
+        ? { sha3: { algorithm: 'sha3-256' as const, digest: storage.sha3.digest } }
+        : {}),
     };
   }
   throw new Error(
@@ -118,6 +130,13 @@ export async function downloadArtifact(
   hasher.update(data);
   if (hasher.digest('hex') !== release.checksum) {
     throw new Error(`checksum mismatch for ${release.r2Key}`);
+  }
+  if (release.sha3) {
+    const sha3 = new Bun.CryptoHasher(release.sha3.algorithm);
+    sha3.update(data);
+    if (sha3.digest('hex') !== release.sha3.digest) {
+      throw new Error(`sha3-256 mismatch for ${release.r2Key}`);
+    }
   }
   return data;
 }

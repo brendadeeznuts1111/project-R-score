@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "runId": "invariants-20260817t04535547",
+  "scope": "invariants",
+  "generatedAt": "2026-08-17T04:53:55.479Z",
+  "reportIntegrity": {
+    "bytes": 2517,
+    "sha256": "9627ec12e45d284dbe772d277f9c9faad38e1f24b6098b1e8b1d5872def8c5b8",
+    "sha3_256": "0fe87eac66fa9339b1d6e162bc4fa82fa8478baec16de0cd2ef1264c9f26b1a4"
+  },
+  "artifacts": {
+    "json": {
+      "bytes": 2699,
+      "sha256": "b5ed009bf864ca03f06c2b229618abefa76f3a7930a72fd7b0054d73d58fd809",
+      "sha3_256": "de9690eed8f451cd3d3aa056daae9dedd88759ac1fd23e46a9838e8de9ea11d0"
+    },
+    "markdown": {
+      "bytes": 1101,
+      "sha256": "f2fdaba8acf93a835b2dbdfec38a2540704cbf489aa06798b3686c5e2cbdfda2",
+      "sha3_256": "5fef0af806ba1c790839a8a5040d8c20e4227df75195e81b5c8e5bb4ca77b4df"
+    },
+    "html": {
+      "bytes": 5683,
+      "sha256": "98856a5b3aa7536299e4cff627bbe6cb6ae9d625d76f4050b136684bda78c978",
+      "sha3_256": "0328785ff43561721c3fb9741e54c9de0682d6b5cd66ee0e3b736ae74bf830ac"
+    }
+  }
+}
