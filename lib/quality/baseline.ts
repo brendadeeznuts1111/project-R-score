@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports -- Bun 1.3 lacks atomic rename.
 import { mkdir, rename, rm } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { dirnamePath as dirname, resolvePath as resolve } from '../path-bun';
 import {
   canonicalJsonDigests,
   canonicalJsonText,

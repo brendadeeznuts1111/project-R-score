@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-restricted-imports -- Bun 1.3 lacks atomic rename and exclusive mkdir APIs.
 import { mkdir, rename, rm } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { dirnamePath as dirname, joinPath as join, resolvePath as resolve } from '../path-bun';
 import { utf8TextDigests } from './canonical-json.ts';
 import {
   renderQualityReportHtml,

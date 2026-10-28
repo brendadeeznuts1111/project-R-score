@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { resolve } from 'node:path';
+import { resolvePath as resolve } from '../lib/path-bun';
 import { invariantExitCode, runInvariantLanes } from '../lib/quality/invariant-runner.ts';
 
 const results = await runInvariantLanes({

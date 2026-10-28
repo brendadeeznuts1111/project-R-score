@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds
-import { resolve } from 'node:path';
+import { resolvePath as resolve } from '../lib/path-bun';
 import { acceptQualityBaseline } from '../lib/quality/baseline.ts';
 import { canonicalJsonDigests, parseCanonicalJsonValue } from '../lib/quality/canonical-json.ts';
 import { invariantExitCode, runInvariantLanes } from '../lib/quality/invariant-runner.ts';
