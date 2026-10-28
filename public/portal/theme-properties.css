@@ -1,0 +1,16 @@
+/* CSS @property registrations for theme tokens — enables type-safe custom properties */
+@property --bg { syntax: "<color>"; inherits: true; initial-value: #0d1117; }
+@property --surface { syntax: "<color>"; inherits: true; initial-value: #161b22; }
+@property --border { syntax: "<color>"; inherits: true; initial-value: #30363d; }
+@property --text { syntax: "<color>"; inherits: true; initial-value: #e6edf3; }
+@property --text-dim { syntax: "<color>"; inherits: true; initial-value: #8b949e; }
+@property --accent { syntax: "<color>"; inherits: true; initial-value: #58a6ff; }
+@property --accent-glow { syntax: "<color>"; inherits: true; initial-value: rgba(88, 166, 255, 0.15); }
+@property --green { syntax: "<color>"; inherits: true; initial-value: #3fb950; }
+@property --yellow { syntax: "<color>"; inherits: true; initial-value: #d29922; }
+@property --orange { syntax: "<color>"; inherits: true; initial-value: #db6d28; }
+@property --red { syntax: "<color>"; inherits: true; initial-value: #f85149; }
+@property --maroon { syntax: "<color>"; inherits: true; initial-value: #f38ba8; }
+@property --primary { syntax: "<color>"; inherits: true; initial-value: #58a6ff; }
+@property --background { syntax: "<color>"; inherits: true; initial-value: #0d1117; }
+@property --foreground { syntax: "<color>"; inherits: true; initial-value: #e6edf3; }
