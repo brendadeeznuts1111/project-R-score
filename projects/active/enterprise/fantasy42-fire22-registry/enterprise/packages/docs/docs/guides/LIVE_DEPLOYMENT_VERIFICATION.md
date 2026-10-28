@@ -60,7 +60,7 @@ successfully implements the Crystal Clear Architecture framework.
 https://vinny2times.fire22.workers.dev/**
 
 **📊 Real-World Validation:** See
-[Enterprise Refactoring Validation](../ENTERPRISE_REFACTORING_VALIDATION.md) for
+Enterprise Refactoring Validation for
 complete transformation analysis.
 
 ---
@@ -470,11 +470,11 @@ curl -s "https://vinny2times.fire22.workers.dev/api/system/metrics" | jq '.error
 ### **Contact Information:**
 
 - **Architecture Documentation:**
-  [Crystal Clear Architecture](../crystal-clear-architecture/)
+  Crystal Clear Architecture
 - **Implementation Guide:**
-  [Live Implementation Links](../crystal-clear-architecture/LIVE_IMPLEMENTATION_LINKS.md)
+  Live Implementation Links
 - **Infrastructure Gaps:**
-  [Missing Components](../crystal-clear-architecture/MISSING_INFRASTRUCTURE_COMPONENTS.md)
+  [Missing Components](../../../../../dashboard-worker/MISSING_INFRASTRUCTURE_COMPONENTS.md)
 
 ---
 
