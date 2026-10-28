@@ -2320,7 +2320,7 @@
     "portal:theme:xml": "bun tools/sync-portal-theme-xml.ts",
     "portal:tokens:scan": "bun tools/scan-tokens.ts",
     "portal:utilities:gen": "bun tools/gen-utilities.ts",
-    "portal:theme:watch": "bun --watch tools/sync-portal-theme.ts",
+    "portal:theme:watch": "bun --watch scripts/theme-sync.ts",
     "tokens": "bun tools/portal-tokens.ts",
     "portal:colors:check": "bun tools/check-portal-raw-colors.ts && bun tools/check-portal-color-kernels.ts",
     "validate:colors": "bun run portal:colors:check",
