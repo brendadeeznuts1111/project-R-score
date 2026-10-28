@@ -29,15 +29,14 @@ function tempRoot(): string {
 
 /** Sync recursive rm for process.on('exit') paths (temp lifecycle only). */
 export function removeIndexTreeSync(dir: string): void {
-  Bun.spawnSync({ cmd: ['rm', '-rf', dir], stdout: 'pipe', stderr: 'pipe' });
+  Bun.spawnSync(['rm', '-rf', dir], { stdout: 'pipe', stderr: 'pipe' });
 }
 
 export async function materializeIndexTree(
   subdirs: string[],
   cwd = process.cwd()
 ): Promise<IndexTree> {
-  const ls = Bun.spawnSync({
-    cmd: ['git', 'ls-files', '-z', '--', ...subdirs],
+  const ls = Bun.spawnSync(['git', 'ls-files', '-z', '--', ...subdirs], {
     cwd,
     stdout: 'pipe',
     stderr: 'pipe',
@@ -49,8 +48,7 @@ export async function materializeIndexTree(
   // Creates the root even when the file list is empty (checkout-index only
   // creates directories for files it writes).
   await Bun.write(`${dir}/.bun-keep`, '');
-  const co = Bun.spawnSync({
-    cmd: ['git', 'checkout-index', '-f', '-z', '--stdin', `--prefix=${dir}/`],
+  const co = Bun.spawnSync(['git', 'checkout-index', '-f', '-z', '--stdin', `--prefix=${dir}/`], {
     cwd,
     stdin: ls.stdout,
     stdout: 'pipe',

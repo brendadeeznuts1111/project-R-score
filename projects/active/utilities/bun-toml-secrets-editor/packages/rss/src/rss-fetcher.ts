@@ -1,4 +1,5 @@
 import { getLogger, isInternalIP, SecurityError } from "@bun-toml/core";
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 export class RSSFetcher {
 	private logger = getLogger();
@@ -11,7 +12,7 @@ export class RSSFetcher {
 		this.logger.info("Fetching RSS", { url });
 
 		try {
-			const response = await fetch(url, {
+      const response = await fetchTomlConfigured(url, {
 				headers: {
 					"User-Agent": options.userAgent || "Bun-RSS/1.0",
 					Accept: "application/rss+xml, application/atom+xml",

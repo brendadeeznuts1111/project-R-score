@@ -146,7 +146,7 @@ export async function buildLiveIntegrationHealthDocument(
     }
 
     const overall = overallFromResults(healthyCount, sourceCount);
-    const callSign = partnerCode !== null ? `${partnerCode}-001` : null;
+    const callSign = partnerCode === null ? null : `${partnerCode}-001`;
 
     rows.push({
       partnerCode,

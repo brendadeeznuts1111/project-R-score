@@ -59,10 +59,9 @@ export class V8TypeCheckingBridge {
 
     if (typeof value !== "number") return false;
 
-    // Check if value fits in 32-bit float range
-    const buffer = new Float32Array(1);
-    buffer[0] = value;
-    return buffer[0] === value && Number.isFinite(value);
+    // V8's Float32 predicate accepts finite numbers representable by the
+    // float32 range; it does not require exact round-trip precision.
+    return Number.isFinite(value) && Math.abs(value) <= 3.4028234663852886e38;
   }
 
   static isDate(value: unknown): boolean {
@@ -301,7 +300,22 @@ export const {
   isArrayBuffer,
   isSharedArrayBuffer,
 } = feature("NATIVE_ADDONS")
-  ? V8TypeCheckingBridge
+  ? {
+      isMap: V8TypeCheckingBridge.isMap.bind(V8TypeCheckingBridge),
+      isArray: V8TypeCheckingBridge.isArray.bind(V8TypeCheckingBridge),
+      isInt32: V8TypeCheckingBridge.isInt32.bind(V8TypeCheckingBridge),
+      isBigInt: V8TypeCheckingBridge.isBigInt.bind(V8TypeCheckingBridge),
+      isUint32: V8TypeCheckingBridge.isUint32.bind(V8TypeCheckingBridge),
+      isFloat32: V8TypeCheckingBridge.isFloat32.bind(V8TypeCheckingBridge),
+      isDate: V8TypeCheckingBridge.isDate.bind(V8TypeCheckingBridge),
+      isRegExp: V8TypeCheckingBridge.isRegExp.bind(V8TypeCheckingBridge),
+      isTypedArray:
+        V8TypeCheckingBridge.isTypedArray.bind(V8TypeCheckingBridge),
+      isArrayBuffer:
+        V8TypeCheckingBridge.isArrayBuffer.bind(V8TypeCheckingBridge),
+      isSharedArrayBuffer:
+        V8TypeCheckingBridge.isSharedArrayBuffer.bind(V8TypeCheckingBridge),
+    }
   : {
       isMap: () => false,
       isArray: () => false,
@@ -324,7 +338,19 @@ export const {
   toV8Value,
   fromV8Value,
   validateV8Compatibility,
-} = V8TypeCheckingBridge;
+} = {
+  registerTypeChecks:
+    V8TypeCheckingBridge.registerTypeChecks.bind(V8TypeCheckingBridge),
+  unregisterTypeChecks:
+    V8TypeCheckingBridge.unregisterTypeChecks.bind(V8TypeCheckingBridge),
+  getRegisteredAddons:
+    V8TypeCheckingBridge.getRegisteredAddons.bind(V8TypeCheckingBridge),
+  getTypeChecks: V8TypeCheckingBridge.getTypeChecks.bind(V8TypeCheckingBridge),
+  toV8Value: V8TypeCheckingBridge.toV8Value.bind(V8TypeCheckingBridge),
+  fromV8Value: V8TypeCheckingBridge.fromV8Value.bind(V8TypeCheckingBridge),
+  validateV8Compatibility:
+    V8TypeCheckingBridge.validateV8Compatibility.bind(V8TypeCheckingBridge),
+};
 
 // Demonstration function
 export function demonstrateV8Bridge(): void {

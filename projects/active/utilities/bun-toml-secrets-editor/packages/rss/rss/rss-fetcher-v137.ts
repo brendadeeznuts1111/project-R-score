@@ -8,6 +8,7 @@
  * - Bun.JSONL for streaming large datasets
  * - CPU profiling hooks for performance monitoring
  */
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 import { handleFetchError } from "../errors/rss-errors.js";
 import { RSSProfiler } from "../profiling/rss-profiler.js";
@@ -83,7 +84,7 @@ export class RSSFetcherV137 {
 						fetchOptions.preserveHeaderCasing = true;
 					}
 
-					const response = await fetch(url, fetchOptions);
+          const response = await fetchTomlConfigured(url, fetchOptions);
 
 					// Handle streaming JSONL (v1.3.7: Bun.JSONL)
 					if (

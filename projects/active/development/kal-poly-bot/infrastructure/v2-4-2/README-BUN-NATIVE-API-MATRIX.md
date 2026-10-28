@@ -121,14 +121,14 @@ bun test tests/bun-native-api-matrix.test.ts
 
 ## Test Results
 
-- **Total Tests**: 108
-- **Passing**: 105 (97.2%)
-- **Failing**: 3 (2.8%)
+- **Total Tests**: 105
+- **Passing**: 105 (100%)
+- **Failing**: 0
 
-### Current Issues
-1. **Parity Lock Pattern**: Some locks contain non-hex characters (needs investigation)
-2. **Text Processing**: HTML escaping test expects incorrect behavior
-3. **Zero-Cost Exports**: Some components return empty objects when features are disabled
+### Guarded Contracts
+1. **Parity locks** use deterministic SHA-256-derived hexadecimal prefixes and suffixes.
+2. **Text processing** requires escaped entities and rejects raw tag delimiters.
+3. **Zero-cost exports** preserve method binding in both enabled and disabled feature modes.
 
 ## Performance Targets
 

@@ -1,6 +1,7 @@
 // @see https://www.rssboard.org/rss-specification — optional item/channel dates
 
 import { describe, expect, test } from 'bun:test';
+import { parsePackageDependencyRecords } from '../lib/registry/package-dependencies.ts';
 import { RSSManager, generateRSS } from '../lib/rss/rss-manager.ts';
 import { buildRssFeed } from '../scripts/search-benchmark-snapshot.ts';
 import { parseFirstRssGuid } from '../scripts/search-status-contract-check.ts';
@@ -70,6 +71,15 @@ describe('deterministic package RSS generation', () => {
       description: 'Package',
       dependencies: { zebra: '^1', alpha: '^2' },
       devDependencies: {},
+      optionalDependencies: { optional: '~3' },
+      peerDependencies: { peer: '>=4' },
+      peerDependenciesMeta: { peer: { optional: true } },
+      packageDependencies: parsePackageDependencyRecords({
+        dependencies: { zebra: '^1', alpha: '^2' },
+        optionalDependencies: { optional: '~3' },
+        peerDependencies: { peer: '>=4' },
+        peerDependenciesMeta: { peer: { optional: true } },
+      }),
       bunDocs: [
         { api: 'write', url: 'https://bun.com/docs/runtime/file-io', category: 'runtime' },
         { api: 'build', url: 'https://bun.com/docs/bundler', category: 'bundler' },
@@ -84,8 +94,13 @@ describe('deterministic package RSS generation', () => {
     expect(first).not.toContain('<lastBuildDate>');
     expect(first).not.toContain('<pubDate>');
     expect(first.indexOf('build - @scope/pkg')).toBeLessThan(first.indexOf('write - @scope/pkg'));
-    expect(first.indexOf('Dependency: alpha@^2')).toBeLessThan(
-      first.indexOf('Dependency: zebra@^1')
+    expect(first.indexOf('Dependency [runtime]: alpha@^2')).toBeLessThan(
+      first.indexOf('Dependency [runtime]: zebra@^1')
+    );
+    expect(first).toContain('Dependency [optional]: optional@~3');
+    expect(first).toContain('Dependency [peer (optional)]: peer@&gt;=4');
+    expect(first).toContain(
+      '<guid isPermaLink="false">dep:@scope/pkg:peer:optional:peer:&gt;=4</guid>'
     );
     expect(first).toContain('<guid isPermaLink="false">bun:@scope/pkg:build</guid>');
   });

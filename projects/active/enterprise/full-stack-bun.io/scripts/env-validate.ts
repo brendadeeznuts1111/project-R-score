@@ -1,4 +1,15 @@
 #!/usr/bin/env bun
+import {
+  createFullStackBunOutboundAuthority,
+  fetchFullStackBunOutbound,
+} from '../src/security/outbound';
+
+const NPM_LATEST_AUTHORITY = createFullStackBunOutboundAuthority({
+  kind: 'registry',
+  name: 'npm-bun-latest',
+  baseUrl: 'https://registry.npmjs.org/bun/latest',
+  exact: true,
+});
 import { structuredLog } from "../src/shared/utils";
 
 async function validateEnvironment() {
@@ -92,7 +103,7 @@ async function validateEnvironment() {
 
   // Check network connectivity
   try {
-    const response = await fetch('https://registry.npmjs.org/bun/latest', {
+    const response = await fetchFullStackBunOutbound(NPM_LATEST_AUTHORITY, 'https://registry.npmjs.org/bun/latest', {
       signal: AbortSignal.timeout(5000)
     });
     if (response.ok) {

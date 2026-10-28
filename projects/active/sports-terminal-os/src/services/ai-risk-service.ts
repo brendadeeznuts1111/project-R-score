@@ -15,7 +15,7 @@ import {
   logPlayerRisk,
 } from "@utils/tableLogger";
 import type { RiskTier, CustomerArchetype } from "@utils/types";
-import { fetchFixedExternalProvider } from "@utils/outbound-endpoints";
+import { fetchKimiRisk } from "@utils/integration-outbound";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -158,7 +158,7 @@ export async function analyzePlayerRisk(playerId: string): Promise<RiskAnalysisR
 
   if (kimiApiKey && process.env.ENABLE_RISK_ENGINE === "true") {
     try {
-      const response = await fetchFixedExternalProvider("kimi-risk", "https://api.moonshot.cn/v1/chat/completions", {
+      const response = await fetchKimiRisk({
         method: "POST",
         headers: {
           "Authorization": `Bearer ${kimiApiKey}`,

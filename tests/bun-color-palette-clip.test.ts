@@ -1,4 +1,4 @@
-// @see https://bun.com/docs/runtime/color#output-formats — Bun.color
+// @see https://bun.com/docs/runtime/color — Bun.color
 import { describe, expect, test } from 'bun:test';
 import {
   PALETTE_CLIP_FORMATS,

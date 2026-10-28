@@ -9,6 +9,7 @@ import https from "node:https";
 import { buildTLSConfig, getTLSInfo, createTLSBadge } from "./utils/tls-helpers";
 import { openProjectShell } from "./pty-ui";
 import { VersionValidator } from "./version-validator";
+import { fetchEnterpriseDashboardOutbound } from "./security/outbound.ts";
 import { applyStartupOptimizations, getOptimizationStatus, refreshOptimizations, probeAllHosts } from "./utils/startup-optimizations";
 import {
   safeStringWidth,
@@ -2514,10 +2515,9 @@ const server = Bun.serve({
           const timeout = setTimeout(() => controller.abort(), 5000);
 
           try {
-            await fetch(`https://${host}`, {
+            await fetchEnterpriseDashboardOutbound("link-check", `https://${host}`, {
               method: "HEAD",
               signal: controller.signal,
-              verbose: feature("DEBUG") ? true : false,
             });
           } catch {
             // Connection might fail but we still get timing

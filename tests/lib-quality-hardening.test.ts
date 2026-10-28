@@ -111,8 +111,11 @@ describe('lib quality hardening', () => {
       JSON.stringify({
         name: '@factorywager/example',
         version: '1.2.3',
-        dependencies: { effect: '^3.0.0', invalid: 42 },
+        dependencies: { effect: '^3.0.0' },
         devDependencies: { typescript: '^5.0.0' },
+        optionalDependencies: { sharp: '^1.0.0' },
+        peerDependencies: { react: '^19.0.0' },
+        peerDependenciesMeta: { react: { optional: true } },
         rss: 'https://example.com/feed.xml',
       })
     );
@@ -124,8 +127,17 @@ describe('lib quality hardening', () => {
       version: '1.2.3',
       dependencies: { effect: '^3.0.0' },
       devDependencies: { typescript: '^5.0.0' },
+      optionalDependencies: { sharp: '^1.0.0' },
+      peerDependencies: { react: '^19.0.0' },
+      peerDependenciesMeta: { react: { optional: true } },
       rssFeed: 'https://example.com/feed.xml',
     });
+    expect(info.packageDependencies).toEqual([
+      { packageName: 'effect', range: '^3.0.0', kind: 'runtime' },
+      { packageName: 'typescript', range: '^5.0.0', kind: 'development' },
+      { packageName: 'sharp', range: '^1.0.0', kind: 'optional' },
+      { packageName: 'react', range: '^19.0.0', kind: 'peer', peer: { optional: true } },
+    ]);
   });
 
   test('package analysis rejects a non-object package manifest', async () => {

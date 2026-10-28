@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "types": ["bun"]
+  },
+  "files": [
+    "integrations/outbound-client.ts",
+    "src/browser-outbound.ts",
+    "tests/unit/outbound-client.test.ts",
+    "tests/unit/browser-outbound.test.ts"
+  ]
+}

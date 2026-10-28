@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "types": ["bun"],
+    "lib": ["ESNext", "DOM"]
+  },
+  "files": [
+    "../lib/rss/feed-snapshot-archive.ts",
+    "../lib/rss/feed-snapshot-writer.ts",
+    "../lib/rss/memory-feed-snapshot-archive.ts",
+    "../lib/rss/r2-feed-snapshot-archive.ts",
+    "../lib/rss/rss-manager.ts",
+    "rss-feed-snapshot-archive.test.ts",
+    "feed-snapshot-writer.test.ts",
+    "r2-feed-snapshot-archive.test.ts"
+  ]
+}

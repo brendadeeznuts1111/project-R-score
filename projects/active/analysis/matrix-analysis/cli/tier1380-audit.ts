@@ -30,6 +30,7 @@
 
 import { Database } from "bun:sqlite";
 import { existsSync, mkdirSync, statSync } from "fs";
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
 
 // ═════════════════════════════════════════════════════════
 // Constants & Startup
@@ -234,7 +235,7 @@ function parseRSSItems(xml: string): RSSItem[] {
 async function checkRSS(feedUrl = "https://bun.com/rss.xml"): Promise<void> {
 	const start = Bun.nanoseconds();
 
-	const res = await fetch(feedUrl).catch(() => null);
+	const res = await fetchMatrixPublicResource(feedUrl).catch(() => null);
 	if (!res || !res.ok) {
 		console.error(`${GLYPHS.AUDIT} Failed to fetch: ${feedUrl}`);
 		return;

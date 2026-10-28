@@ -275,6 +275,8 @@ credentials/
 **/config/
 **/secrets/
 **/auth/
+!projects/active/dashboards/enterprise-dashboard/src/server/auth/
+!projects/active/dashboards/enterprise-dashboard/src/server/auth/**
 !functions/api/auth/
 !functions/api/auth/**
 !functions-bun-only/api/auth/
@@ -297,7 +299,12 @@ config/*
 !config/subdomains.json
 !config/images.toml
 !config/runtime-flags.json
+!config/control-override-ownership.json
+!config/control-override-ownership.schema.json
 !config/project-r-agent-contract.json
+!config/agent-consumer-ownership.json
+!config/subprocess-consumer-ownership.json
+!config/outbound-consumers.json
 !config/scraper-targets.ts
 !config/scrape-agents.toml
 !config/onboarding-defaults.toml

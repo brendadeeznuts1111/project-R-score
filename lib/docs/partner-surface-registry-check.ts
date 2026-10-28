@@ -5,7 +5,6 @@
  * walking **object key names** (never substring-searching JSON text — omit lists
  * in this inventory bake would false-positive).
  *
- * `conceptIds` on the bag are glossary / relatedConcept refs, not JSON paths.
  */
 
 import type {

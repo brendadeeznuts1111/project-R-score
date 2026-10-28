@@ -15,6 +15,10 @@ import http from "node:http";
 import { mkdirSync } from "node:fs";
 import { Database } from "bun:sqlite";
 import { MLGSGraph } from "./src/graph/MLGSGraph";
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+} from './src/security/outbound';
 
 // Use local path for development
 const mlgsPath = process.env.MLGS_PATH || './data/mlgs-proxy.db';
@@ -101,6 +105,20 @@ const bookieRoutes: Record<string, URLPattern> = {
 	caesars: new URLPattern({ hostname: 'api.caesars.com', pathname: '/sportsbook/*' })
 };
 
+const BOOKIE_AUTHORITIES = Object.fromEntries(
+	Object.entries(bookieRoutes).map(([bookie, route]) => {
+		const hostname = String(route.hostname.input);
+		const pathPrefix = String(route.pathname.input).replace(/\*.*$/, '');
+		return [bookie, createFullStackBunOutboundAuthority({
+			kind: 'bookie',
+			name: `${bookie}-feed`,
+			baseUrl: `https://${hostname}${pathPrefix}`,
+			pathPrefix,
+			credentialHeaders: ['proxy-authorization'],
+		})];
+	})
+) as Record<string, ReturnType<typeof createFullStackBunOutboundAuthority>>;
+
 // Export for tests
 export { BOOKIE_PROXIES, bookieRoutes };
 
@@ -134,7 +152,9 @@ const server = Bun.serve({
 			const startTime = performance.now();
 			try {
 				const proxyConfig = BOOKIE_PROXIES[bookie];
-				const targetUrl = `https://${bookieRoutes[bookie]?.hostname.input || bookieName}.com${path}`;
+				const authority = BOOKIE_AUTHORITIES[bookie];
+				if (!authority) throw new Error(`Missing outbound authority for ${bookie}`);
+				const targetUrl = `${authority.origin}${path}`;
 
 				console.info(JSON.stringify({
 					bookie_routed: bookie,
@@ -146,7 +166,7 @@ const server = Bun.serve({
 				// PER-BOOKIE PROXY HEADERS
 				// Note: In production, use http.request with proxy agent
 				// For demo, we'll simulate proxy headers
-				const response = await fetch(targetUrl, {
+				const response = await fetchFullStackBunOutbound(authority, targetUrl, {
 					headers: {
 						'User-Agent': `HyperBun-${bookie}-v3.1`,
 						'Accept-Encoding': 'gzip, deflate, br',
@@ -282,10 +302,12 @@ async function fetchBookieOdds(
 	path: string
 ): Promise<any> {
 	const proxy = BOOKIE_PROXIES[bookie];
-	const targetUrl = `https://${bookieRoutes[bookie]?.hostname.input || bookie}.com${path}`;
+	const authority = BOOKIE_AUTHORITIES[bookie];
+	if (!authority) throw new Error(`Missing outbound authority for ${bookie}`);
+	const targetUrl = `${authority.origin}${path}`;
 
 	try {
-		const response = await fetch(targetUrl, {
+		const response = await fetchFullStackBunOutbound(authority, targetUrl, {
 			headers: {
 				'User-Agent': `HyperBun-${bookie.toUpperCase()}-ArbBot-v3.1`,
 				'Accept': 'application/json',

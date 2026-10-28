@@ -12,6 +12,7 @@
 
 import { dns } from "bun";
 import { config } from "../config";
+import { fetchEnterpriseDashboardOutbound } from "../security/outbound.ts";
 
 // Host status type with color info
 type HostStatus = {
@@ -311,7 +312,7 @@ export async function probeHostTiming(url: string): Promise<{
   // Connection + TTFB timing
   const connectStart = Bun.nanoseconds();
   try {
-    const res = await fetch(url, { method: "HEAD" });
+    const res = await fetchEnterpriseDashboardOutbound("configured-head", url, { method: "HEAD" });
     const ttfbMs = (Bun.nanoseconds() - connectStart) / 1_000_000;
     const totalMs = (Bun.nanoseconds() - start) / 1_000_000;
 

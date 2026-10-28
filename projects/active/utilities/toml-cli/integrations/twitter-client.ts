@@ -1,3 +1,5 @@
+import { fetchTomlIntegration } from './outbound-client';
+
 /**
  * Twitter Client Wrapper
  * High-level wrapper for common Twitter operations with compliance integration
@@ -209,7 +211,7 @@ export class TwitterClient {
     try {
       await this.rateLimiter.execute('read', async () => {
         // Try to get account settings to validate credentials
-        const response = await fetch('https://api.twitter.com/1.1/account/settings.json', {
+        const response = await fetchTomlIntegration('https://api.twitter.com/1.1/account/settings.json', {
           headers: {
             'Authorization': `Bearer ${this.config.credentials.bearerToken || this.config.credentials.accessToken}`,
           },

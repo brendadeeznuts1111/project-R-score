@@ -35,6 +35,18 @@ function sampleFor(name: string): { input: string; expected: string } {
   if (name === 'StateCode') return { input: 'ma', expected: 'MA' };
   if (name === 'SportsbookId') return { input: 'DraftKings', expected: 'draftkings' };
   if (name === 'ZipCode') return { input: '02139', expected: '02139' };
+  if (name === 'ContentDigest') {
+    return { input: `sha256:${'a'.repeat(64)}`, expected: `sha256:${'a'.repeat(64)}` };
+  }
+  if (name === 'ContentKey') {
+    return { input: `sha256/aa/${'a'.repeat(64)}`, expected: `sha256/aa/${'a'.repeat(64)}` };
+  }
+  if (name === 'SourceLocatorId') {
+    return {
+      input: `locator-sha256:${'b'.repeat(64)}`,
+      expected: `locator-sha256:${'b'.repeat(64)}`,
+    };
+  }
   if (name === 'PartnerCode') return { input: 'SPEN', expected: 'SPEN' };
   if (name === 'PartnerCallSignCode') return { input: 'SPEN-001', expected: 'SPEN-001' };
   if (name === 'PartnerProfileVersionCode') return { input: 'v1.0', expected: 'v1.0' };
@@ -78,8 +90,8 @@ function sampleFor(name: string): { input: string; expected: string } {
 }
 
 describe('branded domain-value catalog', () => {
-  test('catalog is a unique 97-value, 10-domain contract', () => {
-    expect(branded.BRAND_CATALOG).toHaveLength(97);
+  test('catalog is a unique 102-value, 10-domain contract', () => {
+    expect(branded.BRAND_CATALOG).toHaveLength(102);
 
     const names = branded.BRAND_CATALOG.map(spec => spec.name);
     const domains = new Set(branded.BRAND_CATALOG.map(spec => spec.domain));
@@ -89,9 +101,10 @@ describe('branded domain-value catalog', () => {
     expect(domains.size).toBe(10);
     expect(domains.has('governance')).toBeTrue();
     expect(domains.has('surfaces')).toBeTrue();
-    expect(kinds.filter(kind => kind === 'id')).toHaveLength(75);
-    expect(kinds.filter(kind => kind === 'key')).toHaveLength(3);
+    expect(kinds.filter(kind => kind === 'id')).toHaveLength(78);
+    expect(kinds.filter(kind => kind === 'key')).toHaveLength(4);
     expect(kinds.filter(kind => kind === 'code')).toHaveLength(19);
+    expect(kinds.filter(kind => kind === 'digest')).toHaveLength(1);
   });
 
   test('entity names and generated symbols are collision-free after normalization', () => {
@@ -130,7 +143,7 @@ describe('branded domain-value catalog', () => {
   });
 
   test('generated guards cover every canonical runtime shape', () => {
-    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(97);
+    expect(Object.keys(branded.BRAND_GUARDS)).toHaveLength(102);
 
     for (const spec of branded.BRAND_CATALOG) {
       const guardName = `is${spec.name}` as keyof typeof branded.BRAND_GUARDS;

@@ -93,7 +93,7 @@ export class UploadService {
 
     // Initialize S3 client only if FEAT_CLOUD_UPLOAD enabled
     // This code is completely eliminated if feature is disabled
-    if (feature("FEAT_CLOUD_UPLOAD", false) && this.config.provider !== "local") {
+    if ((feature("FEAT_CLOUD_UPLOAD") ? true : false) && this.config.provider !== "local") {
       // Dynamic import of S3 client (only when feature enabled)
       const { s3 } = require("bun");
 
@@ -140,7 +140,7 @@ export class UploadService {
     }
 
     // Choose upload strategy based on file size and features
-    const HAS_MULTIPART = feature("FEAT_MULTIPART_UPLOAD", false);
+    const HAS_MULTIPART = feature("FEAT_MULTIPART_UPLOAD") ? true : false;
 
     if (HAS_MULTIPART && totalBytes > UPLOAD.MAX_SIMPLE_SIZE) {
       console.info(`🧩 Using multipart upload for ${options.filename}`);
@@ -189,7 +189,7 @@ export class UploadService {
         const metadata: Record<string, string> = {};
 
         // Add custom metadata if feature enabled
-        const HAS_CUSTOM_METADATA = feature("FEAT_CUSTOM_METADATA", false);
+        const HAS_CUSTOM_METADATA = feature("FEAT_CUSTOM_METADATA") ? true : false;
         if (HAS_CUSTOM_METADATA && options.metadata) {
           Object.assign(metadata, options.metadata);
           console.info(`🏷️  Custom metadata: ${JSON.stringify(options.metadata)}`);
@@ -276,7 +276,7 @@ export class UploadService {
     startedAt: number
   ): Promise<UploadResult> {
     // Compile-time check: multipart upload only if feature enabled
-    if (!feature("FEAT_MULTIPART_UPLOAD", false)) {
+    if (!(feature("FEAT_MULTIPART_UPLOAD") ? true : false)) {
       throw new Error("Multipart upload not enabled (FEAT_MULTIPART_UPLOAD)");
     }
 
@@ -323,7 +323,7 @@ export class UploadService {
               progress.progress = Math.floor((uploadedBytes / buffer.length) * 100);
 
               // Emit progress update if feature enabled
-              if (feature("FEAT_UPLOAD_PROGRESS", false)) {
+              if (feature("FEAT_UPLOAD_PROGRESS") ? true : false) {
                 this.emitProgress(uploadId, progress);
               }
             }
@@ -498,7 +498,7 @@ export class UploadService {
    */
   private emitProgress(uploadId: string, progress: UploadProgress): void {
     // Compile-time elimination: progress only if FEAT_UPLOAD_PROGRESS enabled
-    if (!feature("FEAT_UPLOAD_PROGRESS", false)) {
+    if (!(feature("FEAT_UPLOAD_PROGRESS") ? true : false)) {
       return; // Entire method body eliminated if feature disabled
     }
 
@@ -520,7 +520,7 @@ export class UploadService {
     timestamp: number;
   }): void {
     // Compile-time elimination: analytics only if FEAT_UPLOAD_ANALYTICS enabled
-    if (!feature("FEAT_UPLOAD_ANALYTICS", false)) {
+    if (!(feature("FEAT_UPLOAD_ANALYTICS") ? true : false)) {
       return; // Entire method body eliminated if feature disabled
     }
 

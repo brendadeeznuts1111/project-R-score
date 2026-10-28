@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchSurfaceOutbound } from '../core/security/surface-outbound.ts';
+
 /**
  * 🚀 Fire22 Comprehensive Benchmarking Suite
  *
@@ -233,7 +235,7 @@ export class BenchmarkSuite {
     await this.benchmark(
       'HTTP GET Request',
       async () => {
-        await fetch(url);
+        await fetchSurfaceOutbound(url);
       },
       { iterations: 1000, async: true }
     );
@@ -241,7 +243,7 @@ export class BenchmarkSuite {
     await this.benchmark(
       'HTTP POST Request',
       async () => {
-        await fetch(url, {
+        await fetchSurfaceOutbound(url, {
           method: 'POST',
           body: JSON.stringify({ test: 'data' }),
         });

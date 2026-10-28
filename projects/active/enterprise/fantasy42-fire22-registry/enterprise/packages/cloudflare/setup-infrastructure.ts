@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalDeployment } from '../../../src/security/final-outbound.ts';
+
 /**
  * 🚀 Complete Cloudflare Infrastructure Setup for Fantasy42-Fire22
  * Creates all required resources and deploys the worker with proper health checks
@@ -165,7 +167,7 @@ async function heartbeat() {
   }
 
   try {
-    const response = await fetch(HUB_ENDPOINT, {
+    const response = await fetchFinalDeployment(HUB_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -209,7 +211,7 @@ export default { heartbeat }
     };
 
     try {
-      const response = await fetch('https://apexodds.net/api/hub/register', {
+      const response = await fetchFinalDeployment('https://apexodds.net/api/hub/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(hubConfig),

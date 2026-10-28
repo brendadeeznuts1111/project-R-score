@@ -18,6 +18,7 @@
 
 import { bold, color } from "bun:color";
 import { $ } from "bun";
+import { createStorageOutboundClient } from "../src/http/storage-outbound.ts";
 
 // 🟢 BUILD-TIME EMBEDDED METADATA (set via --define flags)
 declare const BUILD_VERSION: string;
@@ -94,6 +95,7 @@ class S3Client {
 	private bucket: string;
 	private endpoint?: string;
 	private region: string;
+	private outbound: ReturnType<typeof createStorageOutboundClient>;
 
 	constructor(config: {
 		accessKeyId: string;
@@ -107,6 +109,13 @@ class S3Client {
 		this.bucket = config.bucket;
 		this.endpoint = config.endpoint;
 		this.region = config.region || "us-east-1";
+		this.outbound = createStorageOutboundClient(this.endpointOrigin());
+	}
+
+	private endpointOrigin(): string {
+		return this.endpoint
+			? new URL(this.endpoint).origin
+			: `https://${this.bucket}.s3.${this.region}.amazonaws.com`;
 	}
 
 	async putObject(
@@ -119,7 +128,7 @@ class S3Client {
 			: `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 
 		// Use Bun's fetch with AWS signature (simplified - in production use AWS SDK)
-		const response = await fetch(url, {
+		const response = await this.outbound.request(url, {
 			method: "PUT",
 			body: body,
 			headers: {
@@ -139,7 +148,7 @@ class S3Client {
 			: `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 
 		try {
-			const response = await fetch(url);
+			const response = await this.outbound.request(url, { method: "GET" });
 			if (response.ok) {
 				return await response.arrayBuffer();
 			}
@@ -155,7 +164,7 @@ class S3Client {
 			: `https://${this.bucket}.s3.${this.region}.amazonaws.com/${key}`;
 
 		try {
-			const response = await fetch(url, { method: "HEAD" });
+			const response = await this.outbound.request(url, { method: "HEAD" });
 			return {
 				exists: response.ok,
 				size: response.headers.get("content-length")

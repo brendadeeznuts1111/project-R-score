@@ -28,6 +28,18 @@ export interface PolymarketHistorical {
 	volume: number;
 }
 
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+} from '../../../src/security/outbound';
+
+const POLYMARKET_AUTHORITY = createFullStackBunOutboundAuthority({
+	kind: 'market-data',
+	name: 'polymarket-api',
+	baseUrl: 'https://api.polymarket.com/markets/',
+	pathPrefix: '/markets/',
+});
+
 export class PolymarketClient {
 	private readonly baseUrl = 'https://clob.polymarket.com';
 	private readonly apiUrl = 'https://api.polymarket.com';
@@ -44,7 +56,7 @@ export class PolymarketClient {
 				? `${this.apiUrl}/markets?historical=true`
 				: `${this.apiUrl}/markets`;
 
-			const res = await fetch(url, {
+			const res = await fetchFullStackBunOutbound(POLYMARKET_AUTHORITY, url, {
 				headers: {
 					'Accept': 'application/json',
 					'User-Agent': 'Mozilla/5.0'
@@ -74,7 +86,7 @@ export class PolymarketClient {
 	async fetchHistorical(marketId: string, days: number = 30): Promise<PolymarketHistorical[]> {
 		try {
 			const url = `${this.apiUrl}/markets/${marketId}/history?days=${days}`;
-			const res = await fetch(url);
+			const res = await fetchFullStackBunOutbound(POLYMARKET_AUTHORITY, url);
 
 			if (!res.ok) {
 				throw new Error(`Historical API error: ${res.status}`);
@@ -189,6 +201,5 @@ export class PolymarketClient {
 		return historical;
 	}
 }
-
 
 

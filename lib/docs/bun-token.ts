@@ -1,17 +1,11 @@
 /**
- * BunToken — agent-facing export contract for Bun documentation tokens.
- *
  * Interior harness: TokenRef (brands, provenance, allPages).
  * Public export: BunToken (this module).
- *
- * Flow: DocCatalogEntry → TokenRef → BunToken
- *
  * @see ./token-ref.ts
  * @see ./bun-token.schema.json
  * @see ../../docs/BUN_DOCS_OPERATE.md
  */
 
-/** Coarse kind for agents (maps from fine catalog TokenKind). */
 export type BunTokenKind = 'API' | 'CLI' | 'Config' | 'Env' | 'PackageJson' | 'Concept' | 'Other';
 
 export type BunTokenStability = 'stable' | 'experimental' | 'deprecated';
@@ -34,7 +28,6 @@ export type BunTokenExample = {
   description?: string;
 };
 
-/** Agent / export northstar. */
 export type BunToken = {
   name: string;
   kind: BunTokenKind;
@@ -66,7 +59,6 @@ export type BunToken = {
   };
 };
 
-/** Overlay hit shape (from release scrape) — keep tools-independent. */
 export type VersionHitLike = {
   version: string;
   url: string;
@@ -82,7 +74,6 @@ const HIT_KIND_TO_EVENT: Record<VersionHitLike['kind'], BunVersionEventType> = {
   stabilize: 'stabilized',
 };
 
-/** Map fine catalog / TokenRef kind → BunToken.kind. */
 export function toBunTokenKind(kind: string): BunTokenKind {
   switch (kind) {
     case 'api':

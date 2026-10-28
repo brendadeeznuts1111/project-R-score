@@ -1,3 +1,5 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../../runtime-outbound.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/security-hardening-layer.ts
 // Component #49: Security Hardening Layer (CVE-2024 Prevention)
@@ -91,10 +93,6 @@ export class SecurityHardeningLayer {
     source: string,
     _version?: string
   ): TrustedDependencyResult {
-    if (!feature("SECURITY_HARDENING")) {
-      return { valid: true, reason: "Security hardening disabled" }; // Legacy vulnerable mode
-    }
-
     // Only trusted registries are trusted by default
     if (this.TRUSTED_REGISTRIES.has(source)) {
       this.securityMetrics.packagesAllowed++;
@@ -146,9 +144,10 @@ export class SecurityHardeningLayer {
     const suspiciousPatterns = [
       /\.\./, // Directory traversal
       /[<>]/, // HTML injection
-      /[|&;$]/, // Command injection
+      /[|&;$`]/, // Command injection
       /^(test|dev|debug)/i, // Test packages in production
       /password|secret|token|key/i, // Sensitive terms
+      /backdoor|trojan|keylogger|spyware/i, // Known malicious naming signals
       /\.(exe|bat|sh|ps1|cmd)$/i, // Executable extensions
     ];
 
@@ -161,14 +160,6 @@ export class SecurityHardeningLayer {
   static createIsolatedContext(
     sandboxGlobals?: Record<string, unknown>
   ): IsolatedContext {
-    if (!feature("SECURITY_HARDENING")) {
-      return {
-        context:
-          (globalThis as any).vm?.createContext?.(sandboxGlobals || {}) || {},
-        isolated: false,
-      }; // Vulnerable to loader leaks
-    }
-
     // True isolation: no Bun internals visible
     const sanitizedGlobals: Record<string, unknown> = {
       console: {
@@ -338,10 +329,6 @@ export class SecurityHardeningLayer {
 
   // Scan package.json for security issues
   static scanPackageJson(packageJson: unknown): PackageScanResult {
-    if (!feature("SECURITY_HARDENING")) {
-      return { valid: true, issues: [], securityScore: 100 };
-    }
-
     const issues: SecurityIssue[] = [];
 
     if (!packageJson || typeof packageJson !== "object") {
@@ -444,10 +431,6 @@ export class SecurityHardeningLayer {
   static createSecureClient(
     baseOptions?: Record<string, unknown>
   ): (url: string, options?: RequestInit) => Promise<Response> {
-    if (!feature("SECURITY_HARDENING")) {
-      return fetch; // Use default fetch
-    }
-
     const secureFetch = async (url: string, options: RequestInit = {}) => {
       const secureOptions: RequestInit = {
         ...baseOptions,
@@ -464,7 +447,7 @@ export class SecurityHardeningLayer {
         // Security timeouts
         signal: AbortSignal.timeout(30000),
         // Redirect policy
-        redirect: "manual",
+        redirect: "error",
       };
 
       // Validate URL
@@ -473,9 +456,17 @@ export class SecurityHardeningLayer {
         throw new Error("HTTPS required for non-localhost requests");
       }
 
-      return fetch(url, secureOptions);
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-security-hardened-client",
+        baseUrl: urlObj.origin,
+        pathPrefix: "/",
+        methods: ["GET", "HEAD", "POST", "PUT", "DELETE"],
+        addressClass: urlObj.hostname === "localhost" ? "loopback" : "public",
+      });
+      return fetchKalPolyOutbound(authority, urlObj, secureOptions);
     };
 
+    if (!feature("SECURITY_HARDENING")) return secureFetch;
     return secureFetch;
   }
 
@@ -502,7 +493,7 @@ export class SecurityHardeningLayer {
     console.error("[CVE-2024 VIOLATION]", violation);
 
     // Send to audit system
-    fetch("https://api.buncatalog.com/v1/security/violation", {
+    fetchBunCatalog("/v1/security/violation", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -624,7 +615,22 @@ export const {
   createIsolatedContext,
   validateConfig,
 } = feature("SECURITY_HARDENING")
-  ? SecurityHardeningLayer
+  ? {
+      validateTrustedDependency: (
+        packageName: string,
+        source: string,
+        version?: string
+      ) =>
+        SecurityHardeningLayer.validateTrustedDependency(
+          packageName,
+          source,
+          version
+        ),
+      createIsolatedContext: (globals?: Record<string, unknown>) =>
+        SecurityHardeningLayer.createIsolatedContext(globals),
+      validateConfig: (config: unknown) =>
+        SecurityHardeningLayer.validateConfig(config),
+    }
   : {
       validateTrustedDependency: () => ({ valid: true, reason: "Disabled" }),
       createIsolatedContext: (globals?: Record<string, unknown>) => ({
@@ -646,7 +652,17 @@ export const {
   resetSecurityMetrics,
   validateEnvironment,
 } = feature("SECURITY_HARDENING")
-  ? SecurityHardeningLayer
+  ? {
+      scanPackageJson: (packageJson: unknown) =>
+        SecurityHardeningLayer.scanPackageJson(packageJson),
+      createSecureClient: (options?: Record<string, unknown>) =>
+        SecurityHardeningLayer.createSecureClient(options),
+      getSecurityMetrics: () => SecurityHardeningLayer.getSecurityMetrics(),
+      resetSecurityMetrics: () =>
+        SecurityHardeningLayer.resetSecurityMetrics(),
+      validateEnvironment: () =>
+        SecurityHardeningLayer.validateEnvironment(),
+    }
   : {
       scanPackageJson: () => ({ valid: true, issues: [], securityScore: 100 }),
       createSecureClient: () => fetch,

@@ -8,6 +8,7 @@
 // @see https://bun.com/docs/runtime/utils#bun-which — Bun.which
 // @see https://bun.com/docs/test/index#run-tests — bun:test
 import { describe, expect, test } from 'bun:test';
+import { createSecureServer } from 'node:http2';
 import {
   BUN_V1_3_12_HTTPS_PROXY_POOL_KEY_DIMENSIONS,
   isProxyObjectForm,
@@ -214,6 +215,52 @@ describe('Bun fetch HTTPS proxy CONNECT keep-alive', () => {
     ];
     expect(forms.map(isProxyObjectForm)).toEqual([false, false, true, true, true, true]);
   });
+
+  test(
+    'reports exact HTTP2Unsupported for HTTP/2 through CONNECT',
+    async () => {
+      await using workspace = await createTestWorkspace('factorywager-h2-proxy-');
+      const keyPath = workspace.resolve('key.pem');
+      const certificatePath = workspace.resolve('certificate.pem');
+      await generateSelfSignedCertificate(keyPath, certificatePath);
+      const target = createSecureServer({
+        key: await Bun.file(keyPath).text(),
+        cert: await Bun.file(certificatePath).text(),
+      });
+      target.on('stream', stream => {
+        stream.respond({ ':status': 200, 'content-type': 'text/plain' });
+        stream.end('h2-through-connect');
+      });
+      await new Promise<void>((resolve, reject) => {
+        target.once('error', reject);
+        target.listen(0, '127.0.0.1', () => {
+          target.off('error', reject);
+          resolve();
+        });
+      });
+      const address = target.address();
+      if (!address || typeof address === 'string') throw new Error('H2 target did not bind TCP');
+      await using proxy = startConnectProxy();
+      try {
+        let rejected: unknown;
+        try {
+          await fetch(`https://factorywager-h2.invalid:${address.port}/h2`, {
+            proxy: proxy.origin,
+            protocol: 'http2',
+            tls: { rejectUnauthorized: false },
+          });
+        } catch (error) {
+          rejected = error;
+        }
+        expect(rejected).toBeInstanceOf(TypeError);
+        expect((rejected as Error & { code?: string }).code).toBe('HTTP2Unsupported');
+        expect(proxy.connectRequests).toHaveLength(0);
+      } finally {
+        await new Promise<void>(resolve => target.close(() => resolve()));
+      }
+    },
+    15_000
+  );
 
   test(
     'HTTPS_PROXY supports lowercase precedence for the next fetch',

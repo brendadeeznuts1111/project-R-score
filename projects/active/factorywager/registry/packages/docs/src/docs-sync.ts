@@ -11,6 +11,11 @@ import {
   cloudflareAccountIdFromEnv,
   r2EndpointFromAccount,
 } from '../../../../../../../config/r2-env.ts';
+import {
+  createFactoryR2Authority,
+  fetchFactoryR2,
+  type FactoryR2Authority,
+} from '../../r2-storage/src/r2-outbound.ts';
 
 export interface UserPreferences {
   userId: string;
@@ -61,7 +66,7 @@ export interface SyncData {
 
 export class DocumentationSync {
   private r2Bucket: string;
-  private baseUrl: string;
+  private r2Authority: FactoryR2Authority;
   private deviceId: string;
 
   constructor(
@@ -73,7 +78,7 @@ export class DocumentationSync {
   ) {
     this.r2Bucket = config?.bucketName || Bun.env.R2_DOCS_BUCKET || 'docs-sync';
     const accountId = config?.accountId || cloudflareAccountIdFromEnv();
-    this.baseUrl = r2EndpointFromAccount(accountId);
+    this.r2Authority = createFactoryR2Authority(accountId, r2EndpointFromAccount(accountId));
     this.deviceId = this.getDeviceId();
   }
 
@@ -110,15 +115,19 @@ export class DocumentationSync {
     const key = `sync/${this.userId}/data.json`;
 
     try {
-      const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': this.getAuthHeader(),
-          'Content-Type': 'application/json',
-          'x-amz-meta-device': this.deviceId,
-          'x-amz-meta-synced': syncData.lastSyncedAt,
+      const response = await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key,
+        init: {
+          method: 'PUT',
+          headers: {
+            'Authorization': this.getAuthHeader(),
+            'Content-Type': 'application/json',
+            'x-amz-meta-device': this.deviceId,
+            'x-amz-meta-synced': syncData.lastSyncedAt,
+          },
+          body: JSON.stringify(syncData, null, 2),
         },
-        body: JSON.stringify(syncData, null, 2),
       });
 
       if (response.ok) {
@@ -140,9 +149,13 @@ export class DocumentationSync {
     const key = `sync/${this.userId}/data.json`;
 
     try {
-      const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-        headers: {
-          'Authorization': this.getAuthHeader(),
+      const response = await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key,
+        init: {
+          headers: {
+            'Authorization': this.getAuthHeader(),
+          },
         },
       });
 
@@ -171,13 +184,17 @@ export class DocumentationSync {
     const key = `progress/${this.userId}/${progress.packageName}@${progress.version}.json`;
 
     try {
-      const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': this.getAuthHeader(),
-          'Content-Type': 'application/json',
+      const response = await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key,
+        init: {
+          method: 'PUT',
+          headers: {
+            'Authorization': this.getAuthHeader(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(progress, null, 2),
         },
-        body: JSON.stringify(progress, null, 2),
       });
 
       return response.ok;
@@ -194,9 +211,13 @@ export class DocumentationSync {
     const key = `progress/${this.userId}/${packageName}@${version}.json`;
 
     try {
-      const response = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-        headers: {
-          'Authorization': this.getAuthHeader(),
+      const response = await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key,
+        init: {
+          headers: {
+            'Authorization': this.getAuthHeader(),
+          },
         },
       });
 
@@ -232,13 +253,17 @@ export class DocumentationSync {
     const key = `docsets/${this.userId}/${docSet.id}.json`;
 
     try {
-      await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': this.getAuthHeader(),
-          'Content-Type': 'application/json',
+      await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key,
+        init: {
+          method: 'PUT',
+          headers: {
+            'Authorization': this.getAuthHeader(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(docSet, null, 2),
         },
-        body: JSON.stringify(docSet, null, 2),
       });
 
       return docSet;
@@ -253,14 +278,15 @@ export class DocumentationSync {
    */
   async getDocSets(): Promise<DocSet[]> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/${this.r2Bucket}?list-type=2&prefix=docsets/${this.userId}/`,
-        {
+      const response = await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        query: { 'list-type': '2', prefix: `docsets/${this.userId}/` },
+        init: {
           headers: {
             'Authorization': this.getAuthHeader(),
           },
-        }
-      );
+        },
+      });
 
       if (!response.ok) {
         return [];
@@ -271,8 +297,10 @@ export class DocumentationSync {
 
       const docSets: DocSet[] = [];
       for (const key of keys) {
-        const dsResponse = await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-          headers: { 'Authorization': this.getAuthHeader() },
+        const dsResponse = await fetchFactoryR2(this.r2Authority, {
+          bucket: this.r2Bucket,
+          key,
+          init: { headers: { 'Authorization': this.getAuthHeader() } },
         });
         if (dsResponse.ok) {
           docSets.push(await dsResponse.json());
@@ -307,28 +335,36 @@ export class DocumentationSync {
 
       // Save share metadata
       const key = `shares/${shareToken}.json`;
-      await fetch(`${this.baseUrl}/${this.r2Bucket}/${key}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': this.getAuthHeader(),
-          'Content-Type': 'application/json',
+      await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key,
+        init: {
+          method: 'PUT',
+          headers: {
+            'Authorization': this.getAuthHeader(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            docSetId,
+            userId: this.userId,
+            createdAt: new Date().toISOString(),
+          }),
         },
-        body: JSON.stringify({
-          docSetId,
-          userId: this.userId,
-          createdAt: new Date().toISOString(),
-        }),
       });
 
       // Update doc set
       const dsKey = `docsets/${this.userId}/${docSetId}.json`;
-      await fetch(`${this.baseUrl}/${this.r2Bucket}/${dsKey}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': this.getAuthHeader(),
-          'Content-Type': 'application/json',
+      await fetchFactoryR2(this.r2Authority, {
+        bucket: this.r2Bucket,
+        key: dsKey,
+        init: {
+          method: 'PUT',
+          headers: {
+            'Authorization': this.getAuthHeader(),
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(docSet, null, 2),
         },
-        body: JSON.stringify(docSet, null, 2),
       });
 
       return shareUrl;

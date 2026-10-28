@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'bun:test';
 import {
   FACTORY_WAGER_NPM_READ_URL,
+  fetchLocalRegistryWrite,
   fetchRegistryReadTokenless,
   parseLocalRegistryWriteUrl,
   prepareLocalRegistryWrite,
@@ -11,7 +12,7 @@ import {
 
 describe('registry runtime planes', () => {
   it('defaults public metadata reads to the canonical tokenless npm endpoint', () => {
-    expect(resolveRegistryReadUrl({ env: {} })).toBe(FACTORY_WAGER_NPM_READ_URL);
+    expect(String(resolveRegistryReadUrl({ env: {} }))).toBe(FACTORY_WAGER_NPM_READ_URL);
     const init = tokenlessRegistryReadInit();
     expect(init.credentials).toBe('omit');
     expect(new Headers(init.headers).has('authorization')).toBe(false);
@@ -27,9 +28,9 @@ describe('registry runtime planes', () => {
     expect(() =>
       resolveRegistryReadUrl({ explicit: 'https://registry.example.com', env: {} })
     ).toThrow('or an HTTP loopback URL');
-    expect(
+    expect(String(
       resolveRegistryReadUrl({ explicit: 'http://localhost:4873', env: {} })
-    ).toBe('http://localhost:4873');
+    )).toBe('http://localhost:4873');
   });
 
   it('rejects the public read endpoint as a write destination before reading credentials', () => {
@@ -54,24 +55,71 @@ describe('registry runtime planes', () => {
   });
 
   it('accepts only explicit credential-free HTTP loopback writes', () => {
-    expect(parseLocalRegistryWriteUrl('http://localhost:4873/')).toBe(
+    expect(String(parseLocalRegistryWriteUrl('http://localhost:4873/'))).toBe(
       'http://localhost:4873'
     );
-    expect(parseLocalRegistryWriteUrl('http://127.0.0.1:4873')).toBe(
+    expect(String(parseLocalRegistryWriteUrl('http://127.0.0.1:4873'))).toBe(
       'http://127.0.0.1:4873'
     );
     expect(() => parseLocalRegistryWriteUrl('https://localhost:4873')).toThrow();
     expect(() => parseLocalRegistryWriteUrl('http://user:pass@localhost:4873')).toThrow();
   });
 
+  it('executes local mutations through a bounded unsafe-write policy', async () => {
+    const base = parseLocalRegistryWriteUrl('http://localhost:4873/private');
+    let observedInit: BunFetchRequestInit | undefined;
+    await fetchLocalRegistryWrite(
+      base,
+      'http://localhost:4873/private/@scope/pkg',
+      { method: 'PUT', headers: { Authorization: 'Bearer local' }, body: '{}' },
+      {
+        environment: {},
+        fetcher: async (_input, init) => {
+          observedInit = init;
+          return new Response('ok');
+        },
+      }
+    );
+    expect(observedInit?.credentials).toBe('omit');
+    expect(observedInit?.redirect).toBe('error');
+    expect(() =>
+      fetchLocalRegistryWrite(
+        base,
+        'http://localhost:4873/admin',
+        { method: 'DELETE' },
+        { environment: {}, fetcher: async () => new Response('never') }
+      )
+    ).toThrow('selected loopback plane');
+    expect(() =>
+      fetchLocalRegistryWrite(
+        base,
+        'http://localhost:4873/private/pkg',
+        { method: 'PUT', proxy: 'http://proxy.test' },
+        { environment: {}, fetcher: async () => new Response('never') }
+      )
+    ).toThrow('proxy cannot override');
+    expect(() =>
+      fetchLocalRegistryWrite(
+        base,
+        'http://localhost:4873/private/pkg',
+        { method: 'PUT' },
+        {
+          environment: {},
+          networkMode: 'offline-no-socket',
+          fetcher: async () => new Response('never'),
+        }
+      )
+    ).toThrow('forbids network fetch');
+  });
+
   it('keeps legacy REGISTRY_URL warning-only for reads and fail-closed for writes', () => {
     const warnings: string[] = [];
-    expect(
+    expect(String(
       resolveRegistryReadUrl({
         env: { REGISTRY_URL: 'http://localhost:9999' },
         warn: message => warnings.push(message),
       })
-    ).toBe(FACTORY_WAGER_NPM_READ_URL);
+    )).toBe(FACTORY_WAGER_NPM_READ_URL);
     expect(() =>
       resolveLocalRegistryWriteUrl({
         env: { REGISTRY_URL: 'http://localhost:9999' },
@@ -86,7 +134,7 @@ describe('registry runtime planes', () => {
     const fetcher = (() => {
       fetchCalls++;
       return Promise.resolve(new Response(null, { status: 200 }));
-    }) as typeof fetch;
+    }) as unknown as typeof fetch;
 
     expect(() =>
       fetchRegistryReadTokenless(
@@ -130,6 +178,7 @@ describe('registry runtime planes', () => {
     ).text();
 
     expect(cliSource).toContain('prepareLocalRegistryWrite');
+    expect(cliSource.match(/fetchLocalRegistryWrite/g)?.length).toBe(4);
     expect(cliSource.match(/redirect: 'error'/g)?.length).toBe(3);
     expect(cliSource).not.toContain('process.env.REGISTRY_URL');
     expect(cliSource).not.toContain('//registry.factory-wager.com/:_authToken');

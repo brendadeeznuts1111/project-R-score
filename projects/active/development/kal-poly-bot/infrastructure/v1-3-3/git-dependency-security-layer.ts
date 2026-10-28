@@ -1,4 +1,5 @@
 import "./types.d.ts";
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../../runtime-outbound.ts";
 // infrastructure/v1-3-3/git-dependency-security-layer.ts
 // Component #60: Git Dependency Security Layer for Secure Custom Indicators
 
@@ -236,7 +237,16 @@ export class GitDependencySecurityLayer {
     }
 
     try {
-      const response = await fetch(url, {
+      const target = new URL(url);
+      if (!['github.com', 'api.github.com', 'codeload.github.com'].includes(target.hostname)) {
+        throw new TypeError('Git dependency tarball must use a reviewed GitHub authority');
+      }
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-github-tarball",
+        baseUrl: target.origin,
+        pathPrefix: "/",
+      });
+      const response = await fetchKalPolyOutbound(authority, target, {
         headers: {
           "User-Agent": "Kalman-Arbitrage-System/1.3.3",
           Accept: "application/octet-stream",
@@ -274,7 +284,12 @@ export class GitDependencySecurityLayer {
 
     try {
       const apiUrl = `https://api.github.com/repos/${owner}/${repo}`;
-      const response = await fetch(apiUrl, {
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-github-repository",
+        baseUrl: "https://api.github.com",
+        pathPrefix: "/repos/",
+      });
+      const response = await fetchKalPolyOutbound(authority, apiUrl, {
         headers: {
           "User-Agent": "Kalman-Arbitrage-System/1.3.3",
         },

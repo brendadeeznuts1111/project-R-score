@@ -3,6 +3,8 @@
  * Comprehensive transaction processing system for deposits, withdrawals, and cash management
  */
 
+import { fetchSameOriginGet } from '../security/browser-outbound.ts';
+
 import { EventEmitter } from 'events';
 import {
   TransactionItemSchema,
@@ -154,7 +156,7 @@ export class CashierService extends EventEmitter {
   private async loadExistingData(): Promise<void> {
     try {
       // Load transactions from storage/API
-      const response = await fetch('/api/transactions/cashier');
+      const response = await fetchSameOriginGet('/api/transactions/cashier');
       if (response.ok) {
         const data = await response.json();
         data.transactions.forEach((transaction: CashierTransaction) => {

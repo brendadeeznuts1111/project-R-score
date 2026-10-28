@@ -74,7 +74,6 @@ function comparableHost(value: string): string {
     .replace(/\.$/, '');
 }
 
-/** Parse the public v0.4 catalog into the only fields partner intake may consume. */
 export function parseBookmakerCatalogArtifact(value: unknown): BookmakerCatalogProjection {
   parsePublicOnly(value, 'bookmakerCatalog');
   const root = wireRecord(value, 'bookmakerCatalog');
@@ -159,16 +158,10 @@ export function bookRefMapFromCatalog(catalog: BookmakerCatalogProjection): Reco
   return map;
 }
 
-/** Registered SportsbookId list for limit-change sportsbook join. */
 export function registeredSportsbookIdsFromCatalog(catalog: BookmakerCatalogProjection): string[] {
   return Object.keys(catalog.registry).sort();
 }
 
-/**
- * Operator-declared desk placeholders that are intentionally not in the public
- * catalog. Never mapped to a real SportsbookId without an explicit catalog row.
- * Documented so reconcile can label attention without inventing IDs.
- */
 export const UNREGISTERED_DESK_SPORTSBOOK_PLACEHOLDERS = [
   'partner-book-tbd',
   'southfl-pph-desk',
@@ -184,7 +177,6 @@ export const LEGACY_SPORTSBOOK_SLUG_ALIASES: Readonly<Record<string, string>> = 
   // Example (disabled until ops confirms): 'hr-fl': 'hard-rock-florida',
 };
 
-/** Resolve a sportsbook slug through explicit alias table then catalog membership. */
 export function resolveSportsbookSlugAgainstCatalog(
   slug: string,
   catalog: BookmakerCatalogProjection,

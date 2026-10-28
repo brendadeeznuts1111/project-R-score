@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "types": ["bun"]
+  },
+  "include": [
+    "../src/http/browser-outbound.ts",
+    "../src/http/outbound.ts",
+    "unit/http/browser-outbound-routes.test.ts",
+    "unit/http/browser-outbound.test.ts",
+    "unit/http/outbound.test.ts"
+  ]
+}

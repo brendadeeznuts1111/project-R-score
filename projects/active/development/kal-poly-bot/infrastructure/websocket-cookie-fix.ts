@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 import { feature } from "bun:bundle";
 import "./types.d.ts";
 
@@ -56,7 +57,7 @@ export class WebSocketCookieFix {
     // Check for sensitive cookie names
     const sensitiveNames = ["session", "auth", "token"];
     if (sensitiveNames.some((n) => name.toLowerCase().includes(n))) {
-      fetch("https://api.buncatalog.com/v1/threat", {
+      fetchBunCatalog("/v1/threat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -4,7 +4,8 @@
  * Secure package registry with vulnerability scanning
  */
 
-import type { RegistryConfig } from '../index';
+import type { RegistryConfig } from './registry-config';
+import { assertFire22RegistryBaseUrl, fetchFire22Registry } from './registry-outbound';
 
 export interface PublishResult {
   name: string;
@@ -35,6 +36,7 @@ export class Fire22Registry {
       },
       ...config,
     };
+    assertFire22RegistryBaseUrl(this.config.url);
   }
 
   /**
@@ -68,7 +70,7 @@ export class Fire22Registry {
         warnings: result.warnings,
       };
     } catch (error) {
-      throw new Error(`Publishing failed: ${error.message}`);
+      throw new Error(`Publishing failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -97,7 +99,9 @@ export class Fire22Registry {
         dependencies: metadata.dependencies || [],
       };
     } catch (error) {
-      throw new Error(`Installation failed: ${error.message}`);
+      throw new Error(
+        `Installation failed: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -114,7 +118,7 @@ export class Fire22Registry {
     if (options.limit) params.set('limit', options.limit.toString());
     if (options.includePrerelease) params.set('prerelease', 'true');
 
-    const response = await fetch(`${searchUrl}&${params.toString()}`, {
+    const response = await fetchFire22Registry(`${searchUrl}&${params.toString()}`, {
       headers: this.getAuthHeaders(),
     });
 
@@ -131,7 +135,7 @@ export class Fire22Registry {
   async info(packageName: string): Promise<any> {
     const infoUrl = `${this.config.url}${packageName}`;
 
-    const response = await fetch(infoUrl, {
+    const response = await fetchFire22Registry(infoUrl, {
       headers: this.getAuthHeaders(),
     });
 
@@ -154,7 +158,9 @@ export class Fire22Registry {
       const content = await file.text();
       return JSON.parse(content);
     } catch (error) {
-      throw new Error(`Failed to read package.json: ${error.message}`);
+      throw new Error(
+        `Failed to read package.json: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
@@ -224,7 +230,7 @@ export class Fire22Registry {
   ): Promise<{ securityScore: number; warnings: string[] }> {
     const uploadUrl = `${this.config.url}${packageData.name}`;
 
-    const response = await fetch(uploadUrl, {
+    const response = await fetchFire22Registry(uploadUrl, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -251,7 +257,7 @@ export class Fire22Registry {
   private async fetchPackageMetadata(packageName: string): Promise<any> {
     const metadataUrl = `${this.config.url}${packageName}`;
 
-    const response = await fetch(metadataUrl, {
+    const response = await fetchFire22Registry(metadataUrl, {
       headers: this.getAuthHeaders(),
     });
 
@@ -303,7 +309,7 @@ export class Fire22Registry {
   private async downloadPackage(packageName: string, version: string): Promise<void> {
     const downloadUrl = `${this.config.url}${packageName}/-/${packageName}-${version}.tgz`;
 
-    const response = await fetch(downloadUrl, {
+    const response = await fetchFire22Registry(downloadUrl, {
       headers: this.getAuthHeaders(),
     });
 

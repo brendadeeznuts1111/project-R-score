@@ -2,6 +2,8 @@
 // @bun v1.3.7+
 // Tier-1380 RSS Cache & Performance Analytics
 
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
+
 console.info("🚀 Tier-1380 RSS Cache & Performance Analytics\n");
 
 // ─── Cache Management ─────────────────────────────────
@@ -18,7 +20,7 @@ async function checkETag(url, savedETag = null) {
 	const startTime = Date.now();
 
 	try {
-		const response = await fetch(url, { headers });
+		const response = await fetchMatrixPublicResource(url, { headers });
 		const fetchTime = Date.now() - startTime;
 		const currentETag = response.headers.get("etag");
 		const status = response.status;
@@ -67,7 +69,7 @@ async function benchmarkFetchAndParse(url, iterations = 3) {
 		const startTime = Date.now();
 
 		try {
-			const response = await fetch(url);
+			const response = await fetchMatrixPublicResource(url);
 			const text = await response.text();
 
 			// Bun-compatible parsing (regex-based)
@@ -123,7 +125,7 @@ async function auditFeedSize(url) {
 	console.info("📏 Feed Size Audit:");
 
 	try {
-		const response = await fetch(url);
+		const response = await fetchMatrixPublicResource(url);
 		const text = await response.text();
 
 		// Extract items and descriptions using regex
@@ -205,7 +207,7 @@ async function demonstrateOneLiners() {
 	// 12. Simple ETag check
 	console.info("12. ETag Cache Validation:");
 	try {
-		const etagResult = await fetch("https://bun.com/rss.xml").then((r) => ({
+		const etagResult = await fetchMatrixPublicResource("https://bun.com/rss.xml").then((r) => ({
 			status: r.status,
 			etag: r.headers.get("etag"),
 		}));
@@ -221,7 +223,7 @@ async function demonstrateOneLiners() {
 	console.info("\n13. Performance Benchmark:");
 	try {
 		const start = Date.now();
-		await fetch("https://bun.com/rss.xml")
+		await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((text) => {
 				const items = (text.match(/<item/g) || []).length;
@@ -235,7 +237,7 @@ async function demonstrateOneLiners() {
 	// 14. Content size audit
 	console.info("\n14. Content Size Audit:");
 	try {
-		await fetch("https://bun.com/rss.xml")
+		await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((text) => {
 				const descMatches =

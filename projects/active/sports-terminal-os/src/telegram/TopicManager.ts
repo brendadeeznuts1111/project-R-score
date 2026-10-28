@@ -16,7 +16,7 @@
 
 import { Database } from "bun:sqlite";
 import { createLogger } from "@utils/logger";
-import { h2Fetch } from "@utils/h2-fetch";
+import { fetchTelegramBotApi } from "@utils/integration-outbound";
 
 const logger = createLogger("TopicManager");
 
@@ -283,8 +283,7 @@ export class TopicManager {
         return;
       }
 
-      const apiUrl = `https://api.telegram.org/bot${botToken}`;
-      const response = await h2Fetch(`${apiUrl}/createForumTopic`, {
+      const response = await fetchTelegramBotApi(botToken, "createForumTopic", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

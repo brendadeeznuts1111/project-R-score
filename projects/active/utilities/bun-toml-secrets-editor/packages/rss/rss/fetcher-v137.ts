@@ -1,5 +1,6 @@
 // src/fetcher-v137.ts - Leverages v1.3.7 fetch fixes
 // v1.3.7: Request cache and mode options now work correctly
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 export interface FetchOptions {
 	timeout?: number;
@@ -20,7 +21,7 @@ export interface FetchOptions {
  * - signal option stable under load
  */
 export async function fetchRSS(url: string, options: FetchOptions = {}) {
-	const response = await fetch(url, {
+  const response = await fetchTomlConfigured(url, {
 		headers: {
 			"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7)",
 			Accept: "application/rss+xml, application/atom+xml, */*",
@@ -53,7 +54,7 @@ export async function fetchRSSWithHTTP2(
 	options: FetchOptions = {},
 ) {
 	// v1.3.7: HTTP/2 optimizations for AWS ALB
-	const response = await fetch(url, {
+  const response = await fetchTomlConfigured(url, {
 		headers: {
 			"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7; HTTP/2)",
 			Accept: "application/rss+xml, application/atom+xml, */*",
@@ -76,7 +77,7 @@ export async function fetchWithProxyBypass(
 	options: FetchOptions = {},
 ) {
 	// v1.3.7: NO_PROXY environment variable is now properly respected
-	const response = await fetch(url, {
+  const response = await fetchTomlConfigured(url, {
 		headers: {
 			"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7; Proxy-Bypass)",
 			Accept: "application/rss+xml, application/atom+xml, */*",

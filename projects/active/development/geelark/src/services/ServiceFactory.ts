@@ -6,6 +6,10 @@ import {
   COMPILE_TIME_CONFIG,
   COMPILE_TIME_FEATURES,
 } from "../constants/features/compile-time.js";
+import {
+  fetchGeelarkServiceApi,
+  type BrowserOutboundOptions,
+} from "../http/browser-outbound.js";
 
 /**
  * Type for feature flag function
@@ -44,10 +48,12 @@ export class ServiceFactory {
    * @internal
    */
   private readonly featureFn: FeatureFn;
+  private readonly outboundOptions: BrowserOutboundOptions;
 
-  constructor(featureFn?: FeatureFn) {
+  constructor(featureFn?: FeatureFn, outboundOptions: BrowserOutboundOptions = {}) {
     // Default to real bun:bundle feature function
     this.featureFn = featureFn ?? realFeature;
+    this.outboundOptions = outboundOptions;
   }
 
   /**
@@ -57,6 +63,7 @@ export class ServiceFactory {
   createApiService() {
     // Capture feature function in closure for returned object methods
     const featureFn = this.featureFn;
+    const outboundOptions = this.outboundOptions;
 
     // Mock API only included in development builds
     if (featureFn("FEAT_MOCK_API")) {
@@ -93,20 +100,22 @@ export class ServiceFactory {
       async request(endpoint: string, options?: any): Promise<any> {
         // Real implementation with feature-based configuration
         const timeout = COMPILE_TIME_CONFIG.API.TIMEOUT_MS;
-        const retryAttempts = COMPILE_TIME_CONFIG.API.RETRY_ATTEMPTS;
-
         try {
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-          const response = await fetch(endpoint, {
-            ...options,
-            signal: controller.signal,
-            headers: {
-              "Content-Type": "application/json",
-              ...options?.headers,
+          const response = await fetchGeelarkServiceApi(
+            endpoint,
+            {
+              ...options,
+              signal: controller.signal,
+              headers: {
+                "Content-Type": "application/json",
+                ...options?.headers,
+              },
             },
-          });
+            outboundOptions,
+          );
 
           clearTimeout(timeoutId);
 
@@ -116,13 +125,6 @@ export class ServiceFactory {
 
           return await response.json();
         } catch (error) {
-          // Retry logic if enabled
-          if (featureFn("FEAT_RETRY_LOGIC") && retryAttempts > 0) {
-            console.info(
-              `🔄 Retrying API request (${retryAttempts} attempts remaining)`
-            );
-            return this.request(endpoint, options);
-          }
           throw error;
         }
       },
@@ -140,6 +142,7 @@ export class ServiceFactory {
    */
   createLoggingService() {
     const featureFn = this.featureFn;
+    const outboundOptions = this.outboundOptions;
 
     // Extended logging only included when feature is enabled
     if (featureFn("FEAT_EXTENDED_LOGGING")) {
@@ -176,10 +179,14 @@ export class ServiceFactory {
           // External logging integration
           if (featureFn("INTEGRATION_WEBHOOK")) {
             // Send to webhook service
-            fetch("/api/logs", {
-              method: "POST",
-              body: JSON.stringify(logEntry),
-            }).catch((err) => console.error("Failed to send log:", err));
+            fetchGeelarkServiceApi(
+              "/api/logs",
+              {
+                method: "POST",
+                body: JSON.stringify(logEntry),
+              },
+              outboundOptions,
+            ).catch((err) => console.error("Failed to send log:", err));
           }
         },
 
@@ -662,8 +669,11 @@ export class ServiceFactory {
  * const mockFeature = (flag: string) => flag === "FEAT_MOCK_API";
  * const factory = createServiceFactory(mockFeature);
  */
-export const createServiceFactory = (featureFn?: FeatureFn): ServiceFactory => {
-  return new ServiceFactory(featureFn);
+export const createServiceFactory = (
+  featureFn?: FeatureFn,
+  outboundOptions: BrowserOutboundOptions = {},
+): ServiceFactory => {
+  return new ServiceFactory(featureFn, outboundOptions);
 };
 
 /**

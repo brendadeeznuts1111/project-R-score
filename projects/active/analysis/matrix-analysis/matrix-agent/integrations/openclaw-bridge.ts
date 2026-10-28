@@ -16,6 +16,7 @@
 import { $ } from "bun";
 import { join } from "path";
 import { homedir } from "os";
+import { fetchMatrixLoopbackWrite } from "../../src/lib/matrix-outbound.ts";
 
 const OPENCLAW_DIR = join(homedir(), "openclaw");
 const OPENCLAW_DIST = join(OPENCLAW_DIR, "dist");
@@ -175,7 +176,7 @@ class OpenClawBridge {
     }
 
     try {
-      const response = await fetch(this.config.openclaw.acpEndpoint, {
+      const response = await fetchMatrixLoopbackWrite(this.config.openclaw.acpEndpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(message),

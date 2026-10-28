@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../core/security/surface-outbound.ts';
+
 /**
  * Crystal Clear Architecture API Integration
  * Connects Dashboard Worker to Backend Services
@@ -65,12 +67,14 @@ export class CrystalClearApiClient {
       headers,
     };
 
-    for (let attempt = 0; attempt < this.config.retries; attempt++) {
+    const method = (requestOptions.method || 'GET').toUpperCase();
+    const maxAttempts = method === 'GET' || method === 'HEAD' ? this.config.retries : 1;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
 
-        const response = await fetch(url, {
+        const response = await fetchSurfaceOutbound(url, {
           ...requestOptions,
           signal: controller.signal,
         });
@@ -83,7 +87,7 @@ export class CrystalClearApiClient {
 
         return await response.json();
       } catch (error) {
-        if (attempt === this.config.retries - 1) {
+        if (attempt === maxAttempts - 1) {
           throw error;
         }
         // Exponential backoff

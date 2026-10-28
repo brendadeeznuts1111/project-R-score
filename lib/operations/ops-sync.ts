@@ -1,7 +1,6 @@
 // @see https://bun.com/docs/runtime/sqlite#load-via-es-module-import — bun:sqlite
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 /**
- * Ops-sync — apply portal channel events (account_assigned / telegram_linked)
  * to the operations tree, with an R2 jsonl consumer and SQLite cursor.
  */
 import type { Database } from 'bun:sqlite';
@@ -20,7 +19,6 @@ import { onboardPartnerProfile } from './partner-onboarding.ts';
 const DEFAULT_TOPIC = 'ops-sync';
 const EVENTS_KEY = 'channels/ops-sync/events.jsonl';
 
-/** Shape compatible with scripts/lib/r2-bridge R2BridgeConfig. */
 export type OpsSyncR2Config = {
   endpoint: string;
   bucket: string;
@@ -60,7 +58,6 @@ function coerceEvent(event: OpsSyncEvent | Record<string, unknown>): OpsSyncEven
 }
 
 /**
- * Only apply when tenantId === 'factory'.
  * - account_assigned → syncProspectFromPortal (status prospect)
  * - telegram_linked → syncProspectFromPortal with telegramId when present
  * Return false for other tenants or unhandled types.
@@ -124,7 +121,6 @@ export function applyOpsSyncEvent(
   return false;
 }
 
-/** ops_sync_cursor: topic PRIMARY KEY, last_seq. Default topic 'ops-sync'. Empty → 0 */
 export function getSyncCursor(db: Database, topic: string = DEFAULT_TOPIC): number {
   const row = db
     .query('SELECT last_seq FROM ops_sync_cursor WHERE topic = $t')
@@ -142,7 +138,6 @@ export function setSyncCursor(db: Database, seq: number, topic: string = DEFAULT
 
 /**
  * Consume channels/ops-sync/events.jsonl from R2 since the stored cursor.
- * Best-effort: R2 read failure or no events → processed=0, lastSeq=getSyncCursor.
  */
 export async function processOpsSyncQueue(
   db: Database,

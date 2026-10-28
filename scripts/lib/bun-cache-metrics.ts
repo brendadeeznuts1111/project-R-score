@@ -3,7 +3,6 @@
 // @see https://bun.com/docs/runtime/child-process#blocking-api-bun-spawnsync — Bun.spawnSync
 // @see https://bun.com/docs/runtime/child-process — Bun.spawn
 // @see https://bun.com/docs/runtime/environment-variables — Bun.env
-import { bunSpawnArgs } from '../../lib/bun-executable.ts';
 import {
   applyBunInstallEnv,
   globalStoreLinksDir,
@@ -11,6 +10,9 @@ import {
 } from './bun-install-env.ts';
 import { formatBytes } from './format';
 import { joinPath } from './fs-bun';
+import { runGuardedLocalBunPm } from './guarded-bun-pm.ts';
+
+const ROOT = joinPath(import.meta.dir, '../..');
 
 export type BunCacheMetrics = {
   collectedAt: string;
@@ -66,10 +68,7 @@ export async function collectBunCacheMetrics(): Promise<BunCacheMetrics> {
   const linksEntries = linksDir && cacheDirExists ? countLinksEntries(linksDir) : 0;
 
   let bunPmCachePath: string | null = null;
-  const pmCache = Bun.spawnSync(bunSpawnArgs(['pm', 'cache']), {
-    stdout: 'pipe',
-    stderr: 'pipe',
-  });
+  const pmCache = runGuardedLocalBunPm(['pm', 'cache'], {}, ROOT);
   if (pmCache.exitCode === 0 && pmCache.stdout) {
     bunPmCachePath =
       new TextDecoder()
@@ -144,11 +143,20 @@ export function pruneAllowed(): boolean {
 
 /** Run `bun pm cache rm` (Bun 1.4 has no safe --dry-run; use mode=dry-run for metrics only). */
 export async function runCachePrune(): Promise<{ ok: boolean; output: string }> {
-  const proc = Bun.spawnSync(bunSpawnArgs(['pm', 'cache', 'rm']), {
-    stdout: 'pipe',
-    stderr: 'pipe',
-    env: applyBunInstallEnv() as Record<string, string>,
-  });
+  const installEnv = applyBunInstallEnv();
+  const proc = runGuardedLocalBunPm(
+    ['pm', 'cache', 'rm'],
+    {
+      ...(installEnv.HOME ? { HOME: installEnv.HOME } : {}),
+      ...(installEnv.BUN_INSTALL_CACHE_DIR
+        ? { BUN_INSTALL_CACHE_DIR: installEnv.BUN_INSTALL_CACHE_DIR }
+        : {}),
+      ...(installEnv.BUN_INSTALL_GLOBAL_STORE
+        ? { BUN_INSTALL_GLOBAL_STORE: installEnv.BUN_INSTALL_GLOBAL_STORE }
+        : {}),
+    },
+    ROOT
+  );
   const output = [proc.stdout, proc.stderr]
     .filter(Boolean)
     .map(chunk => new TextDecoder().decode(chunk as Uint8Array))

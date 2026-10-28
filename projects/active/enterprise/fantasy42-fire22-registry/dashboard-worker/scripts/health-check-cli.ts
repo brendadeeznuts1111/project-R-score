@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🩺 Fire22 Health Check CLI
  *
@@ -240,7 +242,7 @@ class HealthCheckCLI {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), this.options.timeout);
 
-      const response = await fetch(url, {
+      const response = await fetchKnownScriptOutbound(url, {
         signal: controller.signal,
         headers: {
           'User-Agent': 'Fire22-Health-Check-CLI/1.0.0',

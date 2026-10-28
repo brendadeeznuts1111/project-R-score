@@ -4,6 +4,10 @@
  */
 
 import { z } from "zod";
+import {
+  createFullStackBunOutboundAuthority,
+  fetchFullStackBunOutbound,
+} from '../security/outbound';
 
 // Workflow Status Enum
 export enum WorkflowStatus {
@@ -553,7 +557,19 @@ export class WorkflowEngineImpl implements WorkflowEngine {
     const headers = step.config.headers || {};
     const body = step.config.body ? JSON.stringify(step.config.body) : undefined;
 
-    const response = await fetch(url, {
+    if (!['GET', 'HEAD', 'POST', 'PUT'].includes(method)) {
+      throw new TypeError(`Webhook method ${method} is not owned`);
+    }
+    const authority = createFullStackBunOutboundAuthority({
+      kind: 'webhook',
+      name: 'workflow-webhook',
+      baseUrl: url,
+      exact: true,
+      methods: [method as 'GET' | 'HEAD' | 'POST' | 'PUT'],
+      credentialHeaders: ['authorization', 'x-api-key'],
+    });
+
+    const response = await fetchFullStackBunOutbound(authority, url, {
       method,
       headers: {
         'Content-Type': 'application/json',

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchSurfaceOutbound } from '../../../core/security/surface-outbound.ts';
+
 /**
  * 🔥 Fire22 API Client v3.0.9
  * Comprehensive client for the Fire22 sportsbook platform with SIMD acceleration
@@ -301,7 +303,7 @@ export class Fire22ApiClient {
 
       const startTime = performance.now();
 
-      const response = await fetch(url, {
+      const response = await fetchSurfaceOutbound(url, {
         method,
         headers: {
           Authorization: `Bearer ${this.config.token}`,

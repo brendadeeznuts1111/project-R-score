@@ -25,7 +25,11 @@ import {
   stripUrlFragment,
 } from '../lib/docs/blog-extract.ts';
 import { canonicalizeBunBlogUrl } from '../lib/docs/bun-blog-url.ts';
-import { parseRssChannelItems } from '../lib/docs/bun-rss.ts';
+import { parseRssChannelItems, type RssChannelItem } from '../lib/docs/bun-rss.ts';
+import {
+  parseRssChannelItemsUntrusted,
+  requireRSSXmlBoundaryValue,
+} from '../lib/rss/rss-xml-untrusted.ts';
 import { CANONICAL_SOURCES, bunBlog, bunDocs, hrefFromInit } from '../lib/docs/bun-site-url.ts';
 import { joinPath } from '../lib/path-bun';
 
@@ -569,15 +573,17 @@ function cleanSummary(html: string, max = 400): string {
   ).slice(0, max);
 }
 
+function releaseNotesFromRssItems(items: readonly RssChannelItem[], limit: number): ReleaseNote[] {
+  return items.slice(0, limit).map(item => ({
+    title: decodeHtmlEntities(item.title),
+    link: item.link,
+    date: item.pubDate,
+    summary: cleanSummary(item.description),
+  }));
+}
+
 export function parseRssItems(xml: string, limit = 50): ReleaseNote[] {
-  return parseRssChannelItems(xml)
-    .slice(0, limit)
-    .map(item => ({
-      title: decodeHtmlEntities(item.title),
-      link: item.link,
-      date: item.pubDate,
-      summary: cleanSummary(item.description),
-    }));
+  return releaseNotesFromRssItems(parseRssChannelItems(xml), limit);
 }
 
 const RSS_CACHE_MS = 300_000;
@@ -595,7 +601,12 @@ export async function fetchRssFeed(limit = 50): Promise<ReleaseNote[]> {
       Accept: 'application/rss+xml, application/xml, text/xml, */*',
     },
   });
-  const items = parseRssItems(await res.text(), 100);
+  const items = releaseNotesFromRssItems(
+    requireRSSXmlBoundaryValue(
+      await parseRssChannelItemsUntrusted(await res.text(), { deadlineMs: 2_000 })
+    ),
+    100
+  );
   rssCache = { at: now, items };
   return items.slice(0, limit);
 }

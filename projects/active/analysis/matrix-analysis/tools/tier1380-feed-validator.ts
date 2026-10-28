@@ -2,6 +2,8 @@
 // @bun v1.3.7+
 // Tier-1380 RSS/XML Feed Validation & Monitoring
 
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
+
 console.info("🔍 Tier-1380 Feed Validation Suite\n");
 
 // ─── Feed Validation Functions ───────────────────────
@@ -9,7 +11,7 @@ async function validateFeedXML(url) {
 	console.info(`📡 Validating: ${url}`);
 
 	try {
-		const response = await fetch(url);
+		const response = await fetchMatrixPublicResource(url);
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 		}
@@ -80,7 +82,7 @@ async function quickHealthChecks() {
 	// 1. Basic XML validity
 	console.info("1. XML Validity Check:");
 	try {
-		const xmlCheck = await fetch("https://bun.com/rss.xml")
+		const xmlCheck = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((t) => {
 				try {
@@ -98,7 +100,7 @@ async function quickHealthChecks() {
 	// 2. Parser error detection
 	console.info("\n2. Parser Error Detection:");
 	try {
-		const errorCheck = await fetch("https://bun.com/rss.xml")
+		const errorCheck = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((t) => {
 				const d = new DOMParser().parseFromString(t, "application/xml");
@@ -113,7 +115,7 @@ async function quickHealthChecks() {
 	// 3. Content-Type header check
 	console.info("\n3. Content-Type Header:");
 	try {
-		const contentType = await fetch("https://bun.com/rss.xml").then(
+		const contentType = await fetchMatrixPublicResource("https://bun.com/rss.xml").then(
 			(r) => r.headers.get("content-type") ?? "missing",
 		);
 		console.info(`   Result: ${contentType}`);
@@ -180,7 +182,7 @@ async function analyzePerformance() {
 		const start = Date.now();
 
 		try {
-			await fetch(url)
+			await fetchMatrixPublicResource(url)
 				.then((r) => r.text())
 				.then((t) => new DOMParser().parseFromString(t, "application/xml"));
 

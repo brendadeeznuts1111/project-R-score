@@ -7,6 +7,20 @@
 import { spawn } from "bun";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
+import {
+  createFullStackBunOutboundAuthority,
+  fetchFullStackBunOutbound,
+  type FullStackBunOutboundAuthority,
+} from '../src/security/outbound';
+
+const PINATA_AUTHORITY = createFullStackBunOutboundAuthority({
+  kind: 'ipfs-pinning',
+  name: 'pinata-pinning',
+  baseUrl: 'https://api.pinata.cloud/pinning/pinByHash',
+  exact: true,
+  methods: ['POST'],
+  credentialHeaders: ['authorization'],
+});
 
 interface IPFSConfig {
   gateway: string;
@@ -23,6 +37,8 @@ interface IPFSResult {
 
 class IPFSClient {
   private config: IPFSConfig;
+  private gatewayAuthority: FullStackBunOutboundAuthority;
+  private apiAuthority: FullStackBunOutboundAuthority;
 
   constructor(config: Partial<IPFSConfig> = {}) {
     this.config = {
@@ -30,6 +46,27 @@ class IPFSClient {
       api: config.api || 'https://api.ipfs.io/api/v0',
       timeout: config.timeout || 30000
     };
+    const gatewayUrl = new URL(this.config.gateway);
+    const apiUrl = new URL(this.config.api);
+    this.gatewayAuthority = createFullStackBunOutboundAuthority({
+      kind: 'ipfs-gateway',
+      name: 'ipfs-gateway',
+      baseUrl: gatewayUrl.toString(),
+      pathPrefix: gatewayUrl.pathname,
+      addressClass: gatewayUrl.hostname === 'localhost' || gatewayUrl.hostname.startsWith('127.')
+        ? 'loopback'
+        : 'public',
+    });
+    this.apiAuthority = createFullStackBunOutboundAuthority({
+      kind: 'ipfs-api',
+      name: 'ipfs-api',
+      baseUrl: `${apiUrl.toString().replace(/\/$/, '')}/add`,
+      exact: true,
+      methods: ['POST'],
+      addressClass: apiUrl.hostname === 'localhost' || apiUrl.hostname.startsWith('127.')
+        ? 'loopback'
+        : 'public',
+    });
   }
 
   // Add file to IPFS and get CID
@@ -89,7 +126,9 @@ class IPFSClient {
       const url = `${this.config.gateway}${cid}`;
 
       // Use fetch to download
-      const response = await fetch(url, { timeout: this.config.timeout });
+      const response = await fetchFullStackBunOutbound(this.gatewayAuthority, url, {
+        signal: AbortSignal.timeout(this.config.timeout),
+      });
 
       if (!response.ok) {
         return { success: false, error: `HTTP ${response.status}: ${response.statusText}` };
@@ -129,7 +168,7 @@ class IPFSClient {
       }
 
       // Fallback: Use pinning service
-      const pinResult = await fetch('https://api.pinata.cloud/pinning/pinByHash', {
+      const pinResult = await fetchFullStackBunOutbound(PINATA_AUTHORITY, 'https://api.pinata.cloud/pinning/pinByHash', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -194,10 +233,10 @@ class IPFSClient {
       const formData = new FormData();
       formData.append('file', new Blob([fileContent]), filePath);
 
-      const response = await fetch(`${this.config.api}/add`, {
+      const response = await fetchFullStackBunOutbound(this.apiAuthority, `${this.config.api}/add`, {
         method: 'POST',
         body: formData,
-        timeout: this.config.timeout
+        signal: AbortSignal.timeout(this.config.timeout)
       });
 
       if (response.ok) {

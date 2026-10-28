@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../core/security/surface-outbound.ts';
+
 /**
  * Enhanced API Security Template with Real-time Monitoring
  * Security policies, authentication, and access control with live threat detection
@@ -363,7 +365,7 @@ declare function configureThresholds(): void;
 async function runSecurityScan(): Promise<void> {
   try {
     console.info('🔍 Running enhanced security scan...');
-    const response = await fetch('/api/security/scan', {
+    const response = await fetchSurfaceOutbound('/api/security/scan', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     });
@@ -385,7 +387,7 @@ async function runSecurityScan(): Promise<void> {
 
 async function viewScanResults(): Promise<void> {
   try {
-    const response = await fetch('/api/security/results');
+    const response = await fetchSurfaceOutbound('/api/security/results');
     if (response.ok) {
       const results = await response.json();
       const formattedResults = JSON.stringify(results, null, 2);

@@ -469,13 +469,11 @@ describe("Component #135: Text-Processing", () => {
 
   test("escapes HTML correctly", () => {
     const escaped = textProcessing.escapeHTML("<script>alert('xss')</script>");
-    // The escaped HTML should contain the escaped entities
-    expect(escaped).toContain("<");
-    expect(escaped).toContain(">");
-    // Verify it's properly escaped (no raw < or > from the original script tags)
+    expect(escaped).toContain("&lt;script&gt;");
+    expect(escaped).toContain("&#039;xss&#039;");
     expect(escaped).not.toMatch(/<script>/);
-    // Also verify the actual escaped content
-    expect(escaped).toBe("<script>alert('xss')</script>");
+    expect(escaped).not.toContain("<");
+    expect(escaped).not.toContain(">");
   });
 });
 

@@ -1,5 +1,6 @@
 // bunmark-dashboard.tsx - COMPLETE 125W SPECTRUM LIVE
 import { serve, file } from "bun";
+import { fetchTomlConfigured } from "./src/http/configured-outbound.ts";
 
 const BENCHMARKS = {
   "🟢 Startup (hello.js)": { bun: ["5.2ms/3.8ms"], node: ["25.1ms/18.2ms"], deno: ["38.4ms/29.1ms"] },
@@ -54,7 +55,7 @@ serve({
 
 async function fetchBunReleases() {
   try {
-    const rss = await fetch("https://bun.com/rss.xml");
+    const rss = await fetchTomlConfigured("https://bun.com/rss.xml");
     const xml = await rss.text();
     // Parse top 3 releases (v1.3.7, 1.3.6, 1.3.5)
     return parseReleases(xml).slice(0, 3);

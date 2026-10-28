@@ -3,6 +3,8 @@
  * Centralized management for the unified hierarchy system
  */
 
+import { fetchSameOriginGet, fetchSameOriginPut } from '../security/browser-outbound.ts';
+
 import {
   UnifiedHierarchyNode,
   UniversalLevel,
@@ -60,7 +62,7 @@ export class HierarchyManager {
    */
   private async fetchHierarchyData(): Promise<void> {
     try {
-      const response = await fetch('/api/hierarchy/unified');
+      const response = await fetchSameOriginGet('/api/hierarchy/unified');
       if (!response.ok) throw new Error('Failed to fetch hierarchy data');
 
       const data = await response.json();
@@ -336,8 +338,7 @@ export class HierarchyManager {
    */
   private async saveNode(node: UnifiedHierarchyNode, auditInfo: any): Promise<void> {
     try {
-      const response = await fetch(`/api/hierarchy/unified/${node.id}`, {
-        method: 'PUT',
+      const response = await fetchSameOriginPut(`/api/hierarchy/unified/${node.id}`, {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ node, auditInfo }),
       });
@@ -385,7 +386,7 @@ export class HierarchyManager {
    * Migrate Fire22 agent hierarchy
    */
   private async migrateFire22Hierarchy(migration: HierarchyMigration): Promise<void> {
-    const response = await fetch('/api/agents/hierarchy');
+    const response = await fetchSameOriginGet('/api/agents/hierarchy');
     const agents = await response.json();
 
     for (const agent of agents) {

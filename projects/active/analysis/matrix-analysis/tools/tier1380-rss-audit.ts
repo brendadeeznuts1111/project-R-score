@@ -2,13 +2,15 @@
 // @bun v1.3.7+
 // Tier-1380 RSS Audit & Logging System (Bun Compatible)
 
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
+
 console.info("🔍 Tier-1380 RSS Audit & Logging System\n");
 
 // ─── Bun-Compatible RSS Parsing ───────────────────────
 // @ts-expect-error - Implicit any types for runtime compatibility
 async function parseRSSFeed(url) {
 	try {
-		const response = await fetch(url);
+		const response = await fetchMatrixPublicResource(url);
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 		}
@@ -185,7 +187,7 @@ async function demonstrateOneLiners() {
 	// 15. Title width audit (Bun version)
 	console.info("15. RSS Title Width Audit:");
 	try {
-		const auditResult = await fetch("https://bun.com/rss.xml")
+		const auditResult = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((text) => {
 				const titleMatch = text.match(/<item[^>]*>[\s\S]*?<title[^>]*>([^<]+)<\/title>/);
@@ -205,7 +207,7 @@ async function demonstrateOneLiners() {
 	// 16. Audit logging (Bun version)
 	console.info("\n16. RSS Audit Logging:");
 	try {
-		const logResult = await fetch("https://bun.com/rss.xml")
+		const logResult = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then(async (text) => {
 				const titleMatch = text.match(/<item[^>]*>[\s\S]*?<title[^>]*>([^<]+)<\/title>/);
@@ -226,7 +228,7 @@ async function demonstrateOneLiners() {
 	// 17. JSON Lines export (Bun version)
 	console.info("\n17. RSS → JSON Lines Export:");
 	try {
-		const jsonExport = await fetch("https://bun.com/rss.xml")
+		const jsonExport = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((text) => {
 				const itemMatches = text.match(/<item[^>]*>[\s\S]*?<\/item>/g) || [];

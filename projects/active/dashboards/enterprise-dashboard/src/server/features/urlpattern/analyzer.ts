@@ -4,6 +4,7 @@
 import { patterns as routerPatterns, routeGroups } from "../../router";
 import { logger } from "./logger";
 import { ANALYZER_CONFIG } from "./constants";
+import { fetchEnterpriseDashboardOutbound } from "../../security/outbound.ts";
 import type {
   PatternAnalysis,
   BunURLPatternMetrics,
@@ -554,7 +555,7 @@ export class URLPatternUltimateAnalyzer {
       const requests = [];
       for (let i = 0; i < ANALYZER_CONFIG.AGENT_TEST_REQUESTS; i++) {
         requests.push(
-          fetch('http://httpbin.org/get', {
+          fetchEnterpriseDashboardOutbound('urlpattern-analysis', 'https://httpbin.org/get', {
             keepalive: true
           }).catch((error) => {
             keepAliveIssues.push(`Request ${i + 1} failed: ${error instanceof Error ? error.message : String(error)}`);
@@ -834,7 +835,7 @@ export class URLPatternUltimateAnalyzer {
       
       for (let i = 0; i < ANALYZER_CONFIG.AGENT_COMPREHENSIVE_REQUESTS; i++) {
         promises.push(
-          fetch('http://httpbin.org/delay/0.1', { 
+          fetchEnterpriseDashboardOutbound('urlpattern-analysis', 'https://httpbin.org/delay/0.1', {
             keepalive: true 
           }).catch((error) => {
             results.recommendations.push(`Agent request ${i + 1} failed: ${error instanceof Error ? error.message : String(error)}`);

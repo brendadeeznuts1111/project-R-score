@@ -1,3 +1,5 @@
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../../runtime-outbound.ts";
+
 /**
  * Component #12: Threat Intelligence Service
  *
@@ -139,7 +141,14 @@ export class ThreatIntelligenceService {
     if (!this.config.serviceUrl) return 0.1;
 
     try {
-      const response = await fetch(`${this.config.serviceUrl}/ip/${ip}`, {
+      const target = new URL(this.config.serviceUrl);
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-threat-intelligence",
+        baseUrl: target.origin,
+        pathPrefix: `${target.pathname.replace(/\/$/, "")}/ip/`,
+        credentialHeaders: ["authorization"],
+      });
+      const response = await fetchKalPolyOutbound(authority, `${this.config.serviceUrl}/ip/${ip}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${this.config.apiKey}`,

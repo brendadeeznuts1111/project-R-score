@@ -12,6 +12,7 @@
  */
 
 import { existsSync } from "fs";
+import { fetchKalPolyTelegramSendMessage } from "../outbound-client.ts";
 
 // =============================================================================
 // CONSTANTS & CONFIG
@@ -23,7 +24,6 @@ const CONFIG = {
   CONTROL_PANEL_PORT: 3000,
   TELEGRAM_MESSAGE_LIMIT: 4096,
   METRICS_UPDATE_INTERVAL_MS: 300000, // 5 minutes
-  TELEGRAM_API_BASE_URL: "https://api.telegram.org/bot",
 } as const;
 
 // =============================================================================
@@ -148,8 +148,6 @@ class TelegramNotificationService {
     }
 
     const messageThreadId = this.credentials.topicMapping[category] || 0;
-    const apiEndpoint = `${CONFIG.TELEGRAM_API_BASE_URL}${this.credentials.botToken}/sendMessage`;
-
     const requestParams = new URLSearchParams({
       chat_id: this.credentials.chatId,
       text: content.substring(0, CONFIG.TELEGRAM_MESSAGE_LIMIT),
@@ -159,7 +157,7 @@ class TelegramNotificationService {
     });
 
     try {
-      const response = await fetch(apiEndpoint, {
+      const response = await fetchKalPolyTelegramSendMessage(this.credentials.botToken, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: requestParams,

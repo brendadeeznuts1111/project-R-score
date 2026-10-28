@@ -1,3 +1,5 @@
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from '../../runtime-outbound.ts';
+
 /**
  * REDACTED - COMPLIANCE NOTICE
  *
@@ -75,8 +77,15 @@ export class ResponsibleGamblingEngine {
   private static async checkSelfExclusion(userId: string): Promise<RGCheck> {
     try {
       // Query self-exclusion database (example using Bun's native fetch)
-      const response = await fetch(
-        `https://self-exclusion-registry.example.com/v1/check/${userId}`,
+      const authority = createKalPolyOutboundAuthority({
+        name: 'kal-poly-self-exclusion',
+        baseUrl: 'https://self-exclusion-registry.example.com',
+        pathPrefix: '/v1/check/',
+        credentialHeaders: ['authorization', 'x-license-number'],
+      });
+      const response = await fetchKalPolyOutbound(
+        authority,
+        `https://self-exclusion-registry.example.com/v1/check/${encodeURIComponent(userId)}`,
         {
           headers: {
             Authorization: `Bearer ${process.env.SELF_EXCLUSION_API_KEY}`,
@@ -1214,7 +1223,14 @@ export async function logComplianceEvent(event: ComplianceEvent) {
   );
 
   // Also send to centralized compliance system
-  await fetch('https://compliance-registry.example.com/v1/audit', {
+  const authority = createKalPolyOutboundAuthority({
+    name: 'kal-poly-compliance-audit',
+    baseUrl: 'https://compliance-registry.example.com',
+    pathPrefix: '/v1/audit',
+    methods: ['POST'],
+    credentialHeaders: ['x-license-number'],
+  });
+  await fetchKalPolyOutbound(authority, 'https://compliance-registry.example.com/v1/audit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -1245,7 +1261,14 @@ export async function logComplianceEvent(event: ComplianceEvent) {
     JSON.stringify(logEntry, null, 2)
   );
 
-  await fetch('https://compliance-registry.example.com/v1/audit', {
+  const authority = createKalPolyOutboundAuthority({
+    name: 'kal-poly-compliance-audit',
+    baseUrl: 'https://compliance-registry.example.com',
+    pathPrefix: '/v1/audit',
+    methods: ['POST'],
+    credentialHeaders: ['x-license-number'],
+  });
+  await fetchKalPolyOutbound(authority, 'https://compliance-registry.example.com/v1/audit', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

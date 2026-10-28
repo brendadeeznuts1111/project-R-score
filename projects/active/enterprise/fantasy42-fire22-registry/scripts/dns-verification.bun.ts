@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchFinalDeployment } from '../src/security/final-outbound.ts';
 /**
  * Fantasy42-Fire22 DNS Verification Suite
  * Comprehensive DNS record verification and health checking
@@ -181,7 +183,7 @@ class DNSVerifier {
     for (const url of subdomains) {
       try {
         console.info(`🔗 Testing ${url}...`);
-        const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+        const response = await fetchFinalDeployment(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
 
         if (response.ok) {
           console.info(`   ✅ ${url} - CONNECTED (${response.status})`);

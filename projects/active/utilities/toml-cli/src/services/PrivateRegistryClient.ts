@@ -5,6 +5,7 @@
 
 import { parseCookies, getSetCookie } from 'bun:cookie';
 import type { ScopeContext } from '../config/scope.config';
+import { fetchTomlRegistry } from '../../integrations/outbound-client';
 
 export interface RegistryConfig {
   registry: string;
@@ -180,7 +181,7 @@ export class PrivateRegistryClient {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     try {
-      const response = await fetch(fetchUrl, {
+      const response = await fetchTomlRegistry(fetchUrl, config.registry, {
         method: 'GET',
         headers,
         signal: controller.signal,
@@ -279,9 +280,8 @@ export class PrivateRegistryClient {
     if (!config) return false;
 
     try {
-      const response = await fetch(config.registry, {
+      const response = await fetchTomlRegistry(config.registry, config.registry, {
         method: 'HEAD',
-        timeout: 5000,
       });
       return response.ok;
     } catch {

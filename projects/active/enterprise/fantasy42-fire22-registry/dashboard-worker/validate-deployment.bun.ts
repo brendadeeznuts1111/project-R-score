@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchSurfaceOutbound } from './core/security/surface-outbound.ts';
+
 /**
  * 🚀 Pre-Deployment Validation Script
  * Comprehensive validation before any deployment to ensure 100% success rate
@@ -424,14 +426,14 @@ class DeploymentValidator {
   private async checkSecurity(): Promise<boolean> {
     try {
       // Test health endpoint and error handling
-      const response = await fetch('https://dashboard-worker.nolarose1968-806.workers.dev/health');
+      const response = await fetchSurfaceOutbound('https://dashboard-worker.nolarose1968-806.workers.dev/health');
 
       if (!response.ok) {
         throw new Error('Health endpoint not accessible');
       }
 
       // Test error handling with non-existent endpoint
-      const errorResponse = await fetch(
+      const errorResponse = await fetchSurfaceOutbound(
         'https://dashboard-worker.nolarose1968-806.workers.dev/nonexistent'
       );
       const errorData = await errorResponse.json();
@@ -496,7 +498,7 @@ class DeploymentValidator {
   private async checkIntegration(): Promise<boolean> {
     try {
       // Test Fire22 integration - use agent management API as integration test
-      const response = await fetch(
+      const response = await fetchSurfaceOutbound(
         'https://dashboard-worker.nolarose1968-806.workers.dev/api/agents/test'
       );
 

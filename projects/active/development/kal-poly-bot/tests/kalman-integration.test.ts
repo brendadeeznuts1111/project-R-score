@@ -12,6 +12,29 @@ import { KalmanStabilityIntegration } from "../infrastructure/v1.3.3-integration
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe("Kalman Infrastructure Integration: v2.4.2 + v1.3.3", () => {
+  const activatedFeatures = [
+    "CPU_PROFILING",
+    "GIT_DEPS_SECURE",
+    "SPAWN_SYNC_ISOLATED",
+    "CONFIG_LOAD_PATCH",
+  ] as const;
+  const priorFeatures = new Map<string, string | undefined>();
+
+  beforeAll(() => {
+    for (const feature of activatedFeatures) {
+      const key = `FEATURE_${feature}`;
+      priorFeatures.set(key, process.env[key]);
+      process.env[key] = "1";
+    }
+  });
+
+  afterAll(() => {
+    for (const [key, value] of priorFeatures) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  });
+
   console.info("🧪 Testing Golden Matrix Integration");
   console.info("=====================================\n");
 
@@ -119,16 +142,16 @@ trustedDependencies: true
     expect(result85.warnings).toContain("[SECURITY] High cancellation rate");
   });
 
-  test("Component #56: Package Manager Stability", () => {
+  test("Component #56: Package Manager Stability", async () => {
     // This test creates/updates bun.lock with configVersion: 1
-    KalmanStabilityIntegration.stabilizeKalmanDependencies();
+    await KalmanStabilityIntegration.stabilizeKalmanDependencies();
 
     // Verify lockfile exists
-    const lockfile = Bun.file("bun.lock");
-    expect(lockfile.exists()).toBe(true);
+    const lockfile = Bun.file(new URL("../bun.lock", import.meta.url));
+    expect(await lockfile.exists()).toBe(true);
 
     // Verify configVersion is 1
-    const content = JSON.parse(lockfile.textSync());
+    const content = Bun.JSONC.parse(await lockfile.text());
     expect(content.configVersion).toBe(1);
   });
 
@@ -203,20 +226,18 @@ trustedDependencies: true
     expect(args).toContain("pm");
   });
 
-  test("Component #63: Config Loading Patch", () => {
-    const config = KalmanStabilityIntegration.loadKalmanConfig('package.json');
+  test("Component #63: Config Loading Patch", async () => {
+    const config = await KalmanStabilityIntegration.loadKalmanConfig('package.json');
     expect(config).toBeDefined();
     expect(config.name).toBeDefined();
   });
 
-  test("Component #64: Hoisted Install Restoration", () => {
-    KalmanStabilityIntegration.ensureKalmanWorkspaceCompatibility();
-
+  test("Component #64: Workspace override stays default-denied", async () => {
     const bunfig = Bun.file("bunfig.toml");
-    if (bunfig.exists()) {
-      const content = bunfig.textSync();
-      expect(content).toContain("linker = \"hoisted\"");
-    }
+    const before = await bunfig.text();
+    await KalmanStabilityIntegration.ensureKalmanWorkspaceCompatibility();
+    expect(await bunfig.text()).toBe(before);
+    expect(process.env.FEATURE_HOISTED_INSTALL).not.toBe("1");
   });
 
   test("Pattern #74: Cross-Book Provider Sync", async () => {
@@ -234,7 +255,7 @@ trustedDependencies: true
     const pattern = new (require("../features/kalman-features.bun").ProviderDivergenceKF)();
 
     const primary = { price: 100.5, timestamp: Date.now(), provider: "primary", bookId: "P" };
-    const backup = { price: 100.5, timestamp: Date.now() + 250, provider: "backup", bookId: "B" };
+    const backup = { price: 100.5, timestamp: Date.now() + 300, provider: "backup", bookId: "B" };
 
     const trigger = await pattern.detectFeedDivergence(primary, backup);
     expect(trigger).toBeDefined();

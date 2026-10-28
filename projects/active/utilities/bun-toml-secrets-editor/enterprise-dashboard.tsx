@@ -1,5 +1,9 @@
 // enterprise-dashboard.tsx - 🏢 FULLY PROXIED PRODUCTION DASHBOARD
 import { serve } from "bun";
+import {
+  fetchTomlConfigured,
+  fetchTomlLoopback,
+} from "./src/http/configured-outbound.ts";
 
 // 🚀 BUN FETCH SUPERPOWERS
 const FETCH_SUPERPOWERS = {
@@ -62,7 +66,7 @@ serve({
       const timeoutId = setTimeout(() => controller.abort(), 5000);
       
       try {
-        const response = await fetch(target, {
+        const response = await fetchTomlConfigured(target, {
           // 🔥 ALL FEATURES ENABLED
           signal: controller.signal,
           proxy: process.env.HTTPS_PROXY,
@@ -107,7 +111,10 @@ serve({
     const proxyRequest = async (targetUrl: string, proxyUrl?: string) => {
       try {
         // Bun auto-respects $HTTPS_PROXY - no manual proxy needed!
-        const response = await fetch(targetUrl, {
+        const outboundFetch = targetUrl.startsWith("http://localhost:")
+          ? fetchTomlLoopback
+          : fetchTomlConfigured;
+        const response = await outboundFetch(targetUrl, {
           // proxy: proxyUrl || process.env.HTTPS_PROXY || undefined, // Bun handles this automatically
           headers: {
             "User-Agent": "Bunmark-Enterprise/1.3.7",

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+import { fetchFinalServer } from '../security/final-outbound.ts';
+
 /**
  * 📦 Advanced Version Management System
  *
@@ -423,7 +425,7 @@ export class VersionManager extends EventEmitter {
     try {
       console.info('🔍 Checking for updates...');
 
-      const response = await fetch(this.updateCheckUrl, {
+      const response = await fetchFinalServer(this.updateCheckUrl, {
         headers: {
           'X-Current-Version': this.currentVersion.version,
           'X-Environment': this.environment,
@@ -462,7 +464,7 @@ export class VersionManager extends EventEmitter {
     try {
       console.info(`📥 Downloading update to version ${version}...`);
 
-      const response = await fetch(downloadUrl);
+      const response = await fetchFinalServer(downloadUrl);
       if (!response.ok) {
         throw new Error(`Download failed: ${response.status}`);
       }

@@ -1,12 +1,11 @@
 // src/server-simple.ts - Working RSS Optimizer with v1.3.7 features
+import { XMLParser } from "fast-xml-parser";
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
-function parseFeedXml(xml: string) {
-	return Bun.XML.parse(xml, {
-		ignoreAttributes: false,
-		parseAttributeValue: true,
-		attributeNamePrefix: "@",
-	});
-}
+const parser = new XMLParser({
+	ignoreAttributes: false,
+	parseAttributeValue: true,
+});
 
 Bun.serve({
 	port: 3000,
@@ -24,7 +23,7 @@ Bun.serve({
 				// v1.3.7: Headers preserve casing + preconnect optimization
 				fetch.preconnect(new URL(feedUrl).origin, { dns: true, tcp: true });
 
-				const response = await fetch(feedUrl, {
+        const response = await fetchTomlConfigured(feedUrl, {
 					headers: {
 						"User-Agent": "RSS-Optimizer/1.0 (Bun/1.3.7)",
 						Accept: "application/rss+xml, application/atom+xml, */*",
@@ -35,7 +34,7 @@ Bun.serve({
 				const xml = await response.text();
 				const parseStart = performance.now();
 
-				const feed = parseFeedXml(xml);
+				const feed = parser.parse(xml);
 				const fetchTime = performance.now() - startTime;
 				const parseTime = performance.now() - parseStart;
 
@@ -98,9 +97,9 @@ Bun Version: ${Bun.version}
 				url.searchParams.get("url") || "https://news.ycombinator.com/rss";
 
 			try {
-				const response = await fetch(feedUrl);
+        const response = await fetchTomlConfigured(feedUrl);
 				const xml = await response.text();
-				const feed = parseFeedXml(xml);
+				const feed = parser.parse(xml);
 
 				const title =
 					feed.rss?.channel?.title || feed.feed?.title || "Untitled";

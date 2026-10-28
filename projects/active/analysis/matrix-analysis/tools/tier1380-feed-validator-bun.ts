@@ -2,6 +2,8 @@
 // @bun v1.3.7+
 // Tier-1380 RSS/XML Feed Validation (Bun Compatible)
 
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
+
 console.info("🔍 Tier-1380 Feed Validation Suite (Bun Compatible)\n");
 
 // ─── Bun-Compatible Feed Validation ───────────────────
@@ -10,7 +12,7 @@ async function validateFeedXML(url) {
 	console.info(`📡 Validating: ${url}`);
 
 	try {
-		const response = await fetch(url);
+		const response = await fetchMatrixPublicResource(url);
 		if (!response.ok) {
 			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
 		}
@@ -104,7 +106,7 @@ async function quickHealthChecks() {
 	// 1. Basic feed structure check
 	console.info("1. Feed Structure Check:");
 	try {
-		const structureCheck = await fetch("https://bun.com/rss.xml")
+		const structureCheck = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => ({
 				contentType: r.headers.get("content-type") ?? "missing",
 				text: r.text(),
@@ -129,7 +131,7 @@ async function quickHealthChecks() {
 	// 2. Content-Type validation
 	console.info("\n2. Content-Type Validation:");
 	try {
-		const contentType = await fetch("https://bun.com/rss.xml").then(
+		const contentType = await fetchMatrixPublicResource("https://bun.com/rss.xml").then(
 			(r) => r.headers.get("content-type") ?? "missing",
 		);
 		const isValid = contentType.includes("xml") || contentType.includes("rss");
@@ -144,7 +146,7 @@ async function quickHealthChecks() {
 	// 3. Feed size and basic metrics
 	console.info("\n3. Feed Metrics:");
 	try {
-		const metrics = await fetch("https://bun.com/rss.xml")
+		const metrics = await fetchMatrixPublicResource("https://bun.com/rss.xml")
 			.then((r) => r.text())
 			.then((text) => ({
 				size: text.length,
@@ -232,7 +234,7 @@ async function analyzePerformance() {
 		const start = Date.now();
 
 		try {
-			await fetch(url)
+			await fetchMatrixPublicResource(url)
 				.then((r) => r.text())
 				.then((text) => {
 					// Basic validation

@@ -114,6 +114,14 @@ export class YAML12StrictParser {
   }
 
   static parseConfig(yamlContent: string): Record<string, unknown> {
+    if (/^\s*[\w.-]+\s*:/m.test(yamlContent)) {
+      const parsed = Bun.YAML.parse(yamlContent);
+      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+        return Object.fromEntries(Object.entries(parsed));
+      }
+      throw new TypeError("YAML configuration must contain a mapping");
+    }
+
     if (!feature("YAML12_STRICT")) {
       const parsed = Bun.YAML.parse(yamlContent);
       if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
@@ -126,11 +134,16 @@ export class YAML12StrictParser {
     return this.parseYAML12StrictImplementation(yamlContent);
   }
 
+  static parseYAML12Strict(yamlContent: string): Record<string, unknown> {
+    return this.parseYAML12StrictImplementation(yamlContent);
+  }
+
   private static parseYAML12StrictImplementation(
     yamlContent: string
   ): Record<string, unknown> {
     const config: Record<string, unknown> = {};
     const lines = yamlContent.split("\n");
+    let currentSection: string | undefined;
 
     for (const line of lines) {
       const trimmed = line.trim();
@@ -143,7 +156,11 @@ export class YAML12StrictParser {
       if (keyValueMatch) {
         const [, key, rawValue] = keyValueMatch;
         const value = this.parseValue(rawValue.trim());
-        this.setNestedValue(config, key, value);
+        this.setNestedValue(
+          config,
+          currentSection ? `${currentSection}.${key}` : key,
+          value
+        );
         continue;
       }
 
@@ -161,8 +178,8 @@ export class YAML12StrictParser {
       // Handle section headers
       const sectionMatch = trimmed.match(/^\[([^\]]+)\]$/);
       if (sectionMatch) {
-        const sectionName = sectionMatch[1];
-        config[sectionName] = config[sectionName] || {};
+        currentSection = sectionMatch[1];
+        this.setNestedValue(config, currentSection, {});
         continue;
       }
     }
@@ -190,6 +207,13 @@ export class YAML12StrictParser {
   }
 
   private static parseValue(value: string): any {
+    if (value.startsWith("[") && value.endsWith("]")) {
+      const contents = value.slice(1, -1).trim();
+      return contents
+        ? contents.split(",").map((entry) => this.parseValue(entry.trim()))
+        : [];
+    }
+
     // Remove quotes if present
     const unquoted = value.replace(/^["'](.+)["']$/, "$1");
 
@@ -214,7 +238,7 @@ export class YAML12StrictParser {
   }
 
   static parseBasicYAML(yamlContent: string): Record<string, unknown> {
-  // Basic parser retained for the strict migration helpers below.
+    // Basic parser retained for the strict migration helpers below.
     const config: Record<string, any> = {};
     const lines = yamlContent.split("\n");
 
@@ -373,19 +397,21 @@ enableFeature = no
 
 // Zero-cost exports
 export const parseConfig = feature("YAML12_STRICT")
-  ? YAML12StrictParser.parseYAML12Strict
+  ? (content: string) => YAML12StrictParser.parseYAML12Strict(content)
   : (content: string) => YAML12StrictParser.parseBasicYAML(content);
 
 export const parseBoolean = feature("YAML_BOOLEAN_STRICT")
-  ? YAML12StrictParser.parseBoolean
+  ? (value: string) => YAML12StrictParser.parseBoolean(value)
   : (value: string) => YAML12StrictParser.legacyParseBoolean(value);
 
-export const {
-  validateYAMLContent,
-  migrateToYAML12,
-  benchmark,
-  demonstrateSecurity,
-} = YAML12StrictParser;
+export const validateYAMLContent = (content: string) =>
+  YAML12StrictParser.validateYAMLContent(content);
+export const migrateToYAML12 = (content: string) =>
+  YAML12StrictParser.migrateToYAML12(content);
+export const benchmark = (content: string, iterations?: number) =>
+  YAML12StrictParser.benchmark(content, iterations);
+export const demonstrateSecurity = () =>
+  YAML12StrictParser.demonstrateSecurity();
 
 // Demonstration function
 export function demonstrateYAML12Parser(): void {

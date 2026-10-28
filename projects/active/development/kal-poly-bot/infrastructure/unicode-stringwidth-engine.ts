@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/unicode-stringwidth-engine.ts
 import { feature } from "bun:bundle";
 
@@ -136,7 +137,7 @@ export class UnicodeStringWidthEngine {
   private static logExcessiveWidth(text: string, width: number): void {
     if (!feature("THREAT_INTEL")) return;
 
-    fetch("https://api.buncatalog.com/v1/threat", {
+    fetchBunCatalog("/v1/threat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -47,16 +47,7 @@ export interface Vulnerability {
   references: string[];
 }
 
-export interface RegistryConfig {
-  url: string;
-  token?: string;
-  scopes: string[];
-  security: {
-    scanning: boolean;
-    audit: boolean;
-    strict: boolean;
-  };
-}
+export type { RegistryConfig } from './registry/registry-config';
 
 export interface BunxConfig {
   enabled: boolean;

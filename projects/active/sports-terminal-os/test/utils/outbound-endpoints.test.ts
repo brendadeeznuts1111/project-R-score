@@ -45,7 +45,8 @@ describe('prediction provider outbound endpoints', () => {
       'kalshi',
       'https://api.elections.kalshi.com/trade-api/v2/markets',
       { headers: { Authorization: 'Bearer hidden' } },
-      fetcher
+      fetcher,
+      { environment: {}, resolver: async () => [{ address: '1.1.1.1', family: 4, ttl: 30, source: 'bun' }] }
     );
     expect(response.status).toBe(200);
     expect(observedUrl).toContain('/trade-api/v2/markets');

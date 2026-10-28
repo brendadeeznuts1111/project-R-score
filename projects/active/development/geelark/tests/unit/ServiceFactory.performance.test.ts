@@ -1,8 +1,18 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
 import { createServiceFactory, type FeatureFn } from "../../src/services/ServiceFactory";
 
+const fastFetch = mock(() =>
+  Promise.resolve(Response.json({ success: true, data: "test" })),
+);
+const createPerformanceFactory = (featureFn?: FeatureFn) =>
+  createServiceFactory(featureFn, {
+    baseOrigin: "https://geelark.test",
+    fetcher: fastFetch,
+  });
+
 beforeEach(() => {
-  console.log = mock(() => {}); // Suppress factory logs during tests
+  fastFetch.mockClear();
+  console.info = mock(() => {});
 });
 
 describe("ServiceFactory - Performance Benchmarks", () => {
@@ -17,7 +27,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
       phoneManager: [],
     };
 
-    const factory = createServiceFactory();
+    const factory = createPerformanceFactory();
 
     // Benchmark API service creation
     for (let i = 0; i < iterations; i++) {
@@ -88,7 +98,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
 
   test("feature flag resolution performance", () => {
     const iterations = 10000;
-    const factory = createServiceFactory();
+    const factory = createPerformanceFactory();
 
     // Create all services to test feature flag resolution
     for (let i = 0; i < iterations; i++) {
@@ -113,7 +123,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
     const iterations = 1000;
     const services: any[] = [];
 
-    const factory = createServiceFactory();
+    const factory = createPerformanceFactory();
 
     // Create many services to test memory usage
     for (let i = 0; i < iterations; i++) {
@@ -132,7 +142,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
     const iterations = 100;
     const promises: Promise<any>[] = [];
 
-    const factory = createServiceFactory();
+    const factory = createPerformanceFactory();
 
     // Create services concurrently
     for (let i = 0; i < iterations; i++) {
@@ -147,8 +157,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
 
   test("service method execution performance", async () => {
     const iterations = 100;
-    const mockFeature: FeatureFn = (flag) => flag === "FEAT_MOCK_API";
-    const factory = createServiceFactory(mockFeature);
+    const factory = createPerformanceFactory(() => false);
 
     const apiService = factory.createApiService();
     const loggingService = factory.createLoggingService();
@@ -159,7 +168,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
 
     for (let i = 0; i < iterations; i++) {
       // Call various service methods (using mock API)
-      await apiService.request("/test");
+      await apiService.request("/api/health");
       loggingService.log("test message");
       monitoringService.trackMetric("test", 100);
       cacheService.set("key", "value");
@@ -196,7 +205,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
       const start = performance.now();
 
       const mockFeature: FeatureFn = (flag: string) => mockFeatures[flag] || false;
-      const factory = createServiceFactory(mockFeature);
+      const factory = createPerformanceFactory(mockFeature);
 
       // Create services with different feature combinations
       factory.createApiService();
@@ -213,7 +222,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
 
   test("bundle size impact simulation", () => {
     const allFeaturesDisabled: FeatureFn = () => false;
-    const minimalFactory = createServiceFactory(allFeaturesDisabled);
+    const minimalFactory = createPerformanceFactory(allFeaturesDisabled);
 
     const minimalApi = minimalFactory.createApiService();
     const minimalLogging = minimalFactory.createLoggingService();
@@ -226,7 +235,7 @@ describe("ServiceFactory - Performance Benchmarks", () => {
 
     // Create a factory with all features enabled
     const allFeaturesEnabled: FeatureFn = () => true;
-    const fullFactory = createServiceFactory(allFeaturesEnabled);
+    const fullFactory = createPerformanceFactory(allFeaturesEnabled);
 
     const fullLogging = fullFactory.createLoggingService();
     const fullMonitoring = fullFactory.createMonitoringService();

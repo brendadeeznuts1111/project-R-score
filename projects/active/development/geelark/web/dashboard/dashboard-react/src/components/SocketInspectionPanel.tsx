@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Network, Globe, Activity, AlertTriangle, TrendingUp, Search, Database } from "lucide-react";
+import { fetchBrowserSameOrigin } from "../../../../../src/http/browser-outbound";
 
 interface DNSQuery {
   id?: number;
@@ -89,10 +90,10 @@ export const SocketInspectionPanel: React.FC = () => {
       setLoading(true);
 
       const [statsRes, dnsRes, tcpRes, suspiciousRes] = await Promise.all([
-        fetch(`${API_BASE}/stats`),
-        fetch(`${API_BASE}/dns/patterns`),
-        fetch(`${API_BASE}/tcp/patterns`),
-        fetch(`${API_BASE}/dns/suspicious`),
+        fetchBrowserSameOrigin(`${API_BASE}/stats`),
+        fetchBrowserSameOrigin(`${API_BASE}/dns/patterns`),
+        fetchBrowserSameOrigin(`${API_BASE}/tcp/patterns`),
+        fetchBrowserSameOrigin(`${API_BASE}/dns/suspicious`),
       ]);
 
       if (!statsRes.ok || !dnsRes.ok || !tcpRes.ok) {

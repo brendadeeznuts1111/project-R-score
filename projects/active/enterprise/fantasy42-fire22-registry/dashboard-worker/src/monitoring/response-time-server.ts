@@ -1,4 +1,5 @@
 import { ResponseTimeMonitor } from './response-time-distribution';
+import { fetchServiceOrigin } from '../security/outbound-client.ts';
 
 /**
  * Fire22 Response Time Monitoring Server
@@ -219,13 +220,17 @@ setTimeout(async () => {
 
   for (let i = 0; i < 20; i++) {
     const endpoint = endpoints[Math.floor(Math.random() * endpoints.length)];
-    fetch(`${server.url}${endpoint}`).catch(() => {});
+    fetchServiceOrigin(server.url, `${server.url}${endpoint}`, {}).catch(() => {});
     await Bun.sleep(100);
   }
 
   // Show sample stats after traffic
   setTimeout(async () => {
-    const response = await fetch(`${server.url}api/monitoring/response-times`);
+  const response = await fetchServiceOrigin(
+    server.url,
+    `${server.url}api/monitoring/response-times`,
+    {}
+  );
     const stats = await response.json();
 
     console.info('📊 Sample Statistics:');

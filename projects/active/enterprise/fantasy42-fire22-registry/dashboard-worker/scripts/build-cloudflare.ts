@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🚀 Fire22 Cloudflare Build & Deploy System
  *
@@ -92,7 +94,7 @@ export class CloudflareBuildSystem {
 
       // Test the deployment
       console.info('\n🧪 Testing deployment...');
-      const response = await fetch(url);
+      const response = await fetchKnownScriptOutbound(url);
       const data = await response.json();
       console.info('   Status:', data.status);
       console.info('   Version:', data.version);
@@ -190,7 +192,7 @@ export class CloudflareBuildSystem {
     const url = 'https://dashboard-worker.nolarose1968-806.workers.dev';
 
     try {
-      const response = await fetch(url);
+      const response = await fetchKnownScriptOutbound(url);
       const data = await response.json();
 
       console.info('📊 Deployment Status:');

@@ -4,6 +4,12 @@
  * 12GB historical tick data → $0.24/mo storage
  */
 
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+	type FullStackBunOutboundAuthority,
+} from '../../../../src/security/outbound';
+
 export interface R2Config {
 	accountId: string;
 	bucket: string;
@@ -24,10 +30,19 @@ export interface TickRecord {
 export class R2Loader {
 	private config: R2Config;
 	private baseUrl: string;
+	private authority: FullStackBunOutboundAuthority;
 
 	constructor(config: R2Config) {
 		this.config = config;
-		this.baseUrl = `https://api.cloudflare.com/client/v4/accounts/${config.accountId}/r2/buckets/${config.bucket}`;
+		this.baseUrl = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(config.accountId)}/r2/buckets/${encodeURIComponent(config.bucket)}`;
+		this.authority = createFullStackBunOutboundAuthority({
+			kind: 'r2',
+			name: 'cloudflare-r2',
+			baseUrl: `${this.baseUrl}/objects/`,
+			pathPrefix: new URL(`${this.baseUrl}/objects/`).pathname,
+			methods: ['GET', 'PUT'],
+			credentialHeaders: ['authorization'],
+		});
 	}
 
 	/**
@@ -49,7 +64,7 @@ export class R2Loader {
 		
 		try {
 			const url = `${this.baseUrl}/objects/${encodeURIComponent(key)}`;
-			const res = await fetch(url, {
+			const res = await fetchFullStackBunOutbound(this.authority, url, {
 				headers: {
 					'Authorization': `Bearer ${this.config.accessKeyId}:${this.config.secretAccessKey}`
 				}
@@ -101,7 +116,7 @@ export class R2Loader {
 			const content = dateTicks.map(t => JSON.stringify(t)).join('\n') + '\n';
 
 			const url = `${this.baseUrl}/objects/${encodeURIComponent(key)}`;
-			await fetch(url, {
+			await fetchFullStackBunOutbound(this.authority, url, {
 				method: 'PUT',
 				headers: {
 					'Authorization': `Bearer ${this.config.accessKeyId}:${this.config.secretAccessKey}`,
@@ -155,6 +170,5 @@ export class R2Loader {
 		return result;
 	}
 }
-
 
 

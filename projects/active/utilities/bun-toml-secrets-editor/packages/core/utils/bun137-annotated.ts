@@ -1,5 +1,6 @@
 // Bun v1.3.7 Features with Structured Annotations
 // Using the established annotation protocol for automated documentation
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 // Type declarations for Bun global
 declare global {
@@ -98,7 +99,7 @@ export class SimpleHTTPClient {
 	constructor(private defaultHeaders: Record<string, string> = {}) {}
 
 	async get(url: string, headers?: Record<string, string>): Promise<Response> {
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			headers: { ...this.defaultHeaders, ...headers },
 		});
 	}
@@ -114,7 +115,7 @@ export class SimpleHTTPClient {
 		etag: string,
 		headers?: Record<string, string>,
 	): Promise<Response> {
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			headers: {
 				"If-None-Match": etag,
 				...this.defaultHeaders,

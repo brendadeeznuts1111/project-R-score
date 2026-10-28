@@ -8,6 +8,11 @@ import {
   type RegistryIndex,
 } from '../packages/registry-client/src/index.ts';
 
+const READ_GRANTS = [
+  { operation: 'metadata-read' as const, origins: ['https://registry.example'], reason: 'test' },
+  { operation: 'artifact-read' as const, origins: ['https://registry.example'], reason: 'test' },
+];
+
 async function checksum(data: Uint8Array): Promise<string> {
   const digest = await crypto.subtle.digest('SHA-256', data);
   return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
@@ -65,6 +70,7 @@ describe('@factorywager/registry-client', () => {
     const client = new RegistryClient({
       baseUrl: 'https://registry.example/',
       apiKey: 'read-plane-must-not-see-this',
+      grants: READ_GRANTS,
       fetcher,
     });
 
@@ -85,7 +91,11 @@ describe('@factorywager/registry-client', () => {
       String(input).endsWith('registry.json')
         ? Response.json(index)
         : new Response(new Uint8Array([3, 2, 1]));
-    const client = new RegistryClient({ baseUrl: 'https://registry.example', fetcher });
+    const client = new RegistryClient({
+      baseUrl: 'https://registry.example',
+      fetcher,
+      grants: READ_GRANTS,
+    });
     await expect(client.download('@factorywager/routing-algorithms')).rejects.toThrow(
       'checksum mismatch'
     );
@@ -129,6 +139,13 @@ describe('@factorywager/registry-client', () => {
       baseUrl: 'https://registry.example',
       publishUrl: 'http://registry-write.localhost:3000',
       apiKey: 'secret',
+      grants: [
+        {
+          operation: 'publish',
+          origins: ['http://registry-write.localhost:3000'],
+          reason: 'test publish',
+        },
+      ],
       fetcher: async (input, init) => {
         expect(String(input)).toStartWith('http://registry-write.localhost:3000/');
         authorization = new Headers(init?.headers).get('Authorization');
@@ -146,6 +163,7 @@ describe('@factorywager/registry-client', () => {
     const client = new RegistryClient({
       baseUrl: 'https://registry.example',
       apiKey: 'never-print-this',
+      grants: READ_GRANTS,
       fetcher: async () => new Response('unavailable', { status: 503 }),
     });
     try {
@@ -155,6 +173,49 @@ describe('@factorywager/registry-client', () => {
       expect(cause).toBeInstanceOf(RegistryHttpError);
       expect(String(cause)).not.toContain('never-print-this');
     }
+  });
+
+  test('default-denies registry planes and rejects credential-bearing origins', async () => {
+    expect(
+      () => new RegistryClient({ baseUrl: 'https://user:secret@registry.example' })
+    ).toThrow('must not contain credentials');
+
+    const client = new RegistryClient({
+      baseUrl: 'https://registry.example',
+      fetcher: async () => {
+        throw new Error('grant denial must happen before fetch');
+      },
+    });
+    await expect(client.fetchIndex()).rejects.toThrow('metadata-read requires an exact origin grant');
+  });
+
+  test('strictly parses index relations and bounds response bytes', async () => {
+    const invalid = await fixtureIndex(new Uint8Array([1]));
+    const packageRow = invalid.packages['@factorywager/routing-algorithms'];
+    const malformed = {
+      ...invalid,
+      packages: {
+        ...invalid.packages,
+        '@factorywager/routing-algorithms': {
+          ...packageRow,
+          'dist-tags': { latest: '9.9.9' },
+        },
+      },
+    };
+    const malformedClient = new RegistryClient({
+      baseUrl: 'https://registry.example',
+      grants: READ_GRANTS,
+      fetcher: async () => Response.json(malformed),
+    });
+    await expect(malformedClient.fetchIndex()).rejects.toThrow('targets a missing release');
+
+    const boundedClient = new RegistryClient({
+      baseUrl: 'https://registry.example',
+      grants: READ_GRANTS,
+      maxJsonBytes: 8,
+      fetcher: async () => new Response('{"schemaVersion":1,"packages":{}}'),
+    });
+    await expect(boundedClient.fetchIndex()).rejects.toThrow('byte limit');
   });
 });
 

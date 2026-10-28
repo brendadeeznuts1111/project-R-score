@@ -1,6 +1,7 @@
 // utils/bun137-features.ts
 // Streamlined Bun v1.3.7 Features - No Bloat
 // Core functionality only
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 // ANSI Text Wrapping - 88x faster
 export function wrapText(text: string, width: number = 80): string[] {
@@ -27,13 +28,13 @@ export class SimpleHTTPClient {
 	constructor(private defaultHeaders: Record<string, string> = {}) {}
 
 	async get(url: string, headers?: Record<string, string>) {
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			headers: { ...this.defaultHeaders, ...headers },
 		});
 	}
 
 	async post(url: string, data: any, headers?: Record<string, string>) {
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -59,7 +60,7 @@ export class SimpleHTTPClient {
 			requestHeaders["If-None-Match"] = etag;
 		}
 
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			headers: requestHeaders,
 		});
 	}
@@ -81,7 +82,7 @@ export class SimpleHTTPClient {
 		etag: string,
 		headers?: Record<string, string>,
 	) {
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -99,7 +100,7 @@ export class SimpleHTTPClient {
 		etag: string,
 		headers?: Record<string, string>,
 	) {
-		return fetch(url, {
+    return fetchTomlConfigured(url, {
 			method: "DELETE",
 			headers: {
 				"If-Match": etag,

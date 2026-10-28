@@ -1,3 +1,5 @@
+import { postBrowserTelemetry } from '../browser-outbound';
+
 export interface WebGLError {
   type: 'context_lost' | 'shader_compilation' | 'texture_load' | 'geometry';
   message: string;
@@ -405,18 +407,13 @@ export class WebGLErrorHandler {
     }
     
     // Send to custom monitoring
-    fetch('https://monitoring.quantumnavigator.io/errors', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    postBrowserTelemetry('errors', JSON.stringify({
         ...error,
         timestamp: Date.now(),
         sessionId: GlobalStateManager.getInstance().getState().user.sessionId,
         userAgent: navigator.userAgent,
         url: window.location.href
-      }),
-      keepalive: true
-    }).catch(() => {
+      })).catch(() => {
       // Fail silently
     });
   }

@@ -2,6 +2,7 @@
 // enhanced-performance-suite.ts — Enhanced performance monitoring with advanced analytics
 
 import { Database } from "bun:sqlite";
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
 
 // Enhanced ANSI colors with gradients
 const colors = {
@@ -314,7 +315,7 @@ async function analyzeRSSEnhanced(feedUrl: string = "https://bun.com/rss.xml") {
 
 	try {
 		const startTime = performance.now();
-		const response = await fetch(feedUrl);
+		const response = await fetchMatrixPublicResource(feedUrl);
 		const fetchTime = performance.now() - startTime;
 
 		if (!response.ok) {

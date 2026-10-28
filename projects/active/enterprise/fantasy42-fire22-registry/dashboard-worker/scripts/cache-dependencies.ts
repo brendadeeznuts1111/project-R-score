@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * Dependency Caching Strategy for Fire22 Dashboard
  * Optimizes package installation with smart caching
@@ -187,7 +189,7 @@ logs:
     for (const registry of registries) {
       try {
         const start = Bun.nanoseconds();
-        const response = await fetch(registry.url, { signal: AbortSignal.timeout(5000) });
+        const response = await fetchKnownScriptOutbound(registry.url, { signal: AbortSignal.timeout(5000) });
         const end = Bun.nanoseconds();
         const ms = (end - start) / 1_000_000;
 

@@ -7,6 +7,7 @@
  */
 
 import { partnerProfileService } from "./partner-profile-service";
+import { fetchPartnerSourceHealth } from "../../utils/integration-outbound";
 
 /**
  * Authorize a source connection for a partner.
@@ -134,13 +135,7 @@ export function getSourceStatus(partnerId: string): Array<{
 async function pingSourceEndpoint(endpoint?: string): Promise<boolean> {
   if (!endpoint) return false;
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
-    const res = await fetch(endpoint, {
-      method: "HEAD",
-      signal: controller.signal,
-    }).catch(() => null);
-    clearTimeout(timeout);
+    const res = await fetchPartnerSourceHealth(endpoint).catch(() => null);
     return res !== null && (res.status >= 200 && res.status < 500);
   } catch {
     return false;

@@ -1,4 +1,10 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
+// @updated Bun.env · fixed v1.0.3 · 2023-09-22 · https://bun.com/blog/bun-v1.0.3
+// @updated Bun.env · changed v1.1.0 · 2024-04-01 · https://bun.com/blog/bun-v1.1
+// @updated Bun.env · fixed v1.2.8 · 2025-03-31 · https://bun.com/blog/bun-v1.2.8
+// @updated Bun.env · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @verified Bun.env · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/runtime/environment-variables
 // @see https://bun.com/docs/guides/util/entrypoint — import.meta.main
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/pm/cli/install#dry-run — --dry-run
@@ -7,21 +13,6 @@
 // @see https://bun.com/docs/runtime/utils#bun-nanoseconds — Bun.nanoseconds
 // @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options — Bun.inspect.table
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
-/**
- * bake:all — offline registry bake orchestrator.
- *
- * Runs every bake that is safe without a live vault / proton session, in
- * dependency order, with per-step timing and a pass/fail summary.
- * Vault-dependent bakes (vault:health:bake, compliance:bake:vault) are
- * intentionally excluded — run them separately with an agent session.
- *
- * Nested bun argv0 uses resolveBunExecutable (never bare `"bun"`).
- *
- *   bun run bake:all                 # run all offline bakes
- *   bun run bake:all -- --list       # list steps without running
- *   bun run bake:all -- --dry-run    # print commands without running
- *   bun run bake:all -- --only=capabilities,packages
- */
 import { isModuleEntrypoint, resolveBunExecutable } from '../lib/bun-executable.ts';
 import { resolvePath } from '../scripts/lib/fs-bun';
 import { logTable } from '../lib/console-depth';

@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/s3-content-disposition.ts
 import { feature } from "bun:bundle";
 
@@ -68,7 +69,7 @@ export class S3ContentDisposition {
 
     const suspiciousExtensions = ['.sh', '.bat', '.exe'];
     if (suspiciousExtensions.some(ext => options.filename?.endsWith(ext))) {
-      fetch("https://api.buncatalog.com/v1/threat", {
+      fetchBunCatalog("/v1/threat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -85,7 +86,7 @@ export class S3ContentDisposition {
   private static logContentDispositionSet(key: string, disposition: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

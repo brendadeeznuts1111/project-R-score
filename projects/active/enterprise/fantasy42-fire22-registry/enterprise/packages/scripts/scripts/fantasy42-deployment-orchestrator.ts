@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalDeployment } from '../../../../src/security/final-outbound.ts';
+
 /**
  * 🚀 Fantasy42 Deployment Orchestrator
  *
@@ -671,9 +673,7 @@ class Fantasy42DeploymentOrchestrator {
   private async performHealthCheck(check: any): Promise<boolean> {
     // Implement health check
     try {
-      const response = await fetch(check.url, {
-        timeout: check.timeout * 1000,
-      });
+      const response = await fetchFinalDeployment(check.url);
       return response.ok;
     } catch {
       return false;

@@ -96,6 +96,7 @@ function buildManifest(): Manifest {
       id: brands.filter(brand => brand.kind === 'id').length,
       key: brands.filter(brand => brand.kind === 'key').length,
       code: brands.filter(brand => brand.kind === 'code').length,
+      digest: brands.filter(brand => brand.kind === 'digest').length,
     },
     domainCatalog: domains.map(name => ({
       name,

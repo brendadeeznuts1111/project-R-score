@@ -10,6 +10,14 @@
  * Do not treat this feed as the HTML blog index (`CANONICAL_SOURCES.blog`).
  */
 import { parseXmlElementList, parseXmlText } from './bun-blog-url.ts';
+import {
+  assertNoRssDoctype,
+  assertRssXmlInputWithinQuota,
+  assertRssXmlShapeWithinQuotas,
+  DEFAULT_RSS_XML_QUOTAS,
+  type RSSXmlInput,
+  type RSSXmlQuotas,
+} from '../rss/rss-xml-input.ts';
 
 export type RssChannelItem = {
   title: string;
@@ -43,12 +51,18 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 /** RSS 2.0 channel `<item>` rows from a strict Bun.XML compact document. */
-export function parseRssChannelItems(xml: string): RssChannelItem[] {
+export function parseRssChannelItems(
+  xml: RSSXmlInput,
+  quotaOverrides: Partial<RSSXmlQuotas> = {}
+): RssChannelItem[] {
   // Live-feed policy is intentionally narrower than Bun.XML's native support.
   // Bun does not fetch external entities, but a DTD can still alter the compact
   // value through internal entities/default attributes. Bun.com does not emit one.
-  if (xml.includes('<!DOCTYPE')) throw new Error('RSS live feeds must not contain a DOCTYPE');
+  const quotas = { ...DEFAULT_RSS_XML_QUOTAS, ...quotaOverrides };
+  assertRssXmlInputWithinQuota(xml, quotas.maxInputBytes);
+  assertNoRssDoctype(xml);
   const doc: unknown = Bun.XML.parse(xml);
+  assertRssXmlShapeWithinQuotas(doc, quotas);
   if (!isRecord(doc)) throw new Error('RSS document must parse to one root object');
   const root = doc as Record<string, unknown>;
   if (!isRecord(root.rss)) throw new Error('RSS document must have one <rss> root');

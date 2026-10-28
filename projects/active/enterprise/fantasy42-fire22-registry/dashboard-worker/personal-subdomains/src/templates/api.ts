@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../../core/security/surface-outbound.ts';
+
 /**
  * Enhanced API Template Entry Point with Security Integration
  *
@@ -189,7 +191,7 @@ function injectSecurityMonitoring(html: string): string {
 
         async updateMetrics() {
           try {
-            const response = await fetch('/api/security/metrics');
+            const response = await fetchSurfaceOutbound('/api/security/metrics');
             const metrics = await response.json();
 
             // Update UI with real-time metrics
@@ -246,7 +248,7 @@ export async function secureApiTest(endpoint: string): Promise<{
     // Pre-flight security check
     const securityIssues = await checkEndpointSecurity(endpoint);
 
-    const response = await fetch(endpoint, {
+    const response = await fetchSurfaceOutbound(endpoint, {
       headers: {
         'X-Security-Check': 'enabled',
         'X-API-Version': 'v2',

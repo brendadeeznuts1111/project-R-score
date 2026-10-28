@@ -10,6 +10,7 @@
 
 import { secrets } from 'bun';
 import { readFileSync, existsSync } from 'fs';
+import { fetchFire22RegistryHealth } from './registry-outbound.ts';
 
 const SERVICE_NAME = 'fire22-dashboard-worker';
 const TOKEN_NAME = 'registry-token';
@@ -28,14 +29,7 @@ async function setupRegistryToken() {
     if (existingToken) {
       console.info('✅ Registry token already configured in secure storage');
 
-      const response = await fetch(
-        'https://fire22-security-registry.nolarose1968-806.workers.dev/health',
-        {
-          headers: {
-            Authorization: `Bearer ${existingToken}`,
-          },
-        }
-      );
+      const response = await fetchFire22RegistryHealth(existingToken);
 
       if (response.ok) {
         console.info('✅ Token validated successfully with registry');
@@ -130,7 +124,7 @@ switch (command) {
     const token = await getStoredToken();
     if (token) {
       console.info('✅ Token retrieved from secure storage');
-      console.info(`Token: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
+      console.info('Token value remains hidden');
     } else {
       console.info('⚠️ No token found in secure storage');
     }
@@ -143,14 +137,7 @@ switch (command) {
   case 'test':
     const testToken = await getStoredToken();
     if (testToken) {
-      const response = await fetch(
-        'https://fire22-security-registry.nolarose1968-806.workers.dev/health',
-        {
-          headers: {
-            Authorization: `Bearer ${testToken}`,
-          },
-        }
-      );
+      const response = await fetchFire22RegistryHealth(testToken);
 
       if (response.ok) {
         console.info('✅ Token validated successfully with registry');

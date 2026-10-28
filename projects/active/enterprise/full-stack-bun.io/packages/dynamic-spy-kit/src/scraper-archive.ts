@@ -18,6 +18,18 @@ export interface ScrapedOdds {
 	url: string;
 }
 
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+} from '../../../src/security/outbound';
+
+const ODDS_PORTAL_AUTHORITY = createFullStackBunOutboundAuthority({
+	kind: 'scrape',
+	name: 'odds-portal',
+	baseUrl: 'https://www.oddsportal.com/',
+	pathPrefix: '/',
+});
+
 export class OddsPortalScraper {
 	private readonly baseUrl = 'https://www.oddsportal.com';
 	private readonly userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -35,7 +47,7 @@ export class OddsPortalScraper {
 			// Format URL for OddsPortal
 			const url = this.formatOddsPortalUrl(market, date);
 
-			const res = await fetch(url, {
+			const res = await fetchFullStackBunOutbound(ODDS_PORTAL_AUTHORITY, url, {
 				headers: {
 					'User-Agent': this.userAgent,
 					'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -268,6 +280,5 @@ export class OddsPortalScraper {
 		return null;
 	}
 }
-
 
 

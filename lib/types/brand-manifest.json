@@ -1,8 +1,8 @@
 {
   "version": 3,
-  "generatedAt": "2026-08-26T08:53:02.143Z",
+  "generatedAt": "2026-08-26T12:24:03.322Z",
   "source": "lib/types/branded/index.ts#BRAND_CATALOG",
-  "brandCount": 97,
+  "brandCount": 102,
   "domainCount": 10,
   "domains": [
     "audit",
@@ -17,9 +17,10 @@
     "surfaces"
   ],
   "kinds": {
-    "id": 75,
-    "key": 3,
-    "code": 19
+    "id": 78,
+    "key": 4,
+    "code": 19,
+    "digest": 1
   },
   "domainCatalog": [
     {
@@ -50,7 +51,7 @@
     {
       "name": "operations",
       "module": "lib/types/branded/operations.ts",
-      "brandCount": 41
+      "brandCount": 46
     },
     {
       "name": "portal",
@@ -1094,6 +1095,151 @@
       "guard": "BRAND_GUARDS.isFeedId",
       "shortName": "feedId",
       "envName": "FEED_ID"
+    },
+    {
+      "name": "ContentDigest",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Algorithm-qualified SHA-256 identity of exact application content bytes",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^sha256:[a-f0-9]{64}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "digest",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentDigest",
+        "try": "tryContentDigest",
+        "parse": "parseContentDigest"
+      },
+      "guard": "BRAND_GUARDS.isContentDigest",
+      "shortName": "contentDigest",
+      "envName": "CONTENT_DIGEST"
+    },
+    {
+      "name": "ContentKey",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Immutable application content-store key derived from a content digest",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^sha256/[a-f0-9]{2}/[a-f0-9]{64}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "key",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentKey",
+        "try": "tryContentKey",
+        "parse": "parseContentKey"
+      },
+      "guard": "BRAND_GUARDS.isContentKey",
+      "shortName": "contentKey",
+      "envName": "CONTENT_KEY"
+    },
+    {
+      "name": "SourceLocatorId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "SHA-256 identity of a source locator string, never of fetched bytes",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^locator-sha256:[a-f0-9]{64}$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asSourceLocatorId",
+        "try": "trySourceLocatorId",
+        "parse": "parseSourceLocatorId"
+      },
+      "guard": "BRAND_GUARDS.isSourceLocatorId",
+      "shortName": "sourceLocatorId",
+      "envName": "SOURCE_LOCATOR_ID"
+    },
+    {
+      "name": "ChannelAliasId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable mutable channel alias identity, distinct from content and locators",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asChannelAliasId",
+        "try": "tryChannelAliasId",
+        "parse": "parseChannelAliasId"
+      },
+      "guard": "BRAND_GUARDS.isChannelAliasId",
+      "shortName": "channelAliasId",
+      "envName": "CHANNEL_ALIAS_ID"
+    },
+    {
+      "name": "ContentChannelId",
+      "domain": "operations",
+      "tiers": [
+        "as",
+        "try",
+        "parse"
+      ],
+      "mint": [
+        "system-internal",
+        "wire-input"
+      ],
+      "description": "Stable identity of a channel that issued content",
+      "validation": {
+        "shape": "pattern",
+        "pattern": "^[a-z0-9][a-z0-9-]*$",
+        "ingressNormalization": "trim"
+      },
+      "kind": "id",
+      "module": "lib/types/branded/operations.ts",
+      "constructors": {
+        "as": "asContentChannelId",
+        "try": "tryContentChannelId",
+        "parse": "parseContentChannelId"
+      },
+      "guard": "BRAND_GUARDS.isContentChannelId",
+      "shortName": "contentChannelId",
+      "envName": "CONTENT_CHANNEL_ID"
     },
     {
       "name": "ReleaseAssetId",

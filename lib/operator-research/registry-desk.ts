@@ -18,6 +18,7 @@
 
 import { renderReadmeHTML } from '../factory/markdown.ts';
 import { joinPath, relativePath, resolvePath } from '../path-bun.ts';
+import { planBunPublish, spawnRegistryCommandPlan } from '../registry/command-policy.ts';
 import { ROOT } from './paths.ts';
 
 /** Cap rendered README body size in the desk detail payload. */
@@ -511,40 +512,26 @@ export async function listPublishableWorkspaces(): Promise<PublishableWorkspace[
   return out;
 }
 
-export function buildBunPublishArgs(flags: PublishFlags, registryUrl: string): string[] {
-  const args = ['publish'];
-  const dryRun = flags.dryRun !== false;
-  if (dryRun) args.push('--dry-run');
-  if (flags.access) args.push('--access', flags.access);
-  if (flags.tag) args.push('--tag', flags.tag);
-  if (flags.tolerateRepublish) args.push('--tolerate-republish');
-  if (flags.gzipLevel != null && Number.isFinite(flags.gzipLevel)) {
-    args.push('--gzip-level', String(Math.max(0, Math.min(9, Math.floor(flags.gzipLevel)))));
-  }
-  args.push('--registry', registryUrl);
-  return args;
-}
-
 function* linesOf(text: string): Generator<string> {
   if (!text) return;
   const parts = text.replace(/\n$/, '').split('\n');
   for (const line of parts) yield line;
 }
 
+function subprocessOutputText(
+  output: number | ReadableStream<Uint8Array> | null | undefined
+): Promise<string> {
+  return output instanceof ReadableStream ? Bun.readableStreamToText(output) : Promise.resolve('');
+}
+
 async function* spawnEvents(
   cmd: string[],
   cwd: string,
   dryRun: boolean,
-  lane: 'bun-publish' | 'factory'
+  lane: 'bun-publish' | 'factory',
+  proc: ReturnType<typeof Bun.spawn>
 ): AsyncGenerator<RegistryPublishEvent> {
   yield { type: 'start', command: cmd, dryRun, cwd, lane };
-
-  const proc = Bun.spawn(cmd, {
-    cwd,
-    stdout: 'pipe',
-    stderr: 'pipe',
-    env: { ...Bun.env, NO_COLOR: '1' },
-  });
 
   const timeoutMs = Number(Bun.env.REGISTRY_PUBLISH_TIMEOUT_MS ?? 180_000);
   let timedOut = false;
@@ -561,8 +548,8 @@ async function* spawnEvents(
   let exitCode = 1;
   try {
     const [stdoutText, stderrText, code] = await Promise.all([
-      proc.stdout ? Bun.readableStreamToText(proc.stdout) : Promise.resolve(''),
-      proc.stderr ? Bun.readableStreamToText(proc.stderr) : Promise.resolve(''),
+      subprocessOutputText(proc.stdout),
+      subprocessOutputText(proc.stderr),
       proc.exited,
     ]);
     exitCode = code;
@@ -621,8 +608,34 @@ export async function* runBunPublish(
   }
 
   const dryRun = flags.dryRun !== false;
-  const args = buildBunPublishArgs({ ...flags, dryRun }, REGISTRY_PRESETS.local.url);
-  yield* spawnEvents(['bun', ...args], cwd, dryRun, 'bun-publish');
+  const registry = REGISTRY_PRESETS.local.url;
+  const plan = planBunPublish({
+    executable: process.execPath,
+    cwd,
+    profile: 'release',
+    registry: { cli: registry },
+    grants: [
+      {
+        operation: 'publish',
+        origins: [new URL(registry).origin],
+        access: 'write',
+        reason: 'operator registry desk local publish',
+      },
+    ],
+    dryRun,
+    access: flags.access,
+    tag: flags.tag,
+    tolerateRepublish: flags.tolerateRepublish,
+    gzipLevel: flags.gzipLevel,
+    environment: {
+      PATH: Bun.env.PATH,
+      TMPDIR: Bun.env.TMPDIR,
+      CI: Bun.env.CI,
+      NO_COLOR: '1',
+    },
+  });
+  const proc = spawnRegistryCommandPlan(plan, { stdout: 'pipe', stderr: 'pipe' });
+  yield* spawnEvents([plan.executable, ...plan.argv], cwd, dryRun, 'bun-publish', proc);
 }
 
 /**
@@ -746,7 +759,14 @@ export async function* runFactoryPublish(
   }
 
   const factoryCli = joinPath(ROOT, 'lib/factory/cli.ts');
-  yield* spawnEvents(['bun', factoryCli, 'publish', tgzPath], cwd, false, 'factory');
+  const factoryCommand = ['bun', factoryCli, 'publish', tgzPath];
+  const factoryProc = Bun.spawn(factoryCommand, {
+    cwd,
+    stdout: 'pipe',
+    stderr: 'pipe',
+    env: { ...Bun.env, NO_COLOR: '1' },
+  });
+  yield* spawnEvents(factoryCommand, cwd, false, 'factory', factoryProc);
 }
 
 export function publishEventsToSse(

@@ -1,17 +1,21 @@
 #!/usr/bin/env bun
 /**
- * Fire22 Registry Authentication Plugin
+ * Fire22 Registry Authentication Client
  *
- * Automatically injects the secure token from Bun.secrets
- * when accessing the private registry
+ * Loads the registry token from Bun.secrets and scopes it to the guarded
+ * registry health operation. This module never replaces global fetch.
  */
 
 import { secrets } from 'bun';
-import { plugin } from 'bun';
+import {
+  fetchFire22RegistryHealth,
+  FIRE22_REGISTRY_ORIGIN,
+  type RegistryOutboundOptions,
+} from './registry-outbound.ts';
 
 const SERVICE_NAME = 'fire22-dashboard-worker';
 const TOKEN_NAME = 'registry-token';
-const REGISTRY_URL = 'https://fire22-security-registry.nolarose1968-806.workers.dev/';
+const REGISTRY_URL = `${FIRE22_REGISTRY_ORIGIN}/`;
 
 // Get token from secure storage
 async function getSecureToken(): Promise<string | null> {
@@ -27,40 +31,20 @@ async function getSecureToken(): Promise<string | null> {
   }
 }
 
-// Create a Bun plugin for automatic authentication
-plugin({
-  name: 'fire22-registry-auth',
-  async setup(build) {
-    const token = await getSecureToken();
-
-    if (!token) {
-      console.warn('⚠️ Fire22 registry authentication not configured');
-      return;
-    }
-
-    // Intercept fetch requests to the registry
-    const originalFetch = globalThis.fetch;
-    globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
-
-      // Add authentication to registry requests
-      if (url?.startsWith(REGISTRY_URL)) {
-        init = init || {};
-        init.headers = new Headers(init.headers);
-        init.headers.set('Authorization', `Bearer ${token}`);
-
-        console.info(`🔐 Authenticating request to Fire22 registry`);
-      }
-
-      return originalFetch(input, init);
-    };
-
-    console.info('✅ Fire22 registry authentication plugin loaded');
-  },
-});
+async function fetchWithSecureRegistryToken(options: RegistryOutboundOptions = {}) {
+  const token = await getSecureToken();
+  if (!token) throw new Error('Fire22 registry authentication is not configured');
+  return fetchFire22RegistryHealth(token, {}, options);
+}
 
 // Export for use in other scripts
-export { getSecureToken, SERVICE_NAME, TOKEN_NAME, REGISTRY_URL };
+export {
+  fetchWithSecureRegistryToken,
+  getSecureToken,
+  SERVICE_NAME,
+  TOKEN_NAME,
+  REGISTRY_URL,
+};
 
 // Auto-setup when imported
 if (import.meta.main) {
@@ -72,14 +56,10 @@ if (import.meta.main) {
     console.info('✅ Token found in secure storage');
     console.info(`   Service: ${SERVICE_NAME}`);
     console.info(`   Registry: ${REGISTRY_URL}`);
-    console.info(`   Token: ${token.substring(0, 10)}...${token.substring(token.length - 4)}`);
+    console.info('   Token: configured in OS credential storage');
 
     // Test the token
-    const response = await fetch(`${REGISTRY_URL}health`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await fetchFire22RegistryHealth(token);
 
     if (response.ok) {
       console.info('\n✅ Token validated successfully');

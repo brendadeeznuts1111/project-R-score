@@ -5,6 +5,7 @@
  */
 
 import { $ } from "bun";
+import { fetchEnterpriseDashboardOutbound } from "../src/server/security/outbound.ts";
 
 const SERVER_SCRIPT = "src/server/index.ts";
 const PORT = process.env.PORT || "8080";
@@ -59,7 +60,7 @@ async function getRunningServer(): Promise<ServerStatus | null> {
 
     // Try to get health info from running server
     try {
-      const health = await fetch(HEALTH_URL, { signal: AbortSignal.timeout(1000) });
+      const health = await fetchEnterpriseDashboardOutbound("loopback-health", HEALTH_URL, { signal: AbortSignal.timeout(1000) });
       const data = await health.json() as any;
       return {
         pid,
@@ -109,7 +110,7 @@ async function waitForHealth(): Promise<{ success: boolean; data?: any; error?: 
 
   while (Date.now() - start < HEALTH_TIMEOUT) {
     try {
-      const response = await fetch(HEALTH_URL, { signal: AbortSignal.timeout(1000) });
+      const response = await fetchEnterpriseDashboardOutbound("loopback-health", HEALTH_URL, { signal: AbortSignal.timeout(1000) });
       if (response.ok) {
         const data = await response.json();
         return { success: true, data };

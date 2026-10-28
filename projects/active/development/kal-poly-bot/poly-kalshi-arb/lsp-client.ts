@@ -6,6 +6,7 @@
  */
 
 import { spawn } from 'bun';
+import { createKalPolyLoopbackAuthority, fetchKalPolyLoopback } from '../outbound-client.ts';
 
 interface LSPResponse {
   jsonrpc: string;
@@ -99,10 +100,14 @@ export class PublishReadyLSPClient {
           const controller = new AbortController();
           const timeoutSignal = setTimeout(() => controller.abort(), 1000);
 
-          await fetch(`http://localhost:${this.port}/health`, {
+          await fetchKalPolyLoopback(
+            createKalPolyLoopbackAuthority('localhost', this.port),
+            '/health',
+            {
             signal: controller.signal,
             headers: { 'Connection': 'keep-alive' }
-          });
+            }
+          );
 
           clearTimeout(timeoutSignal);
           clearTimeout(timeoutId);
@@ -224,7 +229,10 @@ class BunLSPClient {
       // Check if server is responding
       const checkServer = async () => {
         try {
-          const response = await fetch(`http://localhost:${this.config.port}/health`);
+          const response = await fetchKalPolyLoopback(
+            createKalPolyLoopbackAuthority('localhost', this.config.port),
+            '/health'
+          );
           if (response.ok) {
             clearTimeout(timeoutId);
             resolve();
@@ -432,7 +440,10 @@ class BunLSPClient {
 
   async checkHealth(): Promise<HealthStatus> {
     try {
-      const response = await fetch(`http://localhost:${this.config.port}/health`);
+      const response = await fetchKalPolyLoopback(
+        createKalPolyLoopbackAuthority('localhost', this.config.port),
+        '/health'
+      );
       
       if (response.ok) {
         const data = await response.json();

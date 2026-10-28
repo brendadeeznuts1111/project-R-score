@@ -10,6 +10,10 @@
  */
 
 import { enhancedConfigManager } from '../../scripts/enhanced-secure-config';
+import {
+  fetchConfiguredWebhook,
+  fetchFixedFantasyApi,
+} from '../security/runtime-outbound.ts';
 
 export interface APIConfig {
   baseURL: string;
@@ -270,7 +274,7 @@ export class EnhancedAPIService {
 
     for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
       try {
-        const response = await fetch(url, config);
+        const response = await fetchFixedFantasyApi(url, config);
 
         // Handle 401 Unauthorized
         if (response.status === 401 && attempt < this.config.retryAttempts) {
@@ -411,7 +415,7 @@ export class EnhancedAPIService {
       const auditEndpoint = config.AUDIT_LOG_ENDPOINT;
 
       if (auditEndpoint) {
-        await fetch(auditEndpoint, {
+        await fetchConfiguredWebhook(auditEndpoint, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

@@ -5,6 +5,7 @@
  */
 
 import { $ } from "bun";
+import { fetchMatrixLoopbackRead } from "../../src/lib/matrix-outbound.ts";
 
 interface Alert {
   id: string;
@@ -61,7 +62,7 @@ class AlertManager {
   
   private async checkGateway(): Promise<boolean> {
     try {
-      const response = await fetch("http://127.0.0.1:18789/health", { timeout: 5000 });
+      const response = await fetchMatrixLoopbackRead("http://127.0.0.1:18789/health");
       return response.ok;
     } catch {
       return false;

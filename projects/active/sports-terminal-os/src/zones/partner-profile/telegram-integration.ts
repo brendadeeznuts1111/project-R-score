@@ -16,7 +16,7 @@ import {
   type ExternalPartnerId,
   type TelegramChatId,
 } from "../../../../../../lib/types/branded.ts";
-import { h2Fetch } from "../../utils/h2-fetch";
+import { fetchTelegramBotApi } from "../../utils/integration-outbound";
 import { SendMessageClient, escapeHtml } from "../../telegram/SendMessageClient";
 import { type SignalContext, type GateResult, type ProfileTelegram } from "./partner-profile-schema";
 import { partnerProfileService } from "./partner-profile-service";
@@ -315,7 +315,7 @@ function sendClient(botToken: string): SendMessageClient {
 
 export const telegramBotApiTransport: PartnerTelegramTransport = {
   async createForumTopic({ botToken, chatId, name }) {
-    const response = await h2Fetch(`https://api.telegram.org/bot${botToken}/createForumTopic`, {
+    const response = await fetchTelegramBotApi(botToken, "createForumTopic", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ chat_id: chatId, name }),

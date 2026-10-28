@@ -23,6 +23,16 @@ export type JobId = BrandedString<'JobId'>;
 export type StepId = BrandedString<'StepId'>;
 export type WebhookId = BrandedString<'WebhookId'>;
 export type FeedId = BrandedString<'FeedId'>;
+/** Algorithm-qualified digest of exact application content bytes. */
+export type ContentDigest = BrandedString<'ContentDigest'>;
+/** Immutable storage key derived from a ContentDigest; never a source locator. */
+export type ContentKey = BrandedString<'ContentKey'>;
+/** Digest identity of a source locator string, distinct from byte identity. */
+export type SourceLocatorId = BrandedString<'SourceLocatorId'>;
+/** Stable identity of a mutable channel alias; never a content digest or locator. */
+export type ChannelAliasId = BrandedString<'ChannelAliasId'>;
+/** Stable identity of the source channel that issued content. */
+export type ContentChannelId = BrandedString<'ContentChannelId'>;
 /** Stable identity for a versioned release asset. */
 export type ReleaseAssetId = BrandedString<'ReleaseAssetId'>;
 /** Stable identity for a versioned release capability. */
@@ -123,6 +133,21 @@ const SLUG_ID_VALIDATION = {
   pattern: '^[a-z0-9][a-z0-9-]*$',
   ingressNormalization: 'trim',
 } as const satisfies BrandValidationSpec;
+const CONTENT_DIGEST_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^sha256:[a-f0-9]{64}$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const CONTENT_KEY_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^sha256/[a-f0-9]{2}/[a-f0-9]{64}$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
+const SOURCE_LOCATOR_ID_VALIDATION = {
+  shape: 'pattern',
+  pattern: '^locator-sha256:[a-f0-9]{64}$',
+  ingressNormalization: 'trim',
+} as const satisfies BrandValidationSpec;
 
 const operation = defineBrandConstructors('OperationId');
 const resource = defineBrandConstructors('ResourceId');
@@ -132,6 +157,14 @@ const job = defineBrandConstructors('JobId');
 const step = defineBrandConstructors('StepId');
 const webhook = defineBrandConstructors('WebhookId');
 const feed = defineBrandConstructors('FeedId');
+const contentDigest = defineValidatedBrandConstructors('ContentDigest', CONTENT_DIGEST_VALIDATION);
+const contentKey = defineValidatedBrandConstructors('ContentKey', CONTENT_KEY_VALIDATION);
+const sourceLocatorId = defineValidatedBrandConstructors(
+  'SourceLocatorId',
+  SOURCE_LOCATOR_ID_VALIDATION
+);
+const channelAliasId = defineValidatedBrandConstructors('ChannelAliasId', SLUG_ID_VALIDATION);
+const contentChannelId = defineValidatedBrandConstructors('ContentChannelId', SLUG_ID_VALIDATION);
 const releaseAsset = defineBrandConstructors('ReleaseAssetId');
 const releaseCapability = defineBrandConstructors('ReleaseCapabilityId');
 const run = defineBrandConstructors('RunId');
@@ -200,6 +233,26 @@ export const parseWebhookId = webhook.parse;
 export const asFeedId = feed.as;
 export const tryFeedId = feed.try;
 export const parseFeedId = feed.parse;
+
+export const asContentDigest = contentDigest.as;
+export const tryContentDigest = contentDigest.try;
+export const parseContentDigest = contentDigest.parse;
+
+export const asContentKey = contentKey.as;
+export const tryContentKey = contentKey.try;
+export const parseContentKey = contentKey.parse;
+
+export const asSourceLocatorId = sourceLocatorId.as;
+export const trySourceLocatorId = sourceLocatorId.try;
+export const parseSourceLocatorId = sourceLocatorId.parse;
+
+export const asChannelAliasId = channelAliasId.as;
+export const tryChannelAliasId = channelAliasId.try;
+export const parseChannelAliasId = channelAliasId.parse;
+
+export const asContentChannelId = contentChannelId.as;
+export const tryContentChannelId = contentChannelId.try;
+export const parseContentChannelId = contentChannelId.parse;
 
 export const asReleaseAssetId = releaseAsset.as;
 export const tryReleaseAssetId = releaseAsset.try;
@@ -473,6 +526,46 @@ export const OPERATIONS_BRAND_SPECS = [
     tiers: ['as', 'try', 'parse'],
     mint: ['system-internal', 'wire-input'],
     description: 'RSS / event feed identity',
+  },
+  {
+    name: 'ContentDigest',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Algorithm-qualified SHA-256 identity of exact application content bytes',
+    validation: CONTENT_DIGEST_VALIDATION,
+  },
+  {
+    name: 'ContentKey',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Immutable application content-store key derived from a content digest',
+    validation: CONTENT_KEY_VALIDATION,
+  },
+  {
+    name: 'SourceLocatorId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'SHA-256 identity of a source locator string, never of fetched bytes',
+    validation: SOURCE_LOCATOR_ID_VALIDATION,
+  },
+  {
+    name: 'ChannelAliasId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Stable mutable channel alias identity, distinct from content and locators',
+    validation: SLUG_ID_VALIDATION,
+  },
+  {
+    name: 'ContentChannelId',
+    domain: 'operations',
+    tiers: ['as', 'try', 'parse'],
+    mint: ['system-internal', 'wire-input'],
+    description: 'Stable identity of a channel that issued content',
+    validation: SLUG_ID_VALIDATION,
   },
   {
     name: 'ReleaseAssetId',

@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
 // @see https://bun.com/docs/runtime/secrets#bun-secrets-get-options — Bun.secrets
 /**
  * 🔐 Fire22 Environment Setup Wizard
@@ -498,7 +500,7 @@ class Fire22EnvWizard {
       if (apiKey && apiBaseUrl) {
         console.info('   🔌 Testing Fire22 API connection...');
         try {
-          const response = await fetch(`${apiBaseUrl}/health`, {
+          const response = await fetchKnownScriptOutbound(`${apiBaseUrl}/health`, {
             headers: { Authorization: `Bearer ${apiKey}` },
             signal: AbortSignal.timeout(5000),
           });

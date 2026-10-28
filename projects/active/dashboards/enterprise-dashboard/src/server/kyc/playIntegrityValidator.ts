@@ -7,6 +7,7 @@
 import type { ADBTransport } from "./adbTransport";
 import type { IntegrityParser } from "./integrityParser";
 import type { PlayIntegrityResult } from "./types";
+import { fetchEnterpriseDashboardOutbound } from "../security/outbound.ts";
 
 export class PlayIntegrityValidator {
   constructor(
@@ -66,7 +67,7 @@ export class PlayIntegrityValidator {
     }
 
     try {
-      const response = await fetch("https://playintegrity.googleapis.com/v1/decrypt", {
+      const response = await fetchEnterpriseDashboardOutbound("play-integrity", "https://playintegrity.googleapis.com/v1/decrypt", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${this.googleCloudKey}`,

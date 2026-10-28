@@ -1,5 +1,6 @@
 // runtime-flags-dashboard.tsx - ALL FLAGS LIVE + RSS + Profilers
 import { serve, file } from "bun";
+import { fetchTomlConfigured } from "./src/http/configured-outbound.ts";
 
 serve({
   port: 3137,
@@ -50,7 +51,7 @@ serve({
     // 📰 RSS + FLAG TIPS
     if (url.pathname === "/rss-flags") {
       try {
-        const rss = await fetch("https://bun.com/rss.xml");
+        const rss = await fetchTomlConfigured("https://bun.com/rss.xml");
         const xml = await rss.text();
         return new Response(xml, {
           headers: { "Content-Type": "application/xml" }

@@ -50,6 +50,8 @@ grounded API matrix. Load only the matching route and its owner.
   [`harness/tenants/maintain-workspace.md`](harness/tenants/maintain-workspace.md)
   · `bun run lane:status` (inspection only; not a claim or retirement grant)
 - Harness: [`harness/README.md`](harness/) · `bun run harness:status`
+- Guard coverage gap map:
+  [`harness/tenants/guard-coverage.md`](harness/tenants/guard-coverage.md)
 - Platform routing: [`platform-routing.md`](platform-routing.md) ·
   `bun run verify:pages-edge`
 - Portal foundation: [`portal-foundation.md`](portal-foundation.md) ·

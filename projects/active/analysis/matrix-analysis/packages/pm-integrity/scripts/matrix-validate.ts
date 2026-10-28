@@ -2,6 +2,7 @@
 import { BUN_DOC_MAP } from '../src/col93-matrix.js';
 import { QuantumResistantSecureDataRepository } from '../src/quantum-audit.js';
 import { hashManifest } from '../src/integrity-utils.js';
+import { fetchMatrixPublicResource } from "../../../src/lib/matrix-outbound.ts";
 
 interface RegionConfig {
   name: string;
@@ -40,7 +41,7 @@ class MatrixValidator {
     
     try {
       // Fetch matrix from region
-      const response = await fetch(`${config.endpoint}/matrix/v1.3.7`);
+      const response = await fetchMatrixPublicResource(`${config.endpoint}/matrix/v1.3.7`);
       const latency = performance.now() - startTime;
       
       if (!response.ok) {

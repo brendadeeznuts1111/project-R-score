@@ -1,5 +1,7 @@
 import {
   fetchWithPolicy,
+  isNormalizedLoopbackHostname,
+  type OutboundExecutionOptions,
   type OutboundEndpointPolicy,
   type OutboundFetch,
 } from '../../../../../lib/http/outbound-policy.ts';
@@ -57,7 +59,7 @@ export function fetchInternalProxy(
     readonly query?: URLSearchParams;
     readonly baseUrl?: string;
     readonly fetcher?: OutboundFetch;
-  } = {}
+  } & OutboundExecutionOptions = {}
 ): Promise<Response> {
   if (!ALLOWED_ROUTES.has(route)) {
     throw new TypeError('Internal proxy route is not registered');
@@ -83,7 +85,17 @@ export function fetchInternalProxy(
     ],
     redirect: 'error',
     timeoutMs: 10_000,
+    totalDeadlineMs: 10_000,
+    responseByteLimit: 4_000_000,
+    route: { mode: 'direct' },
+    networkMode: 'online',
+    protocol: { allowed: ['auto'], default: 'auto' },
+    ipAuthority: {
+      mode: isNormalizedLoopbackHostname(base.hostname) ? 'allow-non-public' : 'public-only',
+      enforcement: 'resolve-before-connect',
+    },
+    replayClass: (init.method ?? 'GET').toUpperCase() === 'GET' ? 'safe' : 'unsafe',
   };
 
-  return fetchWithPolicy(target, init, policy, options.fetcher);
+  return fetchWithPolicy(target, init, policy, options.fetcher, options);
 }

@@ -2,6 +2,8 @@
 // Cold fetch benchmark - no preconnect, measures baseline latency
 // Usage: hyperfine 'bun scripts/bench/cold-fetch.ts'
 
+import { fetchEnterpriseDashboardOutbound } from "../../src/server/security/outbound.ts";
+
 const hosts = [
   "https://api.github.com",
   "https://registry.npmjs.org",
@@ -13,7 +15,7 @@ const results: { host: string; latencyMs: number; status: number }[] = [];
 for (const host of hosts) {
   const start = Bun.nanoseconds();
   try {
-    const res = await fetch(host, { method: "HEAD" });
+    const res = await fetchEnterpriseDashboardOutbound("benchmark-public", host, { method: "HEAD" });
     const latencyMs = (Bun.nanoseconds() - start) / 1_000_000;
     results.push({ host, latencyMs, status: res.status });
   } catch (error) {

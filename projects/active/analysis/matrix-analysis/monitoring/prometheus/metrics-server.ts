@@ -5,6 +5,7 @@
  */
 
 import { $ } from "bun";
+import { fetchMatrixLoopbackRead } from "../../src/lib/matrix-outbound.ts";
 
 const PORT = 9090;
 const METRICS_PATH = "/metrics";
@@ -32,7 +33,7 @@ async function collectMetrics(): Promise<SystemMetrics> {
       service: "com.openclaw.gateway",
       name: "gateway_token"
     });
-    const response = await fetch("http://127.0.0.1:18789/health", {
+    const response = await fetchMatrixLoopbackRead("http://127.0.0.1:18789/health", {
       headers: token ? { "Authorization": `Bearer ${token}` } : {}
     });
     gatewayUp = response.ok ? 1 : 0;

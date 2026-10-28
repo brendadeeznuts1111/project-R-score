@@ -326,7 +326,10 @@ export type Permission =
   | "system:write"
   | "pty:access"
   | "projects:read"
-  | "projects:write";
+  | "projects:write"
+  | "kyc:execute"
+  | "kyc:review"
+  | "kyc:admin";
 
 /** Authentication context attached to requests */
 export interface AuthContext {

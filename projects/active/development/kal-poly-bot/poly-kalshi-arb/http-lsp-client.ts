@@ -6,6 +6,7 @@
  */
 
 import { spawn } from 'child_process';
+import { createKalPolyLoopbackAuthority, fetchKalPolyLoopback } from '../outbound-client.ts';
 
 interface LSPResponse {
   jsonrpc: string;
@@ -74,9 +75,13 @@ export class LSPHTTPClient {
 
       const checkInterval = setInterval(async () => {
         try {
-          const response = await fetch(`http://localhost:${this.port}/health`, {
+          const response = await fetchKalPolyLoopback(
+            createKalPolyLoopbackAuthority('localhost', this.port),
+            '/health',
+            {
             signal: AbortSignal.timeout(2000),
-          });
+            }
+          );
 
           if (response.ok) {
             clearTimeout(timeoutId);
@@ -129,11 +134,15 @@ export class LSPHTTPClient {
   async sendRequest(method: string, params: any): Promise<LSPResponse> {
     const id = ++this.messageId;
 
-    const response = await fetch(`http://localhost:${this.port}/${method}`, {
+    const response = await fetchKalPolyLoopback(
+      createKalPolyLoopbackAuthority('localhost', this.port),
+      `/${method}`,
+      {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', id, method, params }),
-    });
+      }
+    );
 
     return response.json();
   }
@@ -142,11 +151,15 @@ export class LSPHTTPClient {
    * Send LSP notification (no response expected)
    */
   async sendNotification(method: string, params: any): Promise<void> {
-    await fetch(`http://localhost:${this.port}/${method}`, {
+    await fetchKalPolyLoopback(
+      createKalPolyLoopbackAuthority('localhost', this.port),
+      `/${method}`,
+      {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ jsonrpc: '2.0', method, params }),
-    });
+      }
+    );
   }
 
   /**

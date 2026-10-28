@@ -1,3 +1,5 @@
+import { postBrowserTelemetry } from '../browser-outbound';
+
 export interface PerformanceMetrics {
   fps: number;
   frameTime: number;
@@ -219,10 +221,7 @@ export class PerformanceMonitor {
   
   private reportViolation(violations: string[]): void {
     // Send to monitoring service
-    fetch('https://monitoring.quantumnavigator.io/violations', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    postBrowserTelemetry('violations', JSON.stringify({
         violations,
         metrics: this.metrics,
         budget: this.budget,
@@ -230,9 +229,7 @@ export class PerformanceMonitor {
         sessionId: GlobalStateManager.getInstance().getState().user.sessionId,
         url: window.location.href,
         userAgent: navigator.userAgent
-      }),
-      keepalive: true
-    }).catch(() => {
+      })).catch(() => {
       // Fail silently
     });
     

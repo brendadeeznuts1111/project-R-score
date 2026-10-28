@@ -14,6 +14,7 @@ import { NPMRegistryServer } from '../../server/src/server';
 import { RegistryAuth, AuthConfigs } from '@factorywager/registry-core/auth';
 import {
   FACTORY_WAGER_NPM_READ_URL,
+  fetchLocalRegistryWrite,
   fetchRegistryReadTokenless,
   prepareLocalRegistryWrite,
   resolveRegistryReadUrl,
@@ -236,7 +237,7 @@ class RegistryCLI {
       };
 
       // Publish to registry
-      const response = await fetch(`${registry}/${pkg.name}`, {
+      const response = await fetchLocalRegistryWrite(registry, `${registry}/${pkg.name}`, {
         method: 'PUT',
         redirect: 'error',
         headers: {
@@ -279,13 +280,17 @@ class RegistryCLI {
       const { url: registry, credentials: authorization } = this.prepareWrite(options);
       if (version) {
         // Delete specific version
-        const response = await fetch(`${registry}/${packageName}/-/${version}`, {
+        const response = await fetchLocalRegistryWrite(
+          registry,
+          `${registry}/${packageName}/-/${version}`,
+          {
           method: 'DELETE',
           redirect: 'error',
           headers: {
             'Authorization': authorization,
           },
-        });
+          }
+        );
 
         if (response.ok) {
           console.info(styled(`✅ Unpublished: ${packageName}@${version}`, 'success'));
@@ -295,7 +300,7 @@ class RegistryCLI {
         }
       } else {
         // Delete entire package
-        const response = await fetch(`${registry}/${packageName}`, {
+        const response = await fetchLocalRegistryWrite(registry, `${registry}/${packageName}`, {
           method: 'DELETE',
           redirect: 'error',
           headers: {

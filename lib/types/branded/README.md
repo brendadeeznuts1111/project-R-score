@@ -10,7 +10,8 @@ text must not travel through the harness as a bare `string`.
 - **Source catalog:** [`index.ts`](./index.ts) → `BRAND_CATALOG`
 - **Generated record:** [`brand-manifest.json`](../brand-manifest.json) — never
   hand-edit
-- **Inventory:** 97 values across 10 domains: 75 IDs, 3 keys, and 19 codes
+- **Inventory:** 100 values across 10 domains: 76 IDs, 4 keys, 19 codes, and 1
+  digest
 - **Runtime:** branded values remain ordinary strings; the nominal tag is
   type-only
 - **Shape guards:** `BRAND_GUARDS.isX(value)` and `isBrandedValue(name, value)`
@@ -26,18 +27,18 @@ authoritative.
 
 ## Domain routing
 
-| Domain     | Values                                                                                  | Module                             |
-| ---------- | --------------------------------------------------------------------------------------- | ---------------------------------- |
-| session    | 5 session, terminal, request, correlation, and snapshot IDs                             | [`session.ts`](./session.ts)       |
-| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs                       | [`identity.ts`](./identity.ts)     |
-| documents  | 3 document, zone, and Bun documentation-token IDs                                       | [`documents.ts`](./documents.ts)   |
-| security   | 2 challenge and policy IDs                                                              | [`security.ts`](./security.ts)     |
-| deployment | 1 deployment ID                                                                         | [`deployment.ts`](./deployment.ts) |
-| audit      | 8 version, audit, finding, concept, entry, evidence, DOD, and rule IDs                  | [`audit.ts`](./audit.ts)           |
-| governance | 13 GitHub issue artifact/concept IDs plus label, dimension, and lifecycle keys/codes    | [`governance.ts`](./governance.ts) |
-| operations | 39 ops, partner identity/provenance, money, sportsbook, jurisdiction, and postal values | [`operations.ts`](./operations.ts) |
-| portal     | 5 portal tenant, Telegram user, portal account, link-nonce, and DOM mount IDs           | [`portal.ts`](./portal.ts)         |
-| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes   | [`surfaces.ts`](./surfaces.ts)     |
+| Domain     | Values                                                                                           | Module                             |
+| ---------- | ------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| session    | 5 session, terminal, request, correlation, and snapshot IDs                                      | [`session.ts`](./session.ts)       |
+| identity   | 6 user, account, identity, OIDC-client, access-key, and token IDs                                | [`identity.ts`](./identity.ts)     |
+| documents  | 3 document, zone, and Bun documentation-token IDs                                                | [`documents.ts`](./documents.ts)   |
+| security   | 2 challenge and policy IDs                                                                       | [`security.ts`](./security.ts)     |
+| deployment | 1 deployment ID                                                                                  | [`deployment.ts`](./deployment.ts) |
+| audit      | 8 version, audit, finding, concept, entry, evidence, DOD, and rule IDs                           | [`audit.ts`](./audit.ts)           |
+| governance | 13 GitHub issue artifact/concept IDs plus label, dimension, and lifecycle keys/codes             | [`governance.ts`](./governance.ts) |
+| operations | 41 ops, content, partner identity/provenance, money, sportsbook, jurisdiction, and postal values | [`operations.ts`](./operations.ts) |
+| portal     | 5 portal tenant, Telegram user, portal account, link-nonce, and DOM mount IDs                    | [`portal.ts`](./portal.ts)         |
+| surfaces   | 10 host/apex/subdomain/surface/Pages/publish/Access IDs + status/access/backend codes            | [`surfaces.ts`](./surfaces.ts)     |
 
 `StateCode` and `ZipCode` have format-aware constructors. Do not replace those
 constructors with the generic factory. `HostId` / `AccessDomainId` are also
@@ -155,8 +156,8 @@ ZIP+4. Use `parse*` when input needs trimming or normalization.
 ## Aggregate types
 
 - `AnyId` is the union of all 70 catalog values whose names end in `Id`.
-- `AnyBrandedValue` is the complete union: `AnyId` plus all branded keys and
-  validated codes.
+- `AnyBrandedValue` is the complete union: `AnyId` plus all branded keys,
+  digests, and validated codes.
 - `unbrand(value)` deliberately returns a plain `string` for serialization,
   persistence, URLs, and other outbound boundaries.
 

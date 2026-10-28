@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v1-3-3/websocket-fragment-guard.ts
 // Component #73: WebSocket Fragment Guard for RFC 6455 Compliance
@@ -228,7 +229,7 @@ export class WebSocketFragmentGuard {
   ): void {
     if (!process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS === "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -244,7 +245,7 @@ export class WebSocketFragmentGuard {
   private static logFragmentProcessingError(error: any): void {
     if (!process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS === "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

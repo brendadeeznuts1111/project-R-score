@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchFinalDeployment } from '../src/security/final-outbound.ts';
 /**
  * Fantasy42-Fire22 Cloudflare Status Checker
  * Comprehensive status verification for Cloudflare integration
@@ -15,7 +17,7 @@ interface StatusCheck {
 
 async function checkRepositoryPrivacy(): Promise<StatusCheck> {
   try {
-    const response = await fetch(
+    const response = await fetchFinalDeployment(
       'https://api.github.com/repos/brendadeeznuts1111/fantasy42-fire22-registry'
     );
     const data = await response.json();

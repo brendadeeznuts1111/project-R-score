@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Activity, Users, Smartphone, Globe, Database, AlertTriangle, TrendingUp } from 'lucide-react';
+import { fetchBrowserSameOrigin } from '../../../../../src/http/browser-outbound';
 
 interface MonitoringSummary {
   totalEvents: number;
@@ -48,22 +49,22 @@ export const MonitoringDashboard: React.FC = () => {
     setLoading(true);
     try {
       // Fetch summary
-      const summaryRes = await fetch('/api/monitoring/summary');
+      const summaryRes = await fetchBrowserSameOrigin('/api/monitoring/summary');
       const summaryData = await summaryRes.json();
       setSummary(summaryData);
 
       // Fetch environment metrics
-      const envRes = await fetch(`/api/monitoring/environment/${selectedEnvironment}?env=${selectedEnvironment}`);
+      const envRes = await fetchBrowserSameOrigin(`/api/monitoring/environment/${selectedEnvironment}?env=${selectedEnvironment}`);
       const envData = await envRes.json();
       setEnvironmentMetrics(envData);
 
       // Fetch top IPs
-      const ipsRes = await fetch(`/api/monitoring/ips/top?env=${selectedEnvironment}&limit=10`);
+      const ipsRes = await fetchBrowserSameOrigin(`/api/monitoring/ips/top?env=${selectedEnvironment}&limit=10`);
       const ipsData = await ipsRes.json();
       setTopIPs(ipsData);
 
       // Fetch top devices
-      const devicesRes = await fetch(`/api/monitoring/devices/top?env=${selectedEnvironment}&limit=10`);
+      const devicesRes = await fetchBrowserSameOrigin(`/api/monitoring/devices/top?env=${selectedEnvironment}&limit=10`);
       const devicesData = await devicesRes.json();
       setTopDevices(devicesData);
     } catch (error) {

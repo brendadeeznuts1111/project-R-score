@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/websocket-fragment-guard.ts
 import { feature } from "bun:bundle";
 
@@ -94,7 +95,7 @@ export class WebSocketFragmentGuard {
       if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
       if (guardedWs.closeFrameBuffer.length > 1024) {
-        fetch("https://api.buncatalog.com/v1/threat", {
+        fetchBunCatalog("/v1/threat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -111,7 +112,7 @@ export class WebSocketFragmentGuard {
   private static logFragmentError(error: any): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

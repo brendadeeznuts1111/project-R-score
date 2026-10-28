@@ -9,6 +9,14 @@ import { WorkerThreadSafetyEngine } from "../worker-thread-safety-engine";
 import { YAMLDocEndFix } from "../yaml-doc-end-fix";
 
 describe("Component #71: Sourcemap-Integrity-Validator", () => {
+  beforeEach(() => {
+    process.env.FEATURE_SOURCEMAP_INTEGRITY = "1";
+  });
+
+  afterEach(() => {
+    delete process.env.FEATURE_SOURCEMAP_INTEGRITY;
+  });
+
   it("should validate build sourcemaps without virtual paths", async () => {
     const buildResult = {
       outputs: [
@@ -73,6 +81,16 @@ describe("Component #71: Sourcemap-Integrity-Validator", () => {
 });
 
 describe("Component #72: NAPI-ThreadSafety-Guard", () => {
+  beforeEach(() => {
+    process.env.FEATURE_NAPI_THREADSAFE = "1";
+    NAPIThreadSafetyGuard.cleanupAll();
+  });
+
+  afterEach(() => {
+    NAPIThreadSafetyGuard.cleanupAll();
+    delete process.env.FEATURE_NAPI_THREADSAFE;
+  });
+
   it("should create thread-safe function", () => {
     const fn = (value: any) => value * 2;
     const tsfn = NAPIThreadSafetyGuard.createThreadSafeFunction(fn, {
@@ -175,6 +193,14 @@ describe("Component #73: WebSocket-Fragment-Guard", () => {
 });
 
 describe("Component #74: Worker-Thread-Safety-Engine", () => {
+  beforeEach(() => {
+    process.env.FEATURE_WORKER_THREAD_SAFETY = "1";
+  });
+
+  afterEach(() => {
+    delete process.env.FEATURE_WORKER_THREAD_SAFETY;
+  });
+
   it("should create worker with safety hooks", () => {
     // Mock Worker constructor
     const originalWorker = global.Worker;

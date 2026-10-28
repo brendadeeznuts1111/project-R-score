@@ -1,3 +1,5 @@
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from '../../../runtime-outbound.ts';
+
 /**
  * Terminal Client - WebSocket interface for Kalman Terminal API
  *
@@ -105,8 +107,19 @@ export class KalmanTerminalClient {
    * Create new terminal session via HTTP API
    */
   private async createSession(): Promise<string> {
-    const response = await fetch(
-      `${this.config.url.replace("ws", "http")}/terminal`,
+    const target = new URL(this.config.url);
+    const httpProtocol = target.protocol === 'wss:' ? 'https:' : 'http:';
+    const origin = `${httpProtocol}//${target.host}`;
+    const authority = createKalPolyOutboundAuthority({
+      name: 'kal-poly-terminal-session',
+      baseUrl: origin,
+      pathPrefix: '/terminal',
+      methods: ['POST'],
+      addressClass: target.hostname === 'localhost' || target.hostname.startsWith('127.') ? 'loopback' : 'public',
+    });
+    const response = await fetchKalPolyOutbound(
+      authority,
+      `${origin}/terminal`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

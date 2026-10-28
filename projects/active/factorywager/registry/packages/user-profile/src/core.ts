@@ -16,6 +16,7 @@ import { toJsonString, serializeBigInt } from './serialization';
 import { requireValidUserId } from './validation';
 import { r2EndpointFromAccount, tryR2Config } from '../../../../../../../config/r2-env.ts';
 import { resolveProfileSecretsService } from '../../../../../../../lib/security/infra-secrets';
+import { createFactoryR2Authority, fetchFactoryR2 } from '../../r2-storage/src/r2-outbound.ts';
 
 // Type-safe profile preferences schema (v10.1)
 export const ProfilePrefsSchema = z.object({
@@ -303,15 +304,20 @@ export class UserProfileEngine {
       const endpoint = r2?.endpoint || r2EndpointFromAccount();
 
       if (r2) {
-        const response = await fetch(`${endpoint}/${this.s3Bucket}/${key}`, {
-          method: 'PUT',
-          headers: {
-            Authorization: `Basic ${btoa(`${r2.accessKeyId}:${r2.secretAccessKey}`)}`,
-            'Content-Type': 'application/octet-stream',
-            'Content-Encoding': 'zstd',
-            'x-amz-meta-parity': hashHex,
+        const authority = createFactoryR2Authority(r2.accountId, endpoint);
+        const response = await fetchFactoryR2(authority, {
+          bucket: this.s3Bucket,
+          key,
+          init: {
+            method: 'PUT',
+            headers: {
+              Authorization: `Basic ${btoa(`${r2.accessKeyId}:${r2.secretAccessKey}`)}`,
+              'Content-Type': 'application/octet-stream',
+              'Content-Encoding': 'zstd',
+              'x-amz-meta-parity': hashHex,
+            },
+            body: compressed,
           },
-          body: compressed,
         });
 
         if (!response.ok) {

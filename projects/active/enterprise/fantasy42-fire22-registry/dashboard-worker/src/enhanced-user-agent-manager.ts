@@ -11,6 +11,7 @@
  */
 
 import type { Fire22LKey, WebLogEntry } from '../src/types/water-dashboard-standards';
+import { fetchFixedFantasyApi } from './security/runtime-outbound.ts';
 
 // User agent configuration
 export interface UserAgentConfig {
@@ -113,7 +114,7 @@ export class EnhancedUserAgentManager {
     let success = false;
 
     try {
-      response = await fetch(url, enhancedOptions);
+      response = await fetchFixedFantasyApi(url, enhancedOptions);
       success = response.ok;
 
       // Track the API call

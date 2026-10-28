@@ -2,7 +2,8 @@
 # Simplified and optimized for seamless development
 
 # Runtime configuration
-preload = ["./scripts/preload.ts"]
+# Runtime preload is intentionally not automatic. The former preload mutates
+# globalThis.console for every entrypoint and has no exact launch owner.
 logLevel = "warn"
 
 # JSX configuration

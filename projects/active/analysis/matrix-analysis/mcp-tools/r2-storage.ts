@@ -1,5 +1,9 @@
 // mcp-tools/r2-storage.ts - R2/S3 integration for persistent violation logs
 import { WidthViolation } from './sse-alerts.js';
+import {
+  fetchMatrixGrantedResource,
+  type MatrixGrantedEndpoint,
+} from "../src/lib/matrix-outbound.ts";
 
 export interface ViolationLogEntry {
   id: string;
@@ -34,6 +38,23 @@ export class R2ViolationLogger {
     this.baseUrl = config.endpoint || `https://${config.accountId}.r2.cloudflarestorage.com`;
   }
 
+  private endpointGrant(method: 'GET' | 'PUT'): MatrixGrantedEndpoint {
+    return {
+      name: `matrix-r2-${method.toLowerCase()}`,
+      origin: new URL(this.baseUrl).origin,
+      authority: 'public-https',
+      allowedMethods: [method],
+      credentialHeaders: [
+        'authorization',
+        'x-amz-content-sha256',
+        'x-amz-date',
+      ],
+      replayClass: method === 'GET' ? 'safe' : 'unsafe',
+      responseByteLimit: method === 'GET' ? 5_000_000 : 1_000_000,
+      timeoutMs: 15_000,
+    };
+  }
+
   /**
    * Upload violation log to R2 with streaming support
    */
@@ -45,7 +66,7 @@ export class R2ViolationLogger {
       // Create signature for AWS S3 API
       const signature = await this.createSignature('PUT', key, body);
 
-      const response = await fetch(`${this.baseUrl}/${this.config.bucket}/${key}`, {
+      const response = await fetchMatrixGrantedResource(`${this.baseUrl}/${this.config.bucket}/${key}`, {
         method: 'PUT',
         headers: {
           'Authorization': `AWS4-HMAC-SHA256 ${signature}`,
@@ -55,7 +76,7 @@ export class R2ViolationLogger {
           'Host': `${this.config.bucket}.${this.config.accountId}.r2.cloudflarestorage.com`
         },
         body
-      });
+      }, this.endpointGrant('PUT'));
 
       if (!response.ok) {
         throw new Error(`R2 upload failed: ${response.status} ${response.statusText}`);
@@ -127,13 +148,13 @@ export class R2ViolationLogger {
       const listUrl = `${this.baseUrl}/${this.config.bucket}?list-type=2&prefix=${encodeURIComponent(prefix)}`;
 
       const signature = await this.createSignature('GET', '', '');
-      const response = await fetch(listUrl, {
+      const response = await fetchMatrixGrantedResource(listUrl, {
         headers: {
           'Authorization': `AWS4-HMAC-SHA256 ${signature}`,
           'x-amz-date': this.getAmzDate(),
           'Host': `${this.config.bucket}.${this.config.accountId}.r2.cloudflarestorage.com`
         }
-      });
+      }, this.endpointGrant('GET'));
 
       if (!response.ok) {
         throw new Error(`R2 query failed: ${response.status} ${response.statusText}`);
@@ -233,7 +254,7 @@ export class R2ViolationLogger {
     try {
       const signature = await this.createSignature('PUT', key, content);
 
-      const response = await fetch(`${this.baseUrl}/${this.config.bucket}/${key}`, {
+      const response = await fetchMatrixGrantedResource(`${this.baseUrl}/${this.config.bucket}/${key}`, {
         method: 'PUT',
         headers: {
           'Authorization': `AWS4-HMAC-SHA256 ${signature}`,
@@ -243,7 +264,7 @@ export class R2ViolationLogger {
           'Host': `${this.config.bucket}.${this.config.accountId}.r2.cloudflarestorage.com`
         },
         body: content
-      });
+      }, this.endpointGrant('PUT'));
 
       if (!response.ok) {
         throw new Error(`Batch upload failed: ${response.status} ${response.statusText}`);

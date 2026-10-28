@@ -506,7 +506,7 @@ export class FinancialOperations {
         requestOptions.body = JSON.stringify(body);
       }
 
-      const response = await fetch(url, requestOptions);
+      const response = await fetchFixedFantasyApi(url, requestOptions);
       const responseData = await response.json();
 
       return {
@@ -562,3 +562,4 @@ class ClientError extends Error {
     this.name = 'ClientError';
   }
 }
+import { fetchFixedFantasyApi } from '../../../../security/runtime-outbound.ts';

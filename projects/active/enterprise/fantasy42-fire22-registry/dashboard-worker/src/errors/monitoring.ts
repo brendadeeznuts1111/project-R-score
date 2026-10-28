@@ -7,6 +7,7 @@
 import { ErrorHandler } from './ErrorHandler';
 import { RetryUtils } from './RetryUtils';
 import { Fire22Error, ErrorSeverity } from './types';
+import { fetchConfiguredWebhook } from '../security/runtime-outbound.ts';
 
 export interface MonitoringConfig {
   alertingEnabled: boolean;
@@ -137,7 +138,7 @@ export class FireEventMonitoring {
    */
   private async sendWebhook(webhookUrl: string, alert: AlertPayload): Promise<void> {
     try {
-      await fetch(webhookUrl, {
+      await fetchConfiguredWebhook(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -190,7 +191,7 @@ export class FireEventMonitoring {
         ],
       };
 
-      await fetch(slackWebhook, {
+    await fetchConfiguredWebhook(slackWebhook, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,12 +1,16 @@
 // API client configuration
-const API_URL = "https://api.example.com";
+import {
+  createFullStackBunOutboundAuthority,
+  fetchFullStackBunOutbound,
+} from './security/outbound';
 
-fetch(API_URL, {
-  proxy: {
-    url: "http://proxy.com:8080",
-    headers: {
-      "Proxy-Authorization": "Bearer tok",
-      "X-Custom-Proxy-Header": "value"
-    }
-  }
+const API_URL = "https://api.example.com";
+const EXAMPLE_API_AUTHORITY = createFullStackBunOutboundAuthority({
+  kind: 'example-api',
+  name: 'example-api-via-proxy',
+  baseUrl: API_URL,
+  exact: true,
+  proxy: 'https://proxy.com:8080',
 });
+
+fetchFullStackBunOutbound(EXAMPLE_API_AUTHORITY, API_URL);

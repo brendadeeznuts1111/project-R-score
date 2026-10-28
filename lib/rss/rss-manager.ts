@@ -4,13 +4,15 @@
 // lib/rss/rss-manager.ts — RSS feed integration with caching and storage
 
 import type { PackageInfo } from '../package/package-manager';
+import { parsePackageDependencyRecords } from '../registry/package-dependencies.ts';
 import { withCircuitBreaker } from '../core/circuit-breaker';
 import { CacheManager } from '../core/cache-manager';
 import { AtomicFileOperations } from '../core/atomic-file-operations';
-import { FeedImageEnricher } from './feed-image.ts';
-import { buildPackageFeed, enrichFeedImages, fetchPackageFeeds } from './rss-feed-preparation.ts';
+import { FeedImageEnricher, type FeedImageSource } from './feed-image.ts';
+import { loadArchivedFeedSnapshot, type FeedSnapshotArchive } from './feed-snapshot-archive.ts';
 import { fetchFeedXml } from './fetch-feed-xml.ts';
-import { generateRSS, parseRSSFeed, type RSSFeed } from './rss-xml.ts';
+import { generateRSS, parseRSSFeed, type RSSFeed, type RSSFeedItem } from './rss-xml.ts';
+import { parseRSSFeedUntrusted, requireRSSXmlBoundaryValue } from './rss-xml-untrusted.ts';
 
 export { generateRSS, parseRSSFeed } from './rss-xml.ts';
 export type { RSSFeed, RSSFeedItem } from './rss-xml.ts';
@@ -31,14 +33,28 @@ export type RSSManagerOptions = {
   imageConcurrency?: number;
   maxFeedBytes?: number;
   feedTimeoutMs?: number;
+  feedParseDeadlineMs?: number;
   allowedFeedOrigins?: string[];
+  snapshotArchive?: FeedSnapshotArchive;
 };
+
+export interface RSSPublishStorage {
+  getOrCreateBucket(packageName: string): Promise<string>;
+  put(
+    bucket: string,
+    key: string,
+    data: Uint8Array,
+    crc32Hex?: string,
+    contentType?: string
+  ): Promise<void>;
+  publicObjectUrl(bucket: string, key: string): string;
+}
 
 export class RSSManager {
   private feeds: Map<string, RSSFeed>;
   private subscriptions: FeedSubscription[];
   private cache: CacheManager;
-  private r2Storage?: any; // R2Storage type
+  private readonly publishStorage?: RSSPublishStorage;
   private readonly fetcher: typeof fetch;
   private readonly imageEnricher: FeedImageEnricher;
   private readonly enrichImages: boolean;
@@ -46,13 +62,15 @@ export class RSSManager {
   private readonly imageConcurrency: number;
   private readonly maxFeedBytes: number;
   private readonly feedTimeoutMs: number;
+  private readonly feedParseDeadlineMs: number;
   private readonly allowedFeedOrigins?: ReadonlySet<string>;
+  private readonly snapshotArchive?: FeedSnapshotArchive;
 
-  constructor(r2Storage?: any, options: RSSManagerOptions = {}) {
+  constructor(publishStorage?: RSSPublishStorage, options: RSSManagerOptions = {}) {
     this.feeds = new Map();
     this.subscriptions = [];
     this.cache = new CacheManager({ defaultTTL: 300000, maxSize: 100 });
-    this.r2Storage = r2Storage;
+    this.publishStorage = publishStorage;
     this.fetcher = options.fetcher ?? fetch;
     this.imageEnricher = options.imageEnricher ?? new FeedImageEnricher({ fetcher: this.fetcher });
     this.enrichImages = options.enrichImages ?? true;
@@ -60,9 +78,11 @@ export class RSSManager {
     this.imageConcurrency = Math.max(1, options.imageConcurrency ?? 3);
     this.maxFeedBytes = options.maxFeedBytes ?? 8 * 1024 * 1024;
     this.feedTimeoutMs = options.feedTimeoutMs ?? 15_000;
+    this.feedParseDeadlineMs = options.feedParseDeadlineMs ?? 1_000;
     this.allowedFeedOrigins = options.allowedFeedOrigins
       ? new Set(options.allowedFeedOrigins.map(origin => new URL(origin).origin))
       : undefined;
+    this.snapshotArchive = options.snapshotArchive;
     this.loadSubscriptions();
   }
 
@@ -97,36 +117,35 @@ export class RSSManager {
           allowedOrigins: this.allowedFeedOrigins,
         })
       );
-      const feed = parseRSSFeed(xml);
-      if (this.enrichImages) {
-        await enrichFeedImages(
-          feed,
-          this.imageEnricher,
-          this.maxImagesPerFeed,
-          this.imageConcurrency
-        );
-      }
+      const feed = requireRSSXmlBoundaryValue(
+        await parseRSSFeedUntrusted(xml, {
+          deadlineMs: this.feedParseDeadlineMs,
+          quotas: { maxInputBytes: this.maxFeedBytes },
+        })
+      );
+      if (this.enrichImages) await this.enrichFeedImages(feed, feedUrl);
 
       // Cache with CacheManager (TTL handled by manager)
       await this.cache.set(feedUrl, feed, { tags: ['rss'] });
 
-      // Store in R2 if available
-      if (this.r2Storage) {
-        await this.r2Storage.putJson(`rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`, feed);
-      }
-
       return feed;
     } catch (error) {
-      console.error(`Failed to fetch RSS feed ${feedUrl}:`, error);
-
-      // Try to get from R2 cache
-      if (this.r2Storage) {
-        const cachedFeed = await this.r2Storage.getJson(
-          `rss/${feedUrl.replace(/[^a-zA-Z0-9]/g, '-')}.json`
-        );
-        if (cachedFeed) return cachedFeed;
+      if (this.snapshotArchive) {
+        const archived = await loadArchivedFeedSnapshot({
+          archive: this.snapshotArchive,
+          sourceUrl: feedUrl,
+        });
+        if (archived) {
+          return requireRSSXmlBoundaryValue(
+            await parseRSSFeedUntrusted(archived.feedXml, {
+              deadlineMs: this.feedParseDeadlineMs,
+              quotas: { maxInputBytes: this.maxFeedBytes },
+            })
+          );
+        }
       }
 
+      console.error(`Failed to fetch RSS feed ${feedUrl}:`, error);
       throw error;
     }
   }
@@ -152,24 +171,118 @@ export class RSSManager {
     _packageName: string,
     configuredFeedUrls: readonly string[] = []
   ): Promise<RSSFeed[]> {
-    return fetchPackageFeeds(configuredFeedUrls, feedUrl => this.fetchFeed(feedUrl));
+    const feeds: RSSFeed[] = [];
+
+    // Package names do not identify a GitHub repository or a feed endpoint.
+    // Only caller-supplied, provenance-bearing URLs are eligible for fetching.
+    for (const feedUrl of [...new Set(configuredFeedUrls)].sort()) {
+      try {
+        const feed = await this.fetchFeed(feedUrl);
+        feeds.push(feed);
+      } catch {
+        // Ignore failed feeds
+      }
+    }
+
+    return feeds;
   }
 
   async generatePackageFeed(packageName: string, packageInfo: PackageInfo): Promise<RSSFeed> {
-    return buildPackageFeed(packageName, packageInfo);
+    const feed: RSSFeed = {
+      title: `${packageName} - Bun Documentation`,
+      link: `https://bun.com/docs/packages/${encodeURIComponent(packageName)}`,
+      description: `Documentation updates for ${packageName}`,
+      items: [],
+      // No source revision timestamp exists in PackageInfo. Omitting dates is
+      // deterministic and standards-valid; request time is not content time.
+      lastBuildDate: '',
+      ttl: 1440, // 24 hours
+    };
+
+    // Add Bun API documentation as feed items
+    if (packageInfo.bunDocs) {
+      for (const doc of [...packageInfo.bunDocs].sort((a, b) =>
+        `${a.category}\0${a.api}\0${a.url}`.localeCompare(`${b.category}\0${b.api}\0${b.url}`)
+      )) {
+        feed.items.push({
+          title: `${doc.api} - ${packageName}`,
+          link: doc.url,
+          description: `Documentation for ${doc.api} API used in ${packageName}`,
+          pubDate: '',
+          category: [doc.category],
+          guid: `bun:${packageName}:${doc.api}`,
+        });
+      }
+    }
+
+    // Preserve dependency plane and peer optionality in both presentation and identity.
+    const packageDependencies =
+      packageInfo.packageDependencies ?? parsePackageDependencyRecords(packageInfo);
+    for (const dependency of packageDependencies) {
+      const peerQualifier =
+        dependency.kind === 'peer' ? (dependency.peer?.optional ? ':optional' : ':required') : '';
+      const kindLabel =
+        dependency.kind === 'peer' && dependency.peer?.optional
+          ? 'peer (optional)'
+          : dependency.kind;
+      feed.items.push({
+        title: `Dependency [${kindLabel}]: ${dependency.packageName}@${dependency.range}`,
+        link: `https://www.npmjs.com/package/${dependency.packageName}`,
+        description: `${packageName} declares ${dependency.packageName} ${dependency.range} as a ${kindLabel} dependency`,
+        pubDate: '',
+        category: ['dependencies', `dependency:${dependency.kind}`],
+        guid: `dep:${packageName}:${dependency.kind}${peerQualifier}:${dependency.packageName}:${dependency.range}`,
+      });
+    }
+
+    return feed;
   }
 
   async publishPackageFeed(packageName: string, feed: RSSFeed): Promise<string> {
-    if (!this.r2Storage) {
+    if (!this.publishStorage) {
       throw new Error('R2 storage required for publishing feeds');
     }
 
     const xml = generateRSS(feed);
-    const bucket = await this.r2Storage.getOrCreateBucket(packageName);
+    const bucket = await this.publishStorage.getOrCreateBucket(packageName);
+    const key = `feeds/${packageName}.rss`;
+    await this.publishStorage.put(
+      bucket,
+      key,
+      new TextEncoder().encode(xml),
+      undefined,
+      'application/rss+xml; charset=utf-8'
+    );
 
-    await this.r2Storage.put(bucket, `feeds/${packageName}.rss`, new TextEncoder().encode(xml));
+    return this.publishStorage.publicObjectUrl(bucket, key);
+  }
 
-    return `https://${bucket}.${this.r2Storage['config'].accountId}.r2.dev/feeds/${packageName}.rss`;
+  private async enrichFeedImages(feed: RSSFeed, feedUrl: string): Promise<void> {
+    const candidates = feed.items
+      .filter((item): item is RSSFeedItem & { imageUrl: string; imageSource: FeedImageSource } =>
+        Boolean(item.imageUrl && item.imageSource)
+      )
+      .slice(0, this.maxImagesPerFeed);
+    let cursor = 0;
+    const workers = Array.from(
+      { length: Math.min(this.imageConcurrency, candidates.length) },
+      async () => {
+        while (cursor < candidates.length) {
+          const item = candidates[cursor++];
+          if (!item) continue;
+          try {
+            item.image = await this.imageEnricher.enrich({
+              url: item.imageUrl,
+              source: item.imageSource,
+              feedUrl,
+            });
+          } catch (error) {
+            console.warn(`Failed to enrich RSS image ${item.imageUrl}:`, error);
+          }
+        }
+      }
+    );
+    await Promise.all(workers);
   }
 
   private async loadSubscriptions(): Promise<void> {

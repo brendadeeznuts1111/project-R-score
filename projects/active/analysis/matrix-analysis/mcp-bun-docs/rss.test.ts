@@ -4,7 +4,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, spyOn } from "bun:test";
-import { parseRSS, type RSSFeed, type RSSItem, safeRSSPreview } from "./rss.ts";
+import { parseRSS, safeRSSPreview } from "./rss.ts";
 
 let fetchSpy: ReturnType<typeof spyOn> | null = null;
 
@@ -29,6 +29,21 @@ const SAMPLE_RSS = `<?xml version="1.0"?>
 </channel>
 </rss>`;
 
+function hermeticOutbound() {
+	return {
+		fetcher: globalThis.fetch,
+		resolver: async () => [
+			{
+				address: "93.184.216.34",
+				family: 4 as const,
+				ttl: 60,
+				source: "node-resolver" as const,
+			},
+		],
+		environment: {},
+	};
+}
+
 describe("parseRSS", () => {
 	beforeEach(() => {
 		fetchSpy = spyOn(globalThis, "fetch").mockResolvedValue(
@@ -40,7 +55,9 @@ describe("parseRSS", () => {
 	});
 
 	it("returns RSSFeedResult with feed and audit", async () => {
-		const result = await parseRSS("https://example.com/feed.xml");
+		const result = await parseRSS("https://example.com/feed.xml", {
+			outbound: hermeticOutbound(),
+		});
 		expect(result).toHaveProperty("feed");
 		expect(result).toHaveProperty("audit");
 		expect(result.audit).toHaveProperty("fetchTimeMs");
@@ -55,7 +72,9 @@ describe("parseRSS", () => {
 	});
 
 	it("parses item title, link, pubDate, description", async () => {
-		const { feed } = await parseRSS("https://example.com/feed.xml");
+		const { feed } = await parseRSS("https://example.com/feed.xml", {
+			outbound: hermeticOutbound(),
+		});
 		const first = feed.items[0];
 		expect(first.title).toBe("Bun v99.0.0");
 		expect(first.link).toBe("https://bun.com/blog/bun-v99");
@@ -65,14 +84,17 @@ describe("parseRSS", () => {
 
 	it("throws on non-ok response", async () => {
 		fetchSpy!.mockResolvedValueOnce(new Response("", { status: 404 }));
-		await expect(parseRSS("https://example.com/feed.xml")).rejects.toThrow(
-			"RSS fetch failed: 404",
-		);
+		await expect(
+			parseRSS("https://example.com/feed.xml", {
+				outbound: hermeticOutbound(),
+			}),
+		).rejects.toThrow("RSS fetch failed: 404");
 	});
 
 	it("calls onAudit with audit metadata", async () => {
 		let captured: { fetchTimeMs: number; sizeBytes: number } | null = null;
 		await parseRSS("https://example.com/feed.xml", {
+			outbound: hermeticOutbound(),
 			onAudit: (a) => {
 				captured = a;
 			},
@@ -86,9 +108,11 @@ describe("parseRSS", () => {
 		fetchSpy!.mockResolvedValueOnce(
 			new Response("<xml><parsererror>bad</parsererror></xml>"),
 		);
-		await expect(parseRSS("https://example.com/feed.xml")).rejects.toThrow(
-			"parsererror",
-		);
+		await expect(
+			parseRSS("https://example.com/feed.xml", {
+				outbound: hermeticOutbound(),
+			}),
+		).rejects.toThrow("parsererror");
 	});
 });
 

@@ -1,3 +1,16 @@
+// @see https://bun.com/docs/pm/filter#package-name-filter-pattern — --filter
+// @updated --filter · fixed v1.1.5 · 2024-04-26 · https://bun.com/blog/bun-v1.1.5
+// @updated --filter · fixed v1.1.6 · 2024-04-28 · https://bun.com/blog/bun-v1.1.6
+// @updated --filter · fixed v1.1.7 · 2024-05-03 · https://bun.com/blog/bun-v1.1.7
+// @updated --filter · changed v1.1.43 · 2025-01-08 · https://bun.com/blog/bun-v1.1.43
+// @updated --filter · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
+// @updated --filter · fixed v1.2.15 · 2025-05-28 · https://bun.com/blog/bun-v1.2.15
+// @updated --filter · changed v1.2.20 · 2025-08-10 · https://bun.com/blog/bun-v1.2.20
+// @updated --filter · fixed v1.3.0 · 2025-10-10 · https://bun.com/blog/bun-v1.3
+// @updated --filter · fixed v1.3.6 · 2026-01-13 · https://bun.com/blog/bun-v1.3.6
+// @updated --filter · fixed v1.3.11 · 2026-03-18 · https://bun.com/blog/bun-v1.3.11
+// @updated --filter · changed v1.3.14 · 2026-05-13 · https://bun.com/blog/bun-v1.3.14
+// @verified --filter · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/pm/filter#package-name-filter-pattern
 // @see https://bun.com/reference/bun/Transpiler — Bun.Transpiler
 // @see https://bun.com/docs/runtime/s3#bun-s3client-bun-s3 — S3Client
 // @see https://bun.com/docs/runtime/workers#creating-a-worker — Workers
@@ -1526,6 +1539,324 @@ export const CRITICAL_PROOF_PATHS: readonly ProofPath[] = [
       'bun test tests/channel-suite.test.ts tests/verification-subsystem.test.ts tests/bundler-loader-probes.test.ts tests/networking-channel.test.ts tests/verification-proof-taxonomy.test.ts tests/channel-meta-refresh.test.ts tests/verification-proof-consistency.test.ts',
     freshRerunKind: 'claim',
     owner: 'lib/verification/',
+  },
+  {
+    id: 'guard-controls-v1',
+    claim:
+      'Declared Bun runtime, install, registry, connect, optimization, resolution, preload, and experimental controls have canonical identities, fail-closed policy decisions, and no drift from Bun 1.4 help',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:controls:check',
+      'lib/security/control-policy.ts',
+      'scripts/check-control-policy.ts',
+      'tests/control-policy.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:controls:check',
+    freshRerunKind: 'claim',
+    owner: 'runtime-tooling',
+  },
+  {
+    id: 'guard-subprocess-authority-v1',
+    claim:
+      'The guarded Bun child-process boundary binds executable, argv, cwd, environment, and control grants while an exact bidirectional inventory classifies raw and guarded consumers and rejects additions, removals, or authority changes',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:subprocess:check',
+      'lib/security/guarded-bun-process.ts',
+      'lib/security/subprocess-consumer-inventory.ts',
+      'scripts/check-subprocess-policy.ts',
+      'scripts/subprocess-authority-inventory.json',
+      'tests/guarded-bun-process.test.ts',
+      'tests/subprocess-consumer-inventory.test.ts',
+      'tests/registry-command-policy.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:subprocess:check',
+    freshRerunKind: 'claim',
+    owner: 'runtime-tooling',
+  },
+  {
+    id: 'guard-network-authority-v1',
+    claim:
+      'The typed outbound boundary rejects undeclared routes, destinations, address classes, redirects, protocols, proxy choices, replay, deadlines, and oversized responses covered by its hermetic policy suite',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:network:check',
+      'lib/http/outbound-policy.ts',
+      'tests/ip-authority.test.ts',
+      'tests/outbound-policy.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:network:check',
+    freshRerunKind: 'claim',
+    owner: 'networking',
+  },
+  {
+    id: 'guard-sports-integrations-v1',
+    claim:
+      'Sports Terminal server-side integration egress is confined to reviewed policy boundaries and its provider, webhook, internal-proxy, and Telegram policy suites pass',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:integrations:check',
+      'scripts/check-sports-terminal-integrations.ts',
+      'projects/active/sports-terminal-os/src/utils/integration-outbound.ts',
+      'projects/active/sports-terminal-os/test/utils/integration-outbound.test.ts',
+      'projects/active/sports-terminal-os/test/telegram/send-message-client.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:integrations:check',
+    freshRerunKind: 'claim',
+    owner: 'sports-terminal-os',
+  },
+  {
+    id: 'guard-outbound-consumers-v1',
+    claim:
+      'The repository-wide AST-derived outbound inventory exactly matches its reviewed manifest, requires an owner, reason, and classification for every current row, and passes the hermetic public-client and outbound-policy suite',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:outbound-consumers:check',
+      'config/outbound-consumers.json',
+      'lib/http/outbound-consumer-inventory.ts',
+      'scripts/check-outbound-consumers.ts',
+      'tests/outbound-consumer-inventory.test.ts',
+      'tests/public-resource-client.test.ts',
+      'tests/outbound-policy.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:outbound-consumers:check',
+    freshRerunKind: 'claim',
+    owner: 'networking',
+  },
+  {
+    id: 'guard-protocol-matrix-v1',
+    claim:
+      'The hermetic protocol suite proves direct HTTP/1.1 and HTTP/2 behavior, HTTPS CONNECT reuse, exact pre-CONNECT HTTP2Unsupported handling, replay-safe fallback, capability expiry, cache partitioning, and cross-protocol content-digest parity',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:protocol-matrix:check',
+      'lib/http/protocol-matrix.ts',
+      'tests/protocol-matrix.test.ts',
+      'tests/fetch-proxy-keepalive.test.ts',
+      'projects/active/sports-terminal-os/test/utils/h2-fetch.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:protocol-matrix:check',
+    freshRerunKind: 'claim',
+    owner: 'networking',
+  },
+  {
+    id: 'guard-offline-content-v1',
+    claim:
+      'Offline content composition resolves verified local content while a process-wide sentinel rejects external fetch, TCP, TLS, HTTP, HTTP2, and UDP entrypoints before invocation without breaking loopback fixtures',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:offline:check',
+      'lib/security/offline-socket-sentinel.ts',
+      'lib/content-store/offline-content.ts',
+      'tests/offline-socket-sentinel.test.ts',
+      'tests/offline-content-guard.test.ts',
+      'tests/local-content-store.test.ts',
+      'tests/tsconfig.offline-socket-sentinel.json',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:offline:check',
+    freshRerunKind: 'claim',
+    owner: 'networking',
+  },
+  {
+    id: 'guard-content-store-contract-v1',
+    claim:
+      'Content identity, strict ContentRef parsing, operation rights, package relations, and bounded memory-store behavior satisfy their branded contract and type boundary',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:content-store:check',
+      'lib/content-store/content-contract.ts',
+      'lib/content-store/memory-content-store.ts',
+      'tests/content-store-contract.test.ts',
+      'tests/tsconfig.content-store.json',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:content-store:check',
+    freshRerunKind: 'claim',
+    owner: 'content-store',
+  },
+  {
+    id: 'guard-channel-alias-contract-v1',
+    claim:
+      'The in-memory channel alias boundary enforces branded identities, exact revision and digest compare-and-swap, distinct authorities, verified immutable targets, expiry, and terminal revocation',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:channels:check',
+      'lib/content-store/channel-alias-store.ts',
+      'scripts/check-channel-alias-policy.ts',
+      'tests/channel-alias-store.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:channels:check',
+    freshRerunKind: 'claim',
+    owner: 'release-tracker',
+  },
+  {
+    id: 'guard-content-rights-contract-v1',
+    claim:
+      'ContentRef and channel-alias rights checks fail closed for denied, expired, revoked, authority-mismatched, and operation-ineligible content in the in-memory contract suite',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:content-rights:check',
+      'lib/content-store/content-contract.ts',
+      'lib/content-store/channel-alias-store.ts',
+      'scripts/check-content-rights-policy.ts',
+      'tests/channel-alias-store.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:content-rights:check',
+    freshRerunKind: 'claim',
+    owner: 'release-governance',
+  },
+  {
+    id: 'guard-rights-revocation-ledger-v1',
+    claim:
+      'Hermetic memory and R2 rights ledgers enforce distinct reviewer authority, exact CAS, strict bounded hash-linked history, and terminal revocation while active memory and R2 alias resolution consults the current independent decision',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:content-rights:check && bun run guard:channels:check',
+      'lib/content-store/content-rights-store.ts',
+      'lib/content-store/r2-content-rights-store.ts',
+      'lib/content-store/channel-alias-store.ts',
+      'lib/content-store/r2-channel-alias-store.ts',
+      'tests/content-rights-store.test.ts',
+      'tests/r2-content-rights-store.test.ts',
+      'tests/channel-alias-store.test.ts',
+      'tests/r2-channel-alias-store.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:content-rights:check && bun run guard:channels:check',
+    freshRerunKind: 'claim',
+    owner: 'release-governance',
+  },
+  {
+    id: 'guard-agent-capabilities-v1',
+    claim:
+      'Agent manifests and invocations parse once to branded exact capabilities, reject undeclared or raw-locator authority, enforce experimental approval, and match the hashed agent-entrypoint inventory',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:agents:check',
+      'lib/agents/capability-manifest.ts',
+      'lib/agents/agent-inventory.ts',
+      'scripts/check-agent-capabilities.ts',
+      'tests/agent-capability-manifest.test.ts',
+      'tests/agent-capability-inventory.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:agents:check',
+    freshRerunKind: 'claim',
+    owner: 'agent-tooling',
+  },
+  {
+    id: 'guard-registry-authority-v1',
+    claim:
+      'Registry reads, installs, publishes, and mirrors use separate exact plane grants; guarded Bun planners enforce source precedence, explicit write authority, clean environments, and hermetic metadata parsing',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:registry:check',
+      'lib/registry/command-policy.ts',
+      'lib/registry/package-dependencies.ts',
+      'packages/registry-client/src/index.ts',
+      'scripts/check-registry-policy.ts',
+      'tests/registry-command-policy.test.ts',
+      'tests/bun-info-field.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:registry:check',
+    freshRerunKind: 'claim',
+    owner: 'factory-registry',
+  },
+  {
+    id: 'guard-feed-ingestion-v1',
+    claim:
+      'RSS/XML parsing and image enrichment enforce bounded hostile-input handling, rights-aware content references, outbound image policy, and deterministic verified offline feed snapshots in the hermetic feed suite',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:feeds:check',
+      'lib/rss/feed-snapshot-manifest.ts',
+      'tests/bun-rss.test.ts',
+      'tests/rss-xml-native.test.ts',
+      'tests/rss-image-enrichment.test.ts',
+      'tests/rss-image-fetch-policy.test.ts',
+      'tests/feed-snapshot-manifest.test.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:feeds:check',
+    freshRerunKind: 'claim',
+    owner: 'release-tracker',
+  },
+  {
+    id: 'guard-r2-content-v1',
+    claim:
+      'Hermetic R2 binding adapters conditionally create digest-keyed objects, rehash bounded reads, verify persisted alias JSON around ETag CAS, and load deterministic feed snapshots without online fallback',
+    kinds: ['unit', 'boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run guard:r2-content-store:check',
+      'lib/content-store/r2-content-store.ts',
+      'lib/content-store/r2-channel-alias-store.ts',
+      'lib/rss/feed-snapshot-manifest.ts',
+      'tests/r2-content-store.test.ts',
+      'tests/r2-channel-alias-store.test.ts',
+      'tests/feed-snapshot-manifest.test.ts',
+      'tests/tsconfig.r2-content.json',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run guard:r2-content-store:check',
+    freshRerunKind: 'claim',
+    owner: 'content-store',
+  },
+  {
+    id: 'sports-integration-type-v1',
+    claim:
+      'Sports Terminal integration-health consumes the trusted PartnerProfileService camelCase interior summary without reaching into wire or database field shapes',
+    kinds: ['boundary'],
+    gateClass: 'human-only',
+    gateRef: 'none',
+    evidence: [
+      'bun run --filter sports-terminal-os typecheck',
+      'projects/active/sports-terminal-os/src/api/partner-integration-health-routes.ts',
+      'projects/active/sports-terminal-os/src/zones/partner-profile/partner-profile-service.ts',
+      'docs/harness/tenants/guard-coverage.md',
+    ],
+    freshRerun: 'bun run --filter sports-terminal-os typecheck',
+    freshRerunKind: 'claim',
+    owner: 'sports-terminal-os',
   },
 ] as const;
 

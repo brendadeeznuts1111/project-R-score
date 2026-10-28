@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
 import "./types.d.ts";
 // infrastructure/v1-3-3/yaml-doc-end-fix.ts
 // Component #75: YAML Document End Fix for Spec Compliance
@@ -408,7 +409,7 @@ export class YAMLDocEndFix {
   private static logParseSuccess(): void {
     if (process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS !== "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -423,7 +424,7 @@ export class YAMLDocEndFix {
   private static logParseError(error: Error): void {
     if (process.env.FEATURE_INFRASTRUCTURE_HEALTH_CHECKS !== "1") return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

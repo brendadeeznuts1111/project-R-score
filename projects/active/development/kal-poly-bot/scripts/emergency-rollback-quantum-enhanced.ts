@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../runtime-outbound.ts";
 
 import { DynamicConfigManager } from "../src/config/dynamic-config-manager";
 import { QuantumResistantSecureDataRepository } from "../src/security/quantum-resistant-secure-data-repository";
@@ -412,13 +413,20 @@ classical_signing = true
     await Promise.all(
       webhookUrls
         .filter((url): url is string => url !== undefined) // Type guard to filter undefined
-        .map((url) =>
-          fetch(url, {
+        .map((url) => {
+          const target = new URL(url);
+          const authority = createKalPolyOutboundAuthority({
+            name: "kal-poly-security-alert-webhook",
+            baseUrl: target.origin,
+            pathPrefix: target.pathname,
+            methods: ["POST"],
+          });
+          return fetchKalPolyOutbound(authority, target, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(message),
-          }).catch((error) => console.error(`Failed to notify ${url}:`, error))
-        )
+          }).catch((error) => console.error("Failed to notify security webhook:", error));
+        })
     );
 
     console.error("📢 Security team notified");
@@ -527,13 +535,20 @@ classical_signing = true
     ].filter((url): url is string => url !== undefined); // Type guard to filter undefined
 
     await Promise.all(
-      criticalUrls.map((url) =>
-        fetch(url, {
+      criticalUrls.map((url) => {
+        const target = new URL(url);
+        const authority = createKalPolyOutboundAuthority({
+          name: "kal-poly-critical-alert-webhook",
+          baseUrl: target.origin,
+          pathPrefix: target.pathname,
+          methods: ["POST"],
+        });
+        return fetchKalPolyOutbound(authority, target, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(criticalMessage),
-        }).catch((err) => console.error(`Critical alert failed:`, err))
-      )
+        }).catch((err) => console.error("Critical alert failed:", err));
+      })
     );
 
     console.error("📢 Critical alert sent");

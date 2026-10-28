@@ -4,14 +4,6 @@
 // @see https://bun.com/reference/bun/argv — Bun.argv
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
- * Deep probe Caesars / American Wagering endpoints from the committed catalog.
- *
- * Default: probe public + limit_candidate (reports WAF). Does not place bets.
- *
- *   bun run baseline:caesars:probe
- *   bun run baseline:caesars:probe -- --location=co --json
- *   CAESARS_SCRAPE_COOKIE='...' bun run baseline:caesars:probe -- --live
- *
  * @see lib/operations/scrapers/catalogs/caesars-americanwagering.ts
  */
 import { jsonOut } from '../lib/console-depth.ts';

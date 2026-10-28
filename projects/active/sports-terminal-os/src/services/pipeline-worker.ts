@@ -19,7 +19,7 @@
  */
 
 import type { DriftAlertOutput } from "./odds-drift-engine";
-import { h2Fetch } from "../utils/h2-fetch";
+import { fetchTelegramBotApi } from "../utils/integration-outbound";
 import {
   extractImageEvidenceMeta,
   type ImageEvidenceMeta,
@@ -345,8 +345,9 @@ export class PipelineWorker {
       `<b>Time:</b> ${alert.detectedAt}` +
       thumbnailLine;
 
-    await h2Fetch(
-      `https://api.telegram.org/bot${this.telegramBotToken}/sendMessage`,
+    await fetchTelegramBotApi(
+      this.telegramBotToken,
+      "sendMessage",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

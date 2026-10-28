@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Globe, MapPin, Users, TrendingUp, Search } from "lucide-react";
+import { fetchBrowserSameOrigin } from "../../../../../src/http/browser-outbound";
 
 interface GeoLocation {
   ip: string;
@@ -45,7 +46,7 @@ export const GeolocationPanel: React.FC = () => {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE}/stats`);
+      const response = await fetchBrowserSameOrigin(`${API_BASE}/stats`);
       if (!response.ok) throw new Error("Failed to fetch geolocation stats");
       const data = await response.json();
       setStats(data);
@@ -67,7 +68,7 @@ export const GeolocationPanel: React.FC = () => {
           ? `${API_BASE}/country/${encodeURIComponent(searchQuery)}`
           : `${API_BASE}/city/${encodeURIComponent(searchQuery)}`;
 
-      const response = await fetch(endpoint);
+      const response = await fetchBrowserSameOrigin(endpoint);
       if (!response.ok) throw new Error("Search failed");
       const data = await response.json();
       setSearchResults(data);

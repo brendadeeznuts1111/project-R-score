@@ -4,6 +4,8 @@
 import { describe, expect, spyOn, test } from 'bun:test';
 import { FeedImageEnricher } from '../lib/rss/feed-image.ts';
 import { parseRSSFeed, RSSManager } from '../lib/rss/rss-manager.ts';
+import { MemoryContentStore } from '../lib/content-store/index.ts';
+import { asEvidenceId, asSourceSystemId } from '../lib/types/branded.ts';
 
 const BLUE_PNG = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAANElEQVR4nO3XoREAAAgDMfbqdgyNhTEwEfV/ca307OdKAAECBAgQIECAAAECBAgQIJDne34n9MiXfL2OIwAAAABJRU5ErkJggg==',
@@ -17,6 +19,26 @@ function testFetcher(
   ) => Promise<Response>
 ): typeof fetch {
   return Object.assign(handler, { preconnect: (_url: string): void => {} }) as typeof fetch;
+}
+
+function imageContentPolicy() {
+  const authority = (sourceSystemValue: string) => ({
+    kind: 'source-system' as const,
+    sourceSystemId: asSourceSystemId(sourceSystemValue),
+  });
+  return {
+    rights: {
+      state: 'approved-vendor' as const,
+      reviewEvidenceId: asEvidenceId('feed-image-license-1'),
+      reviewedAt: '2026-08-26T12:00:00.000Z',
+    },
+    authorities: {
+      publisher: authority('feed-image-publisher'),
+      storageSteward: authority('feed-image-store'),
+      rightsReviewAuthority: authority('feed-image-rights-review'),
+      aliasPublisher: authority('feed-image-alias-publisher'),
+    },
+  };
 }
 
 const FEED_XML = `<?xml version="1.0" encoding="UTF-8"?>
@@ -183,6 +205,69 @@ describe('FeedImageEnricher', () => {
     expect(requests[1]?.get('if-modified-since')).toBe('Mon, 24 Aug 2026 12:00:00 GMT');
   });
 
+  test('stores original and derived thumbnail as distinct verified content references', async () => {
+    const store = new MemoryContentStore();
+    const fetcher = testFetcher(async () =>
+      new Response(Uint8Array.from(BLUE_PNG).buffer, {
+        headers: { 'Content-Type': 'image/png' },
+      })
+    );
+    const enricher = new FeedImageEnricher({
+      fetcher,
+      contentStore: store,
+      contentPolicy: imageContentPolicy(),
+      thumbnailWidth: 16,
+      thumbnailHeight: 16,
+    });
+    const metadata = await enricher.enrich({
+      url: 'https://cdn.example.com/fixture.png',
+      feedUrl: 'https://feeds.example.com/releases.xml',
+      source: 'media:content',
+    });
+
+    expect(metadata.originalContentRef?.digest).not.toBe(metadata.thumbnail.contentRef?.digest);
+    expect(metadata.originalContentRef?.sources.map(source => source.locator)).toEqual([
+      'https://feeds.example.com/releases.xml',
+      'https://cdn.example.com/fixture.png',
+    ]);
+    expect(metadata.thumbnail.contentRef?.contentRelations).toEqual([
+      {
+        from: metadata.thumbnail.contentRef.digest,
+        to: metadata.originalContentRef?.digest,
+        kind: 'derived-from',
+      },
+    ]);
+    expect((await store.verify(metadata.originalContentRef!.digest)).status).toBe('verified');
+    expect((await store.verify(metadata.thumbnail.contentRef!.digest)).status).toBe('verified');
+
+    const offline = new FeedImageEnricher({
+      contentStore: store,
+      contentPolicy: imageContentPolicy(),
+      mode: 'offline',
+    });
+    expect(
+      await offline.enrich({
+        url: metadata.sourceUrl,
+        source: metadata.source,
+        cachedMetadata: metadata,
+      })
+    ).toEqual(metadata);
+  });
+
+  test('requires explicit rights policy for storage and fails closed on offline misses', async () => {
+    expect(
+      () => new FeedImageEnricher({ contentStore: new MemoryContentStore() })
+    ).toThrow('must be configured together');
+    const offline = new FeedImageEnricher({
+      contentStore: new MemoryContentStore(),
+      contentPolicy: imageContentPolicy(),
+      mode: 'offline',
+    });
+    await expect(
+      offline.enrich({ url: 'https://cdn.example.com/missing.png', source: 'enclosure' })
+    ).rejects.toThrow('Offline feed image cache miss');
+  });
+
   test('rejects non-image and oversized responses', async () => {
     const textFetcher = testFetcher(async () =>
       new Response('not an image', { headers: { 'Content-Type': 'text/plain' } })
@@ -209,6 +294,32 @@ describe('FeedImageEnricher', () => {
 });
 
 describe('RSSManager integration', () => {
+  test('inherits the feed locator into stored image provenance', async () => {
+    const store = new MemoryContentStore();
+    const fetcher = testFetcher(async input => {
+      if (String(input) === 'https://example.com/feed.xml') {
+        return new Response(FEED_XML, { headers: { 'Content-Type': 'application/rss+xml' } });
+      }
+      return new Response(Uint8Array.from(BLUE_PNG).buffer, {
+        headers: { 'Content-Type': 'image/png' },
+      });
+    });
+    const manager = new RSSManager(undefined, {
+      fetcher,
+      maxImagesPerFeed: 1,
+      imageEnricher: new FeedImageEnricher({
+        fetcher,
+        contentStore: store,
+        contentPolicy: imageContentPolicy(),
+      }),
+    });
+
+    const feed = await manager.fetchFeed('https://example.com/feed.xml');
+    expect(feed.items[0]?.image?.originalContentRef?.sources[0]?.locator).toBe(
+      'https://example.com/feed.xml'
+    );
+  });
+
   test('keeps the feed available when image enrichment fails', async () => {
     const warning = spyOn(console, 'warn').mockImplementation(() => {});
     const fetcher = testFetcher(async input => {

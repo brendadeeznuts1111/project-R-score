@@ -6,6 +6,10 @@
  */
 
 import { createHash, createHmac } from 'crypto';
+import {
+  fetchR2S3,
+  type Fantasy42OutboundOptions,
+} from '../security/outbound-client.ts';
 
 interface R2ClientConfig {
   endpoint: string;
@@ -13,6 +17,8 @@ interface R2ClientConfig {
   secretAccessKey: string;
   region?: string;
   bucket: string;
+  outbound?: Fantasy42OutboundOptions;
+  listFiles?: (localPath: string) => Promise<readonly string[]>;
 }
 
 interface R2Object {
@@ -45,6 +51,8 @@ export class BunR2Client {
   private region: string;
   private bucket: string;
   private service = 's3';
+  private outbound: Fantasy42OutboundOptions;
+  private listFiles: (localPath: string) => Promise<readonly string[]>;
 
   constructor(config: R2ClientConfig) {
     this.endpoint = config.endpoint;
@@ -52,6 +60,19 @@ export class BunR2Client {
     this.secretAccessKey = config.secretAccessKey;
     this.region = config.region || 'auto';
     this.bucket = config.bucket;
+    this.outbound = config.outbound ?? {};
+    this.listFiles = config.listFiles ?? this.listLocalFiles;
+  }
+
+  private request(url: string | URL, init: BunFetchRequestInit): Promise<Response> {
+    return fetchR2S3(this.endpoint, url, init, this.outbound);
+  }
+
+  private async listLocalFiles(localPath: string): Promise<readonly string[]> {
+    const { $ } = await import('bun');
+    const files: string[] = [];
+    for await (const file of $`find ${localPath} -type f`.lines()) files.push(file);
+    return files;
   }
 
   /**
@@ -83,7 +104,7 @@ export class BunR2Client {
       ...this.formatMetadata(options.metadata),
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'PUT',
       headers,
       body,
@@ -107,7 +128,7 @@ export class BunR2Client {
       'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'GET',
       headers,
     });
@@ -147,7 +168,7 @@ export class BunR2Client {
       'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'DELETE',
       headers,
     });
@@ -182,7 +203,7 @@ export class BunR2Client {
       'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'GET',
       headers,
     });
@@ -206,7 +227,7 @@ export class BunR2Client {
       'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'HEAD',
       headers,
     });
@@ -241,7 +262,7 @@ export class BunR2Client {
       'x-amz-content-sha256': 'UNSIGNED-PAYLOAD',
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'PUT',
       headers,
     });
@@ -330,7 +351,7 @@ export class BunR2Client {
       ...this.formatMetadata(options.metadata),
     });
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'POST',
       headers,
     });
@@ -429,7 +450,7 @@ export class BunR2Client {
       }
     );
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'PUT',
       headers,
       body: data,
@@ -470,7 +491,7 @@ ${parts
       }
     );
 
-    const response = await fetch(url, {
+    const response = await this.request(url, {
       method: 'POST',
       headers,
       body: xmlBody,
@@ -492,7 +513,7 @@ ${parts
       { 'x-amz-content-sha256': 'UNSIGNED-PAYLOAD' }
     );
 
-    await fetch(url, {
+    await this.request(url, {
       method: 'DELETE',
       headers,
     });
@@ -721,10 +742,8 @@ export class BunR2BatchClient extends BunR2Client {
    * Sync local directory with R2 bucket
    */
   async syncDirectory(localPath: string, r2Prefix: string = ''): Promise<void> {
-    const { $ } = await import('bun');
-
     // Get all files in directory
-    const files = await $`find ${localPath} -type f`.lines();
+    const files = await this.listFiles(localPath);
 
     for (const file of files) {
       const relativePath = file.replace(localPath + '/', '');

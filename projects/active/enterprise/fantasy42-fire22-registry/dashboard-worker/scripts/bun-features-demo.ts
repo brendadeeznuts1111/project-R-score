@@ -1,10 +1,12 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🚀 Bun Features & Optimizations Demo
  *
  * This script demonstrates the new Bun v1.2.21 features:
- * 1. Custom User-Agent flag for fetch() requests
+ * 1. Custom User-Agent flag for fetch() requests through the guarded script client
  * 2. PostMessage performance optimizations (500x faster)
  * 3. Bunx --package flag for version control
  *
@@ -58,13 +60,13 @@ class BunFeaturesDemo {
     try {
       // Test with default User-Agent
       console.info('📡 Testing with default User-Agent...');
-      const defaultResponse = await fetch('https://httpbin.org/user-agent');
+      const defaultResponse = await fetchKnownScriptOutbound('https://httpbin.org/user-agent');
       const defaultData = await defaultResponse.json();
       console.info(`   Default User-Agent: ${defaultData['user-agent']}`);
 
       // Test with custom User-Agent (if set via --user-agent flag)
       console.info('📡 Testing with custom User-Agent...');
-      const customResponse = await fetch('https://httpbin.org/user-agent');
+      const customResponse = await fetchKnownScriptOutbound('https://httpbin.org/user-agent');
       const customData = await customResponse.json();
       console.info(`   Current User-Agent: ${customData['user-agent']}`);
 

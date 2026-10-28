@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
 /**
  * Registry Configuration Fixer for Fire22 Dashboard
  * Fixes all registry issues and ensures proper npm registry connectivity
@@ -87,7 +89,7 @@ class RegistryFixer {
 
     for (const registry of registries) {
       try {
-        const response = await fetch(registry.url, {
+        const response = await fetchKnownScriptOutbound(registry.url, {
           method: 'HEAD',
           signal: AbortSignal.timeout(5000),
         });

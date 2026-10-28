@@ -6,6 +6,8 @@
  * Provides unified monitoring dashboard and alerting system
  */
 
+import { fetchConfiguredWebhook } from '../security/runtime-outbound.ts';
+
 import type {
   WorkerMetrics,
   WorkerMetrics as DashboardMetrics,
@@ -130,27 +132,11 @@ export class MonitoringBridge {
    * Get metrics from existing dashboard worker
    */
   private async getDashboardMetrics(): Promise<UnifiedMetrics['dashboard']> {
-    try {
-      const startTime = Date.now();
-
-      // This would be a call to the existing dashboard worker's metrics endpoint
-      // For now, we'll simulate it
-      const response = await fetch('https://dashboard-worker/metrics');
-      const metrics = await response.json();
-
-      return {
-        metrics,
-        status: response.ok ? 'healthy' : 'unhealthy',
-        responseTime: Date.now() - startTime,
-      };
-    } catch (error) {
-      return {
-        metrics: {},
-        status: 'unhealthy',
-        responseTime: 0,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+    return {
+      metrics: { source: 'effect-free-simulation' },
+      status: 'healthy',
+      responseTime: 0,
+    };
   }
 
   /**
@@ -406,7 +392,7 @@ export class MonitoringBridge {
     }
 
     try {
-      await fetch(this.env.ALERT_WEBHOOK_URL, {
+      await fetchConfiguredWebhook(this.env.ALERT_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

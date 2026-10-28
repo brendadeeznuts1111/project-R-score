@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, mock, test } from "bun:test";
-import { createServiceFactory } from "../../src/services/ServiceFactory";
+import {
+  createServiceFactory,
+  type FeatureFn,
+} from "../../src/services/ServiceFactory";
+import type { BrowserOutboundFetch } from "../../src/http/browser-outbound";
 
 // Mock fetch for API testing
 const mockResponse = {
@@ -35,16 +39,23 @@ const mockFetch = Object.assign(
   }
 );
 
-global.fetch = mockFetch as typeof fetch;
+let activeFetch: BrowserOutboundFetch = mockFetch;
+const createTestFactory = (featureFn?: FeatureFn) =>
+  createServiceFactory(featureFn, {
+    baseOrigin: "https://geelark.test",
+    fetcher: activeFetch,
+  });
 
 // Mock console to suppress logs during tests
 beforeEach(() => {
-  console.log = mock(() => {});
+  activeFetch = mockFetch;
+  mockFetch.mockClear();
+  console.info = mock(() => {});
 });
 
 describe("ServiceFactory - Basic Functionality", () => {
   test("should create all service types", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
 
     // Test that all factory methods exist and return objects
     const apiService = factory.createApiService();
@@ -72,40 +83,40 @@ describe("ServiceFactory - Basic Functionality", () => {
   });
 
   test("API service should make requests", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const apiService = factory.createApiService();
-    const response = await apiService.request("/test");
+    const response = await apiService.request("/api/health");
 
     expect(response.success).toBe(true);
     expect(response.data).toBe("test");
   });
 
   test("logging service should log messages", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const loggingService = factory.createLoggingService();
     loggingService.log("test message");
 
-    expect(console.log).toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalled();
   });
 
   test("monitoring service should track metrics", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const monitoringService = factory.createMonitoringService();
     monitoringService.trackMetric("test_metric", 100);
 
-    expect(console.log).toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalled();
   });
 
   test("notification service should send notifications", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const notificationService = factory.createNotificationService();
     await notificationService.send("test notification");
 
-    expect(console.log).toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalled();
   });
 
   test("cache service should store and retrieve values", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const cacheService = factory.createCacheService();
     cacheService.set("test_key", "test_value");
     const value = cacheService.get("test_key");
@@ -114,7 +125,7 @@ describe("ServiceFactory - Basic Functionality", () => {
   });
 
   test("phone manager should create phones", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const phoneManager = factory.createPhoneManager();
     const phone = await phoneManager.createPhone({ name: "Test Phone" });
 
@@ -124,7 +135,7 @@ describe("ServiceFactory - Basic Functionality", () => {
   });
 
   test("phone manager should enforce account limits", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const phoneManager = factory.createPhoneManager();
 
     // Create first phone
@@ -137,25 +148,25 @@ describe("ServiceFactory - Basic Functionality", () => {
 
 describe("ServiceFactory - Service Methods", () => {
   test("API service should have health check", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const apiService = factory.createApiService();
     expect(typeof apiService.healthCheck).toBe("function");
   });
 
   test("phone manager should have method factory", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const phoneManager = factory.createPhoneManager();
     expect(typeof phoneManager.getPhoneMethods).toBe("function");
   });
 
   test("cache service should have clear method", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const cacheService = factory.createCacheService();
     expect(typeof cacheService.clear).toBe("function");
   });
 
   test("monitoring service should handle metric tracking", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const monitoringService = factory.createMonitoringService();
 
     // Track multiple metrics
@@ -168,7 +179,7 @@ describe("ServiceFactory - Service Methods", () => {
   });
 
   test("notification service should handle async sending", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const notificationService = factory.createNotificationService();
 
     // Should not throw errors
@@ -185,16 +196,16 @@ describe("ServiceFactory - Error Handling", () => {
         preconnect: () => Promise.resolve(),
       }
     );
-    global.fetch = errorFetch as typeof fetch;
+    activeFetch = errorFetch;
 
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const apiService = factory.createApiService();
 
-    await expect(apiService.request("/error-test")).rejects.toThrow("Network error");
+    await expect(apiService.request("/api/health")).rejects.toThrow("Network error");
   });
 
   test("cache service should handle missing keys", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const cacheService = factory.createCacheService();
     const value = cacheService.get("nonexistent_key");
 
@@ -202,7 +213,7 @@ describe("ServiceFactory - Error Handling", () => {
   });
 
   test("phone manager should validate phone creation", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const phoneManager = factory.createPhoneManager();
 
     // Should create phone with valid config
@@ -218,7 +229,7 @@ describe("ServiceFactory - Error Handling", () => {
 
 describe("ServiceFactory - Performance", () => {
   test("should create services quickly", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const startTime = performance.now();
 
     // Create all services
@@ -237,7 +248,7 @@ describe("ServiceFactory - Performance", () => {
   });
 
   test("should handle multiple service creations", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const iterations = 10;
 
     for (let i = 0; i < iterations; i++) {
@@ -247,7 +258,7 @@ describe("ServiceFactory - Performance", () => {
   });
 
   test("should handle concurrent service creation", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const promises = [
       Promise.resolve(factory.createApiService()),
       Promise.resolve(factory.createLoggingService()),
@@ -265,8 +276,6 @@ describe("ServiceFactory - Performance", () => {
 
 describe("ServiceFactory - Integration", () => {
   test("should work with service combinations", async () => {
-    const factory = createServiceFactory();
-
     // Reset fetch mock for this test
     const integrationMockResponse = {
       ok: true,
@@ -299,14 +308,15 @@ describe("ServiceFactory - Integration", () => {
         preconnect: () => Promise.resolve(),
       }
     );
-    global.fetch = integrationFetch as typeof fetch;
+    activeFetch = integrationFetch;
+    const factory = createTestFactory();
 
     const apiService = factory.createApiService();
     const loggingService = factory.createLoggingService();
     const cacheService = factory.createCacheService();
 
     // Make API call
-    const response = await apiService.request("/api/test");
+    const response = await apiService.request("/api/health");
 
     // Log the response
     loggingService.log("API call completed", { success: response.success });
@@ -319,11 +329,11 @@ describe("ServiceFactory - Integration", () => {
     const parsedResponse = JSON.parse(cachedResponse);
 
     expect(parsedResponse.success).toBe(true);
-    expect(console.log).toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalled();
   });
 
   test("should handle phone manager with other services", async () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const phoneManager = factory.createPhoneManager();
     const loggingService = factory.createLoggingService();
 
@@ -338,11 +348,11 @@ describe("ServiceFactory - Integration", () => {
 
     expect(phone).toBeDefined();
     expect(phone.id).toBeDefined();
-    expect(console.log).toHaveBeenCalled();
+    expect(console.info).toHaveBeenCalled();
   });
 
   test("should maintain service isolation", () => {
-    const factory = createServiceFactory();
+    const factory = createTestFactory();
     const loggingService1 = factory.createLoggingService();
     const loggingService2 = factory.createLoggingService();
     const monitoringService1 = factory.createMonitoringService();

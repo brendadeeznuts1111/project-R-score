@@ -4,6 +4,7 @@
  */
 
 // Local interface to avoid import issues
+import { fetchTomlConfigured } from "../../../../src/http/configured-outbound.ts";
 interface RssFeedConfig {
 	url: string;
 	[key: string]: any;
@@ -168,7 +169,7 @@ export class RssSecurityScanner {
 		const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
 		try {
-			const response = await fetch(url, {
+      const response = await fetchTomlConfigured(url, {
 				...secureOptions,
 				signal: controller.signal,
 			});

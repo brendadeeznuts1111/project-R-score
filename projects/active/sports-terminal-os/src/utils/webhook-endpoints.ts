@@ -2,6 +2,7 @@ import {
   fetchWithPolicy,
   isNormalizedLoopbackHostname,
   type OutboundEndpointPolicy,
+  type OutboundExecutionOptions,
   type OutboundFetch,
 } from '../../../../../lib/http/outbound-policy.ts';
 
@@ -80,10 +81,19 @@ export function validateWebhookEndpointConfig(config: WebhookEndpointConfig): We
 export function fetchWebhookEndpoint(
   config: WebhookEndpointConfig,
   init: Omit<RequestInit, 'method' | 'headers'> = {},
-  fetcher: OutboundFetch = fetch
+  fetcher: OutboundFetch = fetch,
+  options: OutboundExecutionOptions = {}
 ): Promise<Response> {
   const validated = validateWebhookEndpointConfig(config);
   const credentialHeaders = Object.keys(validated.headers);
+  const url = new URL(validated.url);
+  const loopback = isNormalizedLoopbackHostname(url.hostname);
+  const replayClass =
+    validated.method === 'GET'
+      ? 'safe'
+      : validated.method === 'PUT' || validated.method === 'DELETE'
+        ? 'idempotent'
+        : 'unsafe';
   const policy: OutboundEndpointPolicy = {
     name: 'registered-webhook',
     allowedOrigins: [new URL(validated.url).origin],
@@ -92,12 +102,23 @@ export function fetchWebhookEndpoint(
     credentialHeaders,
     redirect: 'error',
     timeoutMs: validated.timeoutMs,
+    totalDeadlineMs: validated.timeoutMs,
+    responseByteLimit: 1_000_000,
+    route: { mode: 'direct' },
+    networkMode: 'online',
+    protocol: { allowed: ['auto'], default: 'auto' },
+    ipAuthority: {
+      mode: loopback ? 'allow-non-public' : 'public-only',
+      enforcement: 'resolve-before-connect',
+    },
+    replayClass,
   };
 
   return fetchWithPolicy(
     validated.url,
     { ...init, method: validated.method, headers: validated.headers },
     policy,
-    fetcher
+    fetcher,
+    options
   );
 }

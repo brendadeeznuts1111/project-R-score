@@ -1,5 +1,7 @@
 #!/usr/bin/env tsx
 
+import { fetchFinalDeployment } from '../../../../src/security/final-outbound.ts';
+
 /**
  * Deploy Docs Worker Script
  * Crystal Clear Architecture - Automated Documentation Deployment
@@ -155,7 +157,7 @@ class DocsWorkerDeployer {
 
     // Test health endpoint
     try {
-      const response = await fetch(`${workerUrl}/api/health`);
+      const response = await fetchFinalDeployment(`${workerUrl}/api/health`);
       if (!response.ok) {
         throw new Error(`Health check failed: ${response.status}`);
       }
@@ -169,7 +171,7 @@ class DocsWorkerDeployer {
 
     // Test main page
     try {
-      const response = await fetch(`${workerUrl}/`);
+      const response = await fetchFinalDeployment(`${workerUrl}/`);
       if (response.ok) {
         console.info(`  ✅ Main page accessible`);
       } else {

@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../../core/security/surface-outbound.ts';
+
 // ╭─────────────────────────────────────────────────────────────────╮
 // │                    🕸️ PATTERN SYSTEM INDEX                     │
 // │              The Central Hub of Pattern Weaving               │
@@ -217,7 +219,7 @@ export const PatternExamples = {
   async secureAPICall(endpoint: string) {
     const results = await PatternUtils.chain(
       { pattern: 'SECURE', context: { type: 'retrieve', service: 'api', name: 'token' } },
-      { pattern: 'TIMING', context: () => fetch(endpoint) },
+      { pattern: 'TIMING', context: () => fetchSurfaceOutbound(endpoint) },
       { pattern: 'TABULAR', context: null }
     );
     return results;

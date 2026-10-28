@@ -6,14 +6,27 @@
 
 import { spawnSync } from "bun";
 import { MappingEngine, SportsMappingData } from "./mapping-engine";
+import {
+	createFullStackBunOutboundAuthority,
+	fetchFullStackBunOutbound,
+	type FullStackBunOutboundAuthority,
+} from '../../../src/security/outbound';
 
 export class MappingStreamer {
 	private registryUrl: string;
 	private token: string;
+	private authority: FullStackBunOutboundAuthority;
 
 	constructor(registryUrl: string = 'https://registry.yourarb.com', token?: string) {
 		this.registryUrl = registryUrl;
 		this.token = token || process.env.BUN_REGISTRY_TOKEN || '';
+		this.authority = createFullStackBunOutboundAuthority({
+			kind: 'registry',
+			name: 'sports-data-registry',
+			baseUrl: registryUrl,
+			pathPrefix: '/@yourorg/sports-data/',
+			credentialHeaders: ['authorization'],
+		});
 	}
 
 	/**
@@ -22,7 +35,7 @@ export class MappingStreamer {
 	async streamFromPrivateRegistry(sport: string = 'ALL'): Promise<SportsMappingData> {
 		try {
 			// Try to fetch from private registry
-			const response = await fetch(`${this.registryUrl}/@yourorg/sports-data/${sport}`, {
+			const response = await fetchFullStackBunOutbound(this.authority, `${this.registryUrl}/@yourorg/sports-data/${sport}`, {
 				headers: {
 					'Authorization': `Bearer ${this.token}`,
 					'Accept': 'application/json'
@@ -83,6 +96,5 @@ export class MappingStreamer {
 		return this.streamFromPrivateRegistry(sport);
 	}
 }
-
 
 

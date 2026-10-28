@@ -1,4 +1,14 @@
 #!/usr/bin/env bun
+// @see https://bun.com/docs/pm/cli/update#latest — --latest
+// @updated --latest · changed v1.1.11 · 2024-06-01 · https://bun.com/blog/bun-v1.1.11
+// @updated --latest · fixed v1.3.2 · 2025-11-08 · https://bun.com/blog/bun-v1.3.2
+// @verified --latest · Bun v1.4.0 · 2026-08-25 · https://bun.com/docs/pm/cli/update#latest
+// @see https://bun.com/docs/runtime/color#flexible-input — Bun.color
+// @released Bun.color · released v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.color · changed v1.1.30 · 2024-10-08 · https://bun.com/blog/bun-v1.1.30
+// @updated Bun.color · fixed v1.1.31 · 2024-10-18 · https://bun.com/blog/bun-v1.1.31
+// @updated Bun.color · fixed v1.1.32 · 2024-10-21 · https://bun.com/blog/bun-v1.1.32
+// @updated Bun.color · changed v1.2.0 · 2025-01-22 · https://bun.com/blog/bun-v1.2
 // @see https://bun.com/docs/runtime/file-io#reading-files-bun-file — Bun.file
 // @see https://bun.com/reference/bun/argv — Bun.argv
 // @see https://bun.com/docs/runtime/utils#bun-env — Bun.env
@@ -6,8 +16,6 @@
 // @see https://bun.com/docs/runtime/child-process#spawn-a-process-bun-spawn — Bun.spawn
 import { applyUnknownLongOptionGuardFor } from '../lib/docs/ref-id-tool-flags.ts';
 /**
- * Recursive outdated report across monorepo workspaces + root.
- *
  *   bun run deps:outdated
  *   bun run deps:outdated -- --latest
  *   bun run deps:outdated -- --json
@@ -114,7 +122,6 @@ async function listWorkspaceDirs(): Promise<Array<{ label: string; cwd: string }
     out.push({ label: 'projects/active/sports-terminal-os', cwd: sto });
   }
 
-  // Nested product (submodule) — optional
   const kalshi = joinPath(root, 'Kalshi-bot');
   if (await pathExists(joinPath(kalshi, 'package.json'))) {
     out.push({ label: 'Kalshi-bot', cwd: kalshi });

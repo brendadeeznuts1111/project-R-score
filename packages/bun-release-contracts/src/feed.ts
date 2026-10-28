@@ -9,8 +9,11 @@ import {
   canonicalizeBunBlogUrl,
   versionFromBunBlogUrl,
 } from '../../../lib/docs/bun-blog-url.ts';
-import { parseRssChannelItems } from '../../../lib/docs/bun-rss.ts';
-import { fetchFeedXml } from '../../../lib/rss/fetch-feed-xml.ts';
+import { parseRssChannelItems, type RssChannelItem } from '../../../lib/docs/bun-rss.ts';
+import {
+  parseRssChannelItemsUntrusted,
+  requireRSSXmlBoundaryValue,
+} from '../../../lib/rss/rss-xml-untrusted.ts';
 import { normalizeVersion } from './generator';
 
 export type ReleaseFeedEntry = {
@@ -25,7 +28,7 @@ export type FetchReleaseFeedOptions = {
   url: string;
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
-  maxBytes?: number;
+  parseDeadlineMs?: number;
 };
 
 const VERSION_PATTERN = /^\d+\.\d+\.\d+$/;
@@ -35,10 +38,10 @@ export function versionFromBlogUrl(url: string): string | null {
   return versionFromBunBlogUrl(url);
 }
 
-export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
+function releaseFeedFromItems(items: readonly RssChannelItem[]): ReleaseFeedEntry[] {
   const entries: ReleaseFeedEntry[] = [];
   const seen = new Set<string>();
-  for (const item of parseRssChannelItems(xml)) {
+  for (const item of items) {
     const version = versionFromBunBlogUrl(item.link);
     if (!version || !VERSION_PATTERN.test(version) || seen.has(version)) continue;
     const publishedAt = parseRssPubDateToIso(item.pubDate);
@@ -59,18 +62,28 @@ export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
   return entries.sort((a, b) => compareReleaseVersions(b.version, a.version));
 }
 
+export function parseReleaseFeed(xml: string): ReleaseFeedEntry[] {
+  return releaseFeedFromItems(parseRssChannelItems(xml));
+}
+
 export async function fetchReleaseFeed(
   options: FetchReleaseFeedOptions
 ): Promise<ReleaseFeedEntry[]> {
-  const xml = await fetchFeedXml(options.fetchImpl ?? fetch, options.url, {
+  const response = await (options.fetchImpl ?? fetch)(options.url, {
     headers: {
       accept: 'application/rss+xml, application/xml, text/xml',
       'user-agent': 'factorywager-bun-release-inventory/0.2',
     },
-    timeoutMs: options.timeoutMs ?? 20_000,
-    maxBytes: options.maxBytes,
+    signal: AbortSignal.timeout(options.timeoutMs ?? 20_000),
   });
-  return parseReleaseFeed(xml);
+  if (!response.ok) throw new Error(`Failed to fetch ${options.url}: HTTP ${response.status}`);
+  return releaseFeedFromItems(
+    requireRSSXmlBoundaryValue(
+      await parseRssChannelItemsUntrusted(await response.text(), {
+        deadlineMs: options.parseDeadlineMs ?? 2_000,
+      })
+    )
+  );
 }
 
 export function compareReleaseVersions(left: string, right: string): number {

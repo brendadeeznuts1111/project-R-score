@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://factorywager.example/schemas/control-override-ownership.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "policyOwner",
+    "defaultDecision",
+    "sourcePrecedence",
+    "registryPrecedence",
+    "conflictRule",
+    "controls",
+    "compositeDenials",
+    "reservedAuthoritySpellings",
+    "applicationModes",
+    "residualScopes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "policyOwner": { "type": "string", "minLength": 1 },
+    "defaultDecision": { "const": "deny" },
+    "sourcePrecedence": {
+      "type": "array",
+      "items": {
+        "enum": ["bunfig", "environment", "bun-options", "cli", "request"]
+      },
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "registryPrecedence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["readInstall", "publish"],
+      "properties": {
+        "readInstall": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "cli",
+              "environment",
+              "publishConfig",
+              "bunfig",
+              "npmrc",
+              "default"
+            ]
+          },
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true
+        },
+        "publish": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "cli",
+              "environment",
+              "publishConfig",
+              "bunfig",
+              "npmrc",
+              "default"
+            ]
+          },
+          "minItems": 5,
+          "maxItems": 5,
+          "uniqueItems": true
+        }
+      }
+    },
+    "conflictRule": { "type": "string", "minLength": 1 },
+    "controls": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/control" }
+    },
+    "compositeDenials": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/denial" }
+    },
+    "reservedAuthoritySpellings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/reserved" }
+    },
+    "applicationModes": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/application" }
+    },
+    "residualScopes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "$defs": {
+    "decision": { "enum": ["allow", "deny"] },
+    "alias": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source", "spelling"],
+      "properties": {
+        "source": { "enum": ["bunfig", "environment", "cli", "request"] },
+        "spelling": { "type": "string", "minLength": 1 },
+        "commands": {
+          "type": "array",
+          "items": { "enum": ["runtime", "install", "info", "publish"] },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "controlId",
+        "owner",
+        "meaning",
+        "defaultDecision",
+        "allowRule",
+        "disallowRule",
+        "aliases"
+      ],
+      "properties": {
+        "controlId": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "meaning": { "type": "string", "minLength": 1 },
+        "defaultDecision": { "$ref": "#/$defs/decision" },
+        "allowRule": { "type": "string", "minLength": 1 },
+        "disallowRule": { "type": "string", "minLength": 1 },
+        "aliases": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/alias" }
+        }
+      }
+    },
+    "denial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spelling",
+        "owner",
+        "meaning",
+        "defaultDecision",
+        "allowRule",
+        "disallowRule"
+      ],
+      "properties": {
+        "spelling": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "meaning": { "type": "string", "minLength": 1 },
+        "defaultDecision": { "const": "deny" },
+        "allowRule": { "type": "string", "minLength": 1 },
+        "disallowRule": { "type": "string", "minLength": 1 }
+      }
+    },
+    "reserved": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "spelling",
+        "owner",
+        "meaning",
+        "evidence",
+        "defaultDecision",
+        "allowRule",
+        "disallowRule"
+      ],
+      "properties": {
+        "spelling": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "meaning": { "type": "string", "minLength": 1 },
+        "evidence": { "type": "string", "minLength": 1 },
+        "defaultDecision": { "const": "deny" },
+        "allowRule": { "type": "string", "minLength": 1 },
+        "disallowRule": { "type": "string", "minLength": 1 }
+      }
+    },
+    "application": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "owner",
+        "meaning",
+        "defaultDecision",
+        "conflictRule"
+      ],
+      "properties": {
+        "key": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "meaning": { "type": "string", "minLength": 1 },
+        "defaultDecision": { "$ref": "#/$defs/decision" },
+        "conflictRule": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

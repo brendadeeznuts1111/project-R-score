@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchFinalServer } from '../../../../src/security/final-outbound.ts';
 /**
  * Bun Shell Integration Demo
  * Demonstrating cross-platform shell operations with JavaScript interop
@@ -70,7 +72,7 @@ const gitStatus =
 console.info(gitStatus);
 
 // Piping with JavaScript objects
-const response = await fetch('https://httpbin.org/json');
+const response = await fetchFinalServer('https://httpbin.org/json');
 const pipedResult = await $`cat < ${response} | head -5`.text();
 console.info('Piped HTTP response:');
 console.info(pipedResult);

@@ -7,6 +7,8 @@
  * Cloudflare Workers for the Crystal Clear Architecture
  */
 
+import { fetchPublicRead } from '../security/outbound-client.ts';
+
 import { DomainWorkerFactory } from './domain-worker-factory';
 import { writeFile, mkdir } from 'fs/promises';
 import { execSync } from 'child_process';
@@ -238,7 +240,9 @@ LOG_LEVEL = "info"
     for (const deployment of deployments) {
       try {
         // Test health endpoint
-        const response = await fetch(`https://${deployment.name}.${this.config.domain}/health`);
+      const response = await fetchPublicRead(
+        `https://${deployment.name}.${this.config.domain}/health`
+      );
         const health = await response.json();
 
         verificationResults.push({

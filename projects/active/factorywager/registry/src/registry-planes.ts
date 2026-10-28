@@ -1,7 +1,11 @@
 import {
+  fetchWithPolicy,
   isNormalizedLoopbackHostname,
   prepareOutboundRequest,
   type OutboundEndpointPolicy,
+  type OutboundExecutionOptions,
+  type OutboundFetch,
+  type OutboundNetworkMode,
 } from '../../../../../lib/http/outbound-policy.ts';
 
 export const FACTORY_WAGER_NPM_READ_URL =
@@ -145,6 +149,51 @@ export function prepareLocalRegistryWrite<T>(
 ): { readonly url: LocalRegistryWriteUrl; readonly credentials: T } {
   const url = resolveLocalRegistryWriteUrl(options);
   return { url, credentials: readCredentials() };
+}
+
+export interface LocalRegistryWriteExecutionOptions extends OutboundExecutionOptions {
+  readonly fetcher?: OutboundFetch;
+  readonly networkMode?: OutboundNetworkMode;
+}
+
+/** Execute an explicitly selected loopback registry mutation without production fallback. */
+export function fetchLocalRegistryWrite(
+  baseUrl: LocalRegistryWriteUrl,
+  input: string | URL,
+  init: BunFetchRequestInit,
+  options: LocalRegistryWriteExecutionOptions = {}
+): Promise<Response> {
+  const selected = new URL(parseLocalRegistryWriteUrl(baseUrl));
+  const url = input instanceof URL ? input : new URL(input);
+  if (
+    url.origin !== selected.origin ||
+    url.username ||
+    url.password ||
+    url.hash ||
+    (selected.pathname !== '/' &&
+      url.pathname !== selected.pathname &&
+      !url.pathname.startsWith(`${selected.pathname.replace(/\/$/, '')}/`))
+  ) {
+    throw new Error('Local registry write request must remain inside its selected loopback plane');
+  }
+  const { fetcher = fetch, networkMode = 'online', ...execution } = options;
+  const policy = {
+    name: 'factory-registry-local-write',
+    allowedOrigins: [selected.origin],
+    allowedMethods: ['PUT', 'DELETE'],
+    credentialMode: 'scoped',
+    credentialHeaders: ['authorization'],
+    redirect: 'error',
+    timeoutMs: 15_000,
+    totalDeadlineMs: 15_000,
+    responseByteLimit: 8 * 1024 * 1024,
+    route: { mode: 'direct' },
+    networkMode,
+    protocol: { allowed: ['auto', 'h1', 'h2'], default: 'auto' },
+    ipAuthority: { mode: 'allow-non-public', enforcement: 'resolve-before-connect' },
+    replayClass: 'unsafe',
+  } as const satisfies OutboundEndpointPolicy;
+  return fetchWithPolicy(url, init, policy, fetcher, execution);
 }
 
 /** Build a GET/HEAD request that cannot carry ambient or explicit credentials. */

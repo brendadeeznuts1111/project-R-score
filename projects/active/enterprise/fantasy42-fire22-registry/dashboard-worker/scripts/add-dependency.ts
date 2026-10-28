@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
 /**
  * Safe Dependency Addition Script for Fire22 Dashboard
  * Ensures proper registry usage and Cloudflare Workers compatibility
@@ -120,7 +122,7 @@ class DependencyManager {
 
     try {
       const url = `${this.NPM_REGISTRY}${name}${version ? `/${version}` : '/latest'}`;
-      const response = await fetch(url);
+      const response = await fetchKnownScriptOutbound(url);
 
       if (!response.ok) {
         console.error(`   ✗ Package not found in npm registry`);

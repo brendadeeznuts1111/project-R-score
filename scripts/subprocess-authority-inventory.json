@@ -1,0 +1,2713 @@
+{
+  "schema": "factorywager.subprocess-authority-inventory.v1",
+  "entries": [
+    {
+      "id": "lib/bun-fs-utils.ts#Bun.spawnSync#b80491e1a7202687#1",
+      "file": "lib/bun-fs-utils.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "b80491e1a72026874b15a06a6bd70227d41e1f3b5178128e26045b6931b9d425",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/bun-install-platform-docs.ts#spawnGuardedBunChildSync#275d85de35517edb#1",
+      "file": "lib/docs/bun-install-platform-docs.ts",
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "275d85de35517edb93b554900a03c36503e34805b3b59618da74c4c6ee8c50e3",
+      "controlSpellings": [],
+      "review": {
+        "owner": "bun-docs",
+        "executable": "verified-bun",
+        "args": "call-exact",
+        "cwd": "disposable-temp",
+        "environment": "empty",
+        "stdio": "pipe",
+        "network": "denied",
+        "offline": "required",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "The platform probe permits only its fixed install argv in its owned temporary directory."
+      }
+    },
+    {
+      "id": "lib/docs/bun-native-capabilities-sync.ts#Bun.spawn#e6ceefdabe65bbb4#1",
+      "file": "lib/docs/bun-native-capabilities-sync.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "e6ceefdabe65bbb465591e79d3461b8329a9cfe932c30a7c482c7d5267b65df6",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/bun-release-tracker.ts#Bun.spawn#fad3427a7df2f22e#1",
+      "file": "lib/docs/bun-release-tracker.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "fad3427a7df2f22e01d84f99420d5ab2682be54b82feb2b75c0fb65b48a58b94",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/bun-release-tracker.ts#spawnGuardedBunChildSync#eb9a4e62915181d0#1",
+      "file": "lib/docs/bun-release-tracker.ts",
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "eb9a4e62915181d0488e4aaf77471b06627fed93bb11f9e570c7ce836d6a1fe2",
+      "controlSpellings": [],
+      "review": {
+        "owner": "bun-release-proof",
+        "executable": "process-exec-path",
+        "args": "fixed-build",
+        "cwd": "disposable-temp",
+        "environment": "empty",
+        "stdio": "pipe",
+        "network": "denied",
+        "offline": "required",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Compile feature proof permits only its fixed build argv and owned temporary paths."
+      }
+    },
+    {
+      "id": "lib/docs/fetch-protocol-docs.ts#Bun.spawn#834f48c152b13b3d#1",
+      "file": "lib/docs/fetch-protocol-docs.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "834f48c152b13b3d3481fcd36e45e6be0a4bffbd9314bd28eda01100f3ee876a",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#355f1734340e301d#1",
+      "file": "lib/docs/ripgrep-spawn.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "355f1734340e301df7ac0702337535dffb514ff357104fba0ea524cf0b92ca98",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#355f1734340e301d#2",
+      "file": "lib/docs/ripgrep-spawn.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "355f1734340e301df7ac0702337535dffb514ff357104fba0ea524cf0b92ca98",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#ca7a7e8580baef5e#1",
+      "file": "lib/docs/ripgrep-spawn.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "ca7a7e8580baef5e17d7c40dabadecc0cca06dbcc361df2ee86584c2e9ca6a9b",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawn#ca7a7e8580baef5e#2",
+      "file": "lib/docs/ripgrep-spawn.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "ca7a7e8580baef5e17d7c40dabadecc0cca06dbcc361df2ee86584c2e9ca6a9b",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/ripgrep-spawn.ts#Bun.spawnSync#a87bed7ed92e708f#1",
+      "file": "lib/docs/ripgrep-spawn.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "a87bed7ed92e708f0e6a693f1618c705a59b15b6e86cfe4d83c87ed162f7e1ff",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/docs/smart-symbol-index.ts#Bun.spawnSync#a87bed7ed92e708f#1",
+      "file": "lib/docs/smart-symbol-index.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "a87bed7ed92e708f0e6a693f1618c705a59b15b6e86cfe4d83c87ed162f7e1ff",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/cli.ts#Bun.spawn#1638024980ca9f32#1",
+      "file": "lib/factory/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "1638024980ca9f32c25feef9dddc4df33e6a21e65ba24c4298db14954d4f2117",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/cli.ts#Bun.spawn#1889a49528b84947#1",
+      "file": "lib/factory/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "1889a49528b8494735a58ad5357536adfadd294152ca2d83e1b83d5769cd0d68",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/cli.ts#Bun.spawn#476500d89544e634#1",
+      "file": "lib/factory/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "476500d89544e634cb36dc38de985b72a61d6542750f24f383b5244270c8f3a9",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/cli.ts#Bun.spawn#704aff77338ddbf4#1",
+      "file": "lib/factory/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "704aff77338ddbf43b3a870263497531b09404ebeda4dd7fc4cdfdfba93de3d3",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/cli.ts#Bun.spawn#8810464e2765786d#1",
+      "file": "lib/factory/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "8810464e2765786d271e3262e2d8617bae19bebda49a59746dfd4fcbc19a3da1",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/cli.ts#Bun.spawn#ed2d7d996305e0d4#1",
+      "file": "lib/factory/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "ed2d7d996305e0d45974651543fecdfe7040a0edbb871fa9b9d6e136ec0b352f",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/publish-metadata.ts#Bun.spawn#56ce849fce111f2e#1",
+      "file": "lib/factory/publish-metadata.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "56ce849fce111f2e5f8801efdfb901b43719690de5a5091e6d50ab483f127974",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/publish-metadata.ts#Bun.spawn#696d7893886bb334#1",
+      "file": "lib/factory/publish-metadata.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "696d7893886bb3345bf96514c9d21e38fc1f3f288ab45fb1a5f6a14ad2be2507",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/factory/publish-metadata.ts#Bun.spawnSync#2124707c0d34746a#1",
+      "file": "lib/factory/publish-metadata.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "2124707c0d34746a8dd68811e3784bd974cc31adcd295e5d88036d18ff9468ba",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/gate-map.ts#Bun.spawn#40c70a0f9f6c0c2d#1",
+      "file": "lib/gate-map.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "40c70a0f9f6c0c2d5cbe0b2fc7528268ac4f56bdffee43a18b7f69cd648f8db1",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/gate-report-monorepo.ts#Bun.spawn#c71eda25d302e0f4#1",
+      "file": "lib/gate-report-monorepo.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "c71eda25d302e0f46d6aaea678d2f5510177a74b30c57091d2c7d3bd914b82a7",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/github-repository-ref.ts#Bun.spawnSync#9da1d041da2362b0#1",
+      "file": "lib/github-repository-ref.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "9da1d041da2362b0e18341cf78d18f69468088f32161ae3ffab95a0e07dccea2",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/actions-check-noise.ts#Bun.spawn#24d7ce9234a6395f#1",
+      "file": "lib/harness/actions-check-noise.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "24d7ce9234a6395fff3207ebf48b1555d6f7790d8457e670a66ee87796cf3b52",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/actions-check-noise.ts#Bun.spawn#cb21446963c6b463#1",
+      "file": "lib/harness/actions-check-noise.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "cb21446963c6b463e6522e065fb395d97bf4c225df7f1a3fb6fe99d92e81656d",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/bun-cli.ts#Bun.spawnSync#535dee042a319012#1",
+      "file": "lib/harness/bun-cli.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "535dee042a31901295f8e402273176cc993d205a819756f2f8cc6670cf14e112",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/coverage-ratchet.ts#Bun.spawn#1380670ee230b481#1",
+      "file": "lib/harness/coverage-ratchet.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "1380670ee230b481461287ef17f1f6c6ab731a08c91420108bd623c24c81b913",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/file-removal-git.ts#Bun.spawn#c4ce11878bf63a01#1",
+      "file": "lib/harness/file-removal-git.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c4ce11878bf63a01fbb2abda9372f6825fb349d3008523845f7597ff3e58edab",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/focused-coverage.ts#Bun.spawn#e091c85c25d69e1e#1",
+      "file": "lib/harness/focused-coverage.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "e091c85c25d69e1e05aad801d343877d57b36a4dcea697a848b636fd973268b1",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/heal-fixture.ts#Bun.spawn#a48df59f9a1595a7#1",
+      "file": "lib/harness/heal-fixture.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "a48df59f9a1595a70aa1c4663276cb6c33cd995755a71c932d20d29d8e8a7ae7",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/maintenance.ts#Bun.spawn#77fcedc766506e9f#1",
+      "file": "lib/harness/maintenance.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "77fcedc766506e9ff0a332ebd0a9fc53cd5ff65b3543c35556640bd243d67537",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/monorepo-health.ts#Bun.spawn#86410734ebafad9f#1",
+      "file": "lib/harness/monorepo-health.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "86410734ebafad9f73d6d86f2490b1264e799503a38b05415e1a93b1b067e699",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/harness/process-capture.ts#Bun.spawn#136fa7e3781bdf73#1",
+      "file": "lib/harness/process-capture.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "136fa7e3781bdf739085d7892459ec3088132781178aea0634eb965f45ec6d26",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/http/skills-catalog.ts#Bun.spawn#e3f34b709a9699ba#1",
+      "file": "lib/http/skills-catalog.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "e3f34b709a9699ba4420af66e63c2683b8be6819bfd51829a2235f066b20ac7e",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/junit-reporter-env.ts#Bun.spawnSync#8bffba59f408f0e1#1",
+      "file": "lib/junit-reporter-env.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "8bffba59f408f0e1185549560de39b676460aa87a2ddb56608749bc98371810b",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/macros/git-commit.ts#Bun.spawnSync#18c1874a5994ad40#1",
+      "file": "lib/macros/git-commit.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "18c1874a5994ad40bac009067d8df6de0a683601c9f6babedba24f8d840d53dc",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/monitoring/install-cache-slice.ts#Bun.spawnSync#14ba10b1ce512ffe#1",
+      "file": "lib/monitoring/install-cache-slice.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "14ba10b1ce512ffeb91bc4c776a0af6a50bb63b67de1a79354c7424cfa2384dc",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/monitoring/install-cache-slice.ts#Bun.spawnSync#1bee2af70933570a#1",
+      "file": "lib/monitoring/install-cache-slice.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "1bee2af70933570a8adbef344682f7864eb8a816dda1f1ebb4ff578dade2fd3d",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/monitoring/install-cache-slice.ts#Bun.spawnSync#561543fd31e5733c#1",
+      "file": "lib/monitoring/install-cache-slice.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "561543fd31e5733c280c0f3c45681a7f7993d5c54f0e45a4cd911a7a94c70556",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/monitoring/install-cache-slice.ts#Bun.spawnSync#f8915c615a542207#1",
+      "file": "lib/monitoring/install-cache-slice.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "f8915c615a542207420ad8f8ec94129c506883ab266b772425fbb10a01aa2306",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operations/db.ts#Bun.spawnSync#c8cca46a10b58a9c#1",
+      "file": "lib/operations/db.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "c8cca46a10b58a9c9c3067f1417cb81595f7bf0b42f9faaef00d946424ec3238",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operator-research/package-update.ts#Bun.spawn#57d401ddb885ab65#1",
+      "file": "lib/operator-research/package-update.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "57d401ddb885ab65140dbbdaa9ee122147fa166782b68037308094be3dc73809",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operator-research/package-update.ts#Bun.spawn#57d401ddb885ab65#2",
+      "file": "lib/operator-research/package-update.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "57d401ddb885ab65140dbbdaa9ee122147fa166782b68037308094be3dc73809",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operator-research/registry-desk.ts#Bun.spawn#aa1e5aabbf218d0c#1",
+      "file": "lib/operator-research/registry-desk.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "aa1e5aabbf218d0cd702a72c8eb8cf4fde14b1e4a293c6ca859f56c12eed1376",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operator-research/registry-desk.ts#Bun.spawn#f1a2d721bf91cd87#1",
+      "file": "lib/operator-research/registry-desk.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "f1a2d721bf91cd87466e426d11cdca5cc09d8c8dd9a112d4ef2bf2c86de460df",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operator-research/registry-desk.ts#spawnRegistryCommandPlan#815298a2f52eb2b7#1",
+      "file": "lib/operator-research/registry-desk.ts",
+      "callee": "spawnRegistryCommandPlan",
+      "authority": "guarded-registry-consumer",
+      "expressionHash": "815298a2f52eb2b71b22603b69753553fbc97e0b4a03322494f5aaba37a6c3a9",
+      "controlSpellings": [
+        "--registry"
+      ]
+    },
+    {
+      "id": "lib/operator-research/system-panel.ts#Bun.spawn#52cf97cb96fb6da7#1",
+      "file": "lib/operator-research/system-panel.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "52cf97cb96fb6da754d64ceb25531e465f57618fd322a5f0cc2622f7f9f0087d",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/operator-research/worker-registry.ts#Bun.spawn#db1939cd19f4104d#1",
+      "file": "lib/operator-research/worker-registry.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "db1939cd19f4104df0edd66a9a0d4032b87ead10b38de48f5d6a3def209588a2",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/portal/capability-doctor.ts#Bun.spawn#c7393a1e036fa0ff#1",
+      "file": "lib/portal/capability-doctor.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c7393a1e036fa0ff91f518a570b0db013791ac69ddb3f198a7f1ddba4250aff1",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/portal/command-centre-api.ts#Bun.spawn#102cb4a9cfe424d1#1",
+      "file": "lib/portal/command-centre-api.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "102cb4a9cfe424d167fafa61372754bbec88fd14a4b4907bbb277f8138f658b6",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/projects-scan.ts#Bun.spawnSync#54140465400bb839#1",
+      "file": "lib/projects-scan.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "54140465400bb839ebc3c4b7248554c0698fd5043d9291acee3778234e9da609",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/projects-scan.ts#Bun.spawnSync#f1a889dc0694ca2e#1",
+      "file": "lib/projects-scan.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "f1a889dc0694ca2e7bec178609705407b4250c155148747c6b1e5bf44270c834",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/reference-discovery.ts#Bun.spawn#92604921195e77de#1",
+      "file": "lib/reference-discovery.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "92604921195e77dea943315d22b5c50aa10df511eaef029ca3162166c568f929",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/registry/bun-info-field.ts#spawnRegistryCommandPlan#ffc69b59e0643044#1",
+      "file": "lib/registry/bun-info-field.ts",
+      "callee": "spawnRegistryCommandPlan",
+      "authority": "guarded-registry-consumer",
+      "expressionHash": "ffc69b59e0643044db0bc8359506fc9375da0f0a6af04d8558859f1f41fe87c5",
+      "controlSpellings": [
+        "--registry"
+      ]
+    },
+    {
+      "id": "lib/registry/command-policy.ts#spawnGuardedBunChild#11f516e5c3c78e12#1",
+      "file": "lib/registry/command-policy.ts",
+      "callee": "spawnGuardedBunChild",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "11f516e5c3c78e124721e98ef2388f62b008ead18879dd02ddb99163d4c4b5cc",
+      "controlSpellings": [],
+      "review": {
+        "owner": "registry-control",
+        "executable": "plan-exact",
+        "args": "plan-exact",
+        "cwd": "plan-exact",
+        "environment": "allowlisted",
+        "stdio": "caller-bounded",
+        "network": "registry-origin-bound",
+        "offline": "invocation-policy",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Registry planner binds every process and network authority before async spawn."
+      }
+    },
+    {
+      "id": "lib/registry/command-policy.ts#spawnGuardedBunChildSync#90198e41b6f00dc6#1",
+      "file": "lib/registry/command-policy.ts",
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "90198e41b6f00dc62b952f4b6875d866dc12f25a6afe18cf55fef95a75e928ff",
+      "controlSpellings": [],
+      "review": {
+        "owner": "registry-control",
+        "executable": "plan-exact",
+        "args": "plan-exact",
+        "cwd": "plan-exact",
+        "environment": "allowlisted",
+        "stdio": "caller-bounded",
+        "network": "registry-origin-bound",
+        "offline": "invocation-policy",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Registry planner binds every process and network authority before sync spawn."
+      }
+    },
+    {
+      "id": "lib/registry/npm-publish-readme.ts#Bun.spawn#56ce849fce111f2e#1",
+      "file": "lib/registry/npm-publish-readme.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "56ce849fce111f2e5f8801efdfb901b43719690de5a5091e6d50ab483f127974",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/registry/npm-publish-readme.ts#Bun.spawn#ad6163676815a27f#1",
+      "file": "lib/registry/npm-publish-readme.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "ad6163676815a27f45fb17851dd0409e77fd3fa23a6d411cf984176396bed137",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/repo-containment.ts#Bun.spawn#92604921195e77de#1",
+      "file": "lib/repo-containment.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "92604921195e77dea943315d22b5c50aa10df511eaef029ca3162166c568f929",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/repo-containment.ts#Bun.spawn#c1584d6f9ab78299#1",
+      "file": "lib/repo-containment.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c1584d6f9ab7829953a0bbc851add4c73c3815e57f8caca5c01726587c04ec98",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/research/thread-improvement.ts#Bun.spawn#49412ba441eb32a5#1",
+      "file": "lib/research/thread-improvement.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "49412ba441eb32a50f0a57d1693cd93d8b992bde263c6709bb8cd360eba585f0",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/research/thread-improvement.ts#Bun.spawn#8dfed17ee2de1807#1",
+      "file": "lib/research/thread-improvement.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "8dfed17ee2de180732b4719345b32caae2fc52074b7bacbbf57ac0e85ca091c2",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/security/guarded-bun-process.ts#Bun.spawn#8971c15591a070bd#1",
+      "file": "lib/security/guarded-bun-process.ts",
+      "callee": "Bun.spawn",
+      "authority": "guarded-authority-primitive",
+      "expressionHash": "8971c15591a070bd3e6ea83ba096fbf802f7691e3e6b00eb413bf569e43ebeb4",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/security/guarded-bun-process.ts#Bun.spawnSync#2584992f022840e1#1",
+      "file": "lib/security/guarded-bun-process.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "guarded-authority-primitive",
+      "expressionHash": "2584992f022840e1759a05f399685b4b14421cf4ac05ebf02e8076379c05379c",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/security/pass-session.ts#Bun.spawn#5cf734dc2240cbf3#1",
+      "file": "lib/security/pass-session.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "5cf734dc2240cbf3e3937171ed6e50b189262f28fc9e1b936b471a9f7c5a5859",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/security/preload-startup-measurement-child.ts#spawnGuardedBunChild#6bc2e800dfb1ddd2#1",
+      "file": "lib/security/preload-startup-measurement-child.ts",
+      "callee": "spawnGuardedBunChild",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "6bc2e800dfb1ddd271b6095c5095152bdcf6492b15e1f42b530ab552863d442b",
+      "controlSpellings": [],
+      "review": {
+        "owner": "runtime-tooling",
+        "executable": "verified-bun",
+        "args": "measurement-exact",
+        "cwd": "repository-bound",
+        "environment": "empty",
+        "stdio": "pipe",
+        "network": "loopback-only",
+        "offline": "denied",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "The measurement harness binds Bun, argv, cwd, empty environment, and one ephemeral loopback origin before spawn."
+      }
+    },
+    {
+      "id": "lib/security/vault-health-cron-worker.ts#Bun.spawn#681a1b7550969c1a#1",
+      "file": "lib/security/vault-health-cron-worker.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "681a1b7550969c1a1f71def54028cca8aca2a61157ad345f068a8e7f755574ca",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/terminal.ts#Bun.spawn#c720b3250d7f4ecd#1",
+      "file": "lib/terminal.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "c720b3250d7f4ecd9f55d9d06c3d4a89c10308d91fed06623dc34457d2abdda3",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/tmp-probe.ts#Bun.spawn#09a9411e2c7fa863#1",
+      "file": "lib/tmp-probe.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "09a9411e2c7fa8636632d3fd3fb1fd01cd5c1270121ae3998d2d7e6c3c8f16cf",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/channels.ts#Bun.spawn#b2f3412a39d95911#1",
+      "file": "lib/verification/channels.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "b2f3412a39d95911402099bedf2293126cf1954f382ee8c3ab712cbc09044828",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/channels.ts#Bun.spawnSync#d997ee9551fb1697#1",
+      "file": "lib/verification/channels.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "d997ee9551fb169731f1723d5cf16f4fa7fff5646889225077e37ae68a3a4b30",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/cloudflare-pages-preflight.ts#Bun.spawn#088660cd546b2748#1",
+      "file": "lib/verification/cloudflare-pages-preflight.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "088660cd546b2748d009657db6166b3e333d38173416818ceff3d4bf1744b54b",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/cloudflare-pages-preflight.ts#Bun.spawn#b911b308917c85ed#1",
+      "file": "lib/verification/cloudflare-pages-preflight.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "b911b308917c85ed4701cc582de1aaf37d3bcc3961408491f9c697d09036e30e",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/install-env-probes.ts#Bun.spawnSync#0ade5b684da743bf#1",
+      "file": "lib/verification/install-env-probes.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "intentional-native-probe",
+      "expressionHash": "0ade5b684da743bfe90a0d5716c864131224d0de4feb87d268001a84b1a2f58e",
+      "controlSpellings": [],
+      "exception": {
+        "owner": "install-env-verification",
+        "reason": "Exercises Bun install environment behavior in disposable directories; shared policy would suppress the behavior under test."
+      }
+    },
+    {
+      "id": "lib/verification/install-env-probes.ts#spawnRegistryCommandPlanSync#b95cd3512e5c5eb9#1",
+      "file": "lib/verification/install-env-probes.ts",
+      "callee": "spawnRegistryCommandPlanSync",
+      "authority": "guarded-registry-consumer",
+      "expressionHash": "b95cd3512e5c5eb936382cb34109e50e9eedb78b3e7473566ddf14c76564051d",
+      "controlSpellings": [
+        "--registry"
+      ]
+    },
+    {
+      "id": "lib/verification/install-platform.ts#Bun.spawnSync#8640e1581c4d5071#1",
+      "file": "lib/verification/install-platform.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-package-manager-probe",
+      "expressionHash": "8640e1581c4d5071c6f8b7fcf70780e0d4e399e2528a349b56c28ae9310c78d5",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/pm-registry-probes.ts#Bun.spawnSync#408bf52c4ffe36df#1",
+      "file": "lib/verification/pm-registry-probes.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "408bf52c4ffe36df9044aac74be7ea3027dafc15625feb296c14086f5e627db7",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/resolve-bun-binary.ts#Bun.spawnSync#2252922d3d7504ce#1",
+      "file": "lib/verification/resolve-bun-binary.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "2252922d3d7504ceba3096f9cde088022ac3a05738cdb11cd1ec97ff36b9988e",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/resolve-bun-binary.ts#Bun.spawnSync#bf11e3851d663e5d#1",
+      "file": "lib/verification/resolve-bun-binary.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "bf11e3851d663e5d3b7ae3cba88be05848dc3a4db4969e17bff389d5a99cf226",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/ssot-flow-soft.ts#Bun.spawn#04d5262d4a35ccf3#1",
+      "file": "lib/verification/ssot-flow-soft.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "04d5262d4a35ccf3d70d0d2b67db0aedc182550e9fd3596606fa639413fe279b",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/ssot-flow-soft.ts#Bun.spawn#2f9ec797b5ffeb55#1",
+      "file": "lib/verification/ssot-flow-soft.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2f9ec797b5ffeb55a7d1cb00b7135a94161c85d7a344360c8bbfe7b761fe67b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/ssot-flow-soft.ts#Bun.spawn#510f91b018100cee#1",
+      "file": "lib/verification/ssot-flow-soft.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "510f91b018100cee4cf1dadddca4fde22a8b606ffd28710becab1b710c54113a",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/ssot-flow-soft.ts#Bun.spawnSync#0e196490fcb85b51#1",
+      "file": "lib/verification/ssot-flow-soft.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "0e196490fcb85b5103e3eea913c3fe49ab6cb0823c0e2fc4a3144d64d612a301",
+      "controlSpellings": []
+    },
+    {
+      "id": "lib/verification/ssot-flow-soft.ts#Bun.spawnSync#980bf19f666911e1#1",
+      "file": "lib/verification/ssot-flow-soft.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "980bf19f666911e1964814c59e1c19779dadfdac673d33f34865ff5994a6a6fa",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/bun-release-contracts/src/cli.ts#Bun.spawn#6a8d34c85d10b280#1",
+      "file": "packages/bun-release-contracts/src/cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "6a8d34c85d10b28020a46a54482dae6f483a389f22f28acf21b5207333265f95",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/bun-release-contracts/src/generator.ts#Bun.spawn#cd1b0ccf6dd20b8c#1",
+      "file": "packages/bun-release-contracts/src/generator.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "cd1b0ccf6dd20b8cea207b6c2637e640d6954e283796913e6f707ecdabb8aa45",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/cache.ts#Bun.spawn#e983543b895a22e3#1",
+      "file": "packages/proton-pass/src/cache.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "e983543b895a22e32b96ed984a1339d09c116337a4ea91e40ba1844fde540b94",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/inject.ts#Bun.spawn#033c3d33f90cd88d#1",
+      "file": "packages/proton-pass/src/inject.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "033c3d33f90cd88db7c661f8f3e062a4ae9d596c8d0aa8f96dde8362898285a4",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/inject.ts#Bun.spawn#5cf734dc2240cbf3#1",
+      "file": "packages/proton-pass/src/inject.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "5cf734dc2240cbf3e3937171ed6e50b189262f28fc9e1b936b471a9f7c5a5859",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/inject.ts#Bun.spawn#ad75acd69129ae5e#1",
+      "file": "packages/proton-pass/src/inject.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "ad75acd69129ae5e78e1bbbf2ad1bfb5e60fa8e46d09e27ab4902bc200caf33d",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/session.ts#Bun.spawn#195458589d27cbf5#1",
+      "file": "packages/proton-pass/src/session.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "195458589d27cbf5daa90a9237ddcd8b90e25bc13d9e2640b6b0912059894bb8",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/session.ts#Bun.spawn#e9faff8b754881ad#1",
+      "file": "packages/proton-pass/src/session.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "e9faff8b754881ad173b7b150437e31e68e989a54bfba59def6087530c054eb0",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/ssh-temp.ts#Bun.spawn#a96126aaac209650#1",
+      "file": "packages/proton-pass/src/ssh-temp.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "a96126aaac209650f953219cc33192a5014229b7030abeb099255218414b0612",
+      "controlSpellings": []
+    },
+    {
+      "id": "packages/proton-pass/src/timeout.ts#Bun.spawn#e393675de35660b4#1",
+      "file": "packages/proton-pass/src/timeout.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "e393675de35660b4e8d4faab1e56a28c7d339e1f1379a9fbee6cb0d3e3eb57c4",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/affected-workspaces.ts#Bun.spawn#578290fd253ef4b8#1",
+      "file": "scripts/affected-workspaces.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "578290fd253ef4b8a057475a4eb77cbfa5071f8124cd232a8f1624092e9f9cf9",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/affected-workspaces.ts#Bun.spawn#8febba116821aaf6#1",
+      "file": "scripts/affected-workspaces.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "8febba116821aaf6f033451399e465fb3405aa763c9a8a5c51cbc94e3f59d8f2",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/assert-public-clean.ts#Bun.spawnSync#a049933ce5010a0f#1",
+      "file": "scripts/assert-public-clean.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "a049933ce5010a0fde8ac10e5a0aeb528134db71fce6bdc2155cfc4148a3626c",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/audit-bunfig.ts#Bun.spawn#2de0cbc73f896aa5#1",
+      "file": "scripts/audit-bunfig.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "2de0cbc73f896aa50c34a134d3a8d7fb5e2a1f6c7c93aa61359a2b8a01d5ff13",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/audit-bunfig.ts#Bun.spawn#6efca6945756dfd4#1",
+      "file": "scripts/audit-bunfig.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "6efca6945756dfd46d491e29b740f44bb5236fe02ffffc0863927a7a809e06df",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/audit-bunfig.ts#Bun.spawn#850c9efeb4bae02f#1",
+      "file": "scripts/audit-bunfig.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "850c9efeb4bae02f6d754d20ca53ecc3fc1cf3c68ae59ea24a292fd707dab5b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/audit-bunfig.ts#Bun.spawn#a78d0b4b6a7d3ac5#1",
+      "file": "scripts/audit-bunfig.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "a78d0b4b6a7d3ac59fb068040f4726e1723a5bb6e17bcc8beb745876f76e8408",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bake-bookmakers-board.ts#Bun.spawnSync#feb1cba0afcc42f5#1",
+      "file": "scripts/bake-bookmakers-board.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "feb1cba0afcc42f535218f3f17531f837c9ebe645915802e0f6a190858daed10",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bake-bunfig.ts#Bun.spawn#5cc6b270d27d0df7#1",
+      "file": "scripts/bake-bunfig.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "5cc6b270d27d0df780672d01c399bc01b5c49b4e9310153a67d332a7be4ad0b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bake-install-hygiene-report.ts#Bun.spawnSync#da99123f6b4b03e6#1",
+      "file": "scripts/bake-install-hygiene-report.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "da99123f6b4b03e6a203384f09ac8da6c1d25cbb2110b114b7f54205b76f0b0f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bake-tennis-board.ts#Bun.spawn#73c3a621fd24b008#1",
+      "file": "scripts/bake-tennis-board.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "73c3a621fd24b008007294f017da299e5b1e7a309f1b43269c97362e53c3a66c",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/brand-bench-runner.ts#Bun.spawnSync#aa0aaecc1dde0751#1",
+      "file": "scripts/brand-bench-runner.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "aa0aaecc1dde075100846d391e469122838b111c78c6a2b22ca1e59a7c209a54",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/brand-cpu-profile.ts#Bun.spawn#c51b74ea5d2d7163#1",
+      "file": "scripts/brand-cpu-profile.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "c51b74ea5d2d7163ae0aedcbfa0f39293aaa47faa4f2c4dce43aafd743bd6f8d",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/build-with-defines.ts#Bun.spawn#5cc6b270d27d0df7#1",
+      "file": "scripts/build-with-defines.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "5cc6b270d27d0df780672d01c399bc01b5c49b4e9310153a67d332a7be4ad0b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/build-with-defines.ts#Bun.spawn#9c593ecf9919c964#1",
+      "file": "scripts/build-with-defines.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "9c593ecf9919c964737c9ba70d770c9d17ac783d7574667ee1197233090631d2",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-add-safe.ts#Bun.spawn#12fe1126c134252b#1",
+      "file": "scripts/bun-add-safe.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "12fe1126c134252b536771fbd67418fcb97d2fb65e92ccdd5af777bc466f2643",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-ci.ts#Bun.spawn#7a0f33e75a3dac25#1",
+      "file": "scripts/bun-ci.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "7a0f33e75a3dac258dd414c5170b8c4f907b5c4c1a7c76dce71e36cd3f9778ad",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-ci.ts#Bun.spawn#bfd19991dde30819#1",
+      "file": "scripts/bun-ci.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "bfd19991dde30819182488cd1c45939dd21fd7668c5cae674facad1c3191ed38",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-remove-safe.ts#Bun.spawn#12fe1126c134252b#1",
+      "file": "scripts/bun-remove-safe.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "12fe1126c134252b536771fbd67418fcb97d2fb65e92ccdd5af777bc466f2643",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawn#58073ea147acca75#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "58073ea147acca756af979ee3e68bdbf235d93b168e24aab76244e31108f4838",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#3b1ee3263779a076#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "3b1ee3263779a076e475a98339f9488169e02890d64cd39784bd86eb327a5e26",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#443119c4cbd09b8b#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "443119c4cbd09b8bcf77fc83b8ac4ec025ec9a1cd4107d0b1531a5f399d39801",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#5047f853fffe0d78#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "5047f853fffe0d78b3bca47b4c59d51b56c80b29316ba9e0348400246a311581",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#50afe6d6300e4617#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "50afe6d6300e4617f148716150a41905e13095a014ce5214e3c27f6108d38997",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#5bcbc0b0e3fb321f#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "5bcbc0b0e3fb321f17c39cc1eb850acfcac9d092c867e4c0a6574371858e7fc1",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#720c8c56f0025ddb#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "720c8c56f0025ddb5688988d5ed271a92a5bed06c8598e6c2e03ad3e911067bd",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#7bf9996e9983af38#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "7bf9996e9983af38685096dabe58317e6eaf2142229641adac0d17e7fcf9dee1",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed-staged.ts#Bun.spawnSync#ebaec9217dcbb7ae#1",
+      "file": "scripts/bun-test-changed-staged.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "ebaec9217dcbb7ae0c307e6f13484e4d2250ac07206920eaeecea62361417511",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/bun-test-changed.ts#Bun.spawn#fe948cf15f25ae07#1",
+      "file": "scripts/bun-test-changed.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "fe948cf15f25ae07166d41a766ca2851cc7ce018a5b572292fb47150ed7439b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-bun-brand-baseline.ts#Bun.spawn#aad69cd19f29b6b7#1",
+      "file": "scripts/check-bun-brand-baseline.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "aad69cd19f29b6b75dd302dd12fd779d14ff66e7fde996a09376f4e1c9e6bf1f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-bun-pm-cache.ts#Bun.spawnSync#04d2d6f3a01716d4#1",
+      "file": "scripts/check-bun-pm-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "04d2d6f3a01716d4170db1b6ff328d0907a2331cc0d2b2ce7be2a73b892b7d9b",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-bun-pm-cache.ts#Bun.spawnSync#5fa2f0e35e76d93e#1",
+      "file": "scripts/check-bun-pm-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "5fa2f0e35e76d93e44860e80b4f98816b96b2ddb08cef06356a04e348689c5e9",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-bun-pm-cache.ts#Bun.spawnSync#e272747eb29031d8#1",
+      "file": "scripts/check-bun-pm-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "e272747eb29031d826378825b639539d36b33b406a5fc33fbeed339057156e2f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-bun-pm-cache.ts#Bun.spawnSync#f8915c615a542207#1",
+      "file": "scripts/check-bun-pm-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "f8915c615a542207420ad8f8ec94129c506883ab266b772425fbb10a01aa2306",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-cli-flag-allowlists.ts#Bun.spawn#f53dc5d0f20ef735#1",
+      "file": "scripts/check-cli-flag-allowlists.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "f53dc5d0f20ef735e070d626fc77d83f1199863dc97cc882b4a380b9df65c689",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-control-policy.ts#Bun.spawnSync#354a97d605b3b941#1",
+      "file": "scripts/check-control-policy.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "354a97d605b3b94160a8b5840746cba6e07400883fde80374d5ccb5b89af03eb",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-control-policy.ts#Bun.spawnSync#b4515c156bde0669#1",
+      "file": "scripts/check-control-policy.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-package-manager-probe",
+      "expressionHash": "b4515c156bde066923d2605651a21681ceac4c1269d153dcff99acb8066d8cc1",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-docs.ts#Bun.spawnSync#ac0e7773622399d5#1",
+      "file": "scripts/check-docs.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "ac0e7773622399d58ee66257f33e29a2545a2a81bb8e88317c36915c519db50d",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-mixed-lane.ts#Bun.spawn#82d613182aeb2078#1",
+      "file": "scripts/check-mixed-lane.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "82d613182aeb20785703a16240a79db584110072398a9dd793fbd8b535261fa7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-monorepo-health.ts#Bun.spawn#02a56367823a64a7#1",
+      "file": "scripts/check-monorepo-health.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "02a56367823a64a76df9cf94d324de1e0575569f1e1df32e735049ebcf79ad33",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-package-scripts.ts#Bun.spawn#2faa8dfb58482616#1",
+      "file": "scripts/check-package-scripts.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2faa8dfb58482616d25b7c9996184eeb5293047d7aae1e92c7d3e9e9ac575de6",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-package-scripts.ts#Bun.spawn#ee0705702be4338d#1",
+      "file": "scripts/check-package-scripts.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "ee0705702be4338d3690db986063414ed6cacc585396d7d159b755bf662dce4b",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/check-search-policy-governance.ts#Bun.spawn#fd124ed5697e50e2#1",
+      "file": "scripts/check-search-policy-governance.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "fd124ed5697e50e231db2199e31c5138b1a6b46548f3c654e005ef3509e0b872",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/ci-bun-check.ts#Bun.spawnSync#1ca26a385a1525c4#1",
+      "file": "scripts/ci-bun-check.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "1ca26a385a1525c4ececf07560c0357c323b6f3fd06567c7eb0251062fd33cb9",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/ci-bun-check.ts#Bun.spawnSync#aab1490778ac5feb#1",
+      "file": "scripts/ci-bun-check.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "aab1490778ac5feb46a1a242a7a4b796864ca2dae8d37ae7989ec6c8905411ca",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/ci-bun-check.ts#Bun.spawnSync#cee604cc7ac041e1#1",
+      "file": "scripts/ci-bun-check.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "cee604cc7ac041e1f766da47559d87c42db9117fd1d7e7fefcdccbfe24e3f35f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/ci-core.ts#Bun.spawn#3830a03889c2f421#1",
+      "file": "scripts/ci-core.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "3830a03889c2f421c95c629c5ba0822ce2876fd3b34d34e9661de9221733c6ac",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/concept-graph.ts#Bun.spawn#7444cc5033da1edc#1",
+      "file": "scripts/concept-graph.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "7444cc5033da1edc5fa757b21b3a2ef38736124d5eed444f9f15cd1a6186c06f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/concept-propose.ts#Bun.spawn#9a55495f89c45d6c#1",
+      "file": "scripts/concept-propose.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "9a55495f89c45d6c94bc8cd986a3a9a710745ca52d4dd4f471938ea61fd00bc6",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/deps-outdated-workspaces.ts#Bun.spawn#35c7c0f282a6b543#1",
+      "file": "scripts/deps-outdated-workspaces.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "35c7c0f282a6b5434bfb7c97f9a9e3285266655d4865a8fd8e0ba2a9d469b78f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/dev-portal.ts#Bun.spawn#071f393480233695#1",
+      "file": "scripts/dev-portal.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "071f393480233695bfdd36adb4e370570f8a071f80f8acbeb8add75944391030",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/dev-portal.ts#Bun.spawn#3d8f98250f3c1992#1",
+      "file": "scripts/dev-portal.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "3d8f98250f3c19926efcda8c7986e76d45ef66a98f41b8e164a6bcf1b9509b59",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/evict-root-tilde-cache.ts#Bun.spawnSync#7df981d73f1fc1a5#1",
+      "file": "scripts/evict-root-tilde-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "7df981d73f1fc1a59c5d832f8d4f8be3d60d5c51c8732f460b015cd6a3c53a2f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/gate-report-monorepo.ts#Bun.spawn#31ac16fc006219fe#1",
+      "file": "scripts/gate-report-monorepo.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "31ac16fc006219fed52fb2129ab90681d78059885cce7714fa3dcd95bc279aa1",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/inspect-tests.ts#Bun.spawn#332bba3de651e558#1",
+      "file": "scripts/inspect-tests.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "332bba3de651e55804d62d3c1fbb8f81e46bea1dba92dd3fdfe7d4cd7d2e9183",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/inventory-wrappers.ts#Bun.spawn#06cec794455dd3c1#1",
+      "file": "scripts/inventory-wrappers.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "06cec794455dd3c1a20c6c2ffec1757590b9b1beb7c272045ab9f9fa7f1ecb50",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#1bee2af70933570a#1",
+      "file": "scripts/lib/bun-cache-metrics.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "1bee2af70933570a8adbef344682f7864eb8a816dda1f1ebb4ff578dade2fd3d",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#41ec0729b37ceb53#1",
+      "file": "scripts/lib/bun-cache-metrics.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "41ec0729b37ceb53fac91f87fb7eb7f1a29df4a5bd0436e41622f8fa0d41b091",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#561543fd31e5733c#1",
+      "file": "scripts/lib/bun-cache-metrics.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "561543fd31e5733c280c0f3c45681a7f7993d5c54f0e45a4cd911a7a94c70556",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/bun-cache-metrics.ts#Bun.spawnSync#96ac2513dae68461#1",
+      "file": "scripts/lib/bun-cache-metrics.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "96ac2513dae6846167fd17894ba0cb75b58d9fbeb0fcdbd6a24b0d3ca0dec7d3",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/bun-install-env.ts#Bun.spawnSync#7f531b87b252eed7#1",
+      "file": "scripts/lib/bun-install-env.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "7f531b87b252eed71e1969c99ade203a3ff40f5ff365c3f7d5cd979863e65650",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/console-staged-violations.ts#Bun.spawn#f7f7396e9ed437a9#1",
+      "file": "scripts/lib/console-staged-violations.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "f7f7396e9ed437a91f16946ad1bee4620ad2772f3789a35c4331984df24494af",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/git-changed.ts#Bun.spawn#00a135101cd5416d#1",
+      "file": "scripts/lib/git-changed.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "00a135101cd5416daad449661af7eb6c4e54c44be33b0883bcb1d0f2f7b5e0b9",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/git-changed.ts#Bun.spawn#2a671d9279c69bfc#1",
+      "file": "scripts/lib/git-changed.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2a671d9279c69bfc7015421edcc822091f785ea1a00b001c06cfbf6a055c3bf7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/guarded-bun-pm.ts#spawnGuardedBunChildSync#f4f2ac26b3c9e38c#1",
+      "file": "scripts/lib/guarded-bun-pm.ts",
+      "callee": "spawnGuardedBunChildSync",
+      "authority": "guarded-process-consumer",
+      "expressionHash": "f4f2ac26b3c9e38c2dee09c5baa94facf39bbe42535a56916d06aed026696c73",
+      "controlSpellings": [],
+      "review": {
+        "owner": "bun-pm-health",
+        "executable": "verified-bun",
+        "args": "fixed-local-pm-allowlist",
+        "cwd": "repository-root",
+        "environment": "three-name-allowlist",
+        "stdio": "pipe",
+        "network": "denied",
+        "offline": "required",
+        "flagPassthrough": "control-policy",
+        "defaultDeny": true,
+        "reason": "Local cache and health probes permit nine exact bun pm argv vectors and cannot inherit registry, proxy, preload, or experimental controls."
+      }
+    },
+    {
+      "id": "scripts/lib/harness-group-runner.ts#Bun.spawn#b85bdcc2c3d3607c#1",
+      "file": "scripts/lib/harness-group-runner.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "b85bdcc2c3d3607c17cc23d8512c170f4bb996e55c0548c011011ec5a66d6527",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#2d08edb811e97bc4#1",
+      "file": "scripts/lib/index-tree.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "2d08edb811e97bc4b9975c64b872792f8b728899bf26232beda5baa861386f8c",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#5ac86b9fc8f8213b#1",
+      "file": "scripts/lib/index-tree.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "5ac86b9fc8f8213b7b3feaa68798e7280c7e09cf8dcc29f781e1c1b5e004143a",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/index-tree.ts#Bun.spawnSync#f956b50bf1286bff#1",
+      "file": "scripts/lib/index-tree.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "f956b50bf1286bffee10a51bbf33fe239739da4ed9c1d4053f73f53f08146777",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/pre-push-receipt-profile.ts#Bun.spawn#e7a308e0aa81e5b9#1",
+      "file": "scripts/lib/pre-push-receipt-profile.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "e7a308e0aa81e5b9f7ea1a4b1cc4c6674245d5e623de09f3e8e37d87279ca679",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/release-artifact-io.ts#Bun.spawn#5e56f47c415100c2#1",
+      "file": "scripts/lib/release-artifact-io.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "5e56f47c415100c27d1dd08127caa4096997705ac0dcf30c79e97b5ddf2cf299",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/release-artifact-io.ts#Bun.spawn#66c681f3d3fac3cf#1",
+      "file": "scripts/lib/release-artifact-io.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "66c681f3d3fac3cf3c49bdb8d08d3fba823dd8c514ca89812c3c6d7dbdc7bce3",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/release-artifact-io.ts#Bun.spawn#d9e88e84b14c140c#1",
+      "file": "scripts/lib/release-artifact-io.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "d9e88e84b14c140c52e65088a97cebd0c0658c09338dcbc2f029c83f1cfbb0ea",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/vault-gap-status.ts#Bun.spawn#249fe190d975d7aa#1",
+      "file": "scripts/lib/vault-gap-status.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "249fe190d975d7aa07892896a0e9b3ff2ce12c577e422d289868ef98e5b8f331",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lib/vault-gap-status.ts#Bun.spawn#46b4cf881c17dad1#1",
+      "file": "scripts/lib/vault-gap-status.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "46b4cf881c17dad125358f99b2f6be7501afdae5e4ad49b284162595a854bc5f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/limit-forecast-lab-profile.ts#Bun.spawn#67d713075726ac8d#1",
+      "file": "scripts/limit-forecast-lab-profile.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "67d713075726ac8d8d912306cd9d096582224ad91ebbfde215f49c3badbe5829",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lint-harness.ts#Bun.spawn#f2ecf5277d69f96a#1",
+      "file": "scripts/lint-harness.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "f2ecf5277d69f96a91f316146e0623a6d447ec45880d519ab53f8026594af86c",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/lint-money-sql.ts#Bun.spawn#eacd6d9584313c7b#1",
+      "file": "scripts/lint-money-sql.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "eacd6d9584313c7b207136837818fbd66b835631298e125b340afae87f8a32cd",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/migrate-money-to-integers.ts#Bun.spawnSync#83a4505c100cab63#1",
+      "file": "scripts/migrate-money-to-integers.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "83a4505c100cab636f6ef3248afe64f3eeb9354e6962bf10c414b51ff36dca3d",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/new-regression.ts#Bun.spawn#f2ac93a08b224ee7#1",
+      "file": "scripts/new-regression.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "f2ac93a08b224ee74addcbb0476bcacd27691de952a5fe058b1d696b1d54ace8",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-commit-ast-grep.ts#Bun.spawn#2a671d9279c69bfc#1",
+      "file": "scripts/pre-commit-ast-grep.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2a671d9279c69bfc7015421edcc822091f785ea1a00b001c06cfbf6a055c3bf7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-commit-ast-grep.ts#Bun.spawn#2a815e18c413fdd3#1",
+      "file": "scripts/pre-commit-ast-grep.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "2a815e18c413fdd323720e8de5dfaca3d9c7f348ffbf99b1aedbd5c0a48f6a18",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-commit-harness.ts#Bun.spawn#38a3550a06321461#1",
+      "file": "scripts/pre-commit-harness.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "38a3550a06321461dee6e5039370f6e8ab0f7398c32b2431b6c3a83fe7a0be3a",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-commit-harness.ts#Bun.spawn#38a3550a06321461#2",
+      "file": "scripts/pre-commit-harness.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "38a3550a06321461dee6e5039370f6e8ab0f7398c32b2431b6c3a83fe7a0be3a",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-commit-harness.ts#Bun.spawn#aeeb7dc5be5e5da2#1",
+      "file": "scripts/pre-commit-harness.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "aeeb7dc5be5e5da2eeb6be57cff5432355e4bf1b0439e58f2eaf3d6102362ab8",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-commit.ts#Bun.spawn#cb62c5b511ac62a3#1",
+      "file": "scripts/pre-commit.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "cb62c5b511ac62a3ddd7853cb6008dd464948ac64c2b5e75fda23385349495b4",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-push-receipt.ts#Bun.spawn#11a3aa0c7ca2f660#1",
+      "file": "scripts/pre-push-receipt.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "11a3aa0c7ca2f6605aea962699bb94dd281fdaf29ada2108e00b62b290b05d78",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/pre-push-receipt.ts#Bun.spawnSync#f551db80decb6f9f#1",
+      "file": "scripts/pre-push-receipt.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "f551db80decb6f9f10b4ebc92d20c92c7c9f07cda37c57d834aede05130b0200",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/precommit/gate-runtime.ts#Bun.spawn#8b815469e02997ce#1",
+      "file": "scripts/precommit/gate-runtime.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "8b815469e02997cee92da805a3f5c375c82b98807a9cbdcb68668fe92d6c5bfc",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/precommit/gate-runtime.ts#Bun.spawn#ad088e46a2896f01#1",
+      "file": "scripts/precommit/gate-runtime.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "ad088e46a2896f016ee6d77f3a7c053a17b426feebf3d490a44f79f6a116faee",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/precommit/gate-runtime.ts#Bun.spawn#aeeb7dc5be5e5da2#1",
+      "file": "scripts/precommit/gate-runtime.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "aeeb7dc5be5e5da2eeb6be57cff5432355e4bf1b0439e58f2eaf3d6102362ab8",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/precommit/gate-runtime.ts#Bun.spawn#f52f4f8bbc0384f8#1",
+      "file": "scripts/precommit/gate-runtime.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "f52f4f8bbc0384f8327e1223ad58858683badb4ccd5eb92019df75d3ce73ebc8",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/prepare-bookmakers-publish.ts#Bun.spawnSync#323b0ed00ef1cfa5#1",
+      "file": "scripts/prepare-bookmakers-publish.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "323b0ed00ef1cfa54bc0b0ae8fa754cf6e6f8e29df87c8256bf9958b06f9c8f4",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/prepare-bookmakers-publish.ts#Bun.spawnSync#fe5d6c0e01ba7616#1",
+      "file": "scripts/prepare-bookmakers-publish.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "fe5d6c0e01ba76167af22efba431c099812ee3f33e0f39f003bc85036659bfe7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/promote.ts#Bun.spawn#0071a28b167ab45f#1",
+      "file": "scripts/promote.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "0071a28b167ab45f7fc70a74ad18f0a9fe72e1a4c76c28083a6bee3d4fe4e0aa",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/promote.ts#Bun.spawnSync#edda33b7d44cd4f7#1",
+      "file": "scripts/promote.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "edda33b7d44cd4f79807a4f9c04230f9a8c19f0af90df514f0a7aa6ba326cf68",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/promote.ts#Bun.spawnSync#edda33b7d44cd4f7#2",
+      "file": "scripts/promote.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "edda33b7d44cd4f79807a4f9c04230f9a8c19f0af90df514f0a7aa6ba326cf68",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/promote.ts#Bun.spawnSync#f402f306afae6a56#1",
+      "file": "scripts/promote.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "f402f306afae6a56d5a3bb3bfd6a0106d6a2eedab9dba424449fdfab1ec0b404",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/proton-inject.ts#Bun.spawn#2b34790ec0f0d281#1",
+      "file": "scripts/proton-inject.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2b34790ec0f0d28177e099c0c4d35f003134883ade6f9e6d0c5f30dc5f396a32",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/provision-partner-secrets.ts#Bun.spawnSync#acafa4a44960c875#1",
+      "file": "scripts/provision-partner-secrets.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "acafa4a44960c875cccc45d1de96cea8129e8c07ef918f553397e43233fd5215",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/rate-removal-candidates.ts#Bun.spawn#b4b1b971e33eb876#1",
+      "file": "scripts/rate-removal-candidates.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "b4b1b971e33eb876fed472cc8e4d4eaa62acbe518dbc98a92ad208131fb55fdc",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/refresh-partners-dashboard.ts#Bun.spawn#8bdfe31977e269a5#1",
+      "file": "scripts/refresh-partners-dashboard.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "8bdfe31977e269a52138cbd41ddfcbfcf7f6c9d245ec2cf4ead8b97d2cafb0ac",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/release.ts#Bun.spawn#c971bc103a50920c#1",
+      "file": "scripts/release.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c971bc103a50920c7600ac3eb82fcc0e607aa3f41669780ba376141ba5b831dd",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawn#4d893bd905636e76#1",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "4d893bd905636e76aa3178e3b1ad187fbabf317003de06f54add92a77121a06f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawn#5adcf7ad86bf7c9f#1",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "5adcf7ad86bf7c9f0173a000a6ad467ca0009ac0939771272339869f171621cc",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawn#88d1a145d9b66a9b#1",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "88d1a145d9b66a9b56d3f33dd4e181fa979f942fac43de30fa7efbeba5bd2af2",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawnSync#3f878ef5b7c4535c#1",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "3f878ef5b7c4535cc70ec2fb10b5bc7dfee16f7e033da9f7f1dfb3fa05b6f223",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawnSync#65b26549af122f65#1",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "65b26549af122f6522956e5538ed0e7bd1c2946d4a6d2e95807a403fb21e83b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawnSync#89195cae051bf7b8#1",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "89195cae051bf7b8667f292b7cdb8e8affe4d10e081162322c03ad4a71b98000",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/repo-hygiene.ts#Bun.spawnSync#89195cae051bf7b8#2",
+      "file": "scripts/repo-hygiene.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "89195cae051bf7b8667f292b7cdb8e8affe4d10e081162322c03ad4a71b98000",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/run-with-junit-env.ts#Bun.spawn#2dbb0112317c176c#1",
+      "file": "scripts/run-with-junit-env.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "2dbb0112317c176c1b9c13dafb70cbb2e9097f06434da3a2bca5e6cacc0ff917",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/search-benchmark-dashboard.ts#Bun.spawn#fd124ed5697e50e2#1",
+      "file": "scripts/search-benchmark-dashboard.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "fd124ed5697e50e231db2199e31c5138b1a6b46548f3c654e005ef3509e0b872",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/search-benchmark-snapshot.ts#Bun.spawn#75440559a47b6036#1",
+      "file": "scripts/search-benchmark-snapshot.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "75440559a47b60361eaf88d9706f6b0f206606ea76f196fe1011cd2b5133ee77",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/search-benchmark.ts#Bun.spawn#5717a1c2c554e0e8#1",
+      "file": "scripts/search-benchmark.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "5717a1c2c554e0e87362b08c75ab51a04318765579ed9db6d5870883719e6011",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/search-coverage-loc.ts#Bun.spawn#3cb8b54d4d9aed68#1",
+      "file": "scripts/search-coverage-loc.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "3cb8b54d4d9aed68c7d62d8c2af7e0a458e6d52bcdcaefa4e0b0ff5ff174676f",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/search-smart.ts#Bun.spawn#7e1c0ecbe9966ef5#1",
+      "file": "scripts/search-smart.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "7e1c0ecbe9966ef516b3ad208f0595304268552543e84b1faa12980f9bdbcd26",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/secrets-scan-local.ts#Bun.spawnSync#6b31dbcfc12987b3#1",
+      "file": "scripts/secrets-scan-local.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "6b31dbcfc12987b3455aeb5d7b8807d35f035b9d463ed1eabc3742ec06249801",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/secrets-scan-local.ts#Bun.spawnSync#766c2f89f4a20a9c#1",
+      "file": "scripts/secrets-scan-local.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "766c2f89f4a20a9c7a7acc978ff1e55482a9e80a6e78bcd4bee1379730b4bc3b",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/security-dependency-guard.ts#Bun.spawnSync#91fc04ae32436eb8#1",
+      "file": "scripts/security-dependency-guard.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "91fc04ae32436eb8b389a7e195204869678631cd698b4246022f8e7c2c69ba97",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/security-dependency-guard.ts#Bun.spawnSync#bf4dda8374df4440#1",
+      "file": "scripts/security-dependency-guard.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "bf4dda8374df444004576f05b722f8c1269e73be3d2531ab8b693a9abdca0e47",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/serve-public.ts#Bun.spawn#bfb384f785997a96#1",
+      "file": "scripts/serve-public.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "bfb384f785997a963f0d0af98d4b0b52049874112e27430605d4f1c0bf4ddd78",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/suite-inventory.ts#Bun.spawn#d8eea29e6b584e1d#1",
+      "file": "scripts/suite-inventory.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "d8eea29e6b584e1d2a2ee06b87184bd832943512e8af6aeb4dac81bf89881e6a",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/suite-inventory.ts#Bun.spawn#fbb4d2e20ce4aaa9#1",
+      "file": "scripts/suite-inventory.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "fbb4d2e20ce4aaa9cb935c85976d7630f3aa727b164def391eceed97798a6eaa",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/vault-gap-close.ts#Bun.spawn#dbf5e216c0cba7e8#1",
+      "file": "scripts/vault-gap-close.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "dbf5e216c0cba7e80936f61f36204bca1da025fc3e3f296c1561b93ebb633aff",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/vault-gap-close.ts#Bun.spawn#fe088eb64bb5085a#1",
+      "file": "scripts/vault-gap-close.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "fe088eb64bb5085a392dc5ca3014cfefc94850bc2b6efab1ea35cabc1cc803f7",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#031c574e1cf0096a#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "031c574e1cf0096a63a5dd238b90238704cd82e44b4f63ed747af1cbae5252d3",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#415913082d7d7195#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "415913082d7d71954d809ff25778512d4319633e5e83f10e7bb85cc7af7872df",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#561543fd31e5733c#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "561543fd31e5733c280c0f3c45681a7f7993d5c54f0e45a4cd911a7a94c70556",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#63454a0850f45cbb#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "63454a0850f45cbbf6625094ff77fe75f333eac58c85b1cb7cdf5dcf8d416bf0",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#6dcfe31b96b41866#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "6dcfe31b96b418662dd680d191b5b63cbea688dda541fa60a2b8de2253305276",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#a41c26410735c808#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "a41c26410735c808cc77a651ed53d6070dbc46781ac33057314a3e733d722e10",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#bdc9d54c273e49b4#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "bdc9d54c273e49b497f3ca909abbf78e0a45c4abe503908be3a5424387be389d",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#c858d0766fd40c56#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "c858d0766fd40c563af939a444d780ac4eee7d20069a466beeee2d547493479c",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-install-cache.ts#Bun.spawnSync#e188c459f001c00f#1",
+      "file": "scripts/verify-install-cache.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "e188c459f001c00f49b6ceb561f8fde65345c9abf48a5c5db608c7ac207f3b16",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/verify-registry-client-package.ts#Bun.spawn#ed9743e4f8bc14c4#1",
+      "file": "scripts/verify-registry-client-package.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "ed9743e4f8bc14c42e34ab1d6cc6a6568de782ddb230d3318d0b2bbb565cd23b",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/vps-health-snapshot.ts#Bun.spawnSync#5952f4d08d27f9bf#1",
+      "file": "scripts/vps-health-snapshot.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "5952f4d08d27f9bf50e841271fe5b14ed19d2516e6925a6196c73ef0d313012b",
+      "controlSpellings": []
+    },
+    {
+      "id": "scripts/with-bun-cache-env.ts#Bun.spawn#76842df8fa0c3d6c#1",
+      "file": "scripts/with-bun-cache-env.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "76842df8fa0c3d6c3cd3ec429819a390e0a67791ecb8ce7951c73d8187dfb8ff",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bake-all.ts#Bun.spawn#eed1960be4aa34db#1",
+      "file": "tools/bake-all.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "eed1960be4aa34dba4d50f3fe74d518131f07daad2449a8827f94eb6af01ecb6",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bake-soft-accounting-export.ts#Bun.spawn#874089d97fc3ac3d#1",
+      "file": "tools/bake-soft-accounting-export.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "874089d97fc3ac3d8705c61fbe1ca312516a09358cb6d5f30975513c9caf98e7",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bake-soft-accounting-export.ts#Bun.spawn#b42f74f4fa547c7f#1",
+      "file": "tools/bake-soft-accounting-export.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "b42f74f4fa547c7f420e87600d78dc28d6c090bcf8c2405ca84470a86a2d7ab0",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/brand-coverage.ts#Bun.spawn#c13d4497506dca2c#1",
+      "file": "tools/brand-coverage.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c13d4497506dca2cddda69c5f0be88326229d35531dca9c1019766d253a1c31f",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/brand-coverage.ts#Bun.spawn#e3a8f0cc57cba75a#1",
+      "file": "tools/brand-coverage.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "e3a8f0cc57cba75a3d6da29c8e4096f2df7a48c276257af695383ba358d70a22",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/branded-id-check.ts#Bun.spawn#6c6c6f68e71e5b24#1",
+      "file": "tools/branded-id-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "6c6c6f68e71e5b246b849893332da0661a6482560e98f5d16cab4b531cc2d43a",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/branded-id-check.ts#Bun.spawn#f207d24119170f81#1",
+      "file": "tools/branded-id-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "f207d24119170f819a920d6b3bea217444459df1c81ffa1521a29cf1444843bc",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-api-oneliners.ts#Bun.spawnSync#f8c0183acd4c5fc1#1",
+      "file": "tools/bun-api-oneliners.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "f8c0183acd4c5fc115042c807921350bcfc61680d5490ebfa8bb12429f337ce2",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-api-showcase.ts#Bun.spawn#06f2fa96a00a81dd#1",
+      "file": "tools/bun-api-showcase.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "06f2fa96a00a81dd75f72b0ac088a81c432685d318040d83e361db70c36101c8",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-api-showcase.ts#Bun.spawn#3c9d86d66f506692#1",
+      "file": "tools/bun-api-showcase.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "3c9d86d66f5066920b385c0683cd05bd7d3d97657605c458933980f1d1a65310",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-api-showcase.ts#Bun.spawn#ea135206215ae89c#1",
+      "file": "tools/bun-api-showcase.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "ea135206215ae89c3e1f5b54a72f0c5b8c6aae8eec9996e9aeb9489cc602ff99",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-brand-map.ts#Bun.spawn#c13d4497506dca2c#1",
+      "file": "tools/bun-brand-map.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c13d4497506dca2cddda69c5f0be88326229d35531dca9c1019766d253a1c31f",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-doc-refs.ts#Bun.spawn#19ca8639b96cd480#1",
+      "file": "tools/bun-doc-refs.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "19ca8639b96cd480c34ace80356738f6033561b33c0533a534494086999ddb3d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-doc-refs.ts#Bun.spawn#3894f67628a487cb#1",
+      "file": "tools/bun-doc-refs.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "3894f67628a487cbfeab24792d9a2bffd307c2a324ab0e7a6f841c5d4d25ce84",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-doc-refs.ts#Bun.spawn#7b2ca44706c72624#1",
+      "file": "tools/bun-doc-refs.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "7b2ca44706c72624d0833876455b8d509ea8ccaba98b1336e2dcec9368989db4",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-doc-refs.ts#Bun.spawn#a0c232c3bb8ae6c2#1",
+      "file": "tools/bun-doc-refs.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "a0c232c3bb8ae6c2f677af5f4921102ebbb196914a81776bd1cc2290a9d52210",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-docs-mcp-lib.ts#Bun.spawn#75440559a47b6036#1",
+      "file": "tools/bun-docs-mcp-lib.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "75440559a47b60361eaf88d9706f6b0f206606ea76f196fe1011cd2b5133ee77",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-docs-refresh.ts#Bun.spawn#7fd7fc041ec30b08#1",
+      "file": "tools/bun-docs-refresh.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "7fd7fc041ec30b08505e4287a3c45b5b8ecdd83a58ac3437433c3cb4a69d7b68",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-package-governance.ts#Bun.spawn#c578e5371083c81b#1",
+      "file": "tools/bun-package-governance.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "c578e5371083c81b81e84639d6219e715a6ba647a56d55d99e8c3435cd8a34d7",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-pr-verify.ts#Bun.spawn#554cdd2aa64bd352#1",
+      "file": "tools/bun-pr-verify.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "554cdd2aa64bd352e4400b77fa491cf9f41e641019e4e7ed4ef56030b83c932a",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-pr-verify.ts#Bun.spawn#8221bc759bb6b28b#1",
+      "file": "tools/bun-pr-verify.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "8221bc759bb6b28ba2d24d0b5cb11c4707c83385e8417a91e2cbbae7f78bf114",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-pr-verify.ts#Bun.spawnSync#eb79a49df6810c28#1",
+      "file": "tools/bun-pr-verify.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "eb79a49df6810c28b06b3ee2764016c5c57ff82f206b2a261f095f11b412ddd6",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-test-snapshots.ts#Bun.spawn#51095ac463e1ef7e#1",
+      "file": "tools/bun-test-snapshots.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "51095ac463e1ef7e9a451aae64e999eab752567129fe037e697651b67f2ee466",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-test-snapshots.ts#Bun.spawn#51095ac463e1ef7e#2",
+      "file": "tools/bun-test-snapshots.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "51095ac463e1ef7e9a451aae64e999eab752567129fe037e697651b67f2ee466",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-changelog.ts#Bun.spawn#05b8329b8db7ba28#1",
+      "file": "tools/bun-types-changelog.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "05b8329b8db7ba288f28b0df06487105b89817740481f30dac927824c15a88ff",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-changelog.ts#Bun.spawn#372a2ee900139e5c#1",
+      "file": "tools/bun-types-changelog.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "372a2ee900139e5cfbc1ea13235b3d9b203bafa8aab987d5c2419c1c1531cf69",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-changelog.ts#Bun.spawn#ff83390504bd779f#1",
+      "file": "tools/bun-types-changelog.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "ff83390504bd779f3d1abca4637e8a4ad0ad2c71a8606c2d1fa879f9f09f6d94",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-inventory.ts#Bun.spawn#208b5c7f1020bec9#1",
+      "file": "tools/bun-types-inventory.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "208b5c7f1020bec9cb726d4bf68e6f03254ce804831d6573862d33f29e495ec4",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-report.ts#Bun.spawn#5c0b2ff8acd376ac#1",
+      "file": "tools/bun-types-report.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "5c0b2ff8acd376acfde1c76a9b3bef75851c5678093aa05f86ee48aa50afea52",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-status.ts#Bun.spawn#1230c11bddbb875c#1",
+      "file": "tools/bun-types-status.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "1230c11bddbb875c1b0a6b632e085137f3495231449b9b5a2a6408d1c1595e41",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-diff.ts#Bun.spawn#2b95bb0ff11e0ca1#1",
+      "file": "tools/bun-types-tip-diff.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2b95bb0ff11e0ca190b96aeef4b5da2d7e6db5af878116a81edefe5f5b6ff79d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-diff.ts#Bun.spawn#372a2ee900139e5c#1",
+      "file": "tools/bun-types-tip-diff.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "372a2ee900139e5cfbc1ea13235b3d9b203bafa8aab987d5c2419c1c1531cf69",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-diff.ts#Bun.spawn#f31d67c72cca6f42#1",
+      "file": "tools/bun-types-tip-diff.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "f31d67c72cca6f42ba598f9b484e9e3b4ed40e3ef23fb09eb18fee4005bd95c2",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#2b95bb0ff11e0ca1#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2b95bb0ff11e0ca190b96aeef4b5da2d7e6db5af878116a81edefe5f5b6ff79d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#2f76780e3ec1b97a#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "2f76780e3ec1b97a6d36fb924935df14d7a093ba9a0e323b599762c79363958b",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#48e70270ee58c7c2#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "48e70270ee58c7c274a5585b21bcceb17fda62fa025764ae027cbab7c8003c2f",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#855f89762a485a62#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "855f89762a485a62af0e360bbd5e2e21cb37a3990b08fa5b5f0a6a89b5b34bd5",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#87a634e1245b6656#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "87a634e1245b66569398f011ab1e6627be3fd7813ebfb66cdea23cd4bbc11ee5",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#96e5da175983d0d7#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "96e5da175983d0d77afcbc5500ee231d7026158912e17c5e8ab030de3c3be63d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#c84fbd2f6e0aaac9#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "c84fbd2f6e0aaac92689a2cce5d453524c71beaea9373caeb474cdaff145f484",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#ee457d94b73c3eff#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "ee457d94b73c3eff7e2845d0f6b1ded94db52ac95b3e742afbbcbc74231fdf1e",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-tip-fetch.ts#Bun.spawn#fe254f4e15d396ed#1",
+      "file": "tools/bun-types-tip-fetch.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "fe254f4e15d396ed5471457048b3279fde4b82e326ffc43b0f84187686e4fadf",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/bun-types-usage.ts#Bun.spawn#372a2ee900139e5c#1",
+      "file": "tools/bun-types-usage.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "372a2ee900139e5cfbc1ea13235b3d9b203bafa8aab987d5c2419c1c1531cf69",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/cloudflare-pages-deploy.ts#Bun.spawn#0b86d6515f183e2d#1",
+      "file": "tools/cloudflare-pages-deploy.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "0b86d6515f183e2dd2649cfd94239bb316b8db342a22d976f78e1eacd9011445",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/cloudflare-pages-deploy.ts#Bun.spawn#52eb72018187bc97#1",
+      "file": "tools/cloudflare-pages-deploy.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "52eb72018187bc97d8700196dd840654e4b1e37797900f63c6d003c6727c9817",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/cloudflare-pages-publish.ts#Bun.spawn#1db9f01b2ebb6524#1",
+      "file": "tools/cloudflare-pages-publish.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "1db9f01b2ebb652402bea4a8c63ec1047f095e3585b2ebb60e965b7bf86d11b7",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/cloudflare-pages-publish.ts#Bun.spawn#e0bc967570087277#1",
+      "file": "tools/cloudflare-pages-publish.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "e0bc96757008727709467d33d2ac8895584738942ae84efc7defc5b08455b379",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/codex-thread-portfolio.ts#Bun.spawn#8418f1a7c04d6d0e#1",
+      "file": "tools/codex-thread-portfolio.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "8418f1a7c04d6d0e95f3a375b99a8cf3e77a37721063e0288c4a718a51c25a89",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/codex-thread-portfolio.ts#Bun.spawn#859a367e474964e6#1",
+      "file": "tools/codex-thread-portfolio.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "859a367e474964e64320973384db82fbeaa87f798f438313a111d9430421ad17",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/codex-thread-portfolio.ts#Bun.spawn#9f3c3ba4f5a287c8#1",
+      "file": "tools/codex-thread-portfolio.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "9f3c3ba4f5a287c86adece247e6c2e1739605fd4261b7b7c844769efe21e4dec",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/create-house-forum.ts#Bun.spawn#cb1e895562bca4c1#1",
+      "file": "tools/create-house-forum.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "cb1e895562bca4c1021368cf372049c323fffdebc50f6880fabf8c7864e36ea8",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/doc-map-check.ts#Bun.spawn#92604921195e77de#1",
+      "file": "tools/doc-map-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "92604921195e77dea943315d22b5c50aa10df511eaef029ca3162166c568f929",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/generate-bun-1.4-palette-clip.ts#Bun.spawn#3c3c7f598a095a15#1",
+      "file": "tools/generate-bun-1.4-palette-clip.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "3c3c7f598a095a155083f504f0aee54df3ef647b7f468d4d6c79ab17195c3c99",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/generate-bun-1.4-palette-clip.ts#Bun.spawn#be807e5381df9930#1",
+      "file": "tools/generate-bun-1.4-palette-clip.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "be807e5381df9930f757e1188436ad5489b5ef47d8e4e59ae3696ca2e669f66d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/generate-portal-icons.ts#Bun.spawn#b770362992601573#1",
+      "file": "tools/generate-portal-icons.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "b770362992601573f0f9068d5da92bfedf61996e8b14be545bf9a45c2390638d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/harness-violations.ts#Bun.spawn#23e327d65d8a9f6a#1",
+      "file": "tools/harness-violations.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "23e327d65d8a9f6a3f7a3f17b98e37b5071ae11cc7a60c8fa26d82b2ee668fc7",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/harness-violations.ts#Bun.spawn#ffd6079016424e1f#1",
+      "file": "tools/harness-violations.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "ffd6079016424e1fc446756cb7103e4f2f358ce524f75301065539100f51c75a",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lane-status.ts#Bun.spawn#44cbf70cf774fa9a#1",
+      "file": "tools/lane-status.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "44cbf70cf774fa9a66f500f46d258af056844e00e13cf8c70e24d6a381264903",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lane-status.ts#Bun.spawn#867a3d48127a4449#1",
+      "file": "tools/lane-status.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "867a3d48127a4449590261f91eb23519940ee92730988d9af3125e4901455bfa",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib-area-map-check.ts#Bun.spawn#17499defd3137cd4#1",
+      "file": "tools/lib-area-map-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "17499defd3137cd49c7ebba320d5d0b69d455c79dbff9252f84593e8c8b3fbda",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib-domains-check.ts#Bun.spawn#17499defd3137cd4#1",
+      "file": "tools/lib-domains-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "17499defd3137cd49c7ebba320d5d0b69d455c79dbff9252f84593e8c8b3fbda",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-bun-flags.ts#Bun.spawn#376c36109ad07987#1",
+      "file": "tools/lib/portal-cli-bun-flags.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "376c36109ad07987683494e8b86efedf161e672086daf41189bb7ef3713cd6c3",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-bun-flags.ts#Bun.spawn#c59f6a818a49d791#1",
+      "file": "tools/lib/portal-cli-bun-flags.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "c59f6a818a49d7919b33318c5ba3f9e23eb4345e8bff8e418ad5f1f3c0662e18",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-bun-flags.ts#Bun.spawn#c5d2d92f6ae37215#1",
+      "file": "tools/lib/portal-cli-bun-flags.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "c5d2d92f6ae37215d93b71800500161895c8b9d28e7009f64c03ed1848904d8d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-bun-flags.ts#Bun.spawn#fbead0391e4da47e#1",
+      "file": "tools/lib/portal-cli-bun-flags.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "fbead0391e4da47e119ab704bd3af49a5d0545ddb62894151d0e5cd0c04d99ce",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-doctor.ts#Bun.spawn#93152d9dcf78f897#1",
+      "file": "tools/lib/portal-cli-doctor.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "93152d9dcf78f8974d2d8aed790b6a37db4635c42c1dc0dc4bd6ed995e055dda",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-scanner.ts#Bun.spawn#c0e6df867fb8ac5c#1",
+      "file": "tools/lib/portal-cli-scanner.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "c0e6df867fb8ac5c889a788f78379a3a1818d789a65206e38d99a81b86e0bbb5",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-scanner.ts#Bun.spawn#cdbd1723426a8a4b#1",
+      "file": "tools/lib/portal-cli-scanner.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "cdbd1723426a8a4bbbe8640f36b3bf3c10a8539bf9cde298d8f8203b9d355135",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-cli-scanner.ts#Bun.spawn#f4e5bd91a94538b7#1",
+      "file": "tools/lib/portal-cli-scanner.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "f4e5bd91a94538b73af2ee41b7d380d5e7d4210a2c0be97a8a2100e6e810f3c7",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/lib/portal-package-scope.ts#Bun.spawn#e338a1a6ef917b9a#1",
+      "file": "tools/lib/portal-package-scope.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "e338a1a6ef917b9a04aab430f3de34255d513c72b12a98b12e6edcbc1556a17e",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/md-link-check.ts#Bun.spawn#92604921195e77de#1",
+      "file": "tools/md-link-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "92604921195e77dea943315d22b5c50aa10df511eaef029ca3162166c568f929",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/partner-watch.ts#Bun.spawn#d45fb901fa1c4026#1",
+      "file": "tools/partner-watch.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "d45fb901fa1c4026e2d82eada4f213120314edf94b7e0d1c0948296787ba99de",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-cli.ts#Bun.spawn#18a956859376ed7c#1",
+      "file": "tools/portal-cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "18a956859376ed7c67007728e1368f42ae58257eb71906168fd1991c69500d9c",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-cli.ts#Bun.spawn#7cb3ac58c87f5809#1",
+      "file": "tools/portal-cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "7cb3ac58c87f58094a73f0a3e84522af5ab0bd716cfd1c51aa6ed144fa9ff283",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-cli.ts#Bun.spawn#bdc385ddf585ba18#1",
+      "file": "tools/portal-cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "bdc385ddf585ba183f624991511905965eb87a0e0235658b757ba00bc89a2149",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-probe.ts#Bun.spawn#67452b283763ddc7#1",
+      "file": "tools/portal-probe.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-package-manager-probe",
+      "expressionHash": "67452b283763ddc7b0e7977fa6bff5c2cc807e89b29997785bb1151a1cfdb456",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-secret.ts#Bun.spawn#92bd3d0cbaa652c3#1",
+      "file": "tools/portal-secret.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "92bd3d0cbaa652c36f17728e1367dc1065d234f59c5cdd145575b5ec8fe18e33",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-secret.ts#Bun.spawn#98d6047859ebb801#1",
+      "file": "tools/portal-secret.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "98d6047859ebb8010eca88bece683f10a0c5116d753bb13c4d9b0b5e50f87f54",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/portal-secret.ts#Bun.spawn#a893c25c5805f2a8#1",
+      "file": "tools/portal-secret.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "a893c25c5805f2a883132e6dcb5007cf1ec9d2307891310baa387bd3d4195458",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/projects-root-check.ts#Bun.spawn#17499defd3137cd4#1",
+      "file": "tools/projects-root-check.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "17499defd3137cd49c7ebba320d5d0b69d455c79dbff9252f84593e8c8b3fbda",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/run-verified.ts#Bun.spawn#45147961f6957452#1",
+      "file": "tools/run-verified.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "45147961f69574527399e01fa7c27e68ccd9038043082cdffdc4c582c48b7fb0",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/snapshot-core.ts#Bun.spawn#94b9d825574b7c9e#1",
+      "file": "tools/snapshot-core.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "94b9d825574b7c9ef4f91bc3bd69f839d20a3361ca006835af7223e6e794ee0c",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/snapshot-core.ts#Bun.spawnSync#196025bba792fec1#1",
+      "file": "tools/snapshot-core.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "196025bba792fec111937ed662868a96208496b623a8b7cf3f8e45d4f94d9551",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/snapshot-core.ts#Bun.spawnSync#379eba86d3933f5e#1",
+      "file": "tools/snapshot-core.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "379eba86d3933f5ef0cb946876601e35a5fc5c9651d17dcebecd47a278eccd78",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/snapshot-core.ts#Bun.spawnSync#aa0aaecc1dde0751#1",
+      "file": "tools/snapshot-core.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "aa0aaecc1dde075100846d391e469122838b111c78c6a2b22ca1e59a7c209a54",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/snapshot-live.ts#Bun.spawn#7c2e2ab64cf5fde8#1",
+      "file": "tools/snapshot-live.ts",
+      "callee": "Bun.spawn",
+      "authority": "non-bun-utility",
+      "expressionHash": "7c2e2ab64cf5fde88dc1ab88a330d4fa7ba7befa74a8ca826f156be5e0f1e0c8",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/telegram-bind-surface.ts#Bun.spawn#ba3c49406d2d349c#1",
+      "file": "tools/telegram-bind-surface.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "ba3c49406d2d349cda1ac72de5d8fc76446122fe8ba33fde84c9f859edeae7e1",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/tsconfig-types-audit.ts#Bun.spawnSync#4230cf8cbf3c0e8b#1",
+      "file": "tools/tsconfig-types-audit.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "4230cf8cbf3c0e8b65a5bafe42df26b8262bd6b42c8af21f6cb5fd4eda273cf7",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/vault-cli.ts#Bun.spawn#7dbaa8f31a1ae493#1",
+      "file": "tools/vault-cli.ts",
+      "callee": "Bun.spawn",
+      "authority": "raw-bun-runtime-tooling",
+      "expressionHash": "7dbaa8f31a1ae493d54e171ead1bd5b58ccb53de140d1d40377e54221797271d",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/vault-resolver.ts#Bun.spawn#9b30b60f60fe4c9a#1",
+      "file": "tools/vault-resolver.ts",
+      "callee": "Bun.spawn",
+      "authority": "dynamic-process-boundary",
+      "expressionHash": "9b30b60f60fe4c9a1d1038a03d2990dd8417d8bdaa6e47897726d0c716e5a839",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/verify-guides.ts#Bun.spawnSync#0c3ad4252f408e64#1",
+      "file": "tools/verify-guides.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-package-manager-probe",
+      "expressionHash": "0c3ad4252f408e645a53366a41355a2ba55beac0a7ffb552766d8aa83e4b1cce",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/verify-guides.ts#Bun.spawnSync#f61f5e1f9d85e20b#1",
+      "file": "tools/verify-guides.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "raw-bun-package-manager-probe",
+      "expressionHash": "f61f5e1f9d85e20ba24443cda85828cfd2128c0995b40bc21879d76638280e69",
+      "controlSpellings": []
+    },
+    {
+      "id": "tools/verify-package-info.ts#spawnRegistryCommandPlanSync#b27c3ae1719e16b8#1",
+      "file": "tools/verify-package-info.ts",
+      "callee": "spawnRegistryCommandPlanSync",
+      "authority": "guarded-registry-consumer",
+      "expressionHash": "b27c3ae1719e16b8cbff3dc5412938f8ca45c45ae1cdcc62f15e0d16c373d880",
+      "controlSpellings": [
+        "--registry"
+      ]
+    },
+    {
+      "id": "tools/verify-package-info.ts#spawnRegistryCommandPlanSync#b95cd3512e5c5eb9#1",
+      "file": "tools/verify-package-info.ts",
+      "callee": "spawnRegistryCommandPlanSync",
+      "authority": "guarded-registry-consumer",
+      "expressionHash": "b95cd3512e5c5eb936382cb34109e50e9eedb78b3e7473566ddf14c76564051d",
+      "controlSpellings": [
+        "--registry"
+      ]
+    },
+    {
+      "id": "tools/verify-pages-edge.ts#Bun.spawnSync#c84caf37fc732762#1",
+      "file": "tools/verify-pages-edge.ts",
+      "callee": "Bun.spawnSync",
+      "authority": "non-bun-utility",
+      "expressionHash": "c84caf37fc7327626e1abe6215b9d0f961a6ee2313117951a42d5ebd5d37298a",
+      "controlSpellings": []
+    }
+  ]
+}

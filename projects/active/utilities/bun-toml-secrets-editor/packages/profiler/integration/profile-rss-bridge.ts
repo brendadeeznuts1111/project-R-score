@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 /**
  * Profile-RSS Bridge Integration
@@ -295,7 +296,7 @@ export class ProfileRssBridge {
 		const timeoutId = setTimeout(() => controller.abort(), options.timeout);
 
 		try {
-			const response = await fetch(url, {
+      const response = await fetchTomlConfigured(url, {
 				headers,
 				signal: controller.signal,
 			});

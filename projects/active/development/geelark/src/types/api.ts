@@ -5,6 +5,11 @@
  * Provides type safety for all API operations.
  */
 
+import {
+  fetchBrowserSameOrigin,
+  type BrowserOutboundOptions,
+} from "../http/browser-outbound.js";
+
 /**
  * API Error interface
  */
@@ -224,7 +229,6 @@ export interface AlertDetails {
   zScore?: string;
   mean?: string;
   stdDev?: string;
-  totalRequests?: number;
   average?: string;
   multiplier?: string;
   burstMultiplier?: string;
@@ -367,9 +371,10 @@ export function getErrorMessage(error: unknown): string {
  */
 export async function fetchAPI<T>(
   url: string,
-  init?: RequestInit
+  init?: RequestInit,
+  outboundOptions?: BrowserOutboundOptions,
 ): Promise<T> {
-  const response = await fetch(url, init);
+  const response = await fetchBrowserSameOrigin(url, init, outboundOptions);
 
   if (!response.ok) {
     let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
@@ -403,9 +408,10 @@ export async function fetchAPI<T>(
  */
 export async function fetchAPIEnvelope<T>(
   url: string,
-  init?: RequestInit
+  init?: RequestInit,
+  outboundOptions?: BrowserOutboundOptions,
 ): Promise<APIResponse<T>> {
-  const response = await fetch(url, init);
+  const response = await fetchBrowserSameOrigin(url, init, outboundOptions);
 
   if (!response.ok) {
     return {

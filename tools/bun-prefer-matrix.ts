@@ -56,7 +56,6 @@ export type PreferMatrixTask = {
 };
 
 export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
-  // ── io ──────────────────────────────────────────────────────────────
   {
     id: 'fileIo',
     group: 'io',
@@ -67,7 +66,6 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
   { id: 'glob', group: 'io', use: ['Bun.Glob'], avoid: ['fast-glob', 'globby'] },
   { id: 'paths', group: 'io', use: [], avoid: ['path', 'node:path'] },
 
-  // ── crypto ──────────────────────────────────────────────────────────
   {
     id: 'hashing',
     group: 'crypto',
@@ -77,7 +75,6 @@ export const PREFER_MATRIX: readonly PreferMatrixTask[] = [
   { id: 'passwords', group: 'crypto', use: ['Bun.password'], avoid: ['bcrypt', 'argon2'] },
   { id: 'secrets', group: 'crypto', use: ['Bun.secrets'], avoid: [] },
 
-  // ── process ─────────────────────────────────────────────────────────
   {
     id: 'spawn',
     group: 'process',

@@ -1,3 +1,5 @@
+import { fetchBunCatalog } from "../outbound-client.ts";
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from "../../runtime-outbound.ts";
 import "./types.d.ts";
 // infrastructure/v2-4-2/httpagent-connection-pool.ts
 // Component #45: HttpAgent Connection Pool (kqueue EV_ONESHOT Bug Fix)
@@ -330,7 +332,7 @@ export class HttpAgentConnectionPool {
     };
 
     try {
-      await fetch("https://api.buncatalog.com/v1/audit", {
+      await fetchBunCatalog("/v1/audit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(auditData),
@@ -354,7 +356,14 @@ export class HttpAgentConnectionPool {
     const startTime = Date.now();
 
     try {
-      const response = await fetch(testUrl, {
+      const target = new URL(testUrl);
+      const authority = createKalPolyOutboundAuthority({
+        name: "kal-poly-connection-pool-health",
+        baseUrl: target.origin,
+        pathPrefix: target.pathname,
+        addressClass: target.hostname === "localhost" || target.hostname.startsWith("127.") ? "loopback" : "public",
+      });
+      const response = await fetchKalPolyOutbound(authority, target, {
         // agent option not supported in Bun's fetch
         signal: AbortSignal.timeout(5000),
       });

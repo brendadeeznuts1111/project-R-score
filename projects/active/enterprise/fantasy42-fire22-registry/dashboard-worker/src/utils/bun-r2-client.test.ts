@@ -133,7 +133,8 @@ describe('BunR2Client Core Functionality', () => {
       );
 
       // Intercept fetch calls based on URL pattern
-      global.fetch = mock((url: string) => {
+      global.fetch = mock((input: string | URL) => {
+        const url = input.toString();
         if (url.includes('?uploads')) return mockInitiate();
         if (url.includes('?partNumber=')) return mockUploadPart();
         if (url.includes('?uploadId=')) return mockComplete();
@@ -441,9 +442,9 @@ describe('Security Integration', () => {
     const expectedHash = createHash('sha256').update(content).digest('hex');
 
     // Mock fetch to verify hash header
-    global.fetch = mock((url: string, options: any) => {
-      const headers = options.headers;
-      expect(headers['x-amz-content-sha256']).toBeDefined();
+    global.fetch = mock((_input: string | URL, options: BunFetchRequestInit) => {
+      const headers = new Headers(options.headers);
+      expect(headers.get('x-amz-content-sha256')).toBeDefined();
 
       return Promise.resolve(new Response('', { status: 200 }));
     });
@@ -594,6 +595,7 @@ describe('Bun-specific Optimizations', () => {
       secretAccessKey: mockEnv.R2_SECRET_ACCESS_KEY,
       region: mockEnv.R2_REGION,
       bucket: mockEnv.R2_BUCKET,
+      listFiles: async () => ['/tmp/test-sync-file.txt'],
     });
   });
 
@@ -627,13 +629,6 @@ describe('Bun-specific Optimizations', () => {
 
     // Mock fetch for upload
     global.fetch = mock(() => Promise.resolve(new Response('', { status: 200 })));
-
-    // Mock $ for shell commands
-    const mock$ = {
-      lines: mock(() => Promise.resolve([testFilePath])),
-    };
-
-    (global as any).$ = mock(() => mock$);
 
     // Test sync directory (simplified)
     const mockHeadObject = mock(() => Promise.resolve({ exists: false, metadata: {} }));

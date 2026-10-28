@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../../core/security/surface-outbound.ts';
+
 /**
  * API Shared Template Utilities
  * Common functions and utilities for API templates
@@ -7,7 +9,7 @@
 export async function fetchApiEndpoint(endpoint: string): Promise<void> {
   try {
     console.info('Fetching API endpoint:', endpoint);
-    const response = await fetch(endpoint);
+    const response = await fetchSurfaceOutbound(endpoint);
     const data = await response.json();
 
     if (response.ok) {
@@ -30,7 +32,7 @@ export async function fetchApiEndpoint(endpoint: string): Promise<void> {
 export async function clearCache(): Promise<void> {
   try {
     console.info('Clearing API cache...');
-    const response = await fetch('/api/cache/clear', {
+    const response = await fetchSurfaceOutbound('/api/cache/clear', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -57,7 +59,7 @@ export async function clearCache(): Promise<void> {
 export async function runHealthCheck(): Promise<void> {
   try {
     // Fetch real statistics from the logs API
-    const response = await fetch('/api/logs?limit=1&hours=24');
+    const response = await fetchSurfaceOutbound('/api/logs?limit=1&hours=24');
     const logData = await response.json();
     const stats = logData.statistics;
 
@@ -87,7 +89,7 @@ export async function runHealthCheck(): Promise<void> {
 export async function viewApiLogs(): Promise<void> {
   try {
     // Fetch real log data from the API
-    const response = await fetch('/api/logs?limit=5&hours=24');
+    const response = await fetchSurfaceOutbound('/api/logs?limit=5&hours=24');
     const logData = await response.json();
 
     // Format recent activity
@@ -333,7 +335,7 @@ export async function auditApiEndpoints(): Promise<void> {
     for (const endpoint of endpoints) {
       try {
         const startTime = performance.now();
-        const response = await fetch(endpoint, {
+        const response = await fetchSurfaceOutbound(endpoint, {
           method: 'HEAD', // Use HEAD to minimize data transfer
           headers: {
             'X-Security-Audit': 'true',

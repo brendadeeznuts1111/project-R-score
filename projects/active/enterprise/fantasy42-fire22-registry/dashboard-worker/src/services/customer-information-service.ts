@@ -3,6 +3,12 @@
  * Advanced customer profile management with real-time sync, validation, and integration
  */
 
+import {
+  fetchSameOriginGet,
+  fetchSameOriginPost,
+  fetchSameOriginPut,
+} from '../security/browser-outbound.ts';
+
 import { EventEmitter } from 'events';
 import { FormManagementService } from './form-management-service';
 import { CashierService } from './cashier-service';
@@ -281,7 +287,7 @@ export class CustomerInformationService extends EventEmitter {
   private async loadCustomerData(): Promise<void> {
     try {
       // Load from API/storage
-      const response = await fetch('/api/customers');
+      const response = await fetchSameOriginGet('/api/customers');
       if (response.ok) {
         const data = await response.json();
 
@@ -1042,8 +1048,7 @@ export class CustomerInformationService extends EventEmitter {
    */
   private async syncCustomerToBackend(customer: CustomerProfile): Promise<void> {
     try {
-      const response = await fetch(`/api/customers/${customer.id}`, {
-        method: 'PUT',
+      const response = await fetchSameOriginPut(`/api/customers/${customer.id}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -1068,8 +1073,7 @@ export class CustomerInformationService extends EventEmitter {
     this.syncQueue = [];
 
     try {
-      await fetch('/api/customers/batch-update', {
-        method: 'POST',
+      await fetchSameOriginPost('/api/customers/batch-update', {
         headers: {
           'Content-Type': 'application/json',
         },

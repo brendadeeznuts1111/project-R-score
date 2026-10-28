@@ -13,7 +13,10 @@
  */
 import { joinPath } from '../path-bun.ts';
 import { expandBunMinorVersion, versionFromBunBlogUrl } from '../docs/bun-blog-url.ts';
-import { parseRssChannelItems } from '../docs/bun-rss.ts';
+import {
+  parseRssChannelItemsUntrusted,
+  requireRSSXmlBoundaryValue,
+} from '../rss/rss-xml-untrusted.ts';
 import { parseBunReleaseTag, parseCanaryRelease } from './channels.ts';
 
 export type BunChannelName = 'stable' | 'latest' | 'canary';
@@ -268,9 +271,12 @@ function versionsFromGenericFeed(text: string): string[] {
   return [...versions];
 }
 
-function versionsFromBunRss(text: string): string[] {
+async function versionsFromBunRss(text: string, deadlineMs: number): Promise<string[]> {
   const versions = new Set<string>();
-  for (const item of parseRssChannelItems(text)) {
+  const items = requireRSSXmlBoundaryValue(
+    await parseRssChannelItemsUntrusted(text, { deadlineMs })
+  );
+  for (const item of items) {
     const version = versionFromBunBlogUrl(item.link);
     if (version) versions.add(version);
   }
@@ -496,8 +502,9 @@ export async function runBunChannelDoctor(
     return {};
   });
   const rss = observe('bun-rss', generatedAt, config.sources.rss, async () => ({
-    versions: versionsFromBunRss(
-      await (await fetchChecked(fetchImpl, config.sources.rss, fetchTimeoutMs)).text()
+    versions: await versionsFromBunRss(
+      await (await fetchChecked(fetchImpl, config.sources.rss, fetchTimeoutMs)).text(),
+      2_000
     ),
   }));
   const atom = observe('github-atom', generatedAt, config.sources.atom, async () => ({

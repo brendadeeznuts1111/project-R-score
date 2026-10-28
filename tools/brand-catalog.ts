@@ -20,7 +20,7 @@ const MANIFEST = new URL('../lib/types/brand-manifest.json', import.meta.url).pa
 type Brand = {
   name: string;
   domain: string;
-  kind: 'id' | 'key' | 'code';
+  kind: 'id' | 'key' | 'code' | 'digest';
   module: string;
   constructors: {
     as: string;
@@ -49,7 +49,7 @@ type Manifest = {
   brandCount: number;
   domainCount: number;
   domains: string[];
-  kinds: Record<'id' | 'key' | 'code', number>;
+  kinds: Record<'id' | 'key' | 'code' | 'digest', number>;
   brands: Brand[];
   constructorTiers: Record<string, string>;
   emptyPolicy: string;
@@ -159,7 +159,7 @@ function printIndex(m: Manifest, asJson: boolean): void {
   }
   console.info(
     `\n🏷️  Brand catalog — ${m.brandCount} values · ${m.domainCount} domains ` +
-      `(${m.kinds.id} ids · ${m.kinds.key} key · ${m.kinds.code} codes)\n`
+      `(${m.kinds.id} ids · ${m.kinds.key} keys · ${m.kinds.code} codes · ${m.kinds.digest} digests)\n`
   );
   console.info(`  ${m.emptyPolicy}`);
   console.info(`  ${m.provenance}\n`);

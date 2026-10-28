@@ -9,6 +9,7 @@
  */
 
 import { feature } from "bun:bundle";
+import { createKalPolyLoopbackAuthority, fetchKalPolyLoopback } from "../../outbound-client.ts";
 
 interface HTTPServerConfig {
   port?: number;
@@ -165,9 +166,13 @@ export class HTTPServerEngine {
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 1000);
 
-      const response = await fetch(`http://localhost:${port}/health`, {
+      const response = await fetchKalPolyLoopback(
+        createKalPolyLoopbackAuthority("localhost", port),
+        "/health",
+        {
         signal: controller.signal,
-      });
+        }
+      );
 
       clearTimeout(timeout);
       return response.ok;

@@ -8,6 +8,7 @@
 
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
 
 interface SecurityConfig {
   enableCSP: boolean;
@@ -265,7 +266,7 @@ export default = originalHandler;
         const testUrl = `${url}?test=${encodeURIComponent(payload)}`;
 
         try {
-          const response = await fetch(testUrl);
+          const response = await fetchMatrixPublicResource(testUrl);
           const content = await response.text();
 
           // Check if payload was sanitized

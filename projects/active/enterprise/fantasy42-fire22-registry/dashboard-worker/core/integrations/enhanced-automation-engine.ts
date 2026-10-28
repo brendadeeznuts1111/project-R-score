@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../security/surface-outbound.ts';
+
 /**
  * Enhanced Automation Engine
  * Intelligent automation system leveraging Fantasy42 integrations
@@ -674,7 +676,7 @@ export class EnhancedAutomationEngine {
 
   private async sendWebhook(webhook: any): Promise<void> {
     try {
-      const response = await fetch(webhook.url, {
+      const response = await fetchSurfaceOutbound(webhook.url, {
         method: webhook.method,
         headers: {
           'Content-Type': 'application/json',

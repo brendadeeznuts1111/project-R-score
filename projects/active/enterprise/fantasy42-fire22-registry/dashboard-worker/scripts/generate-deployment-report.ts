@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 📊 Generate Deployment Report
  * Creates comprehensive deployment reports for all environments
@@ -126,7 +128,7 @@ class DeploymentReportGenerator {
 
     // Check main URL
     try {
-      const response = await fetch(deployment.url, {
+      const response = await fetchKnownScriptOutbound(deployment.url, {
         method: 'HEAD',
         signal: AbortSignal.timeout(5000),
       });
@@ -156,7 +158,7 @@ class DeploymentReportGenerator {
     // Check response time
     const startTime = Date.now();
     try {
-      await fetch(deployment.url, {
+      await fetchKnownScriptOutbound(deployment.url, {
         signal: AbortSignal.timeout(5000),
       });
       const responseTime = Date.now() - startTime;

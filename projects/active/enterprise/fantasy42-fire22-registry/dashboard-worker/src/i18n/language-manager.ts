@@ -5,6 +5,8 @@
  */
 
 import languageCodes from './fire22-language-codes.json';
+import { parseExactLocalAuthority } from '../security/runtime-authority-config.ts';
+import { fetchLanguageHub } from '../security/runtime-outbound.ts';
 
 export interface LanguageCode {
   en: string;
@@ -470,11 +472,15 @@ export class Fire22LanguageManagerWithHub extends Fire22LanguageManager {
   constructor(defaultLanguage: string = 'en', hubConfig: Partial<HubSyncConfig> = {}) {
     super(defaultLanguage);
 
+    const hubUrl = parseExactLocalAuthority(
+      hubConfig.hubUrl ?? process.env.HUB_URL ?? 'http://localhost:3001',
+      'language-hub'
+    );
     this.hubConfig = {
-      hubUrl: process.env.HUB_URL || 'http://localhost:3001', // Use 3001 for testing
       autoSync: true,
       syncInterval: 300000, // 5 minutes
       ...hubConfig,
+      hubUrl,
     };
 
     if (this.hubConfig.autoSync && typeof window === 'undefined') {
@@ -512,7 +518,7 @@ export class Fire22LanguageManagerWithHub extends Fire22LanguageManager {
     try {
       if (operation === 'push') {
         // Push local data to hub
-        const response = await fetch(`${this.hubConfig.hubUrl}/api/hub/language/sync`, {
+        const response = await fetchLanguageHub(`${this.hubConfig.hubUrl}/api/hub/language/sync`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -538,7 +544,7 @@ export class Fire22LanguageManagerWithHub extends Fire22LanguageManager {
         return result.success;
       } else {
         // Pull data from hub
-        const response = await fetch(`${this.hubConfig.hubUrl}/api/hub/language/codes`, {
+        const response = await fetchLanguageHub(`${this.hubConfig.hubUrl}/api/hub/language/codes`, {
           method: 'GET',
           headers: {
             ...(this.hubConfig.apiKey && { Authorization: `Bearer ${this.hubConfig.apiKey}` }),
@@ -578,14 +584,17 @@ export class Fire22LanguageManagerWithHub extends Fire22LanguageManager {
     }
 
     try {
-      const response = await fetch(`${this.hubConfig.hubUrl}/api/hub/language/code/${code}`, {
+      const response = await fetchLanguageHub(
+        `${this.hubConfig.hubUrl}/api/hub/language/code/${code}`,
+        {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           ...(this.hubConfig.apiKey && { Authorization: `Bearer ${this.hubConfig.apiKey}` }),
         },
         body: JSON.stringify(codeInfo),
-      });
+        }
+      );
 
       return response.ok;
     } catch (error) {
@@ -602,7 +611,7 @@ export class Fire22LanguageManagerWithHub extends Fire22LanguageManager {
     if (success) {
       // Notify hub of language change
       try {
-        await fetch(`${this.hubConfig.hubUrl}/api/hub/language/set`, {
+        await fetchLanguageHub(`${this.hubConfig.hubUrl}/api/hub/language/set`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -626,7 +635,7 @@ export class Fire22LanguageManagerWithHub extends Fire22LanguageManager {
     error?: string;
   }> {
     try {
-      const response = await fetch(`${this.hubConfig.hubUrl}/api/hub/health`, {
+      const response = await fetchLanguageHub(`${this.hubConfig.hubUrl}/api/hub/health`, {
         method: 'GET',
         signal: AbortSignal.timeout(5000),
       });

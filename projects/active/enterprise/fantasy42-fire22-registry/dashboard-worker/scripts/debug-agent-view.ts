@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * Debug Agent View Tab Issues
  * Check if the tab is working and initializing properly
@@ -15,7 +17,7 @@ async function debugAgentView() {
   console.info('\n1. Testing Dashboard Load');
   console.info('-------------------------');
   try {
-    const response = await fetch(`${BASE_URL}/dashboard`);
+    const response = await fetchKnownScriptOutbound(`${BASE_URL}/dashboard`);
     if (response.ok) {
       const html = await response.text();
 
@@ -47,7 +49,7 @@ async function debugAgentView() {
   console.info('\n2. Testing API Endpoint');
   console.info('----------------------');
   try {
-    const response = await fetch(`${BASE_URL}/api/fantasy402/agent-dashboard`);
+    const response = await fetchKnownScriptOutbound(`${BASE_URL}/api/fantasy402/agent-dashboard`);
     if (response.ok) {
       const data = await response.json();
       if (data.success) {
@@ -72,7 +74,7 @@ async function debugAgentView() {
   console.info('\n3. JavaScript Syntax Check');
   console.info('--------------------------');
   try {
-    const response = await fetch(`${BASE_URL}/dashboard`);
+    const response = await fetchKnownScriptOutbound(`${BASE_URL}/dashboard`);
     const html = await response.text();
 
     // Extract the JavaScript portion

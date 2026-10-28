@@ -74,6 +74,8 @@ const BunTypes = {
 // Keep the exported name for package compatibility.
 export { BunTypes };
 
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from '../runtime-outbound.ts';
+
 /**
  * Custom exceptions for Operation Surgical Precision
  */
@@ -559,7 +561,13 @@ export const HTMLRewriterUtils = {
    */
   async extractLinksFromUrl(url: string): Promise<LinkExtractionResult> {
     try {
-      const response = await fetch(url);
+      const target = new URL(url);
+      const authority = createKalPolyOutboundAuthority({
+        name: 'kal-poly-link-extraction',
+        baseUrl: target.origin,
+        pathPrefix: target.pathname,
+      });
+      const response = await fetchKalPolyOutbound(authority, target);
       if (!response.ok) {
         return {
           totalLinks: 0,

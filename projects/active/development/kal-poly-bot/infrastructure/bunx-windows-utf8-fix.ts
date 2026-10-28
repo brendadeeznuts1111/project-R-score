@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/bunx-windows-utf8-fix.ts
 import { feature } from "bun:bundle";
 
@@ -73,7 +74,7 @@ export class BunxWindowsUTF8Fix {
   private static logUTF8Conversion(original: string, sanitized: string): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

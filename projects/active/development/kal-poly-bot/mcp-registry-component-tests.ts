@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import { createKalPolyOutboundAuthority, fetchKalPolyOutbound } from './runtime-outbound.ts';
 
 /**
  * MCP Registry Component Tests
@@ -52,10 +53,20 @@ class MCPRegistryTester {
   private baseUrl: string;
   private token: string;
   private results: TestResult[] = [];
+  private authority;
 
   constructor(baseUrl: string = 'https://api.mcp-registry.com', token?: string) {
     this.baseUrl = baseUrl;
     this.token = token || process.env.MCP_TOKEN || '';
+    const target = new URL(baseUrl);
+    this.authority = createKalPolyOutboundAuthority({
+      name: 'kal-poly-mcp-registry-components',
+      baseUrl: target.origin,
+      pathPrefix: '/mcp/',
+      methods: ['GET', 'POST'],
+      credentialHeaders: ['authorization'],
+      addressClass: target.hostname === 'localhost' || target.hostname.startsWith('127.') ? 'loopback' : 'public',
+    });
   }
 
   /**
@@ -66,7 +77,7 @@ class MCPRegistryTester {
     const endpoint = '/mcp/package/compress';
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetchKalPolyOutbound(this.authority, `${this.baseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${this.token}`,
@@ -107,7 +118,7 @@ class MCPRegistryTester {
     const endpoint = '/mcp/build/standalone-status';
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetchKalPolyOutbound(this.authority, `${this.baseUrl}${endpoint}`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${this.token}`,
@@ -143,7 +154,7 @@ class MCPRegistryTester {
     const endpoint = '/mcp/test/resilient';
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetchKalPolyOutbound(this.authority, `${this.baseUrl}${endpoint}`, {
         method: 'POST',
         headers: {
           'X-Test-Retry': '3',
@@ -180,7 +191,7 @@ class MCPRegistryTester {
     const endpoint = '/mcp/build/zig-metrics';
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      const response = await fetchKalPolyOutbound(this.authority, `${this.baseUrl}${endpoint}`, {
         method: 'GET',
       });
 

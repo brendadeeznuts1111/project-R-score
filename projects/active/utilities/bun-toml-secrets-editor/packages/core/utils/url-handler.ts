@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 // src/utils/url-handler.ts - URL handling utilities for RSS feeds
+import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
 
 export interface URLMetadata {
 	url: string;
@@ -53,7 +54,7 @@ export class URLHandler {
 	 */
 	static async isFeedURL(url: string): Promise<FeedDiscoveryResult> {
 		try {
-			const response = await fetch(url, {
+      const response = await fetchTomlConfigured(url, {
 				method: "HEAD",
 				headers: {
 					"User-Agent": "RSS-Storage-API/1.0",
@@ -81,7 +82,7 @@ export class URLHandler {
 			}
 
 			// Do a quick GET to validate feed structure
-			const getResponse = await fetch(url, {
+      const getResponse = await fetchTomlConfigured(url, {
 				headers: {
 					"User-Agent": "RSS-Storage-API/1.0",
 				},
@@ -123,7 +124,7 @@ export class URLHandler {
 		const results: FeedDiscoveryResult[] = [];
 
 		try {
-			const response = await fetch(websiteURL, {
+      const response = await fetchTomlConfigured(websiteURL, {
 				headers: {
 					"User-Agent": "RSS-Storage-API/1.0",
 				},

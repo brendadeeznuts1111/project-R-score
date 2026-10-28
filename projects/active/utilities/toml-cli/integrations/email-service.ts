@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchTomlIntegration } from './outbound-client';
+
 const inspectCustom = Symbol.for("Bun.inspect.custom");
 
 export interface EmailConfig {
@@ -126,7 +128,7 @@ export class EmailService {
     const mimeMessage = this.buildMimeMessage(email);
     const encodedMessage = btoa(mimeMessage).replace(/\+/g, '-').replace(/\//g, '_');
 
-    const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    const response = await fetchTomlIntegration('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`,
@@ -153,7 +155,7 @@ export class EmailService {
 
     const message = this.buildOutlookMessage(email);
 
-    const response = await fetch('https://graph.microsoft.com/v1.0/me/sendMail', {
+    const response = await fetchTomlIntegration('https://graph.microsoft.com/v1.0/me/sendMail', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`,
@@ -212,7 +214,7 @@ export class EmailService {
       })
     };
 
-    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+    const response = await fetchTomlIntegration('https://api.sendgrid.com/v3/mail/send', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.config.credentials.apiKey}`,
@@ -249,7 +251,7 @@ export class EmailService {
       });
     }
 
-    const response = await fetch(`https://api.mailgun.net/v3/${this.config.credentials.domain}/messages`, {
+    const response = await fetchTomlIntegration(`https://api.mailgun.net/v3/${this.config.credentials.domain}/messages`, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(`api:${this.config.credentials.apiKey}`)}`
@@ -295,7 +297,7 @@ export class EmailService {
       ...(options.q && { q: options.q })
     });
 
-    const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages?${params}`, {
+    const response = await fetchTomlIntegration(`https://gmail.googleapis.com/gmail/v1/users/me/messages?${params}`, {
       headers: {
         'Authorization': `Bearer ${this.accessToken}`
       }
@@ -320,7 +322,7 @@ export class EmailService {
    * Get single Gmail message
    */
   private async getGmailMessage(messageId: string): Promise<EmailMessage | null> {
-    const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}?format=full`, {
+    const response = await fetchTomlIntegration(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}?format=full`, {
       headers: {
         'Authorization': `Bearer ${this.accessToken}`
       }
@@ -345,7 +347,7 @@ export class EmailService {
       ...(options.q && { $search: options.q })
     });
 
-    const response = await fetch(`https://graph.microsoft.com/v1.0/me/messages?${params}`, {
+    const response = await fetchTomlIntegration(`https://graph.microsoft.com/v1.0/me/messages?${params}`, {
       headers: {
         'Authorization': `Bearer ${this.accessToken}`
       }
@@ -408,7 +410,7 @@ export class EmailService {
       throw new Error('No refresh token available for Gmail');
     }
 
-    const response = await fetch('https://oauth2.googleapis.com/token', {
+    const response = await fetchTomlIntegration('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -447,7 +449,7 @@ export class EmailService {
       throw new Error('No refresh token available for Outlook');
     }
 
-    const response = await fetch('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
+    const response = await fetchTomlIntegration('https://login.microsoftonline.com/common/oauth2/v2.0/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -671,7 +673,7 @@ export class EmailService {
   private async markGmailAsRead(messageId: string, read: boolean): Promise<void> {
     await this.ensureGmailAuth();
 
-    const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}/modify`, {
+    const response = await fetchTomlIntegration(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}/modify`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`,
@@ -691,7 +693,7 @@ export class EmailService {
   private async markOutlookAsRead(messageId: string, read: boolean): Promise<void> {
     await this.ensureOutlookAuth();
 
-    const response = await fetch(`https://graph.microsoft.com/v1.0/me/messages/${messageId}`, {
+    const response = await fetchTomlIntegration(`https://graph.microsoft.com/v1.0/me/messages/${messageId}`, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`,
@@ -710,7 +712,7 @@ export class EmailService {
   private async deleteGmailEmail(messageId: string): Promise<void> {
     await this.ensureGmailAuth();
 
-    const response = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}/trash`, {
+    const response = await fetchTomlIntegration(`https://gmail.googleapis.com/gmail/v1/users/me/messages/${messageId}/trash`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`
@@ -725,7 +727,7 @@ export class EmailService {
   private async deleteOutlookEmail(messageId: string): Promise<void> {
     await this.ensureOutlookAuth();
 
-    const response = await fetch(`https://graph.microsoft.com/v1.0/me/messages/${messageId}`, {
+    const response = await fetchTomlIntegration(`https://graph.microsoft.com/v1.0/me/messages/${messageId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${this.accessToken}`

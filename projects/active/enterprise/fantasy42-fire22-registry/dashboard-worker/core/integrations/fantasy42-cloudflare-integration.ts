@@ -1,3 +1,5 @@
+import { fetchSurfaceOutbound } from '../security/surface-outbound.ts';
+
 /**
  * Fantasy42 Cloudflare Integration
  * Advanced Cloudflare challenge handling, security optimization, and performance enhancement
@@ -779,14 +781,13 @@ export class Fantasy42CloudflareIntegration {
   private async attemptChallengeBypass(): Promise<void> {
     // Attempt to bypass challenge by directly accessing content
     try {
-      const response = await fetch(window.location.href, {
+      const response = await fetchSurfaceOutbound(window.location.href, {
         method: 'GET',
         headers: {
           Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Cache-Control': 'no-cache',
           Pragma: 'no-cache',
         },
-        credentials: 'same-origin',
       });
 
       if (response.ok) {

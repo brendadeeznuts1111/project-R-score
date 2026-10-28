@@ -12,6 +12,7 @@ import { resolve } from "path";
 import type { Benchmark, BenchmarkResult, RouteBenchmarkResult, ProjectBenchmarkResult } from "../types";
 import { ROUTES } from "../features/topology";
 import { scanRepo, getRepoPath } from "./git-scanner";
+import { fetchEnterpriseDashboardOutbound } from "../security/outbound.ts";
 
 /**
  * Test seed generator for reproducible benchmark data
@@ -298,7 +299,7 @@ export async function runRouteBenchmark(
       }
 
       const start = performance.now();
-      const response = await fetch(url, { method });
+      const response = await fetchEnterpriseDashboardOutbound("route-benchmark", url, { method });
       const end = performance.now();
       
       const responseTime = end - start;

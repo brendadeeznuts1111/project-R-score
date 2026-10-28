@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchServiceOrigin } from '../security/outbound-client.ts';
+
 /**
  * Fire22 Response Time Distribution Monitor - Standalone Version
  * Complete monitoring system with embedded dashboard
@@ -546,7 +548,7 @@ console.info(`
 // Generate initial traffic
 setTimeout(async () => {
   for (let i = 0; i < 10; i++) {
-    fetch(`${server.url}api/test/${i}`).catch(() => {});
+    fetchServiceOrigin(server.url, `${server.url}api/test/${i}`, {}).catch(() => {});
     await Bun.sleep(50);
   }
 }, 500);

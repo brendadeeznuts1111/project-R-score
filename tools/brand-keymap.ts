@@ -170,6 +170,7 @@ export function buildBrandKeymap(
       ids: manifest.kinds.id ?? 0,
       keys: manifest.kinds.key ?? 0,
       codes: manifest.kinds.code ?? 0,
+      digests: manifest.kinds.digest ?? 0,
       covered: coverage.filter(row => row.status === 'covered').length,
       referencedUnconstructed: coverage.filter(row => row.status === 'referenced-unconstructed')
         .length,

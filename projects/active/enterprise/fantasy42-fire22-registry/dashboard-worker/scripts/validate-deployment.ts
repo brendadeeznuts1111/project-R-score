@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchKnownScriptOutbound } from './script-outbound.ts';
+
 /**
  * 🔍 Deployment Validation Script
  * Validates GitHub Pages, Cloudflare Pages, and Wiki deployments
@@ -166,9 +168,8 @@ class DeploymentValidator {
     const startTime = Bun.nanoseconds();
 
     try {
-      const response = await fetch(url, {
+      const response = await fetchKnownScriptOutbound(url, {
         method: 'HEAD',
-        redirect: allowRedirect ? 'follow' : 'manual',
       });
 
       const duration = (Bun.nanoseconds() - startTime) / 1_000_000;
@@ -193,7 +194,7 @@ class DeploymentValidator {
   private async checkGitHubDeploymentStatus(result: ValidationResult): Promise<void> {
     try {
       const repo = 'brendadeeznuts1111/fire22-dashboard-worker';
-      const response = await fetch(`https://api.github.com/repos/${repo}/pages`, {
+      const response = await fetchKnownScriptOutbound(`https://api.github.com/repos/${repo}/pages`, {
         headers: {
           Accept: 'application/vnd.github.v3+json',
           'User-Agent': 'Fire22-Validator',

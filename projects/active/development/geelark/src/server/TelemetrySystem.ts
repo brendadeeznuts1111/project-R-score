@@ -5,6 +5,7 @@
  */
 
 import path from "node:path";
+import { fetchGeelarkWebhook } from "../http/outbound.js";
 import { MonitoringSystem } from "./MonitoringSystem";
 import {
     DATABASE_PATHS,
@@ -422,7 +423,7 @@ export class TelemetrySystem {
         ],
       };
 
-      await fetch(config.webhook, {
+      await fetchGeelarkWebhook("slack", config.webhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -457,7 +458,7 @@ export class TelemetrySystem {
         ],
       };
 
-      await fetch(config.webhook, {
+      await fetchGeelarkWebhook("discord", config.webhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

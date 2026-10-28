@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchFinalDeployment } from '../src/security/final-outbound.ts';
 /**
  * Fantasy42-Fire22 Wrangler Deployment CLI
  * Automated deployment workflows for Cloudflare infrastructure
@@ -56,7 +58,7 @@ async function deployToEnvironment(env: string) {
           ? 'https://api.apexodds.net/health'
           : `https://${env}.apexodds.net/health`;
 
-      const response = await fetch(healthUrl);
+      const response = await fetchFinalDeployment(healthUrl);
       const health = await response.json();
 
       if (health.status === 'healthy') {

@@ -11,7 +11,7 @@
  */
 
 import { createLogger } from "@utils/logger";
-import { h2Fetch } from "@utils/h2-fetch";
+import { fetchTelegramBotApi } from "@utils/integration-outbound";
 
 const logger = createLogger("SendMessageClient");
 
@@ -40,7 +40,6 @@ const MAX_MSG_PER_SEC = 30;
 const MSG_WINDOW_MS = 1000;
 const DEDUP_WINDOW_MS = 300000; // 5 minutes
 const MAX_RETRIES = 3;
-const BASE_BACKOFF_MS = 500;
 
 // ---------------------------------------------------------------------------
 // HTML escaping utility
@@ -131,17 +130,21 @@ export class SendMessageClient {
       body.reply_to_message_id = options.reply_to_message_id;
     }
 
-    // Retry loop with exponential backoff
+    // Retry only Telegram's explicit rate-limit rejection. Ambiguous transport
+    // failures are not replayable because sendMessage is an unsafe POST.
     const maxRetries = this.options.maxRetries ?? MAX_RETRIES;
-    const fetchRequest = this.options.fetch ?? h2Fetch;
+    const fetchRequest = this.options.fetch;
     const sleep = this.options.sleep ?? Bun.sleep;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        const response = await fetchRequest(`${this.apiUrl}/sendMessage`, {
+        const requestInit = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
-        });
+        };
+        const response = fetchRequest
+          ? await fetchRequest(`${this.apiUrl}/sendMessage`, requestInit)
+          : await fetchTelegramBotApi(this.botToken, "sendMessage", requestInit);
 
         const data = await response.json();
 
@@ -163,24 +166,11 @@ export class SendMessageClient {
 
         // Non-retryable error
         const errMsg = data.description || `Telegram error ${data.error_code}`;
-        if (attempt >= maxRetries) {
-          return { success: false, error: errMsg };
-        }
+        return { success: false, error: errMsg };
       } catch (err: any) {
-        const isLastAttempt = attempt >= maxRetries;
-        if (isLastAttempt) {
-          return {
-            success: false,
-            error: `Network error after ${maxRetries} retries: ${err.message}`,
-          };
-        }
-
-        // Exponential backoff before retry
-        const backoffMs = BASE_BACKOFF_MS * Math.pow(2, attempt - 1);
-        logger.warn(
-          `Send attempt ${attempt} failed: ${err.message}, retrying in ${backoffMs}ms`
-        );
-        await sleep(backoffMs);
+        // An unknown transport failure may have happened after Telegram accepted
+        // the POST. Retrying would duplicate an unsafe request.
+        return { success: false, error: `Network error without replay: ${err.message}` };
       }
     }
 
@@ -255,4 +245,3 @@ export class SendMessageClient {
     this.dedupMap.set(key, Date.now() + DEDUP_WINDOW_MS);
   }
 }
-

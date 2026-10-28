@@ -5,6 +5,11 @@
  */
 
 import { $ } from 'bun';
+import {
+  fetchCloudflareApi,
+  fetchGithubApi,
+  fetchServiceOrigin,
+} from '../dashboard-worker/src/security/outbound-client.ts';
 
 // ╔══════════════════════════════════════════════════════════════╗
 // ║                 GLOBAL SYSTEM CONFIGURATION                 ║
@@ -34,6 +39,10 @@ interface GlobalConfig {
     kv: boolean;
     r2: boolean;
   };
+}
+
+function errorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 // ╔══════════════════════════════════════════════════════════════╗
@@ -69,7 +78,7 @@ async function validateRepository(): Promise<boolean> {
   console.info('\n📦 Validating repository configuration...');
 
   try {
-    const response = await fetch(
+    const response = await fetchGithubApi(
       'https://api.github.com/repos/brendadeeznuts1111/fantasy42-fire22-registry',
       {
         headers: {
@@ -89,7 +98,7 @@ async function validateRepository(): Promise<boolean> {
       return false;
     }
   } catch (error) {
-    console.info(`❌ Repository validation failed: ${error.message}`);
+    console.info(`❌ Repository validation failed: ${errorMessage(error)}`);
     return false;
   }
 }
@@ -98,7 +107,7 @@ async function validateCloudflare(): Promise<boolean> {
   console.info('\n☁️ Validating Cloudflare configuration...');
 
   try {
-    const response = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
+    const response = await fetchCloudflareApi('https://api.cloudflare.com/client/v4/user/tokens/verify', {
       headers: {
         Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
         'Content-Type': 'application/json',
@@ -115,7 +124,7 @@ async function validateCloudflare(): Promise<boolean> {
       return false;
     }
   } catch (error) {
-    console.info(`❌ Cloudflare validation failed: ${error.message}`);
+    console.info(`❌ Cloudflare validation failed: ${errorMessage(error)}`);
     return false;
   }
 }
@@ -139,8 +148,8 @@ async function setupRepository(): Promise<void> {
 
   // Note: GitHub secrets must be set manually in the web interface
   console.info('📝 GitHub Secrets to configure manually:');
-  Object.keys(secrets).forEach(key => {
-    console.info(`   - ${key}: ${secrets[key] ? '✅ Set' : '❌ Missing'}`);
+  Object.entries(secrets).forEach(([key, value]) => {
+    console.info(`   - ${key}: ${value ? '✅ Set' : '❌ Missing'}`);
   });
 }
 
@@ -187,7 +196,7 @@ async function setupCloudflare(): Promise<void> {
       console.info('⚠️ Queues: NOT CONFIGURED');
     }
   } catch (error) {
-    console.info(`❌ Cloudflare setup failed: ${error.message}`);
+    console.info(`❌ Cloudflare setup failed: ${errorMessage(error)}`);
   }
 }
 
@@ -204,14 +213,19 @@ async function setupRegistry(): Promise<void> {
 
   for (const registry of registries) {
     try {
-      const response = await fetch(`${registry.url}/-/ping`);
+      if (!registry.url) throw new TypeError(`${registry.name} URL is not configured`);
+      const response = await fetchServiceOrigin(
+        registry.url,
+        new URL('/-/ping', registry.url),
+        {}
+      );
       if (response.ok) {
         console.info(`✅ ${registry.name}: CONNECTED`);
       } else {
         console.info(`⚠️ ${registry.name}: HTTP ${response.status}`);
       }
     } catch (error) {
-      console.info(`❌ ${registry.name}: FAILED (${error.message})`);
+      console.info(`❌ ${registry.name}: FAILED (${errorMessage(error)})`);
     }
   }
 }
@@ -235,7 +249,8 @@ async function setupHub(): Promise<void> {
 
   // Test hub port availability
   try {
-    const response = await fetch(`http://localhost:${hubPort}/health`);
+    const hubOrigin = `http://localhost:${hubPort}`;
+    const response = await fetchServiceOrigin(hubOrigin, new URL('/health', hubOrigin), {});
     if (response.ok) {
       console.info(`✅ Hub service: RUNNING (port ${hubPort})`);
     } else {

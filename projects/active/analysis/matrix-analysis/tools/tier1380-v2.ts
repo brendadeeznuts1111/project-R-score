@@ -5,6 +5,7 @@
 import { Database } from "bun:sqlite";
 import { existsSync } from "fs";
 import { transform } from "lightningcss";
+import { fetchMatrixPublicResource } from "../src/lib/matrix-outbound.ts";
 
 // ─── Constants (max 89 cols) ─────────────────────
 const COL_LIMIT = 89;
@@ -71,7 +72,7 @@ function benchCRC32() {
 async function parseRSS(url) {
 	try {
 		const start = Bun.nanoseconds();
-		const text = await fetch(url, {
+		const text = await fetchMatrixPublicResource(url, {
 			headers: { "User-Agent": "Tier-1380-Scanner/2.0" },
 		}).then((r) => r.text());
 

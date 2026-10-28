@@ -2,6 +2,7 @@
 // dashboard-cli.ts - Command-line interface for enhanced dashboard management
 
 import { EnhancedDashboardServer, type EnhancedDashboardConfig } from './enhanced-dashboard';
+import { fetchMatrixLoopbackRead } from "../src/lib/matrix-outbound.ts";
 
 // CLI Commands
 interface CLICommand {
@@ -230,7 +231,7 @@ class DashboardCLI {
 
   private async handleStatus(args: string[]): Promise<void> {
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/health`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/health`);
       const status = await response.json();
       
       console.info("📊 Dashboard Server Status:");
@@ -296,7 +297,7 @@ class DashboardCLI {
 
   private async listTenants(): Promise<void> {
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/tenants/enhanced`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/api/tenants/enhanced`);
       const tenants = await response.json();
       
       console.info("📋 Tenants:");
@@ -367,7 +368,7 @@ class DashboardCLI {
 
   private async listSnapshots(tenant?: string): Promise<void> {
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/snapshots/enhanced`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/api/snapshots/enhanced`);
       const snapshots = await response.json();
       
       console.info("📸 Snapshots:");
@@ -397,7 +398,7 @@ class DashboardCLI {
     const format = args.includes("--json") ? "json" : "table";
     
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/analytics/performance`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/api/analytics/performance`);
       const metrics = await response.json();
       
       if (format === "json") {
@@ -442,7 +443,7 @@ class DashboardCLI {
 
   private async listAlerts(): Promise<void> {
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/alerts`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/api/alerts`);
       const alerts = await response.json();
       
       console.info("🚨 Alerts:");
@@ -490,7 +491,7 @@ class DashboardCLI {
 
   private async getCacheStats(): Promise<void> {
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/cache/stats`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/api/cache/stats`);
       const stats = await response.json();
       
       console.info("💾 Cache Statistics:");
@@ -508,7 +509,7 @@ class DashboardCLI {
 
   private async getCacheSize(): Promise<void> {
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/api/cache/stats`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/api/cache/stats`);
       const stats = await response.json();
       
       console.info(`Cache size: ${stats.size} entries`);
@@ -562,7 +563,7 @@ class DashboardCLI {
     const detailed = args.includes("--detailed");
     
     try {
-      const response = await fetch(`http://${this.config.server.host}:${this.config.server.port}/health`);
+      const response = await fetchMatrixLoopbackRead(`http://${this.config.server.host}:${this.config.server.port}/health`);
       const health = await response.json();
       
       console.info("🏥 System Health:");

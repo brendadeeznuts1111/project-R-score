@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,
+    "strict": true
+  },
+  "include": ["src/security/outbound.ts", "tests/outbound.test.ts"],
+  "exclude": ["node_modules", "dist"]
+}

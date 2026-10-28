@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchFinalDeployment } from '../src/security/final-outbound.ts';
 /**
  * Fantasy42-Fire22 Wrangler Development CLI
  * Easy-to-use Cloudflare Workers development tools
@@ -162,7 +164,7 @@ async function main() {
     case 'health':
       console.info(`🏥 Checking health of ${env} environment...`);
       try {
-        const response = await fetch(
+        const response = await fetchFinalDeployment(
           `https://${env === 'production' ? 'api' : env}.apexodds.net/health`
         );
         const health = await response.json();

@@ -1,10 +1,3 @@
-/**
- * Compact HMAC-SHA256 portal sessions.
- *
- * Web Crypto and Web platform encoding APIs keep this module usable from both
- * Bun handlers and Cloudflare Workers/Pages Functions.
- */
-
 import { base64UrlToBytes, bytesToBase64Url } from '../bytes-base64.ts';
 import { BRAND_GUARDS, type PortalAccountId, type PortalTenantId } from '../types/branded.ts';
 

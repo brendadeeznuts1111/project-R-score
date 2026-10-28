@@ -2,6 +2,7 @@
 
 import type { BunMatrixStore } from "./store";
 import { CACHE_TTL_5MIN_MS } from "../tension-field/constants";
+import { fetchMatrixPublicResource } from "../../../src/lib/matrix-outbound.ts";
 
 export async function updateFromRSS(store: BunMatrixStore, feedUrl: string): Promise<void> {
   const rssCache = store.getRssCache();
@@ -13,7 +14,7 @@ export async function updateFromRSS(store: BunMatrixStore, feedUrl: string): Pro
   }
 
   try {
-    const response = await fetch(feedUrl);
+    const response = await fetchMatrixPublicResource(feedUrl);
     const xml = await response.text();
     const entries = parseRSS(xml);
 

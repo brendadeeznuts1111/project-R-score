@@ -10,6 +10,17 @@
 
 import { extractImageEvidenceMeta } from '../image-metadata.ts';
 import {
+  CONTENT_REF_VERSION,
+  createContentSourceLocator,
+  decideContentRights,
+  parseContentRef,
+  type ContentAuthorities,
+  type ContentRef,
+  type ContentRights,
+  type ContentStore,
+  type PackageDependencyRecord,
+} from '../content-store/index.ts';
+import {
   fetchImageResponse,
   readBoundedImageBytes,
   validateRemoteImageUrl,
@@ -27,6 +38,7 @@ export type FeedImageThumbnail = {
   height: number;
   byteSize: number;
   sha256: string;
+  contentRef?: ContentRef;
 };
 
 export type FeedImageMetadata = {
@@ -39,12 +51,23 @@ export type FeedImageMetadata = {
   byteSize: number;
   sha256: string;
   dominantColor: string;
+  originalContentRef?: ContentRef;
   thumbnail: FeedImageThumbnail;
 };
 
 export type FeedImageCandidate = {
   url: string;
   source: FeedImageSource;
+  /** Feed document that asserted this image locator. */
+  feedUrl?: string;
+  /** Required for an offline read when metadata is loaded from a separate durable index. */
+  cachedMetadata?: FeedImageMetadata;
+};
+
+export type FeedImageContentPolicy = {
+  readonly rights: ContentRights;
+  readonly authorities: ContentAuthorities;
+  readonly packageDependencies?: readonly PackageDependencyRecord[];
 };
 
 export type FeedImageEnricherOptions = {
@@ -56,6 +79,9 @@ export type FeedImageEnricherOptions = {
   maxRedirects?: number;
   timeoutMs?: number;
   allowedOrigins?: string[];
+  contentStore?: ContentStore;
+  contentPolicy?: FeedImageContentPolicy;
+  mode?: 'online' | 'offline';
 };
 
 type CachedImage = {
@@ -85,6 +111,9 @@ export class FeedImageEnricher {
   private readonly maxRedirects: number;
   private readonly timeoutMs: number;
   private readonly allowedOrigins?: ReadonlySet<string>;
+  private readonly contentStore?: ContentStore;
+  private readonly contentPolicy?: FeedImageContentPolicy;
+  private readonly mode: 'online' | 'offline';
   private readonly cache = new Map<string, CachedImage>();
 
   constructor(options: FeedImageEnricherOptions = {}) {
@@ -98,12 +127,27 @@ export class FeedImageEnricher {
     this.allowedOrigins = options.allowedOrigins
       ? new Set(options.allowedOrigins.map(origin => new URL(origin).origin))
       : undefined;
+    if ((options.contentStore === undefined) !== (options.contentPolicy === undefined)) {
+      throw new Error('Feed image ContentStore and contentPolicy must be configured together');
+    }
+    this.contentStore = options.contentStore;
+    this.contentPolicy = options.contentPolicy;
+    this.mode = options.mode ?? 'online';
+    if (this.mode === 'offline' && !this.contentStore) {
+      throw new Error('Offline feed image enrichment requires a ContentStore');
+    }
   }
 
   async enrich(candidate: FeedImageCandidate): Promise<FeedImageMetadata> {
     const initialUrl = validateRemoteImageUrl(candidate.url, this.allowedOrigins);
     const url = initialUrl.href;
     const cached = this.cache.get(url);
+    if (this.mode === 'offline') {
+      const metadata = cached?.metadata ?? candidate.cachedMetadata;
+      if (!metadata) throw new Error(`Offline feed image cache miss: ${url}`);
+      await this.verifyStoredMetadata(metadata);
+      return metadata;
+    }
     const headers = new Headers({
       Accept: 'image/avif,image/webp,image/png,image/jpeg,image/gif,image/*;q=0.8',
       'Accept-Encoding': 'identity',
@@ -114,71 +158,145 @@ export class FeedImageEnricher {
 
     if (cached && !cached.etag && !cached.lastModified) return cached.metadata;
 
-    const signal = AbortSignal.timeout(this.timeoutMs);
     const { response, finalUrl } = await fetchImageResponse(initialUrl, headers, {
       fetcher: this.fetcher,
       maxBytes: this.maxBytes,
       maxRedirects: this.maxRedirects,
       timeoutMs: this.timeoutMs,
       allowedOrigins: this.allowedOrigins,
-      signal,
     });
-    try {
-      if (response.status === 304 && cached) return cached.metadata;
-      if (!response.ok) throw new Error(`Feed image request failed: HTTP ${response.status}`);
+    if (response.status === 304 && cached) return cached.metadata;
+    if (!response.ok) throw new Error(`Feed image request failed: HTTP ${response.status}`);
 
-      const mimeType = response.headers.get('content-type')?.split(';', 1)[0]?.trim() ?? '';
-      if (!mimeType.startsWith('image/')) {
-        throw new Error(`Feed enclosure is not an image: ${mimeType || 'missing content-type'}`);
-      }
+    const mimeType = response.headers.get('content-type')?.split(';', 1)[0]?.trim() ?? '';
+    if (!mimeType.startsWith('image/')) {
+      throw new Error(`Feed enclosure is not an image: ${mimeType || 'missing content-type'}`);
+    }
 
-      const bytes = await readBoundedImageBytes(response, this.maxBytes, signal);
+    const bytes = await readBoundedImageBytes(response, this.maxBytes);
 
-      const original = await extractImageEvidenceMeta(bytes, {
-        image: { maxPixels: this.maxPixels },
-      });
-      const detectedMimeType = mimeForImageFormat(original.format);
-      if (mimeType !== detectedMimeType) {
-        throw new Error(
-          `Feed image MIME mismatch: declared ${mimeType}, detected ${detectedMimeType}`
-        );
-      }
-      const thumbnailBytes = await new Bun.Image(bytes, { maxPixels: this.maxPixels })
-        .resize(this.thumbnailWidth, this.thumbnailHeight, {
-          fit: 'inside',
-          withoutEnlargement: true,
-        })
-        .webp({ quality: 80 })
-        .bytes();
-      const thumbnail = await extractImageEvidenceMeta(thumbnailBytes);
-      const metadata: FeedImageMetadata = {
-        sourceUrl: finalUrl.href,
-        source: candidate.source,
-        mimeType,
-        width: original.width,
-        height: original.height,
-        format: original.format,
-        byteSize: original.size,
-        sha256: original.digest,
-        dominantColor: await averageImageColor(bytes, this.maxPixels),
-        thumbnail: {
-          dataUrl: `data:image/webp;base64,${Buffer.from(thumbnailBytes).toString('base64')}`,
-          mimeType: 'image/webp',
-          width: thumbnail.width,
-          height: thumbnail.height,
-          byteSize: thumbnail.size,
-          sha256: thumbnail.digest,
+    const original = await extractImageEvidenceMeta(bytes, {
+      image: { maxPixels: this.maxPixels },
+    });
+    const detectedMimeType = mimeForImageFormat(original.format);
+    if (mimeType !== detectedMimeType) {
+      throw new Error(
+        `Feed image MIME mismatch: declared ${mimeType}, detected ${detectedMimeType}`
+      );
+    }
+    const thumbnailBytes = await new Bun.Image(bytes, { maxPixels: this.maxPixels })
+      .resize(this.thumbnailWidth, this.thumbnailHeight, {
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .webp({ quality: 80 })
+      .bytes();
+    const thumbnail = await extractImageEvidenceMeta(thumbnailBytes);
+    const contentRefs = await this.persistContent(
+      candidate,
+      finalUrl,
+      mimeType,
+      bytes,
+      thumbnailBytes
+    );
+    const metadata: FeedImageMetadata = {
+      sourceUrl: finalUrl.href,
+      source: candidate.source,
+      mimeType,
+      width: original.width,
+      height: original.height,
+      format: original.format,
+      byteSize: original.size,
+      sha256: original.digest,
+      dominantColor: await averageImageColor(bytes, this.maxPixels),
+      ...(contentRefs ? { originalContentRef: contentRefs.original } : {}),
+      thumbnail: {
+        dataUrl: `data:image/webp;base64,${Buffer.from(thumbnailBytes).toString('base64')}`,
+        mimeType: 'image/webp',
+        width: thumbnail.width,
+        height: thumbnail.height,
+        byteSize: thumbnail.size,
+        sha256: thumbnail.digest,
+        ...(contentRefs ? { contentRef: contentRefs.thumbnail } : {}),
+      },
+    };
+
+    this.cache.set(url, {
+      metadata,
+      etag: response.headers.get('etag') ?? undefined,
+      lastModified: response.headers.get('last-modified') ?? undefined,
+    });
+    return metadata;
+  }
+
+  private async persistContent(
+    candidate: FeedImageCandidate,
+    finalUrl: URL,
+    mimeType: string,
+    originalBytes: Uint8Array,
+    thumbnailBytes: Uint8Array
+  ): Promise<{ original: ContentRef; thumbnail: ContentRef } | undefined> {
+    if (!this.contentStore || !this.contentPolicy) return undefined;
+    const storeDecision = decideContentRights(this.contentPolicy.rights, 'store-bytes');
+    if (!storeDecision.allowed) {
+      throw new Error(`Feed image storage denied: ${storeDecision.reason}`);
+    }
+    const deriveDecision = decideContentRights(this.contentPolicy.rights, 'derive-bytes');
+    if (!deriveDecision.allowed) {
+      throw new Error(`Feed image derivation denied: ${deriveDecision.reason}`);
+    }
+
+    const originalStored = await this.contentStore.put(originalBytes);
+    const thumbnailStored = await this.contentStore.put(thumbnailBytes);
+    if (thumbnailStored.digest === originalStored.digest) {
+      throw new Error('Feed image thumbnail must have a distinct content digest');
+    }
+    const sourceLocators = [candidate.feedUrl, finalUrl.href]
+      .filter((locator): locator is string => locator !== undefined)
+      .filter((locator, index, all) => all.indexOf(locator) === index)
+      .map(createContentSourceLocator);
+    const common = {
+      version: CONTENT_REF_VERSION,
+      sources: sourceLocators,
+      packageDependencies: this.contentPolicy.packageDependencies ?? [],
+      rights: this.contentPolicy.rights,
+      authorities: this.contentPolicy.authorities,
+    } as const;
+    const original: ContentRef = {
+      ...common,
+      digest: originalStored.digest,
+      key: originalStored.key,
+      byteLength: originalStored.byteLength,
+      mediaType: mimeType,
+      contentRelations: [],
+    };
+    const thumbnail: ContentRef = {
+      ...common,
+      digest: thumbnailStored.digest,
+      key: thumbnailStored.key,
+      byteLength: thumbnailStored.byteLength,
+      mediaType: 'image/webp',
+      contentRelations: [
+        {
+          from: thumbnailStored.digest,
+          to: originalStored.digest,
+          kind: 'derived-from',
         },
-      };
+      ],
+    };
+    return { original, thumbnail };
+  }
 
-      this.cache.set(url, {
-        metadata,
-        etag: response.headers.get('etag') ?? undefined,
-        lastModified: response.headers.get('last-modified') ?? undefined,
-      });
-      return metadata;
-    } finally {
-      if (!response.body?.locked) void response.body?.cancel().catch(() => {});
+  private async verifyStoredMetadata(metadata: FeedImageMetadata): Promise<void> {
+    if (!this.contentStore || !metadata.originalContentRef || !metadata.thumbnail.contentRef) {
+      throw new Error('Offline feed image metadata requires original and thumbnail ContentRefs');
+    }
+    for (const ref of [metadata.originalContentRef, metadata.thumbnail.contentRef]) {
+      const parsed = parseContentRef(ref);
+      const bytes = await this.contentStore.get(parsed.digest);
+      if (!bytes || bytes.byteLength !== parsed.byteLength) {
+        throw new Error(`Offline feed image content unavailable: ${parsed.digest}`);
+      }
     }
   }
 }

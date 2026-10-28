@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalDeployment } from '../../../../src/security/final-outbound.ts';
+
 /**
  * Crystal Clear Architecture - Custom Domain Setup
  * Cross-platform Bun Shell script with TypeScript support
@@ -191,7 +193,7 @@ async function testConfiguration(): Promise<void> {
 
   // Test custom domain (will fail until DNS is configured)
   try {
-    const response = await fetch(`https://${CONFIG.domain}/api/health`);
+    const response = await fetchFinalDeployment(`https://${CONFIG.domain}/api/health`);
     if (response.ok) {
       log('Custom domain is live!', 'success');
     } else {

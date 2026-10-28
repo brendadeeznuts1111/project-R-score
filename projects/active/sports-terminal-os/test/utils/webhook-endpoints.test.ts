@@ -53,7 +53,12 @@ describe('webhook outbound endpoints', () => {
       return Promise.resolve(new Response(null, { status: 204 }));
     }) as OutboundFetch;
 
-    const response = await fetchWebhookEndpoint(baseConfig, { body: '{}' }, fetcher);
+    const response = await fetchWebhookEndpoint(baseConfig, { body: '{}' }, fetcher, {
+      environment: {},
+      resolver: async () => [
+        { address: '1.1.1.1', family: 4, ttl: 30, source: 'bun' },
+      ],
+    });
     expect(response.status).toBe(204);
     expect(observedUrl).toBe(baseConfig.url);
     expect(observedInit?.redirect).toBe('error');

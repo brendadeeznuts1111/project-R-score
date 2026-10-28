@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchTomlIntegration } from './outbound-client';
+
 const inspectCustom = Symbol.for("Bun.inspect.custom");
 
 export interface SMSConfig {
@@ -72,7 +74,7 @@ export class SMSGateway {
       ...(options.provideFeedback && { ProvideFeedback: 'true' })
     });
 
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages.json`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages.json`, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`,
@@ -124,7 +126,7 @@ export class SMSGateway {
    * Get message by ID
    */
   async getMessage(messageId: string): Promise<SMSMessage> {
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages/${messageId}.json`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages/${messageId}.json`, {
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`
       }
@@ -156,7 +158,7 @@ export class SMSGateway {
       ...(options.pageSize && { PageSize: options.pageSize.toString() })
     });
 
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages.json?${params}`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages.json?${params}`, {
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`
       }
@@ -178,7 +180,7 @@ export class SMSGateway {
       Body: body
     });
 
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages/${messageId}.json`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages/${messageId}.json`, {
       method: 'POST',
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`,
@@ -200,7 +202,7 @@ export class SMSGateway {
    * Delete message (only possible for queued messages)
    */
   async deleteMessage(messageId: string): Promise<boolean> {
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages/${messageId}.json`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}/Messages/${messageId}.json`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`
@@ -219,7 +221,7 @@ export class SMSGateway {
     price: number;
     currency: string;
   }> {
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}/Usage/Records.json?Category=sms`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}/Usage/Records.json?Category=sms`, {
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`
       }
@@ -387,7 +389,7 @@ export class SMSGateway {
     balance: string;
     currency: string;
   }> {
-    const response = await fetch(`${this.baseUrl}/Accounts/${this.config.accountSid}.json`, {
+    const response = await fetchTomlIntegration(`${this.baseUrl}/Accounts/${this.config.accountSid}.json`, {
       headers: {
         'Authorization': `Basic ${btoa(`${this.config.accountSid}:${this.config.authToken}`)}`
       }

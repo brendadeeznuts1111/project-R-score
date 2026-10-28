@@ -5,6 +5,8 @@
  * Real-time data visualization with actionable insights
  */
 
+import { fetchSameOriginGet } from '../security/browser-outbound.ts';
+
 import { EventEmitter } from 'events';
 
 interface DashboardMetrics {
@@ -158,7 +160,7 @@ class UnifiedDashboard extends EventEmitter {
 
   private async fetchAgentMetrics(): Promise<Partial<DashboardMetrics>> {
     try {
-      const response = await fetch('/api/agents');
+      const response = await fetchSameOriginGet('/api/agents');
       const agents = await response.json();
 
       const activeAgents = agents.filter((a: any) => a.status === 'active').length;
@@ -177,7 +179,7 @@ class UnifiedDashboard extends EventEmitter {
 
   private async fetchCustomerMetrics(): Promise<Partial<DashboardMetrics>> {
     try {
-      const response = await fetch('/api/customers');
+      const response = await fetchSameOriginGet('/api/customers');
       const customers = await response.json();
 
       const activeCustomers = customers.filter((c: any) => c.active).length;
@@ -198,7 +200,7 @@ class UnifiedDashboard extends EventEmitter {
 
   private async fetchBettingMetrics(): Promise<Partial<DashboardMetrics>> {
     try {
-      const response = await fetch('/api/betting/ticker');
+      const response = await fetchSameOriginGet('/api/betting/ticker');
       const tickerData = await response.json();
 
       return {
@@ -213,7 +215,7 @@ class UnifiedDashboard extends EventEmitter {
 
   private async fetchSystemHealth(): Promise<Partial<DashboardMetrics>> {
     try {
-      const response = await fetch('/api/health');
+      const response = await fetchSameOriginGet('/api/health');
       const healthData = await response.json();
 
       return {

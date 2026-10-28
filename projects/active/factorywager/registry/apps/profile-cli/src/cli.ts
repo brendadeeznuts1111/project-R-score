@@ -10,6 +10,10 @@ import { ProfilePrefs, profileEngine, onboardUser, updatePreferences, logger, ha
 import { PreferenceManager } from '@factorywager/pref-propagation';
 import { RedisProfileClient } from '@factorywager/redis-profile';
 import { XGBoostPersonalizationModel } from '@factorywager/xgboost-pers';
+import {
+  createFactoryRegistryOutboundAuthority,
+  fetchFactoryRegistryOutbound,
+} from '../../../src/outbound.ts';
 
 const engine = profileEngine;
 const prefManager = new PreferenceManager();
@@ -90,7 +94,13 @@ async function handleCreate(options: CLIOptions) {
     
     // Check if dashboard is running, if not, start it
     try {
-      const response = await fetch(dashboardUrl, { signal: AbortSignal.timeout(1000) });
+      const dashboardAuthority = createFactoryRegistryOutboundAuthority(
+        'local-dashboard',
+        dashboardUrl
+      );
+      const response = await fetchFactoryRegistryOutbound(dashboardAuthority, dashboardUrl, {
+        signal: AbortSignal.timeout(1000),
+      });
       if (!response.ok) {
         throw new Error('Dashboard not responding');
       }

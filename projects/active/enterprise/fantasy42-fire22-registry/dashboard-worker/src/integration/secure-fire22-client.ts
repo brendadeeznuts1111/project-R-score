@@ -4,6 +4,7 @@
  */
 
 import { secrets } from "bun";
+import { fetchFixedFantasyApi } from '../security/runtime-outbound.ts';
 
 export class SecureFire22Client {
   private static SERVICE_NAME = "fire22-dashboard";
@@ -104,7 +105,7 @@ export class SecureFire22Client {
     const url = `${baseUrl}/${operation}`;
     
     try {
-      const response = await fetch(url, {
+      const response = await fetchFixedFantasyApi(url, {
         method: 'POST',
         headers: {
           'Accept': '*/*',

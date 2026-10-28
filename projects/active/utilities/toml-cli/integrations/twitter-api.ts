@@ -13,6 +13,7 @@ import type {
   RetryPolicy
 } from '../types/twitter.types';
 import { TWITTER_ENDPOINTS } from '../config/twitter.config';
+import { fetchTomlIntegration } from './outbound-client';
 
 /**
  * Twitter API Client with OAuth 1.1a authentication
@@ -136,7 +137,7 @@ export class TwitterApiClient {
         url.search = new URLSearchParams(params).toString();
       }
 
-      const response = await fetch(url.toString(), requestOptions);
+      const response = await fetchTomlIntegration(url, requestOptions);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));

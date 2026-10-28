@@ -1,4 +1,6 @@
 #!/usr/bin/env bun
+
+import { fetchKnownScriptOutbound } from '../script-outbound.ts';
 /**
  * 🌪️ Chaos Testing Engine for Fire22 Error Management System
  * Validates system resilience through controlled failure injection
@@ -493,7 +495,7 @@ class ChaosTestEngine {
 
     for (let i = 0; i < rps; i++) {
       requests.push(
-        fetch(url, {
+        fetchKnownScriptOutbound(url, {
           signal: AbortSignal.timeout(5000),
           headers: { 'X-Chaos-Test': 'true' },
         })
@@ -550,7 +552,7 @@ class ChaosTestEngine {
         const controller = new AbortController();
         setTimeout(() => controller.abort(), 100); // Very short timeout
 
-        await fetch(`http://localhost:3001/api/${target}`, {
+        await fetchKnownScriptOutbound(`http://localhost:3001/api/${target}`, {
           signal: controller.signal,
         });
       } catch (error) {

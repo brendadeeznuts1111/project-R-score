@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { fetchFinalDeployment } from '../../../../src/security/final-outbound.ts';
+
 /**
  * Fire22 Private Registry Setup Script
  * Configures authentication and connection to private registries
@@ -101,7 +103,7 @@ async function testRegistryConnection(
   try {
     // Simple connectivity test - try to fetch package info
     const testUrl = `${config.url.replace(/\/$/, '')}/@fire22/core`;
-    const response = await fetch(testUrl, {
+    const response = await fetchFinalDeployment(testUrl, {
       method: 'HEAD',
       headers: {
         'User-Agent': 'Fire22-Registry-Test/1.0',

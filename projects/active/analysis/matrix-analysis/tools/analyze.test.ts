@@ -20,7 +20,7 @@ import {
 	runTypes,
 } from "./analyze.ts";
 
-const FIXTURE_ROOT = "tools/__fixtures__/analyze";
+const FIXTURE_ROOT = import.meta.dir + "/__fixtures__/analyze";
 
 function opts(
 	overrides: Partial<ReturnType<typeof parseArgs>> = {},
@@ -119,7 +119,7 @@ describe("approxComplexity", () => {
 
 	it("counts if/else/for", () => {
 		const text = "if (x) { } else if (y) { } for (let i=0;i<10;i++) { }";
-		expect(approxComplexity(text)).toBeGreaterThan(1);
+		expect(approxComplexity(text)).toBe(7);
 	});
 });
 
@@ -149,13 +149,13 @@ describe("extractEnumMembers", () => {
 describe("runners with fixtures", () => {
 	it("runScan returns JSON shape with total and files", async () => {
 		const o = opts({ cmd: "scan", format: "json" });
-		const log = console.log;
+		const info = console.info;
 		let out = "";
-		console.log = (x: string) => {
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runScan(o);
-		console.log = log;
+		console.info = info;
 		const j = JSON.parse(out) as { total: number; files: unknown[] };
 		expect(typeof j.total).toBe("number");
 		expect(Array.isArray(j.files)).toBe(true);
@@ -165,12 +165,12 @@ describe("runners with fixtures", () => {
 	it("runTypes returns types with name, kind, file", async () => {
 		const o = opts({ cmd: "types", format: "json" });
 		let out = "";
-		const log = console.log;
-		console.log = (x: string) => {
+		const info = console.info;
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runTypes(o);
-		console.log = log;
+		console.info = info;
 		const j = JSON.parse(out) as {
 			types: { name: string; kind: string; file: string }[];
 		};
@@ -182,12 +182,12 @@ describe("runners with fixtures", () => {
 	it("runClasses returns classes with name, extends, file", async () => {
 		const o = opts({ cmd: "classes", format: "json" });
 		let out = "";
-		const log = console.log;
-		console.log = (x: string) => {
+		const info = console.info;
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runClasses(o);
-		console.log = log;
+		console.info = info;
 		const j = JSON.parse(out) as {
 			classes: { name: string; extends: string; file: string }[];
 		};
@@ -201,12 +201,12 @@ describe("runners with fixtures", () => {
 	it("runDeps returns imports structure", async () => {
 		const o = opts({ cmd: "deps", format: "json" });
 		let out = "";
-		const log = console.log;
-		console.log = (x: string) => {
+		const info = console.info;
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runDeps(o);
-		console.log = log;
+		console.info = info;
 		const j = JSON.parse(out) as Record<string, unknown>;
 		expect(typeof j).toBe("object");
 		// At least deps-a or deps-b has imports
@@ -217,12 +217,12 @@ describe("runners with fixtures", () => {
 	it("runComplexity returns files with complexity", async () => {
 		const o = opts({ cmd: "complexity", format: "json", rest: ["--threshold=1"] });
 		let out = "";
-		const log = console.log;
-		console.log = (x: string) => {
+		const info = console.info;
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runComplexity(o, { complexity: { threshold: 1 } });
-		console.log = log;
+		console.info = info;
 		const j = JSON.parse(out) as { files: { file: string; complexity: number }[] };
 		expect(Array.isArray(j.files)).toBe(true);
 	});
@@ -230,12 +230,12 @@ describe("runners with fixtures", () => {
 	it("runStrength returns files with score, lines, complexity, exports", async () => {
 		const o = opts({ cmd: "strength", format: "json" });
 		let out = "";
-		const log = console.log;
-		console.log = (x: string) => {
+		const info = console.info;
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runStrength(o);
-		console.log = log;
+		console.info = info;
 		const j = JSON.parse(out) as {
 			files: {
 				file: string;
@@ -258,12 +258,12 @@ describe("runRename dry-run", () => {
 	it("reports file:line for OldName in fixture", async () => {
 		const o = opts({ cmd: "rename", rest: ["OldName", "NewName"] });
 		const chunks: string[] = [];
-		const log = console.log;
-		console.log = (...args: unknown[]) => {
+		const info = console.info;
+		console.info = (...args: unknown[]) => {
 			chunks.push(args.map(String).join(" "));
 		};
 		await runRename(o);
-		console.log = log;
+		console.info = info;
 		const out = chunks.join("\n");
 		expect(out).toContain("OldName");
 		expect(out).toContain("rename-target");
@@ -274,12 +274,12 @@ describe("runPolish dry-run", () => {
 	it("reports unused import in fixture", async () => {
 		const o = opts({ cmd: "polish", rest: [] });
 		let out = "";
-		const log = console.log;
-		console.log = (x: string) => {
+		const info = console.info;
+		console.info = (x: string) => {
 			out = x;
 		};
 		await runPolish(o);
-		console.log = log;
+		console.info = info;
 		// unused-import.ts has FixtureEnum imported but only FixtureIface used
 		expect(
 			out.includes("unused") || out.includes("import") || out.includes("removed"),

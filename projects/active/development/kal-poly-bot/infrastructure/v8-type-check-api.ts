@@ -1,3 +1,4 @@
+import { fetchBunCatalog } from "./outbound-client.ts";
 // infrastructure/v8-type-check-api.ts
 import { feature } from "bun:bundle";
 
@@ -75,7 +76,7 @@ export class V8TypeCheckAPI {
   private static logNapiRegistration(): void {
     if (!feature("INFRASTRUCTURE_HEALTH_CHECKS")) return;
 
-    fetch("https://api.buncatalog.com/v1/audit", {
+    fetchBunCatalog("/v1/audit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
