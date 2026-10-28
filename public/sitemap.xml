@@ -6,8 +6,14 @@
   </sitemap>
   <sitemap>
     <loc>https://score.factory-wager.com/sitemap-channels.xml</loc>
+    <lastmod>2026-08-28</lastmod>
   </sitemap>
   <sitemap>
     <loc>https://score.factory-wager.com/sitemap-bun-1.4-videos.xml</loc>
+    <lastmod>2026-08-28</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://score.factory-wager.com/sitemap-portal.xml</loc>
+    <lastmod>2026-08-28</lastmod>
   </sitemap>
 </sitemapindex>

@@ -6,6 +6,32 @@ const BLOG = 'https://bun.com/blog/bun-v1.4';
 
 export const BUN_14_CLAIM_CAPABILITIES: Bun14Capability[] = [
   {
+    id: asReleaseCapabilityId('cpu-profile-env-claim'),
+    domain: 'observability',
+    symbol: 'BUN_CPU_PROFILE',
+    changeKind: 'release-window',
+    adoption: 'upstream-claim',
+    summary: 'Bun documents BUN_CPU_PROFILE=1 for processes that cannot receive profiler flags.',
+    boundary:
+      'Not adopted on the pinned runtime; repository subprocesses use explicit flags or BUN_OPTIONS until an executable proof exists.',
+    releaseUrl: `${BLOG}#dev-tooling`,
+    assetIds: [],
+    contractFiles: [],
+  },
+  {
+    id: asReleaseCapabilityId('markdown-linear-time-claim'),
+    domain: 'runtime',
+    symbol: 'Bun.markdown parser complexity',
+    changeKind: 'performance',
+    adoption: 'upstream-claim',
+    summary: 'Bun reports linear-time Markdown parsing on adversarial input.',
+    boundary:
+      'Upstream complexity claim only; repository tests cover output and security boundaries, not a timing benchmark.',
+    releaseUrl: `${BLOG}#bun-markdown`,
+    assetIds: [],
+    contractFiles: [],
+  },
+  {
     id: asReleaseCapabilityId('ffi-performance-claim'),
     domain: 'runtime',
     symbol: 'bun:ffi',

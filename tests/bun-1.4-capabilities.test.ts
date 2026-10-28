@@ -21,6 +21,7 @@ const FORBIDDEN_ASSET_FACTS = [
 const ATTACHMENT_CAPABILITY_IDS = [
   'cpu-profile-markdown',
   'heap-profile-markdown',
+  'cpu-profile-env-claim',
   'native-async-stack-traces',
   'bun-no-orphans',
   'bun-no-env-file',
@@ -49,6 +50,11 @@ const ATTACHMENT_CAPABILITY_IDS = [
   'bun-spawn-cgroup',
   'bun-repl-native',
   'bun-markdown-cli',
+  'markdown-linear-time-claim',
+  'bun-cron-scheduler',
+  'bun-terminal-local-tools',
+  'bun-run-parallel',
+  'bun-ffi-native-contract',
 ] as const;
 
 describe('Bun 1.4 normalized capability graph', () => {
@@ -228,7 +234,7 @@ describe('Bun 1.4 normalized capability graph', () => {
     const registry = await readCapabilityRegistry(manifest);
     const byId = new Map(registry.capabilities.map(item => [item.id, item]));
 
-    expect(registry.capabilities).toHaveLength(61);
+    expect(registry.capabilities).toHaveLength(66);
     for (const id of ATTACHMENT_CAPABILITY_IDS) expect(byId.has(id)).toBe(true);
     for (const id of [
       'bun-serve-http3-experimental',
@@ -256,5 +262,23 @@ describe('Bun 1.4 normalized capability graph', () => {
       'tests/bun-env-loading.test.ts'
     );
     expect(byId.get('bun-archive-native')?.adoption).toBe('integrated');
+    expect(byId.get('bun-cron-scheduler')).toEqual(
+      expect.objectContaining({ adoption: 'integrated', chapterId: 'what-s-new' })
+    );
+    expect(byId.get('bun-terminal-local-tools')?.contractFiles).toContain(
+      'tests/terminal.test.ts'
+    );
+    expect(byId.get('bun-run-parallel')?.contractFiles).toEqual([
+      'tests/bun-run-parallel-contract.test.ts',
+    ]);
+    expect(byId.get('bun-ffi-native-contract')).toEqual(
+      expect.objectContaining({ adoption: 'contract', chapterId: 'what-s-new' })
+    );
+    expect(byId.get('markdown-linear-time-claim')).toEqual(
+      expect.objectContaining({ adoption: 'upstream-claim', contractFiles: [] })
+    );
+    expect(byId.get('cpu-profile-env-claim')).toEqual(
+      expect.objectContaining({ adoption: 'upstream-claim', contractFiles: [] })
+    );
   });
 });

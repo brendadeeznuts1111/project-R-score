@@ -149,8 +149,8 @@ ctx.waitUntil(
 **Solution:** Deploy tail consumer FIRST
 
 ```bash
-cd tail-worker && wrangler deploy
-cd ../producer && wrangler deploy
+cd .agents/skills/cloudflare/references/tail-workers
+wrangler deploy
 ```
 
 ### 10. No Event Retry

@@ -172,7 +172,6 @@ describe('capability-map-subset parse', () => {
       'No clear screen on reload',
       'Debugger',
       'Working directory',
-      'Custom Bun config',
       'Define constants',
       'Custom export conditions',
       'Silent command echo',
@@ -185,6 +184,10 @@ describe('capability-map-subset parse', () => {
         true
       );
     }
+    expect(rows.find(row => row.capability === 'Custom Bun config')).toMatchObject({
+      api: 'bun --config=<path>',
+      status: 'Implemented',
+    });
     expect(rows.filter(row => row.capability === 'Debugger')).toHaveLength(1);
     expect(rows.find(row => row.capability === 'URLPattern portal routing')?.category).toBe(
       'Runtime'

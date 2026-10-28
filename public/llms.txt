@@ -2,6 +2,8 @@
 
 > Factory registry, operations portal, and evidence (DOD) pipeline.
 
+Canonical public origin: https://score.factory-wager.com/. Public surfaces are read-only unless an endpoint explicitly documents authentication and mutation behavior.
+
 ## Portal (machine-readable markdown)
 
 Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
@@ -26,6 +28,12 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 - [GET /api/env](api/env): env var status (redacted values)
 - [GET /health](health): uptime + artifact freshness probe
 
+## Agent interfaces
+
+- [OpenAPI specification](openapi.yaml): callable public read-plane API contract
+- [MCP catalog](.well-known/mcp.json): published MCP server discovery metadata
+- [Sitemap](sitemap.xml): canonical HTML discovery index with per-page modification dates
+
 ## Artifacts (static)
 
 - [ops-summary.json](registry/ops-summary.json): portal ops snapshot
@@ -42,3 +50,8 @@ Fetch with `Accept: text/markdown` for raw markdown; HTML renders otherwise.
 ## Full corpus
 
 - [llms-full.txt](llms-full.txt): all portal markdown inlined in one file
+
+## Optional
+
+- [Human portal](https://score.factory-wager.com/portal/): interactive registry and operations boards
+- [Repository](https://github.com/brendadeeznuts1111/project-R-score): source, issues, and engineering documentation

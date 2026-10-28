@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'bun:test';
+import { buildPackageDiffCommand } from '../tools/bun-package-governance-cli.ts';
 import { parseLicenseInventory } from '../tools/bun-package-governance.ts';
 
 describe('Bun 1.4 package governance', () => {
@@ -48,5 +49,17 @@ describe('Bun 1.4 package governance', () => {
     expect(() =>
       parseLicenseInventory({ MIT: [{ name: 'alpha', versions: ['1.0.0'], license: 'ISC' }] })
     ).toThrow('reports ISC');
+  });
+
+  test('builds bun pm diff as an argument array without shell interpolation', () => {
+    expect(buildPackageDiffCommand(['react-dom@18.2.0', '18.3.1', '*.min.js'], '/bun')).toEqual([
+      '/bun',
+      'pm',
+      'diff',
+      'react-dom@18.2.0',
+      '18.3.1',
+      '*.min.js',
+    ]);
+    expect(() => buildPackageDiffCommand([])).toThrow('requires at least one');
   });
 });
