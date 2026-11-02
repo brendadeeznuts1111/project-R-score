@@ -96,10 +96,22 @@ persisting the credential outside the vault-derived `.env`/Reasonix cache.
 1. Inject with `bun run proton:inject:factorywager:reasonix`.
 2. Run `bun run cloudflare:access:token:validate`; the read-only probe checks
    application/service-token health and expiry.
-3. Map `CLOUDFLARE_ACCESS_API_TOKEN` to the policy CLI only for an inspected
+3. Run `bun run cloudflare:access:drift`; it compares scoped app name, domain,
+   and session duration to the live list and exits 1 on mismatch. Unlisted live
+   apps stay ignored. It does not change policy.
+4. Map `CLOUDFLARE_ACCESS_API_TOKEN` to the policy CLI only for an inspected
    plan. Never substitute the Pages or DNS token.
-4. Keep Pages preview protection in the Pages project setting; it does not
+5. Keep Pages preview protection in the Pages project setting; it does not
    require widening the Access token with Pages Edit.
+
+On 2026-10-07 a portal-only service token, `portal-bunfig-probe`, was minted.
+It expires 2027-10-07. The secret is the Proton item
+`Cloudflare Access service token portal-bunfig-probe` in vault `factorywager`.
+Its policy action is Service Auth (`non_identity`) on FactoryWager Portal.
+The email Allow policy does not include it. Ledger and the pages.dev portal
+do not accept it. A token request to `/portal/bunfig/` returned 200. The same
+request without the token, and the same token against the ledger host,
+returned 302.
 
 ## Doctor probes (live edge)
 
@@ -138,6 +150,8 @@ It never uses `CLOUDFLARE_ACCESS_API_TOKEN` and cannot mutate policy.
 | `terminal.factory-wager.com` | **NXDOMAIN** (CNAME deleted 2026-07-28) | `infra-terminal-host` — host gone; see [tunnel-inventory](tunnel-inventory.md) · [brand-alignment](../../brand-alignment.md) |
 | `reasonix.factory-wager.com` | **NXDOMAIN** | `infra-reasonix-dns` info (expected) |
 
+Anonymous curls on 2026-10-06 again returned Access 302 for ledger, `score…/portal/`, and `pages.dev/portal/`. `terminal` and `reasonix` still do not resolve. Preview hosts and `portal-cli doctor` were not re-run.
+
 ```bash
 bun tools/portal-cli.ts doctor --group infra --no-write          # live
 bun tools/portal-cli.ts doctor --group infra --offline --layout plain
@@ -149,9 +163,16 @@ The dedicated Access token can read/update Access apps/policies. Account
 **Members** invite remains out of scope for that token (403) — operator access
 is granted via the email allowlist, not Cloudflare account membership.
 
-Aligned 2026-08-02: source YAML and live portal/ledger policies use the same
-explicit email allowlist (`utahj4754@gmail.com`, `brendawill2233@gmail.com`,
-`nolarose@factory-wager.com`; ledger also keeps `inmikehuntglobal@gmail.com`).
+Re-checked 2026-10-06: the three scoped apps match `.cloudflare-access.yml` on
+name, domain, `4h` session, and the explicit email allowlist
+(`utahj4754@gmail.com`, `brendawill2233@gmail.com`, `nolarose@factory-wager.com`;
+ledger also keeps `inmikehuntglobal@gmail.com`). `bun run cloudflare:access:drift`
+exits 0. That check saw 21 live apps and ignored the unlisted ones.
+
+`cf` authenticates with `CLOUDFLARE_API_TOKEN`. For an Access call, export
+`CLOUDFLARE_ACCESS_API_TOKEN` as `CLOUDFLARE_API_TOKEN` in that process only.
+`kimi-cloudflare-access` prefers the OS keychain over `.env`. Do not apply a
+plan that shows these three apps as creates; run the drift check first.
 
 **Pages preview steps:**
 
@@ -160,14 +181,15 @@ explicit email allowlist (`utahj4754@gmail.com`, `brendawill2233@gmail.com`,
 2. Confirm a current hash/branch preview returns Access 302.
 3. Run `bun run cloudflare:access:edge:validate` and confirm the registry public
    plane remains 200 with the shared security headers.
-4. Review any later `kimi-cloudflare-access plan` separately with a rollback
-   snapshot before changing the three production Access applications.
+4. Review any later `kimi-cloudflare-access plan` separately. If it wants to
+   create the three production apps, stop. The drift check is the live compare.
 
 ## Apply gate
 
 ```bash
 bun run cloudflare:access:verify
 bun run cloudflare:access:token:validate # read health; write scope was proved by plan
+bun run cloudflare:access:drift          # scoped name, domain, and session vs live
 bun run cloudflare:access:edge:validate
 bun run proton:check
 kimi-cloudflare-access plan   # production apps only; inspect, do not use for Pages previews

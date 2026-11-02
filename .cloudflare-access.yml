@@ -1,6 +1,6 @@
 # .cloudflare-access.yml — scoped policy-as-code for operator surfaces.
 #
-# STATUS (aligned live 2026-08-02):
+# STATUS (aligned live 2026-10-06):
 #   · ledger.factory-wager.com     — APPLIED (app "ledger" · email allowlist)
 #   · score.factory-wager.com/portal — APPLIED (app "FactoryWager Portal" · email allowlist)
 #   · project-r-score.pages.dev/portal — APPLIED (app "FactoryWager Portal (pages.dev)")
@@ -8,7 +8,10 @@
 #     Settings > General > Enable access policy control is enabled)
 #   · reasonix.factory-wager.com   — DECOMMISSIONED 2026-07-28 (no DNS, no tunnel; app + template removed)
 # Access token: Proton factorywager / Cloudflare Access API Token
-#   → CLOUDFLARE_ACCESS_API_TOKEN (kimi plan uses CLOUDFLARE_API_TOKEN=that value)
+#   → CLOUDFLARE_ACCESS_API_TOKEN
+# cf reads CLOUDFLARE_API_TOKEN, so export the Access token under that name
+# for one process. kimi-cloudflare-access prefers the OS keychain. Do not apply
+# a plan that wants to create these three apps. Use cloudflare:access:drift.
 #
 # Schema matches lib/verification/cloudflare-access-policy.ts:
 # apps[].policies[].include entries are Cloudflare Access rule groups.

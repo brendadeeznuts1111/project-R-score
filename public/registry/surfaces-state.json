@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "kind": "surfaces-state",
-  "generatedAt": "2026-08-06T07:02:14.219Z",
+  "generatedAt": "2026-10-07T01:46:54.569Z",
   "source": "config/surfaces.toml (dig+curl verified 2026-08-04)",
   "surfaces": [
     {
@@ -158,12 +158,12 @@
       "host": "terminal.factory-wager.com",
       "apex": "factory-wager.com",
       "subdomain": "terminal",
-      "backend": "none — CNAME deleted 2026-07-28 (was → 293ba37a.cfargotunnel.com, orphaned tunnel)",
+      "backend": "none on factory-wager.com — CNAME deleted 2026-07-28 (was → 293ba37a.cfargotunnel.com). Tunnel st-production still has a remote connector.",
       "backendCode": "none",
       "status": "retired",
       "protocol": "—",
       "access": "none",
-      "note": "CNAME removed via CF API 2026-07-28 (was 502 dangling to the orphan tunnel). Remaining human decisions: delete the dead tunnel in the dashboard + the 293ba37a credential file on this Mac.",
+      "note": "CNAME removed 2026-07-28. st-production still ingresses this host to http://proxy:3000 from the bet-ticker VPS. Do not delete the tunnel while that connector is up.",
       "dnsTarget": ""
     },
     {
