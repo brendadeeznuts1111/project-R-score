@@ -6,6 +6,8 @@ describe('public read plane', () => {
   test('keeps portal chrome, proof, and brand assets public', () => {
     for (const path of [
       '/portal/style.css',
+      '/sports-ops/',
+      '/sports-ops/index.html',
       '/registry/portal-weave.json',
       '/icons/factory/mark-32.webp',
       '/site.webmanifest',

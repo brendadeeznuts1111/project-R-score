@@ -563,6 +563,22 @@ export const PORTAL_DASHBOARD_ROUTES: PublicRouteDef[] = [
     note: 'static HTML · /api/monitoring JSON',
   },
   {
+    path: '/sports-ops/',
+    name: 'Sports ops command center',
+    category: 'portal',
+    kind: 'simd-route',
+    okStatuses: [200],
+    note: 'public/sports-ops/index.html · seed board until /api/sports-ops/state · live ticker stays on the local Bun relay',
+  },
+  {
+    path: '/api/sports-ops/state',
+    name: 'Sports ops desk state',
+    category: 'api',
+    kind: 'simd-route',
+    okStatuses: [200, 404],
+    note: 'sqlite rollup of fantasy402 wagers and 4codds status · leagues · socket stays on the local relay',
+  },
+  {
     path: '/portal/bunfig/',
     name: 'Bunfig status board',
     category: 'portal',

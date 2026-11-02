@@ -50,6 +50,7 @@ export type DeskGame = {
   line: string;
   live: boolean;
   spread: number | null;
+  league?: string;
 };
 
 export type DeskAlert = { t: string; title: string; msg: string; sev: "high" | "watch" | "info" };
@@ -65,7 +66,7 @@ export type DeskSharp = {
   sharp_score: number;
 };
 
-const SPORT_WORDS = ["Hockey", "Football", "Baseball", "Basketball", "Soccer", "Tennis", "Golf"];
+const SPORT_WORDS = ["Martial Arts", "Hockey", "Football", "Baseball", "Basketball", "Soccer", "Tennis", "Golf"];
 
 export function moneyFromCents(value: number | string | undefined): number {
   const n = Number(value);
@@ -154,6 +155,12 @@ export function mapScore(row: F402Score): DeskGame | null {
     line,
     live: !final,
     spread,
+    league: leagueFromBoard({
+      sport: String(row.SportType || row.SportSubType || "?").trim(),
+      away,
+      home,
+      league: leagueLabel(String(row.SportSubType || row.SportType || "")),
+    }),
   };
 }
 
@@ -203,12 +210,15 @@ export function deriveAlerts(wagers: DeskWager[]): DeskAlert[] {
   return [...wagers]
     .sort((a, b) => b.risk - a.risk || b.id.localeCompare(a.id))
     .slice(0, 18)
-    .map((wager) => ({
-      t: clockLabel(wager.ts),
-      title: wager.sport,
-      msg: `${wager.customer} ${wager.type} r${wager.risk} · ${wager.legs[0]?.desc ?? ""}`.trim(),
-      sev: wager.risk >= 1000 ? "high" : wager.risk >= 300 ? "watch" : "info",
-    }));
+    .map((wager) => {
+      const ticket = ticketOf(wager);
+      return {
+        t: clockLabel(wager.ts),
+        title: ticket.league,
+        msg: `${ticket.market} r${wager.risk} · ${ticket.selection}`.trim(),
+        sev: wager.risk >= 1000 ? "high" : wager.risk >= 300 ? "watch" : "info",
+      };
+    });
 }
 
 export function deriveMovers(previous: DeskGame[], next: DeskGame[]): DeskMover[] {
@@ -265,8 +275,201 @@ export function historyFromPoints(points: HistoryPoint[], games: DeskGame[]) {
       keys: [],
       books: "F402 LINE",
       series: series.slice(-42),
-      cascade: [],
-    };
+    cascade: [],
+  };
   }
   return history;
+}
+
+const LEAGUE_WORDS = ["NCAAF", "NCAAB", "WNBA", "NFL", "MLB", "NHL", "NBA", "EPL", "UCL", "MLS"] as const;
+
+const NFL_CLUBS = [
+  "chiefs", "ravens", "bills", "bengals", "49ers", "rams", "raiders", "giants", "titans", "texans",
+  "saints", "falcons", "jets", "broncos", "dolphins", "packers", "bears", "lions", "vikings",
+  "cowboys", "eagles", "commanders", "steelers", "browns", "colts", "jaguars", "patriots",
+  "buccaneers", "panthers", "seahawks", "cardinals", "chargers",
+];
+
+const COLLEGE_CLUBS = [
+  "southern miss", "troy", "texas a&m", "missouri", "florida st", "florida state", "louisville",
+  "lsu", "alabama", "kennesaw", "ole miss", "tennessee", "washington", "texas", "nebraska", "wisconsin",
+];
+
+export type TicketParts = {
+  code: string;
+  sport: string;
+  rotation: number | null;
+  selection: string;
+  league: string;
+  market: string;
+};
+
+export type LeagueRow = {
+  league: string;
+  sport: string;
+  tickets: number;
+  risk: number;
+  win: number;
+  straight: number;
+  parlay: number;
+  games: number;
+};
+
+export function cleanDesc(desc: string): string {
+  return desc
+    .replace(/&#189;|&frac12;/gi, "½")
+    .replace(/&#188;|&frac14;/gi, "¼")
+    .replace(/&#190;|&frac34;/gi, "¾")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Alt-line ids embed the board rotation, such as 1130101 → 301. */
+export function baseRotation(sport: string, rotation: number | null): number | null {
+  if (rotation == null || !Number.isFinite(rotation)) return null;
+  if (rotation < 1000) return rotation;
+  const digits = String(Math.trunc(rotation));
+  const bands =
+    sport === "FOOTBALL"
+      ? [[300, 499], [200, 299], [100, 199]]
+      : sport === "BASEBALL"
+        ? [[800, 999]]
+        : sport === "BASKETBALL"
+          ? [[500, 699]]
+          : sport === "HOCKEY"
+            ? [[1, 99]]
+            : [];
+  for (const [lo, hi] of bands) {
+    let found: number | null = null;
+    for (let i = 0; i + 3 <= digits.length; i++) {
+      const chunk = Number(digits.slice(i, i + 3));
+      if (chunk >= lo! && chunk <= hi!) found = chunk;
+    }
+    if (found != null) return found;
+  }
+  return rotation;
+}
+
+export function leagueFor(sport: string, rotation: number | null, desc = ""): string {
+  const text = `${sport} ${desc}`.toUpperCase();
+  for (const name of LEAGUE_WORDS) {
+    if (new RegExp(`\\b${name}\\b`).test(text)) return name;
+  }
+  const family = sport.toUpperCase();
+  const n = baseRotation(family, rotation);
+  if (family === "BASEBALL") {
+    if (rotation != null && rotation >= 300000 && rotation < 400000) return "KBO";
+    return "MLB";
+  }
+  if (family === "FOOTBALL") {
+    if (n != null && ((n >= 200 && n < 300) || (n >= 451 && n <= 499))) return "NFL";
+    return "NCAAF";
+  }
+  if (family === "HOCKEY") return "NHL";
+  if (family === "BASKETBALL") {
+    if (n != null && n >= 600 && n < 700) return "WNBA";
+    return "NBA";
+  }
+  if (family === "SOCCER") return "SOCCER";
+  if (family === "MARTIAL ARTS" || family === "MMA" || family === "UFC") return "UFC";
+  if (family === "GOLF") return "GOLF";
+  if (family === "TENNIS") return "TENNIS";
+  return family || "OTHER";
+}
+
+function leagueLabel(raw: string): string {
+  const text = raw.trim().toUpperCase();
+  if (!text || text === "?" ) return "";
+  for (const name of LEAGUE_WORDS) {
+    if (text === name) return name;
+  }
+  return "";
+}
+
+export function leagueFromBoard(game: { sport: string; away: string; home: string; league?: string }): string {
+  if (game.league) return game.league;
+  const sport = game.sport.trim().toUpperCase();
+  if ((LEAGUE_WORDS as readonly string[]).includes(sport) || sport === "SOCCER" || sport === "GOLF" || sport === "TENNIS" || sport === "KBO") {
+    return sport;
+  }
+  const names = `${game.away} ${game.home}`.toLowerCase();
+  if (sport === "FOOTBALL") {
+    if (COLLEGE_CLUBS.some((club) => names.includes(club))) return "NCAAF";
+    if (NFL_CLUBS.some((club) => names.includes(club))) return "NFL";
+    return "NCAAF";
+  }
+  if (sport === "BASEBALL") return names.includes("landers") || names.includes("hanwha") ? "KBO" : "MLB";
+  if (sport === "HOCKEY") return "NHL";
+  if (sport === "BASKETBALL") return "NBA";
+  if (sport === "SOCCER") return "SOCCER";
+  return sport || "OTHER";
+}
+
+const MARKET: Record<string, string> = {
+  S: "spread",
+  M: "moneyline",
+  L: "total",
+  P: "parlay",
+  T: "teaser",
+  E: "total",
+  I: "ifbet",
+  C: "prop",
+};
+
+export function parseTicket(desc: string): TicketParts {
+  const text = cleanDesc(desc);
+  const match = text.match(/^([A-Za-z])[.:\s]\s*([A-Za-z]+(?:\s+[A-Za-z]+)?)\s+#(\d+)\s*(.*)$/);
+  if (!match) {
+    const sport = sportOf(text, "OTHER");
+    return { code: "", sport, rotation: null, selection: text, league: leagueFor(sport, null, text), market: "straight" };
+  }
+  const code = match[1]!.toUpperCase();
+  const sport = match[2]!.toUpperCase();
+  const rotation = Number(match[3]);
+  const selection = (match[4] ?? "").trim();
+  return {
+    code,
+    sport,
+    rotation,
+    selection,
+    league: leagueFor(sport, rotation, text),
+    market: MARKET[code] ?? "straight",
+  };
+}
+
+export function ticketOf(wager: DeskWager): TicketParts {
+  const legs = wager.legs.map((leg) => parseTicket(leg.desc));
+  const first = legs[0] ?? parseTicket("");
+  const leagues = [...new Set(legs.map((leg) => leg.league).filter(Boolean))];
+  return {
+    ...first,
+    sport: first.sport || wager.sport,
+    league: leagues.length > 1 ? "MULTI" : leagues[0] || leagueFor(wager.sport, first.rotation, first.selection),
+    market: first.market || wager.type,
+  };
+}
+
+export function rollupLeagues(wagers: DeskWager[], games: DeskGame[]): LeagueRow[] {
+  const by = new Map<string, LeagueRow>();
+  const touch = (league: string, sport: string): LeagueRow => {
+    const current = by.get(league) ?? { league, sport, tickets: 0, risk: 0, win: 0, straight: 0, parlay: 0, games: 0 };
+    if (!current.sport && sport) current.sport = sport;
+    by.set(league, current);
+    return current;
+  };
+  for (const wager of wagers) {
+    const ticket = ticketOf(wager);
+    const row = touch(ticket.league, ticket.sport || wager.sport);
+    row.tickets += 1;
+    row.risk += Number(wager.risk) || 0;
+    row.win += Number(wager.win) || 0;
+    if (wager.type === "parlay" || ticket.market === "parlay") row.parlay += 1;
+    else row.straight += 1;
+  }
+  for (const game of games) {
+    const league = leagueFromBoard(game);
+    touch(league, game.sport).games += 1;
+  }
+  return [...by.values()].sort((a, b) => b.risk - a.risk || b.tickets - a.tickets || a.league.localeCompare(b.league));
 }
