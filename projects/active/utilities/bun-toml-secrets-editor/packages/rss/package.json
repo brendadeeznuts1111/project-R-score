@@ -16,7 +16,6 @@
 		"smoke": "bun -e \"import * as rss from './src/index.ts'; console.log('✓ RSS smoke passed')\""
 	},
 	"dependencies": {
-		"@bun-toml/core": "workspace:*",
-		"fast-xml-parser": "5.3.3"
+		"@bun-toml/core": "workspace:*"
 	}
 }
