@@ -1,11 +1,5 @@
 // src/server-simple.ts - Working RSS Optimizer with v1.3.7 features
-import { XMLParser } from "fast-xml-parser";
 import { fetchTomlConfigured } from "../../../src/http/configured-outbound.ts";
-
-const parser = new XMLParser({
-	ignoreAttributes: false,
-	parseAttributeValue: true,
-});
 
 Bun.serve({
 	port: 3000,
@@ -34,7 +28,7 @@ Bun.serve({
 				const xml = await response.text();
 				const parseStart = performance.now();
 
-				const feed = parser.parse(xml);
+				const feed = Bun.XML.parse(xml);
 				const fetchTime = performance.now() - startTime;
 				const parseTime = performance.now() - parseStart;
 
@@ -99,7 +93,7 @@ Bun Version: ${Bun.version}
 			try {
         const response = await fetchTomlConfigured(feedUrl);
 				const xml = await response.text();
-				const feed = parser.parse(xml);
+				const feed = Bun.XML.parse(xml);
 
 				const title =
 					feed.rss?.channel?.title || feed.feed?.title || "Untitled";
